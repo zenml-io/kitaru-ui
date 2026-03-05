@@ -23,4 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 
+# Devenv
+.devenv*
+devenv.yaml
+devenv.lock
+devenv.nix
+devenv.local.nix
 
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
