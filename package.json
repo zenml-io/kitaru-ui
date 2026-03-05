@@ -9,7 +9,8 @@
 		"lint": "eslint .",
 		"preview": "vite preview",
 		"format": "prettier --write .",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"generate:types": "node scripts/types.js"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.90.21",
@@ -32,6 +33,7 @@
 		"eslint-plugin-react-refresh": "^0.4.26",
 		"globals": "^16.5.0",
 		"lefthook": "^2.1.2",
+		"openapi-typescript": "^7.13.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"tailwindcss": "^4.2.1",
