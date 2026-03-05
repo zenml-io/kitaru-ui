@@ -25,11 +25,10 @@ dist-ssr
 
 .env*
 !.env.example
+
+
 # Devenv
 .devenv*
-devenv.yaml
-devenv.lock
-devenv.nix
 devenv.local.nix
 
 # direnv
