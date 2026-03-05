@@ -17,6 +17,10 @@
   # env.ZENML_DEBUG = "true";
   env.ZENML_ANALYTICS_OPT_IN = "false";
 
+  scripts.install-zenml-branch.exec = ''
+    sh scripts/install-zenml-branch.sh $1
+  '';
+
   languages.python = {
     enable = true;
     package = pkgs.python312;
