@@ -1,0 +1,44 @@
+{
+	"name": "kitaru",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsc -b && vite build",
+		"dev": "vite",
+		"lint": "eslint .",
+		"preview": "vite preview",
+		"format": "prettier --write .",
+		"test:unit": "vitest"
+	},
+	"dependencies": {
+		"@tanstack/react-query": "^5.90.21",
+		"@tanstack/react-router": "^1.166.2",
+		"@tanstack/react-router-devtools": "^1.166.2",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.3",
+		"@tailwindcss/vite": "^4.2.1",
+		"@tanstack/router-plugin": "^1.166.2",
+		"@types/node": "^24.11.0",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react": "^5.1.4",
+		"babel-plugin-react-compiler": "^1.0.0",
+		"eslint": "^9.39.3",
+		"eslint-plugin-react-hooks": "^7.0.1",
+		"eslint-plugin-react-refresh": "^0.4.26",
+		"globals": "^16.5.0",
+		"lefthook": "^2.1.2",
+		"prettier": "^3.8.1",
+		"prettier-plugin-tailwindcss": "^0.7.2",
+		"tailwindcss": "^4.2.1",
+		"typescript": "~5.9.3",
+		"typescript-eslint": "^8.56.1",
+		"vite": "^7.3.1",
+		"vite-tsconfig-paths": "^6.1.1",
+		"vitest": "^4.0.18"
+	}
+}
