@@ -3,3 +3,4 @@ dist
 .devbox
 src/routeTree.gen.ts
 .venv
+pnpm-lock.yaml
