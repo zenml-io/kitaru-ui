@@ -9,55 +9,54 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as publicMeshRouteImport } from './routes/(public)/_mesh'
+import { Route as publicMeshLoginRouteImport } from './routes/(public)/_mesh/login'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicMeshRoute = publicMeshRouteImport.update({
+  id: '/(public)/_mesh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicMeshLoginRoute = publicMeshLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => publicMeshRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/login': typeof publicMeshLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/login': typeof publicMeshLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/(public)/_mesh': typeof publicMeshRouteWithChildren
+  '/(public)/_mesh/login': typeof publicMeshLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths: '/' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/login'
+  id: '__root__' | '/' | '/(public)/_mesh' | '/(public)/_mesh/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  publicMeshRoute: typeof publicMeshRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -65,12 +64,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(public)/_mesh': {
+      id: '/(public)/_mesh'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof publicMeshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/_mesh/login': {
+      id: '/(public)/_mesh/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof publicMeshLoginRouteImport
+      parentRoute: typeof publicMeshRoute
+    }
   }
 }
 
+interface publicMeshRouteChildren {
+  publicMeshLoginRoute: typeof publicMeshLoginRoute
+}
+
+const publicMeshRouteChildren: publicMeshRouteChildren = {
+  publicMeshLoginRoute: publicMeshLoginRoute,
+}
+
+const publicMeshRouteWithChildren = publicMeshRoute._addFileChildren(
+  publicMeshRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  publicMeshRoute: publicMeshRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,26 +1,22 @@
+import { Toaster } from "@/shared/ui/sonner";
+import { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
-	Link,
+	HeadContent,
 	Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { QueryClient } from "@tanstack/react-query";
 
-const RootLayout = () => (
-	<>
-		<div className="flex gap-2 p-2">
-			<Link to="/" className="[&.active]:font-bold">
-				Home
-			</Link>{" "}
-			<Link to="/about" className="[&.active]:font-bold">
-				About
-			</Link>
+function RootLayout() {
+	return (
+		<div className="font-medium antialiased">
+			<HeadContent />
+			<Outlet />
+			<Toaster position="top-center" />
+			<TanStackRouterDevtools />
 		</div>
-		<hr />
-		<Outlet />
-		<TanStackRouterDevtools />
-	</>
-);
+	);
+}
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 	{

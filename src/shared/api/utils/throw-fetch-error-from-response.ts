@@ -30,6 +30,11 @@ function getErrorMessage(errorData: unknown): string {
 		}
 
 		if (isArray(detail)) {
+			const secondItem = detail[1];
+			if (isString(secondItem) && secondItem.trim().length > 0) {
+				return secondItem;
+			}
+
 			const detailMessage = detail.find(
 				(item): item is string => isString(item) && item.trim().length > 0
 			);
