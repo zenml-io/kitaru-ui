@@ -1,12 +1,9 @@
 import { notFound } from "@tanstack/react-router";
-import { isFetchError } from "../domain/fetch-error";
+import { isFetchError } from "@/shared/api/domain/fetch-error";
 
 /**
- * Wraps a query promise and throws TanStack Router's notFound()
- * if the query fails with a 404 status.
- *
- * Use this for the "primary resource" query in a loader - the one
- * that determines whether the route should exist.
+ * Wrap a query promise and throw TanStack Router's notFound()
+ * when the request fails with a 404 status.
  */
 export async function ensureQueryDataOr404<T>(promise: Promise<T>): Promise<T> {
 	try {

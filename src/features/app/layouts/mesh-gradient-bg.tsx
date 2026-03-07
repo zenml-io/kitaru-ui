@@ -1,10 +1,8 @@
 const palettes = {
 	default: {
-		bg: "#FBF8F5",
 		blobs: ["#F5EDE4", "#EDCAAF", "#FBE8D3", "#F17829"],
 	},
 	success: {
-		bg: "#F5FAF7",
 		blobs: ["#D4E8DC", "#A8D5BA", "#C8E6D0", "#3D8C5C"],
 	},
 } as const;
@@ -15,10 +13,7 @@ export function MeshGradientBg({ variant = "default" }: { variant?: Variant }) {
 	const p = palettes[variant];
 
 	return (
-		<div
-			className="fixed inset-0 -z-10 overflow-hidden transition-colors duration-1500 ease-out"
-			style={{ backgroundColor: p.bg }}
-		>
+		<div className="fixed inset-0 -z-10 overflow-hidden transition-colors duration-1500 ease-out">
 			<div
 				className="not-motion-reduce:animate-drift-1 absolute h-[600px] w-[600px] rounded-full opacity-[0.15] blur-[100px] transition-[background-color] duration-1500 ease-out"
 				style={{ background: p.blobs[0], top: "10%", left: "20%" }}

@@ -4,8 +4,9 @@ import { Input } from "@/shared/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
+import { loginMutationOptions } from "../domain/mutations/login-mutation";
 import { loginSchema, type LoginPayload } from "../domain/login-schema";
-import { useLoginUser } from "../hooks/use-login-user";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export function LoginForm() {
@@ -19,14 +20,16 @@ export function LoginForm() {
 		},
 	});
 
-	const { mutate, isPending: isMutationPending } = useLoginUser({
-		onSuccess: async () => {
-			router.navigate({ to: next ?? "/" });
-		},
-		onError: (err) => {
-			toast.error(err.message);
-		},
-	});
+	const { mutate, isPending: isMutationPending } = useMutation(
+		loginMutationOptions({
+			onSuccess: async () => {
+				router.navigate({ to: next ?? "/" });
+			},
+			onError: (err) => {
+				toast.error(err.message);
+			},
+		})
+	);
 
 	function onSubmit(data: LoginPayload) {
 		mutate(data);

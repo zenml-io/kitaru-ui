@@ -1,9 +1,9 @@
 import "@/assets/styles/tailwind.css";
-import { queryClient } from "@/shared/queryclient";
+import { queryClient } from "@/features/app/query-client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { RootProviders } from "./features/app/root-providers";
+import { RootProviders } from "./features/app/feature/root-providers";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";

@@ -1,4 +1,4 @@
-import { LoginForm } from "@/features/session/ui/login-form";
+import { LoginForm } from "@/features/session/feature/login-form";
 import { Card, CardContent } from "@/shared/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
