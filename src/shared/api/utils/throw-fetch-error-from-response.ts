@@ -1,30 +1,41 @@
+import { isArray, isObject, isString } from "es-toolkit/compat";
 import { FetchError } from "../domain/fetch-error";
 
 function getErrorMessage(errorData: unknown): string {
-	if (typeof errorData === "string" && errorData.trim().length > 0) {
+	if (isString(errorData) && errorData.trim().length > 0) {
 		return errorData;
 	}
 
-	if (errorData && typeof errorData === "object") {
+	if (isArray(errorData)) {
+		const secondItem = errorData[1];
+		if (isString(secondItem) && secondItem.trim().length > 0) {
+			return secondItem;
+		}
+
+		const arrayMessage = errorData.find(
+			(item): item is string => isString(item) && item.trim().length > 0
+		);
+		if (arrayMessage) {
+			return arrayMessage;
+		}
+
+		return "Unknown error";
+	}
+
+	if (isObject(errorData)) {
 		const errorRecord = errorData as Record<string, unknown>;
 		const detail = errorRecord.detail;
-		if (typeof detail === "string" && detail.trim().length > 0) {
+		if (isString(detail) && detail.trim().length > 0) {
 			return detail;
 		}
 
-		if (Array.isArray(detail)) {
+		if (isArray(detail)) {
 			const detailMessage = detail.find(
-				(item): item is string =>
-					typeof item === "string" && item.trim().length > 0
+				(item): item is string => isString(item) && item.trim().length > 0
 			);
 			if (detailMessage) {
 				return detailMessage;
 			}
-		}
-
-		const message = errorRecord.message;
-		if (typeof message === "string" && message.trim().length > 0) {
-			return message;
 		}
 	}
 
