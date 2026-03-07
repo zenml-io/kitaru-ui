@@ -19,7 +19,7 @@ export const Route = createFileRoute("/(public)/_mesh/login")({
 
 function RouteComponent() {
 	return (
-		<Card className="w-[400px] shadow-lg">
+		<Card className="w-full max-w-[400px] shadow-lg">
 			<CardContent className="space-y-3 p-8">
 				<h2 className="text-center text-lg font-semibold">Sign in to Kitaru</h2>
 				<LoginForm />

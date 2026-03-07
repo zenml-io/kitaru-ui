@@ -19,7 +19,7 @@ export function LoginForm() {
 		},
 	});
 
-	const { mutate } = useLoginUser({
+	const { mutate, isPending: isMutationPending } = useLoginUser({
 		onSuccess: async () => {
 			router.navigate({ to: next ?? "/" });
 		},
@@ -74,7 +74,12 @@ export function LoginForm() {
 						</Field>
 					)}
 				/>
-				<Button type="submit">Sign in</Button>
+				<Button
+					disabled={form.formState.isSubmitting || isMutationPending}
+					type="submit"
+				>
+					Sign in
+				</Button>
 			</FieldGroup>
 		</form>
 	);

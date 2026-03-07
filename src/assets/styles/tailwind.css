@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./shadcn.css";
+@import "./drift-motion.css";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
 
@@ -166,6 +167,12 @@
 	--shadow-lg: var(--shadow-lg);
 	--shadow-xl: var(--shadow-xl);
 	--shadow-2xl: var(--shadow-2xl);
+
+	/* Animations */
+	--animate-drift-1: drift-1 20s ease-in-out infinite;
+	--animate-drift-2: drift-2 25s ease-in-out infinite;
+	--animate-drift-3: drift-3 30s ease-in-out infinite;
+	--animate-drift-4: drift-4 22s ease-in-out infinite;
 }
 
 @layer base {

@@ -1,3 +1,4 @@
+import { MeshGradientBg } from "@/shared/layouts/ui/mesh-layout";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(public)/_mesh")({
@@ -7,9 +8,8 @@ export const Route = createFileRoute("/(public)/_mesh")({
 function RouteComponent() {
 	return (
 		<div className="relative flex min-h-dvh items-center justify-center">
-			{/* <MeshGradientBg variant={step === "success" ? "success" : "default"} /> */}
-			<div className="bg-red-600"></div>
-			<div className="flex flex-col items-center gap-6">
+			<MeshGradientBg />
+			<div className="flex w-full flex-col items-center gap-6 px-4">
 				<p className="text-foreground text-2xl font-bold">Kitaru</p>
 				<Outlet />
 			</div>
