@@ -132,6 +132,8 @@ Forms use React Hook Form + Zod for validation:
 - Define React components with `function` declarations instead of arrow functions.
 - Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage or under `src/types` (with `components` vs `operations` imports as appropriate).
 - No type casting.
+- Use dash-case for new file names (e.g. `verification-form.tsx`, `current-user-query.ts`, `activate-server-mutation.ts`).
+- Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions).
 
 ## Assets & Content
 

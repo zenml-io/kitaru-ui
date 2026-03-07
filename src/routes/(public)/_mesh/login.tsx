@@ -1,5 +1,6 @@
 import { LoginForm } from "@/features/session/feature/login-form-container";
 import { Card, CardContent } from "@/shared/ui/card";
+import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/(public)/_mesh/login")({
 	component: RouteComponent,
 	head() {
 		return {
-			meta: [{ title: "Login to Kitaru" }],
+			meta: [{ title: buildPageTitles("Login") }],
 		};
 	},
 });

@@ -9,14 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as PrivateRouteImport } from './routes/_private'
+import { Route as PrivateIndexRouteImport } from './routes/_private/index'
 import { Route as publicMeshRouteImport } from './routes/(public)/_mesh'
 import { Route as publicMeshLoginRouteImport } from './routes/(public)/_mesh/login'
+import { Route as publicMeshActivateServerRouteImport } from './routes/(public)/_mesh/activate-server'
 
-const IndexRoute = IndexRouteImport.update({
+const PrivateRoute = PrivateRouteImport.update({
+  id: '/_private',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivateIndexRoute = PrivateIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PrivateRoute,
 } as any)
 const publicMeshRoute = publicMeshRouteImport.update({
   id: '/(public)/_mesh',
@@ -27,42 +33,65 @@ const publicMeshLoginRoute = publicMeshLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => publicMeshRoute,
 } as any)
+const publicMeshActivateServerRoute =
+  publicMeshActivateServerRouteImport.update({
+    id: '/activate-server',
+    path: '/activate-server',
+    getParentRoute: () => publicMeshRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof PrivateIndexRoute
+  '/activate-server': typeof publicMeshActivateServerRoute
   '/login': typeof publicMeshLoginRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof PrivateIndexRoute
+  '/activate-server': typeof publicMeshActivateServerRoute
   '/login': typeof publicMeshLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_private': typeof PrivateRouteWithChildren
   '/(public)/_mesh': typeof publicMeshRouteWithChildren
+  '/_private/': typeof PrivateIndexRoute
+  '/(public)/_mesh/activate-server': typeof publicMeshActivateServerRoute
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/activate-server' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/(public)/_mesh' | '/(public)/_mesh/login'
+  to: '/' | '/activate-server' | '/login'
+  id:
+    | '__root__'
+    | '/_private'
+    | '/(public)/_mesh'
+    | '/_private/'
+    | '/(public)/_mesh/activate-server'
+    | '/(public)/_mesh/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  PrivateRoute: typeof PrivateRouteWithChildren
   publicMeshRoute: typeof publicMeshRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_private': {
+      id: '/_private'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PrivateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_private/': {
+      id: '/_private/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof PrivateIndexRouteImport
+      parentRoute: typeof PrivateRoute
     }
     '/(public)/_mesh': {
       id: '/(public)/_mesh'
@@ -78,14 +107,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicMeshLoginRouteImport
       parentRoute: typeof publicMeshRoute
     }
+    '/(public)/_mesh/activate-server': {
+      id: '/(public)/_mesh/activate-server'
+      path: '/activate-server'
+      fullPath: '/activate-server'
+      preLoaderRoute: typeof publicMeshActivateServerRouteImport
+      parentRoute: typeof publicMeshRoute
+    }
   }
 }
 
+interface PrivateRouteChildren {
+  PrivateIndexRoute: typeof PrivateIndexRoute
+}
+
+const PrivateRouteChildren: PrivateRouteChildren = {
+  PrivateIndexRoute: PrivateIndexRoute,
+}
+
+const PrivateRouteWithChildren =
+  PrivateRoute._addFileChildren(PrivateRouteChildren)
+
 interface publicMeshRouteChildren {
+  publicMeshActivateServerRoute: typeof publicMeshActivateServerRoute
   publicMeshLoginRoute: typeof publicMeshLoginRoute
 }
 
 const publicMeshRouteChildren: publicMeshRouteChildren = {
+  publicMeshActivateServerRoute: publicMeshActivateServerRoute,
   publicMeshLoginRoute: publicMeshLoginRoute,
 }
 
@@ -94,7 +143,7 @@ const publicMeshRouteWithChildren = publicMeshRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  PrivateRoute: PrivateRouteWithChildren,
   publicMeshRoute: publicMeshRouteWithChildren,
 }
 export const routeTree = rootRouteImport
