@@ -9,7 +9,7 @@ import { loginSchema, type LoginPayload } from "../domain/login-schema";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export function LoginForm() {
+export function LoginFormContainer() {
 	const { next } = useSearch({ from: "/(public)/_mesh/login" });
 	const router = useRouter();
 	const form = useForm<LoginPayload>({
