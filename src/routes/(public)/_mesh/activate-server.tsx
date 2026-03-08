@@ -1,5 +1,5 @@
 import { serverInfoQueryOptions } from "@/features/app/domain/queries/server-info-query";
-import { ServerActivationForm } from "@/features/server-activation/feature/server-activation-form";
+import { ServerActivationForm } from "@/features/server-activation/feature/server-activation-form-container";
 import { Card, CardContent } from "@/shared/ui/card";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute, redirect } from "@tanstack/react-router";
