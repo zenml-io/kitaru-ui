@@ -32,8 +32,8 @@ export async function apiClient(endpoint: string, init?: RequestInit) {
 	} catch (error) {
 		throw new FetchError({
 			status: 0,
-			statusText: "NETWORK_ERROR",
-			message: "Network error while fetching data",
+			statusText: "REQUEST_FAILED",
+			message: "Request failed before receiving a response",
 			url,
 			method,
 			cause: error,
