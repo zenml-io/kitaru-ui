@@ -1,4 +1,4 @@
-import { getServerInfoQueryKey } from "@/features/app/domain/queries/server-info-query";
+import { SERVER_INFO_QUERY_KEY } from "@/features/app/domain/queries/server-info-query";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
@@ -37,7 +37,7 @@ export function ServerActivationForm() {
 			activateServerAndLoginMutationOptions({
 				onSuccess: async () => {
 					await queryClient.invalidateQueries({
-						queryKey: getServerInfoQueryKey(),
+						queryKey: SERVER_INFO_QUERY_KEY,
 						refetchType: "all",
 					});
 
