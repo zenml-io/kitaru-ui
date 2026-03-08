@@ -1,6 +1,6 @@
 # Kitaru UI
 
-Kitaru UI is the web dashboard for [ZenML](https://zenml.io). It is a single-page application built with React 19 and Vite.
+Kitaru UI is the web dashboard for [Kitaru](https://kitaru.ai) — a durable agent infrastructure framework for Python that enables reliable agent execution with built-in crash recovery, human-in-the-loop approval, and cost tracking. It is a single-page application built with React 19 and Vite.
 
 ## Current Scope
 
