@@ -184,6 +184,17 @@ See `server-activation-form-container.tsx` and `login-form-container.tsx` for cu
 
 ## Git Conventions
 
+### Docs Maintenance
+
+Before committing or pushing a PR, check whether `README.md` and `AGENTS.md` need updating to reflect your changes. Common triggers:
+
+- New or renamed folders, features, or routes
+- Added/removed dependencies or scripts
+- Changes to the data fetching, auth, or networking patterns
+- New generated files or build steps
+
+Keep both files accurate — stale docs erode trust faster than missing docs.
+
 ### PR Titles
 
 - Use plain, descriptive titles without conventional commit prefixes (no `feat:`, `fix:`, `ci:`, etc.)
