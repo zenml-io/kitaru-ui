@@ -17,9 +17,13 @@ const palettes = {
 	},
 } as const;
 
-type Variant = keyof typeof palettes;
+export type MeshGradientVariant = keyof typeof palettes;
 
-export function MeshGradientBg({ variant = "default" }: { variant?: Variant }) {
+export function MeshGradientBg({
+	variant = "default",
+}: {
+	variant?: MeshGradientVariant;
+}) {
 	const p = palettes[variant];
 
 	return (

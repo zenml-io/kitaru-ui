@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivateRouteImport } from './routes/_private'
 import { Route as PrivateIndexRouteImport } from './routes/_private/index'
 import { Route as publicMeshRouteImport } from './routes/(public)/_mesh'
+import { Route as PrivateDevicesVerifyRouteImport } from './routes/_private/devices/verify'
 import { Route as publicMeshLoginRouteImport } from './routes/(public)/_mesh/login'
 import { Route as publicMeshActivateServerRouteImport } from './routes/(public)/_mesh/activate-server'
 
@@ -27,6 +28,11 @@ const PrivateIndexRoute = PrivateIndexRouteImport.update({
 const publicMeshRoute = publicMeshRouteImport.update({
   id: '/(public)/_mesh',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PrivateDevicesVerifyRoute = PrivateDevicesVerifyRouteImport.update({
+  id: '/devices/verify',
+  path: '/devices/verify',
+  getParentRoute: () => PrivateRoute,
 } as any)
 const publicMeshLoginRoute = publicMeshLoginRouteImport.update({
   id: '/login',
@@ -44,11 +50,13 @@ export interface FileRoutesByFullPath {
   '/': typeof PrivateIndexRoute
   '/activate-server': typeof publicMeshActivateServerRoute
   '/login': typeof publicMeshLoginRoute
+  '/devices/verify': typeof PrivateDevicesVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PrivateIndexRoute
   '/activate-server': typeof publicMeshActivateServerRoute
   '/login': typeof publicMeshLoginRoute
+  '/devices/verify': typeof PrivateDevicesVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -57,12 +65,13 @@ export interface FileRoutesById {
   '/_private/': typeof PrivateIndexRoute
   '/(public)/_mesh/activate-server': typeof publicMeshActivateServerRoute
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
+  '/_private/devices/verify': typeof PrivateDevicesVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activate-server' | '/login'
+  fullPaths: '/' | '/activate-server' | '/login' | '/devices/verify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activate-server' | '/login'
+  to: '/' | '/activate-server' | '/login' | '/devices/verify'
   id:
     | '__root__'
     | '/_private'
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/_private/'
     | '/(public)/_mesh/activate-server'
     | '/(public)/_mesh/login'
+    | '/_private/devices/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -100,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicMeshRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_private/devices/verify': {
+      id: '/_private/devices/verify'
+      path: '/devices/verify'
+      fullPath: '/devices/verify'
+      preLoaderRoute: typeof PrivateDevicesVerifyRouteImport
+      parentRoute: typeof PrivateRoute
+    }
     '/(public)/_mesh/login': {
       id: '/(public)/_mesh/login'
       path: '/login'
@@ -119,10 +136,12 @@ declare module '@tanstack/react-router' {
 
 interface PrivateRouteChildren {
   PrivateIndexRoute: typeof PrivateIndexRoute
+  PrivateDevicesVerifyRoute: typeof PrivateDevicesVerifyRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateIndexRoute: PrivateIndexRoute,
+  PrivateDevicesVerifyRoute: PrivateDevicesVerifyRoute,
 }
 
 const PrivateRouteWithChildren =
