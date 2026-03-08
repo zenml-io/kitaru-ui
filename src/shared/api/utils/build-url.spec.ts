@@ -12,13 +12,13 @@ describe("buildUrlWithQueries", () => {
 		expect(result).toBe("/api/runs?page=2&sort=created_desc");
 	});
 
-	it("returns the original url when all provided values are nullish", () => {
+	it("stringifies nullish values when provided", () => {
 		const result = buildUrlWithQueries("/api/runs", {
 			ignoreNull: null,
 			ignoreUndefined: undefined,
 		});
 
-		expect(result).toBe("/api/runs");
+		expect(result).toBe("/api/runs?ignoreNull=null&ignoreUndefined=undefined");
 	});
 
 	it("returns the original url when params are empty", () => {
@@ -46,12 +46,14 @@ describe("buildUrlWithQueries", () => {
 		expect(result).toBe("/api/runs?tags=active&tags=favorite");
 	});
 
-	it("skips nullish values inside arrays", () => {
+	it("stringifies nullish values inside arrays", () => {
 		const result = buildUrlWithQueries("/api/runs", {
 			tags: ["active", null, undefined, "favorite"],
 		});
 
-		expect(result).toBe("/api/runs?tags=active&tags=favorite");
+		expect(result).toBe(
+			"/api/runs?tags=active&tags=null&tags=undefined&tags=favorite"
+		);
 	});
 
 	it("handles an empty base url", () => {
