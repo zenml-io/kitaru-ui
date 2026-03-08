@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) and Cursor when working with code in this repository.
+This file provides guidance to AI coding agents (Codex, Cursor, Claude, etc.) when working with code in this repository.
 
 ## Development Commands
 
@@ -8,56 +8,80 @@ This file provides guidance to Codex (Codex.ai/code) and Cursor when working wit
 
 ```bash
 pnpm install          # Install dependencies (uses pnpm, not yarn!)
-pnpm dev             # Start development server (default port 5173)
-pnpm build           # Build for production (tsc + vite build)
-pnpm lint            # Run ESLint
-pnpm format          # Format code with Prettier
+pnpm dev              # Start development server (default port 5173)
+pnpm build            # Build for production (tsc + vite build)
+pnpm lint             # Run ESLint
+pnpm format           # Format code with Prettier
+pnpm test:unit        # Run unit tests (Vitest)
+pnpm preview          # Preview the production build locally
+pnpm generate:types   # Generate OpenAPI types: pnpm generate:types -- <base-url>
 ```
 
-**Important:** The frontend and server must be on the same domain (e.g., `localhost`) for authentication to work correctly. The dashboard uses `credentials: "include"` for cookie-based auth.
+### Authentication & Proxy
+
+The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL` (default `http://localhost:8237`). The app uses cookie-based auth with `credentials: "include"`, so the frontend and backend must appear on the same origin.
 
 ## Architecture Overview
 
 ### Technology Stack
 
-- **Framework:** Vite + React 19 (SPA)
-- **Routing:** @tanstack/router
-- **Data Fetching:** @tanstack/react-query
+- **Framework:** Vite 7 + React 19 (SPA)
+- **Routing:** @tanstack/react-router (file-based with auto code-splitting)
+- **Server state:** @tanstack/react-query
 - **Forms:** React Hook Form + Zod validation
-- **Styling:** Tailwind CSS + Tailwind plugins (forms, typography, container-queries).
-- **UI Components:** Shadcn UI with custom theme
-- **State management:** React Context
-- **Type Safety:** TypeScript (strict mode) with generated types from OpenAPI
+- **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
+- **UI primitives:** Base UI (`@base-ui/react`) + class-variance-authority, with shadcn-style config conventions (`components.json`)
+- **Icons:** @untitledui/icons
+- **Notifications:** Sonner + next-themes
+- **Type safety:** TypeScript (strict mode) with generated types from ZenML OpenAPI spec
+- **Compiler:** React Compiler (via Babel plugin)
+- **Testing:** Vitest
+- **Pre-commit:** Lefthook (ESLint auto-fix + Prettier on staged files)
 
 ### Project Structure
 
 - Feature-based folder structure under `src/features/<feature>` with consistent layers:
   - **feature/** — page/container orchestration, provider composition, feature entrypoints; the public surface routes or other features import from
   - **domain/** — feature-owned API contracts, query definitions, mutation definitions, transformers, schemas, types; where request definitions live
-  - **ui/** — pure presentational components; prefer placing Tailwind classes here, while allowing feature/layout shells when it keeps composition clearer
-  - **utils/** — small feature-scoped pure helpers only
+  - **ui/** — pure presentational components (optional; create when a feature has reusable presentation)
+  - **utils/** — small feature-scoped pure helpers only (optional)
 - Optional sublayers when a feature grows: `domain/queries/`, `domain/mutations/`, `domain/types/`, `feature/hooks/` (only for orchestration hooks that combine domain modules and UI state)
-- `src/routes/*` — file-based TanStack Router route definitions and route composition entrypoints; keep them thin and do not use route files as targets for architecture refactors
-- `src/shared/api/*` — infrastructure-only: transport primitives, path builders, errors, generated OpenAPI types
-- `src/shared/api/*` must not import router concerns (`notFound`, route context, etc.); keep router-aware helpers in app/feature or router-focused shared modules
-- App bootstrap modules (`queryClient`, root providers, app-wide wiring) belong in `src/features/app/feature/*`
-- `src/shared/ui/*` should contain reusable primitives only; shell-specific UI should live with the owning feature
-- `src/shared/ui/*` and `src/shared/utils/styles.ts` are shadcn-managed surfaces referenced by `components.json`; avoid refactors there unless explicitly requested
+- `src/routes/*` — file-based TanStack Router route definitions; these contain `beforeLoad` logic for data preloading and redirects, plus page metadata
+- `src/shared/api/domain/*` — transport layer: `apiClient`, endpoint path constants, `FetchError` class
+- `src/shared/api/utils/*` — URL builders, querystring helpers, error response handling
+- `src/shared/api/types.ts` — generated OpenAPI types (do not hand-edit)
+- `src/shared/api/*` must not import router concerns (`notFound`, route context, etc.); keep router-aware helpers in `src/shared/router/` or feature modules
+- `src/shared/router/utils/*` — shared router helpers (e.g. `ensureQueryDataOr404`)
+- `src/shared/ui/*` — reusable UI primitives built on Base UI; these are the shadcn-managed surface referenced by `components.json`
+- `src/shared/utils/*` — shared utilities (`styles.ts` for `cn()`, `build-page-titles.ts`)
+- App bootstrap modules (`queryClient`, root providers) belong in `src/features/app/`
 - App-global resources (server info, session, config) belong in `src/features/app/domain/*`
-- Assets (icons/images) live in `src/assets` and can be imported as React components via SVGR. `src/contents` is legacy static copy—avoid expanding it unless absolutely required.
+- Assets (icons/images) live in `src/assets` and can be imported as React components via SVGR
 
-# General Best Practices
+### Generated Files
+
+Two files are auto-generated and excluded from ESLint. Do not hand-edit them:
+
+- `src/routeTree.gen.ts` — generated by the TanStack Router Vite plugin from `src/routes/`
+- `src/shared/api/types.ts` — generated by `pnpm generate:types` from the ZenML OpenAPI spec
+
+### Current Route Map
+
+| Path | Layout | Purpose |
+|---|---|---|
+| `/login` | Public (mesh) | Login form |
+| `/activate-server` | Public (mesh) | First-run server activation |
+| `/` | Private | Authenticated home (placeholder) |
+
+## General Best Practices
 
 - Prefer composition over inheritance
-- Favor the composition pattern
 - Keep components focused; lift state only as needed
-- Use component variants for styling variations rather than inline conditionals or Tailwind classes
+- Use component variants (via `cva`) for styling variations rather than inline conditionals
 - Prefer writing Tailwind classes in the `ui` layer, but feature/layout shells may use them when intentional
-- Avoid duplicating code or inventing hyper-generic abstractions: inspect existing flows (and `zenml-cloud-ui`) before writing new components or helpers.
-- Prefer focused components over catch-all versions; duplicating two purposeful components is often clearer than a single complex abstraction.
+- Avoid duplicating code or inventing hyper-generic abstractions: inspect existing flows before writing new components or helpers
+- Prefer focused components over catch-all versions; duplicating two purposeful components is often clearer than a single complex abstraction
 - Reference existing implementations for similar features
-- Point to the data fetching patterns in `domain` layer
-- Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
 ### Data Fetching Pattern
 
@@ -69,7 +93,7 @@ All API interactions follow a consistent pattern. Request definitions belong to 
 - `fetchX(...)` — async fetcher function
 - `xQueryOptions(...)` — built with `queryOptions` or `infiniteQueryOptions`
 
-Read operations must be defined with `queryOptions` / `infiniteQueryOptions` so they are reusable from both route loaders (`queryClient.ensureQueryData(...)`) and components (`useQuery(...)` / `useSuspenseQuery(...)`). Do not create custom query hooks that wrap a single query definition.
+Read operations must be defined with `queryOptions` / `infiniteQueryOptions` so they are reusable from both route loaders and components.
 
 **Mutations** — define in `src/features/<feature>/domain/mutations/<name>-mutation.ts`:
 
@@ -77,6 +101,8 @@ Read operations must be defined with `queryOptions` / `infiniteQueryOptions` so 
 - `xMutationOptions(...)` — optional factory built with `mutationOptions`
 
 Components use `useMutation(xMutationOptions(...))` directly.
+
+**Cross-feature orchestration** — when a mutation needs to chain multiple domain actions (e.g. activate server then login), define an orchestration mutation in the owning feature's `feature/` layer. See `activate-server-and-login-mutation.ts` for the current pattern.
 
 **Example query:**
 
@@ -99,46 +125,62 @@ export function serverInfoQueryOptions() {
 }
 ```
 
-**Usage:** loaders call `queryClient.ensureQueryData(serverInfoQueryOptions())`; components call `useSuspenseQuery(serverInfoQueryOptions())` or `useQuery(serverInfoQueryOptions())`.
+**Current data loading flow:**
+- Route `beforeLoad` handlers call `context.queryClient.ensureQueryData(...)` to preload data
+- Components use `useMutation(...)` for write operations
+- Global 401 handling: `QueryCache.onError` in `query-client.ts` redirects to `/login?next=...` on `FetchError` with status 401
+- Mutation errors are handled locally in the form/container that triggered them
 
 ### Path Aliasing
 
 The codebase uses `@/*` as an alias for `src/*`:
 
 ```typescript
-import { useAuthContext } from "@/shared/feature/AuthContext";
-import { fetcher } from "@/shared/domain/fetch";
+import { apiClient } from "@/shared/api/domain/api-client";
+import { serverInfoQueryOptions } from "@/features/app/domain/queries/server-info-query";
 ```
 
-Configured in both `tsconfig.json` and `vite.config.ts`.
+Configured in both `tsconfig.json` and `vite.config.ts` (via `vite-tsconfig-paths`).
 
 ### Form Handling
 
-Forms use React Hook Form + Zod for validation:
+Forms use React Hook Form + Zod:
 
-- Dynamic form generation from JSON Schema (see `src/lib/forms.ts`)
-- Schema-to-Zod conversion for service connectors and stack components
-- Form components in `src/components/form/`
+- Define a Zod schema in `domain/<name>-schema.ts`
+- Use `zodResolver(schema)` with `useForm(...)` in the form container
+- Use `Controller` for controlled field components
+- Wire submission to `useMutation(xMutationOptions(...))`
+- Show errors via toast notifications (Sonner)
+
+See `server-activation-form-container.tsx` and `login-form-container.tsx` for current examples.
 
 ### Components & Styling
 
-- It's fine to colocate component-specific TypeScript helpers or contexts under `src/components` alongside the component; reserve `src/lib` for global/shared helpers.
-- Icons and illustrations live in `src/assets` and can be imported as React components via SVGR; avoid pulling from `lucide-react`.
-- Keep Tailwind utility classes; Prettier (with the Tailwind plugin) auto-sorts them.
-- Prefer focused components over overly generic abstractions.
+- Reusable UI primitives live in `src/shared/ui/*` and are built on Base UI with `cva` for variants
+- `src/shared/ui/*` and `src/shared/utils/styles.ts` are shadcn-managed surfaces referenced by `components.json`; avoid refactoring them unless explicitly requested
+- Icons and illustrations live in `src/assets` and can be imported as React components via SVGR
+- Keep Tailwind utility classes; Prettier (with the Tailwind plugin) auto-sorts them
+- Prefer focused components over overly generic abstractions
 
 ### Coding Conventions
 
-- Define React components with `function` declarations instead of arrow functions.
-- Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage or under `src/types` (with `components` vs `operations` imports as appropriate).
-- No type casting.
-- Use dash-case for new file names (e.g. `verification-form.tsx`, `current-user-query.ts`, `activate-server-mutation.ts`).
-- Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions).
+- Define React components with `function` declarations instead of arrow functions
+- Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage
+- No type casting
+- Use dash-case for new file names (e.g. `verification-form.tsx`, `current-user-query.ts`, `activate-server-mutation.ts`)
+- Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions)
 
-## Assets & Content
+### Networking
 
-- Place all icons/images in `src/assets` and import them as React components via SVGR; reuse existing assets before adding new ones.
-- `src/contents` stores legacy static text blocks—avoid extending it unless a piece of copy truly must be centralized.
+- `apiClient` prefixes all requests with `/api/v1` and sends `credentials: "include"`
+- Default headers: `Content-Type: application/json`, `Source-Context: dashboard-v2`
+- Login is a special case that overrides content type to `application/x-www-form-urlencoded`
+- Vite proxies `/api` to `VITE_BACKEND_URL` in development
+- Non-OK responses throw `FetchError` (see `throw-fetch-error-from-response.ts`)
+
+## Assets
+
+- Place all icons/images in `src/assets` and import them as React components via SVGR; reuse existing assets before adding new ones
 
 ## Git Conventions
 
@@ -147,3 +189,12 @@ Forms use React Hook Form + Zod for validation:
 - Use plain, descriptive titles without conventional commit prefixes (no `feat:`, `fix:`, `ci:`, etc.)
 - Good: "Add workflow to require release label on PRs"
 - Bad: "ci: add workflow to require release label on PRs"
+
+## CI
+
+GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm lint`
+3. `pnpm build`
+4. `pnpm test:unit`
