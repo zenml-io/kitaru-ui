@@ -5,9 +5,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 export type ServerInfo = components["schemas"]["ServerModel"];
 
-export function getServerInfoQueryKey() {
-	return ["server-info"] as const;
-}
+export const SERVER_INFO_QUERY_KEY = ["server-info"] as const;
 
 export async function fetchServerInfo(): Promise<ServerInfo> {
 	const response = await apiClient(apiPaths.info, { method: "GET" });
@@ -16,7 +14,7 @@ export async function fetchServerInfo(): Promise<ServerInfo> {
 
 export function serverInfoQueryOptions() {
 	return queryOptions({
-		queryKey: getServerInfoQueryKey(),
+		queryKey: SERVER_INFO_QUERY_KEY,
 		queryFn: fetchServerInfo,
 	});
 }

@@ -1,9 +1,19 @@
 const palettes = {
 	default: {
-		blobs: ["#F5EDE4", "#EDCAAF", "#FBE8D3", "#F17829"],
+		blobs: [
+			"oklch(94.99% 0.0148 70.89)",
+			"oklch(86.20% 0.0538 59.63)",
+			"oklch(94.07% 0.0347 70.17)",
+			"oklch(70.18% 0.1717 48.81)",
+		],
 	},
 	success: {
-		blobs: ["#D4E8DC", "#A8D5BA", "#C8E6D0", "#3D8C5C"],
+		blobs: [
+			"oklch(91.28% 0.0266 159.55)",
+			"oklch(83.36% 0.0603 158.45)",
+			"oklch(89.70% 0.0435 153.64)",
+			"oklch(57.74% 0.1079 154.38)",
+		],
 	},
 } as const;
 
