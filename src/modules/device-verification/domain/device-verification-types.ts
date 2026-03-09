@@ -1,4 +1,4 @@
-import type { components, operations } from "@/shared/api/types";
+import type { components, operations } from "@/shared/api/openapi";
 
 export type Device = components["schemas"]["OAuthDeviceResponse"];
 export type DeviceQueryParams = NonNullable<
