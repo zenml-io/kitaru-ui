@@ -40,22 +40,24 @@ The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL` (default `http
 
 ### Project Structure
 
-- Feature-based folder structure under `src/features/<feature>` with consistent layers:
-  - **feature/** — page/container orchestration, provider composition, feature entrypoints; the public surface routes or other features import from
-  - **domain/** — feature-owned API contracts, query definitions, mutation definitions, transformers, schemas, types; where request definitions live
-  - **ui/** — pure presentational components (optional; create when a feature has reusable presentation)
-  - **utils/** — small feature-scoped pure helpers only (optional)
-- Optional sublayers when a feature grows: `domain/queries/`, `domain/mutations/`, `domain/types/`, `feature/hooks/` (only for orchestration hooks that combine domain modules and UI state)
+- The intended module-based structure lives under `src/modules/<module>`.
+- Each module should be split by responsibility using these layers:
+  - **domain/** — module-owned types and actual API/request functions
+  - **business-logic/** — TanStack Query definitions and other module-specific orchestration/business logic
+  - **feature/** — stateful containers, provider composition, and feature entrypoints
+  - **util/** — small module-scoped utilities
+  - **ui/** — stateless presentational components
+- Keep modules split by layer from the start rather than growing a flat module and reorganizing later.
 - `src/routes/*` — file-based TanStack Router route definitions; these contain `beforeLoad` logic for data preloading and redirects, plus page metadata
 - `src/shared/api/domain/*` — transport layer: `apiClient`, endpoint path constants, `FetchError` class
 - `src/shared/api/utils/*` — URL builders, querystring helpers, error response handling
 - `src/shared/api/types.ts` — generated OpenAPI types (do not hand-edit)
-- `src/shared/api/*` must not import router concerns (`notFound`, route context, etc.); keep router-aware helpers in `src/shared/router/` or feature modules
+- `src/shared/api/*` must not import router concerns (`notFound`, route context, etc.); keep router-aware helpers in `src/shared/router/` or module layers
 - `src/shared/router/utils/*` — shared router helpers (e.g. `ensureQueryDataOr404`)
 - `src/shared/ui/*` — reusable UI primitives built on Base UI; these are the shadcn-managed surface referenced by `components.json`
 - `src/shared/utils/*` — shared utilities (`styles.ts` for `cn()`, `build-page-titles.ts`)
-- App bootstrap modules (`queryClient`, root providers) belong in `src/features/app/`
-- App-global resources (server info, session, config) belong in `src/features/app/domain/*`
+- Root Module bootstrap code (`queryClient`, root providers) belongs in `src/modules/root/`
+- Root Module global resources (server info, session, config) belong in `src/modules/root/domain/*`
 - Assets (icons/images) live in `src/assets` and can be imported as React components via SVGR
 
 ### Generated Files
@@ -67,11 +69,11 @@ Two files are auto-generated and excluded from ESLint. Do not hand-edit them:
 
 ### Current Route Map
 
-| Path | Layout | Purpose |
-|---|---|---|
-| `/login` | Public (mesh) | Login form |
-| `/activate-server` | Public (mesh) | First-run server activation |
-| `/` | Private | Authenticated home (placeholder) |
+| Path               | Layout        | Purpose                          |
+| ------------------ | ------------- | -------------------------------- |
+| `/login`           | Public (mesh) | Login form                       |
+| `/activate-server` | Public (mesh) | First-run server activation      |
+| `/`                | Private       | Authenticated home (placeholder) |
 
 ## General Best Practices
 
@@ -85,47 +87,53 @@ Two files are auto-generated and excluded from ESLint. Do not hand-edit them:
 
 ### Data Fetching Pattern
 
-All API interactions follow a consistent pattern. Request definitions belong to the owning feature, not generic shared folders.
+All API interactions follow a consistent pattern. Request definitions belong to the owning module, not generic shared folders.
 
-**Queries** — define in `src/features/<feature>/domain/queries/<name>-query.ts`:
+**Request functions** — define actual read/write API functions in `src/modules/<module>/domain/*`.
 
-- `getXQueryKey(...)` — query key factory
-- `fetchX(...)` — async fetcher function
-- `xQueryOptions(...)` — built with `queryOptions` or `infiniteQueryOptions`
+- Keep these functions focused on transport and response parsing.
+- Do not export custom React Query fetcher helpers for reads when `queryOptions(...)` can express the query API directly.
 
-Read operations must be defined with `queryOptions` / `infiniteQueryOptions` so they are reusable from both route loaders and components.
+**Queries** — define TanStack Query keys and query collections in `src/modules/<module>/business-logic/*`.
 
-**Mutations** — define in `src/features/<feature>/domain/mutations/<name>-mutation.ts`:
+- Export grouped key factories such as `xQueryKeys`.
+- Export grouped query factories such as `xQueries`.
+- Build read APIs with `queryOptions(...)` or `infiniteQueryOptions(...)` so they are reusable from both route loaders and components.
 
-- `mutateX(...)` — raw mutation function
-- `xMutationOptions(...)` — optional factory built with `mutationOptions`
+**Mutations** — define mutation option factories in `src/modules/<module>/business-logic/*`.
+
+- Keep the underlying write request function in `domain/`.
+- Export mutation factories built with `mutationOptions(...)` when needed.
 
 Components use `useMutation(xMutationOptions(...))` directly.
 
-**Cross-feature orchestration** — when a mutation needs to chain multiple domain actions (e.g. activate server then login), define an orchestration mutation in the owning feature's `feature/` layer. See `activate-server-and-login-mutation.ts` for the current pattern.
+**Cross-module orchestration** — when a mutation needs to chain multiple domain actions (e.g. activate server then login), define that orchestration in the owning module's `feature/` layer.
 
 **Example query:**
 
 ```typescript
-// src/features/app/domain/queries/server-info-query.ts
-export function getServerInfoQueryKey() {
-	return ["server-info"] as const;
-}
+// src/modules/device/business-logic/device-queries.ts
+import { queryOptions } from "@tanstack/react-query";
 
-export async function fetchServerInfo(): Promise<ServerInfo> {
-	const response = await apiClient(apiPaths.info, { method: "GET" });
-	return response.json();
-}
+import { fetchDevice } from "@/modules/device/domain/fetch-device";
+import type { DeviceQueryParams } from "@/modules/device/domain/device-query-params";
 
-export function serverInfoQueryOptions() {
-	return queryOptions({
-		queryKey: getServerInfoQueryKey(),
-		queryFn: fetchServerInfo,
-	});
-}
+export const deviceQueryKeys = {
+	all: ["device"] as const,
+	detail: (deviceId: string) => [...deviceQueryKeys.all, deviceId] as const,
+};
+
+export const deviceQueries = {
+	detail: (deviceId: string, queryParams: DeviceQueryParams = {}) =>
+		queryOptions({
+			queryKey: [...deviceQueryKeys.detail(deviceId), queryParams],
+			queryFn: () => fetchDevice(deviceId, queryParams),
+		}),
+};
 ```
 
 **Current data loading flow:**
+
 - Route `beforeLoad` handlers call `context.queryClient.ensureQueryData(...)` to preload data
 - Components use `useMutation(...)` for write operations
 - Global 401 handling: `QueryCache.onError` in `query-client.ts` redirects to `/login?next=...` on `FetchError` with status 401
@@ -137,7 +145,7 @@ The codebase uses `@/*` as an alias for `src/*`:
 
 ```typescript
 import { apiClient } from "@/shared/api/domain/api-client";
-import { serverInfoQueryOptions } from "@/features/app/domain/queries/server-info-query";
+import { deviceQueries } from "@/modules/device/business-logic/device-queries";
 ```
 
 Configured in both `tsconfig.json` and `vite.config.ts` (via `vite-tsconfig-paths`).
@@ -152,7 +160,7 @@ Forms use React Hook Form + Zod:
 - Wire submission to `useMutation(xMutationOptions(...))`
 - Show errors via toast notifications (Sonner)
 
-See `server-activation-form-container.tsx` and `login-form-container.tsx` for current examples.
+See `ServerActivationFormContainer.tsx` and `LoginFormContainer.tsx` for current examples in the intended naming scheme.
 
 ### Components & Styling
 
@@ -167,7 +175,8 @@ See `server-activation-form-container.tsx` and `login-form-container.tsx` for cu
 - Define React components with `function` declarations instead of arrow functions
 - Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage
 - No type casting
-- Use dash-case for new file names (e.g. `verification-form.tsx`, `current-user-query.ts`, `activate-server-mutation.ts`)
+- Use PascalCase for React component and context files (e.g. `Dashboard.tsx`, `DashboardContainer.tsx`, `AuthContext.tsx`)
+- Use kebab-case for hooks, utilities, API calls, and domain-layer files (e.g. `use-pipeline.tsx`, `api-client.ts`, `fetch-device.ts`)
 - Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions)
 
 ### Networking
@@ -188,7 +197,7 @@ See `server-activation-form-container.tsx` and `login-form-container.tsx` for cu
 
 Before committing or pushing a PR, check whether `README.md` and `AGENTS.md` need updating to reflect your changes. Common triggers:
 
-- New or renamed folders, features, or routes
+- New or renamed folders, modules, or routes
 - Added/removed dependencies or scripts
 - Changes to the data fetching, auth, or networking patterns
 - New generated files or build steps

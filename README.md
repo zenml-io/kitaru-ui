@@ -12,20 +12,20 @@ The app currently supports:
 
 ## Tech Stack
 
-| Layer | Tool |
-|---|---|
-| Framework | Vite 7 + React 19 (SPA) |
-| Routing | [@tanstack/react-router](https://tanstack.com/router) (file-based, code-split) |
-| Server state | [@tanstack/react-query](https://tanstack.com/query) |
-| Forms | React Hook Form + Zod |
-| Styling | Tailwind CSS v4 (via `@tailwindcss/vite`) |
-| UI primitives | [Base UI](https://base-ui.com/) + [class-variance-authority](https://cva.style/) |
-| Icons | [@untitledui/icons](https://untitledui.com/icons) |
-| Notifications | [Sonner](https://sonner.emilkowal.dev/) |
-| Theming | next-themes |
-| Type generation | openapi-typescript (from ZenML server OpenAPI spec) |
-| Testing | Vitest |
-| Compiler | React Compiler (via Babel plugin) |
+| Layer           | Tool                                                                             |
+| --------------- | -------------------------------------------------------------------------------- |
+| Framework       | Vite 7 + React 19 (SPA)                                                          |
+| Routing         | [@tanstack/react-router](https://tanstack.com/router) (file-based, code-split)   |
+| Server state    | [@tanstack/react-query](https://tanstack.com/query)                              |
+| Forms           | React Hook Form + Zod                                                            |
+| Styling         | Tailwind CSS v4 (via `@tailwindcss/vite`)                                        |
+| UI primitives   | [Base UI](https://base-ui.com/) + [class-variance-authority](https://cva.style/) |
+| Icons           | [@untitledui/icons](https://untitledui.com/icons)                                |
+| Notifications   | [Sonner](https://sonner.emilkowal.dev/)                                          |
+| Theming         | next-themes                                                                      |
+| Type generation | openapi-typescript (from ZenML server OpenAPI spec)                              |
+| Testing         | Vitest                                                                           |
+| Compiler        | React Compiler (via Babel plugin)                                                |
 
 ## Local Development
 
@@ -52,8 +52,8 @@ The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL`, so the fronte
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|---|---|---|
+| Variable           | Default                 | Description                                 |
+| ------------------ | ----------------------- | ------------------------------------------- |
 | `VITE_BACKEND_URL` | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy |
 
 ### Scripts
@@ -76,14 +76,18 @@ The repo uses [Lefthook](https://github.com/evilmartians/lefthook) for pre-commi
 
 ### Project Structure
 
+The intended frontend architecture is module-based under `src/modules/`. If the repository still contains `src/features/`, treat that as a temporary implementation detail until the rename lands in a separate PR.
+
 ```
 src/
-  features/           Feature-based modules
-    <feature>/
-      domain/          API contracts, queries, mutations, schemas, types
-      feature/         Page containers, orchestration, entrypoints
-      ui/              Presentational components (optional)
-      utils/           Feature-scoped helpers (optional)
+  modules/
+    root/             Root Module bootstrap and app-global resources
+    <module>/
+      domain/          Types and actual API/request functions
+      business-logic/  TanStack Query definitions and module logic
+      feature/         Stateful containers and entrypoints
+      util/            Module-scoped utilities
+      ui/              Stateless presentational components
   routes/              File-based TanStack Router route definitions
   shared/
     api/domain/        Transport layer (apiClient, paths, errors)
@@ -93,6 +97,14 @@ src/
     utils/             Shared utilities (styles, page titles)
   assets/              Icons, images (importable as React components via SVGR)
 ```
+
+### Module Layers
+
+- `domain/` contains module-owned types and the actual request functions that talk to the backend.
+- `business-logic/` contains TanStack Query definitions and other module-specific logic.
+- `feature/` contains stateful containers, orchestration, and module entrypoints.
+- `util/` contains small module-scoped helpers.
+- `ui/` contains stateless, dumb UI components.
 
 ### Generated Files
 
@@ -112,17 +124,19 @@ Both are excluded from ESLint.
 
 ### Route Map
 
-| Path | Layout | Purpose |
-|---|---|---|
-| `/login` | Public (mesh) | Login form |
-| `/activate-server` | Public (mesh) | First-run server activation |
-| `/` | Private | Authenticated home (placeholder) |
+| Path               | Layout        | Purpose                          |
+| ------------------ | ------------- | -------------------------------- |
+| `/login`           | Public (mesh) | Login form                       |
+| `/activate-server` | Public (mesh) | First-run server activation      |
+| `/`                | Private       | Authenticated home (placeholder) |
 
 ### Data Fetching
 
-- **Queries** are defined as `queryOptions(...)` factories in `domain/queries/`
+- **Request functions** live in `domain/` and handle transport and response parsing.
+- **Query keys and query collections** live in `business-logic/` and are built with `queryOptions(...)` or `infiniteQueryOptions(...)`.
+- **Read APIs** should prefer grouped exports such as `deviceQueryKeys` and `deviceQueries` instead of standalone exported fetcher-query helpers.
 - **Route loaders** call `context.queryClient.ensureQueryData(...)` to preload data
-- **Mutations** are defined as `mutationOptions(...)` factories in `domain/mutations/`
+- **Mutations** are exposed from `business-logic/` as `mutationOptions(...)` factories, while their underlying request functions stay in `domain/`
 - **Components** call `useMutation(...)` directly with mutation options
 - Global 401 handling lives in the `QueryCache` error callback (`query-client.ts`)
 
@@ -143,4 +157,4 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main`
 
 ## Contributing
 
-See [AGENTS.md](./AGENTS.md) for coding conventions, data fetching patterns, and architectural guidelines.
+See [AGENTS.md](./AGENTS.md) for the full coding conventions, naming rules, data fetching patterns, and architectural guidance used by coding agents and contributors.
