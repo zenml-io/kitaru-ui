@@ -76,7 +76,7 @@ The repo uses [Lefthook](https://github.com/evilmartians/lefthook) for pre-commi
 
 ### Project Structure
 
-The intended frontend architecture is module-based under `src/modules/`. If the repository still contains `src/features/`, treat that as a temporary implementation detail until the rename lands in a separate PR.
+The frontend architecture is module-based under `src/modules/`.
 
 ```
 src/
