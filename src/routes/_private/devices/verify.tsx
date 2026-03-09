@@ -1,6 +1,6 @@
-import { MeshLayoutFrame } from "@/features/app/layouts/mesh-layout-frame";
-import { deviceQueries } from "@/features/device-verification/domain/fetch-device";
-import { DeviceVerificationFlow } from "@/features/device-verification/feature/device-verification-flow";
+import { deviceQueries } from "@/modules/device-verification/business-logic/device-queries";
+import { DeviceVerificationFlow } from "@/modules/device-verification/feature/DeviceVerificationFlow";
+import { MeshLayoutFrame } from "@/modules/root/ui/MeshLayoutFrame";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";

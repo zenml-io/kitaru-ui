@@ -1,4 +1,4 @@
-import { LoginForm } from "@/features/session/feature/login-form-container";
+import { LoginFormContainer } from "@/modules/session/feature/LoginFormContainer";
 import { Card, CardContent } from "@/shared/ui/card";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
@@ -23,7 +23,7 @@ function RouteComponent() {
 		<Card className="w-full max-w-[400px] shadow-lg">
 			<CardContent className="space-y-3 p-8">
 				<h2 className="text-center text-lg font-semibold">Sign in to Kitaru</h2>
-				<LoginForm />
+				<LoginFormContainer />
 			</CardContent>
 		</Card>
 	);

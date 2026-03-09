@@ -9,41 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PrivateRouteImport } from './routes/_private'
+import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as PrivateIndexRouteImport } from './routes/_private/index'
-import { Route as publicMeshRouteImport } from './routes/(public)/_mesh'
+import { Route as publicMeshRouteRouteImport } from './routes/(public)/_mesh/route'
 import { Route as PrivateDevicesVerifyRouteImport } from './routes/_private/devices/verify'
 import { Route as publicMeshLoginRouteImport } from './routes/(public)/_mesh/login'
 import { Route as publicMeshActivateServerRouteImport } from './routes/(public)/_mesh/activate-server'
 
-const PrivateRoute = PrivateRouteImport.update({
+const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivateIndexRoute = PrivateIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
-const publicMeshRoute = publicMeshRouteImport.update({
+const publicMeshRouteRoute = publicMeshRouteRouteImport.update({
   id: '/(public)/_mesh',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivateDevicesVerifyRoute = PrivateDevicesVerifyRouteImport.update({
   id: '/devices/verify',
   path: '/devices/verify',
-  getParentRoute: () => PrivateRoute,
+  getParentRoute: () => PrivateRouteRoute,
 } as any)
 const publicMeshLoginRoute = publicMeshLoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => publicMeshRoute,
+  getParentRoute: () => publicMeshRouteRoute,
 } as any)
 const publicMeshActivateServerRoute =
   publicMeshActivateServerRouteImport.update({
     id: '/activate-server',
     path: '/activate-server',
-    getParentRoute: () => publicMeshRoute,
+    getParentRoute: () => publicMeshRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -60,8 +60,8 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_private': typeof PrivateRouteWithChildren
-  '/(public)/_mesh': typeof publicMeshRouteWithChildren
+  '/_private': typeof PrivateRouteRouteWithChildren
+  '/(public)/_mesh': typeof publicMeshRouteRouteWithChildren
   '/_private/': typeof PrivateIndexRoute
   '/(public)/_mesh/activate-server': typeof publicMeshActivateServerRoute
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
@@ -83,8 +83,8 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  PrivateRoute: typeof PrivateRouteWithChildren
-  publicMeshRoute: typeof publicMeshRouteWithChildren
+  PrivateRouteRoute: typeof PrivateRouteRouteWithChildren
+  publicMeshRouteRoute: typeof publicMeshRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -93,7 +93,7 @@ declare module '@tanstack/react-router' {
       id: '/_private'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof PrivateRouteImport
+      preLoaderRoute: typeof PrivateRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_private/': {
@@ -101,13 +101,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof PrivateIndexRouteImport
-      parentRoute: typeof PrivateRoute
+      parentRoute: typeof PrivateRouteRoute
     }
     '/(public)/_mesh': {
       id: '/(public)/_mesh'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof publicMeshRouteImport
+      preLoaderRoute: typeof publicMeshRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_private/devices/verify': {
@@ -115,55 +115,56 @@ declare module '@tanstack/react-router' {
       path: '/devices/verify'
       fullPath: '/devices/verify'
       preLoaderRoute: typeof PrivateDevicesVerifyRouteImport
-      parentRoute: typeof PrivateRoute
+      parentRoute: typeof PrivateRouteRoute
     }
     '/(public)/_mesh/login': {
       id: '/(public)/_mesh/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof publicMeshLoginRouteImport
-      parentRoute: typeof publicMeshRoute
+      parentRoute: typeof publicMeshRouteRoute
     }
     '/(public)/_mesh/activate-server': {
       id: '/(public)/_mesh/activate-server'
       path: '/activate-server'
       fullPath: '/activate-server'
       preLoaderRoute: typeof publicMeshActivateServerRouteImport
-      parentRoute: typeof publicMeshRoute
+      parentRoute: typeof publicMeshRouteRoute
     }
   }
 }
 
-interface PrivateRouteChildren {
+interface PrivateRouteRouteChildren {
   PrivateIndexRoute: typeof PrivateIndexRoute
   PrivateDevicesVerifyRoute: typeof PrivateDevicesVerifyRoute
 }
 
-const PrivateRouteChildren: PrivateRouteChildren = {
+const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateIndexRoute: PrivateIndexRoute,
   PrivateDevicesVerifyRoute: PrivateDevicesVerifyRoute,
 }
 
-const PrivateRouteWithChildren =
-  PrivateRoute._addFileChildren(PrivateRouteChildren)
+const PrivateRouteRouteWithChildren = PrivateRouteRoute._addFileChildren(
+  PrivateRouteRouteChildren,
+)
 
-interface publicMeshRouteChildren {
+interface publicMeshRouteRouteChildren {
   publicMeshActivateServerRoute: typeof publicMeshActivateServerRoute
   publicMeshLoginRoute: typeof publicMeshLoginRoute
 }
 
-const publicMeshRouteChildren: publicMeshRouteChildren = {
+const publicMeshRouteRouteChildren: publicMeshRouteRouteChildren = {
   publicMeshActivateServerRoute: publicMeshActivateServerRoute,
   publicMeshLoginRoute: publicMeshLoginRoute,
 }
 
-const publicMeshRouteWithChildren = publicMeshRoute._addFileChildren(
-  publicMeshRouteChildren,
+const publicMeshRouteRouteWithChildren = publicMeshRouteRoute._addFileChildren(
+  publicMeshRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  PrivateRoute: PrivateRouteWithChildren,
-  publicMeshRoute: publicMeshRouteWithChildren,
+  PrivateRouteRoute: PrivateRouteRouteWithChildren,
+  publicMeshRouteRoute: publicMeshRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -122,14 +122,6 @@ Both are excluded from ESLint.
 3. Private route (`_private.tsx`) ensures the current user is loaded before rendering children
 4. If any query returns a 401, a global `QueryCache` error handler redirects to `/login`
 
-### Route Map
-
-| Path               | Layout        | Purpose                          |
-| ------------------ | ------------- | -------------------------------- |
-| `/login`           | Public (mesh) | Login form                       |
-| `/activate-server` | Public (mesh) | First-run server activation      |
-| `/`                | Private       | Authenticated home (placeholder) |
-
 ### Data Fetching
 
 - **Request functions** live in `domain/` and handle transport and response parsing.

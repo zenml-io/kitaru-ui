@@ -1,4 +1,4 @@
-import { serverInfoQueryOptions } from "@/features/app/domain/queries/server-info-query";
+import { serverInfoQueries } from "@/modules/root/business-logic/server-info-queries";
 import { Toaster } from "@/shared/ui/sonner";
 import { QueryClient } from "@tanstack/react-query";
 import {
@@ -24,7 +24,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 	{
 		beforeLoad: async ({ context, location, buildLocation }) => {
 			const serverInfo = await context.queryClient.ensureQueryData(
-				serverInfoQueryOptions()
+				serverInfoQueries.detail()
 			);
 
 			if (
