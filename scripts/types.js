@@ -19,7 +19,7 @@ async function generateTypes(baseUrl) {
 
 	log("Writing output to file...", "📝");
 	const contents = astToString(ast);
-	fs.writeFileSync("./src/shared/api/types.ts", contents);
+	fs.writeFileSync("./src/shared/api/openapi.d.ts", contents);
 
 	log("Script completed successfully.", "✅");
 }
