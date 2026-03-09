@@ -1,4 +1,6 @@
+import createClient, { type Middleware } from "openapi-fetch";
 import { FetchError } from "./fetch-error";
+import type { paths } from "../openapi";
 import { throwFetchErrorFromResponse } from "../utils/throw-fetch-error-from-response";
 
 const defaultHeaders = {
@@ -6,47 +8,34 @@ const defaultHeaders = {
 	"Source-Context": "dashboard-v2",
 };
 
-function mergeHeaders(initHeaders?: HeadersInit): Headers {
-	const mergedHeaders = new Headers(defaultHeaders);
-	if (initHeaders) {
-		const requestHeaders = new Headers(initHeaders);
-		requestHeaders.forEach((value, key) => {
-			mergedHeaders.set(key, value);
-		});
-	}
-	return mergedHeaders;
-}
+export const apiClient = createClient<paths>({
+	baseUrl: "",
+	credentials: "include",
+	headers: defaultHeaders,
+});
 
-export async function apiClient(endpoint: string, init?: RequestInit) {
-	const url = `/api/v1${endpoint}`;
-	const method = (init?.method ?? "GET").toUpperCase();
-	const config: RequestInit = {
-		credentials: "include",
-		...init,
-		headers: mergeHeaders(init?.headers),
-	};
+const errorHandlingMiddleware: Middleware = {
+	async onResponse({ request, response }) {
+		if (!response.ok) {
+			await throwFetchErrorFromResponse({
+				response,
+				url: request.url,
+				method: request.method,
+			});
+		}
 
-	let res: Response;
-	try {
-		res = await fetch(url, config);
-	} catch (error) {
+		return response;
+	},
+	onError({ error, request }) {
 		throw new FetchError({
 			status: 0,
-			statusText: "NETWORK_ERROR",
-			message: "Network error while fetching data",
-			url,
-			method,
+			statusText: "REQUEST_FAILED",
+			message: "Request failed before receiving a response",
+			url: request.url,
+			method: request.method,
 			cause: error,
 		});
-	}
+	},
+};
 
-	if (!res.ok) {
-		await throwFetchErrorFromResponse({
-			response: res,
-			url,
-			method,
-		});
-	}
-
-	return res;
-}
+apiClient.use(errorHandlingMiddleware);
