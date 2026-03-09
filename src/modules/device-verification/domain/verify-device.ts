@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/api/domain/api-client";
-import { apiPaths } from "@/shared/api/domain/api-paths";
+import { expectData } from "@/shared/api/utils/unwrap-api-result";
 import type {
 	Device,
 	DeviceVerifyPayload,
@@ -14,11 +14,14 @@ export async function verifyDevice({
 	deviceId,
 	payload,
 }: VerifyDeviceVariables): Promise<Device> {
-	const response = await apiClient(apiPaths.devices.verify(deviceId), {
-		method: "PUT",
-		body: JSON.stringify(payload),
+	const response = await apiClient.PUT("/api/v1/devices/{device_id}/verify", {
+		params: {
+			path: {
+				device_id: deviceId,
+			},
+		},
+		body: payload,
 	});
 
-	const body: Device = await response.json();
-	return body;
+	return expectData(response);
 }

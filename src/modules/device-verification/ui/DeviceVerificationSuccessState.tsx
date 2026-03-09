@@ -13,12 +13,12 @@ export function DeviceVerificationSuccessState({
 		<div className="flex flex-col items-center justify-center gap-5 text-center">
 			<svg
 				aria-hidden="true"
-				className="text-chart-2 size-16"
+				className="text-success size-16"
 				fill="none"
 				viewBox="0 0 64 64"
 			>
 				<circle
-					className="fill-chart-2/15"
+					className="fill-success/15"
 					cx="32"
 					cy="32"
 					r="30"

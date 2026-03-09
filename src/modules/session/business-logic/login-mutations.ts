@@ -1,15 +1,15 @@
-import { loginUser } from "@/modules/session/domain/login-user";
 import type { LoginPayload } from "@/modules/session/domain/login-schema";
-import type { LoginTokenResponse } from "@/modules/session/domain/types";
+import { loginUser } from "@/modules/session/domain/login-user";
+import { type LoginSuccessResponse } from "@/modules/session/domain/types";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
 import {
-	type UseMutationOptions,
 	mutationOptions,
+	type UseMutationOptions,
 } from "@tanstack/react-query";
 
 export function loginMutationOptions(
 	options?: Omit<
-		UseMutationOptions<LoginTokenResponse, FetchError, LoginPayload, unknown>,
+		UseMutationOptions<LoginSuccessResponse, FetchError, LoginPayload, unknown>,
 		"mutationFn"
 	>
 ) {

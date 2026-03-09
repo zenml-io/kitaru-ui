@@ -77,4 +77,15 @@ describe("activateServerAndLogin", () => {
 			password: payload.admin_password,
 		});
 	});
+
+	it("throws when login returns redirect response", async () => {
+		mockedActivateServer.mockResolvedValue(null);
+		mockedLoginUser.mockResolvedValue({
+			authorization_url: "https://example.com/oauth/authorize",
+		});
+
+		await expect(activateServerAndLogin(payload)).rejects.toThrow(
+			"redirect response"
+		);
+	});
 });

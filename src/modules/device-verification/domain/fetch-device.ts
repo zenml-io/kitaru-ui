@@ -1,6 +1,5 @@
 import { apiClient } from "@/shared/api/domain/api-client";
-import { apiPaths } from "@/shared/api/domain/api-paths";
-import { buildUrlWithQueries } from "@/shared/api/utils/build-url";
+import { expectData } from "@/shared/api/utils/unwrap-api-result";
 import type {
 	Device,
 	DeviceQueryParams,
@@ -10,13 +9,13 @@ export async function fetchDevice(
 	deviceId: string,
 	queryParams: DeviceQueryParams
 ): Promise<Device> {
-	const url = buildUrlWithQueries(
-		apiPaths.devices.detail(deviceId),
-		queryParams
-	);
-	const res = await apiClient(url, {
-		method: "GET",
+	const response = await apiClient.GET("/api/v1/devices/{device_id}", {
+		params: {
+			path: {
+				device_id: deviceId,
+			},
+			query: queryParams,
+		},
 	});
-	const body: Device = await res.json();
-	return body;
+	return expectData(response);
 }

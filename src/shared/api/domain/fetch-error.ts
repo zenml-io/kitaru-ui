@@ -15,10 +15,10 @@ export class FetchError extends Error {
 		cause,
 	}: {
 		message: string;
-		status: number;
+		status?: number;
 		statusText?: string;
 		url: string;
-		method: string;
+		method?: string;
 		details?: unknown;
 		cause?: unknown;
 	}) {

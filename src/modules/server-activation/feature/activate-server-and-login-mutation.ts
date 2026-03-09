@@ -1,7 +1,10 @@
 import { activateServer } from "@/modules/server-activation/domain/activate-server";
 import type { ServerActivationPayload } from "@/modules/server-activation/domain/server-activation-schema";
 import { loginUser } from "@/modules/session/domain/login-user";
-import type { LoginTokenResponse } from "@/modules/session/domain/types";
+import {
+	expectLoginTokenResponse,
+	type LoginTokenResponse,
+} from "@/modules/session/domain/types";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
 import {
 	type UseMutationOptions,
@@ -12,10 +15,11 @@ export async function activateServerAndLogin(
 	payload: ServerActivationPayload
 ): Promise<LoginTokenResponse> {
 	await activateServer(payload);
-	return loginUser({
+	const response = await loginUser({
 		username: payload.admin_username,
 		password: payload.admin_password,
 	});
+	return expectLoginTokenResponse(response);
 }
 
 export function activateServerAndLoginMutationOptions(
