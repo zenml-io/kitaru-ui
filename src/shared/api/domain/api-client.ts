@@ -27,7 +27,7 @@ const errorHandlingMiddleware: Middleware = {
 		return response;
 	},
 	onError({ error, request }) {
-		return new FetchError({
+		throw new FetchError({
 			status: 0,
 			statusText: "REQUEST_FAILED",
 			message: "Request failed before receiving a response",
