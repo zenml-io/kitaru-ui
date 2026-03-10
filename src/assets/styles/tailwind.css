@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./shadcn.css";
+@import "./drift-motion.css";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
 
@@ -60,6 +61,14 @@
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 	--tracking-normal: 0em;
 	--spacing: 0.25rem;
+
+	/* Status */
+	--success: oklch(0.55 0.14 145);
+	--success-foreground: oklch(1 0 0);
+	--warning: oklch(0.68 0.15 70);
+	--warning-foreground: oklch(1 0 0);
+	--info: oklch(0.55 0.15 260);
+	--info-foreground: oklch(1 0 0);
 }
 
 .dark {
@@ -114,6 +123,14 @@
 	--shadow-xl:
 		0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+	/* Status — dark (brighter for contrast on dark backgrounds) */
+	--success: oklch(0.72 0.16 145);
+	--success-foreground: oklch(1 0 0);
+	--warning: oklch(0.78 0.15 70);
+	--warning-foreground: oklch(1 0 0);
+	--info: oklch(0.72 0.15 260);
+	--info-foreground: oklch(1 0 0);
 }
 
 @theme inline {
@@ -158,6 +175,14 @@
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
 
+	/* Status colors */
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
+	--color-info: var(--info);
+	--color-info-foreground: var(--info-foreground);
+
 	--shadow-2xs: var(--shadow-2xs);
 	--shadow-xs: var(--shadow-xs);
 	--shadow-sm: var(--shadow-sm);
@@ -166,6 +191,12 @@
 	--shadow-lg: var(--shadow-lg);
 	--shadow-xl: var(--shadow-xl);
 	--shadow-2xl: var(--shadow-2xl);
+
+	/* Animations */
+	--animate-drift-1: drift-1 20s ease-in-out infinite;
+	--animate-drift-2: drift-2 25s ease-in-out infinite;
+	--animate-drift-3: drift-3 30s ease-in-out infinite;
+	--animate-drift-4: drift-4 22s ease-in-out infinite;
 }
 
 @layer base {

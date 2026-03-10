@@ -1,75 +1,152 @@
-# React + TypeScript + Vite
+# Kitaru UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Kitaru UI is the web dashboard for [Kitaru](https://kitaru.ai) — a durable agent infrastructure framework for Python that enables reliable agent execution with built-in crash recovery, human-in-the-loop approval, and cost tracking. It is a single-page application built with React 19 and Vite.
 
-Currently, two official plugins are available:
+## Current Scope
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The app currently supports:
 
-## React Compiler
+- **Server activation** — first-run setup flow when the ZenML server has not yet been activated
+- **Login / session management** — cookie-based authentication with the ZenML backend
+- **Private area shell** — authenticated layout with a placeholder home page
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Tech Stack
 
-Note: This will impact Vite dev & build performances.
+| Layer           | Tool                                                                             |
+| --------------- | -------------------------------------------------------------------------------- |
+| Framework       | Vite 7 + React 19 (SPA)                                                          |
+| Routing         | [@tanstack/react-router](https://tanstack.com/router) (file-based, code-split)   |
+| Server state    | [@tanstack/react-query](https://tanstack.com/query)                              |
+| Forms           | React Hook Form + Zod                                                            |
+| Styling         | Tailwind CSS v4 (via `@tailwindcss/vite`)                                        |
+| UI primitives   | [Base UI](https://base-ui.com/) + [class-variance-authority](https://cva.style/) |
+| Icons           | [@untitledui/icons](https://untitledui.com/icons)                                |
+| Notifications   | [Sonner](https://sonner.emilkowal.dev/)                                          |
+| Theming         | next-themes                                                                      |
+| Type generation | openapi-typescript (from ZenML server OpenAPI spec)                              |
+| Testing         | Vitest                                                                           |
+| Compiler        | React Compiler (via Babel plugin)                                                |
 
-## Expanding the ESLint configuration
+## Local Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-	globalIgnores(["dist"]),
-	{
-		files: ["**/*.{ts,tsx}"],
-		extends: [
-			// Other configs...
+- Node.js (LTS)
+- [pnpm](https://pnpm.io/)
+- A running ZenML server (default: `http://localhost:8237`)
 
-			// Remove tseslint.configs.recommended and replace with this
-			tseslint.configs.recommendedTypeChecked,
-			// Alternatively, use this for stricter rules
-			tseslint.configs.strictTypeChecked,
-			// Optionally, add this for stylistic rules
-			tseslint.configs.stylisticTypeChecked,
+### Setup
 
-			// Other configs...
-		],
-		languageOptions: {
-			parserOptions: {
-				project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-				tsconfigRootDir: import.meta.dirname,
-			},
-			// other options...
-		},
-	},
-]);
+```bash
+# Install dependencies
+pnpm install
+
+# Copy environment config
+cp .env.example .env
+
+# Start dev server (default: http://localhost:5173)
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL`, so the frontend and backend appear on the same origin. This is required for cookie-based auth (`credentials: "include"`).
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+### Environment Variables
 
-export default defineConfig([
-	globalIgnores(["dist"]),
-	{
-		files: ["**/*.{ts,tsx}"],
-		extends: [
-			// Other configs...
-			// Enable lint rules for React
-			reactX.configs["recommended-typescript"],
-			// Enable lint rules for React DOM
-			reactDom.configs.recommended,
-		],
-		languageOptions: {
-			parserOptions: {
-				project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-				tsconfigRootDir: import.meta.dirname,
-			},
-			// other options...
-		},
-	},
-]);
+| Variable           | Default                 | Description                                 |
+| ------------------ | ----------------------- | ------------------------------------------- |
+| `VITE_BACKEND_URL` | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy |
+
+### Scripts
+
+```bash
+pnpm dev              # Start development server
+pnpm build            # Type-check and build for production
+pnpm preview          # Preview the production build locally
+pnpm lint             # Run ESLint
+pnpm format           # Format code with Prettier
+pnpm test:unit        # Run unit tests (Vitest)
+pnpm generate:types   # Generate OpenAPI types: pnpm generate:types -- <base-url>
 ```
+
+### Pre-commit Hooks
+
+The repo uses [Lefthook](https://github.com/evilmartians/lefthook) for pre-commit hooks that auto-fix ESLint issues and format staged files with Prettier.
+
+## Architecture
+
+### Project Structure
+
+The frontend architecture is module-based under `src/modules/`.
+
+```
+src/
+  modules/
+    root/             Root Module bootstrap and app-global resources
+    <module>/
+      domain/          Types and actual API/request functions
+      business-logic/  TanStack Query definitions and module logic
+      feature/         Stateful containers and entrypoints
+      util/            Module-scoped utilities
+      ui/              Stateless presentational components
+  routes/              File-based TanStack Router route definitions
+  shared/
+    api/domain/        Transport layer (apiClient, paths, errors)
+    api/utils/         URL builders, error helpers
+    router/utils/      Router-specific shared helpers
+    ui/                Reusable UI primitives (Base UI-based)
+    utils/             Shared utilities (styles, page titles)
+  assets/              Icons, images (importable as React components via SVGR)
+```
+
+### Module Layers
+
+- `domain/` contains module-owned types and the actual request functions that talk to the backend.
+- `business-logic/` contains TanStack Query definitions and other module-specific logic.
+- `feature/` contains stateful containers, orchestration, and module entrypoints.
+- `util/` contains small module-scoped helpers.
+- `ui/` contains stateless, dumb UI components.
+
+### Generated Files
+
+These files are auto-generated and should not be hand-edited:
+
+- `src/routeTree.gen.ts` — generated by TanStack Router plugin from `src/routes/`
+- `src/shared/api/types.ts` — generated by `pnpm generate:types` from the ZenML OpenAPI spec
+
+Both are excluded from ESLint.
+
+### App Boot Sequence
+
+1. `src/main.tsx` creates the router with the generated route tree and injects a shared `queryClient`
+2. Root route (`__root.tsx`) fetches server info — if the server is inactive, redirects to `/activate-server`
+3. Private route (`_private.tsx`) ensures the current user is loaded before rendering children
+4. If any query returns a 401, a global `QueryCache` error handler redirects to `/login`
+
+### Data Fetching
+
+- **Request functions** live in `domain/` and handle transport and response parsing.
+- **Query keys and query collections** live in `business-logic/` and are built with `queryOptions(...)` or `infiniteQueryOptions(...)`.
+- **Read APIs** should prefer grouped exports such as `deviceQueryKeys` and `deviceQueries` instead of standalone exported fetcher-query helpers.
+- **Route loaders** call `context.queryClient.ensureQueryData(...)` to preload data
+- **Mutations** are exposed from `business-logic/` as `mutationOptions(...)` factories, while their underlying request functions stay in `domain/`
+- **Components** call `useMutation(...)` directly with mutation options
+- Global 401 handling lives in the `QueryCache` error callback (`query-client.ts`)
+
+### Authentication
+
+- `apiClient` sends all requests to `/api/v1` with `credentials: "include"` (cookie auth)
+- Vite proxies `/api` to `VITE_BACKEND_URL` in development
+- Login uses `application/x-www-form-urlencoded` content type (exception to the default JSON headers)
+
+## CI
+
+GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm lint`
+3. `pnpm build`
+4. `pnpm test:unit`
+
+## Contributing
+
+See [AGENTS.md](./AGENTS.md) for the full coding conventions, naming rules, data fetching patterns, and architectural guidance used by coding agents and contributors.
