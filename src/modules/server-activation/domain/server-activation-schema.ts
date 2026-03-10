@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 export const serverActivationSchema = z.object({
 	server_name: z.string().min(1, "Server name is required"),
