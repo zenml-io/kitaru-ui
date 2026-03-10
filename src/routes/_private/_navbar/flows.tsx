@@ -1,7 +1,7 @@
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_private/_app/flows")({
+export const Route = createFileRoute("/_private/_navbar/flows")({
 	component: RouteComponent,
 	head: () => ({
 		meta: [{ title: buildPageTitles("Flows") }],
