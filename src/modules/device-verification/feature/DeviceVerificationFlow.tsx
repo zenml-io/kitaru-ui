@@ -7,15 +7,14 @@ import {
 	startDeviceVerificationSuccessCountdown,
 	type CountdownTimer,
 } from "@/modules/device-verification/util/login-countdown";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { deviceQueries } from "../business-logic/device-queries";
 
-type Props = {
+type DeviceVerificationFlowProps = {
 	deviceId: string;
 	userCode: string;
-	hostname: string | undefined;
-	ipAddress: string | undefined;
-	location: string | undefined;
 	onVerificationSuccess?: () => void;
 };
 
@@ -24,15 +23,21 @@ type Step = "authorize" | "success";
 export function DeviceVerificationFlow({
 	deviceId,
 	userCode,
-	hostname,
-	ipAddress,
-	location,
 	onVerificationSuccess,
-}: Props) {
+}: DeviceVerificationFlowProps) {
 	const router = useRouter();
 	const [step, setStep] = useState<Step>("authorize");
 	const [countdown, setCountdown] = useState(SUCCESS_REDIRECT_SECONDS);
 	const timerRef = useRef<CountdownTimer | null>(null);
+
+	const { data: device } = useSuspenseQuery({
+		...deviceQueries.detail(deviceId, { user_code: userCode }),
+	});
+
+	const location =
+		device.metadata?.city && device.metadata?.region
+			? `${device.metadata?.city ?? ""}, ${device.metadata?.region ?? ""}`
+			: undefined;
 
 	const goHome = useCallback(() => {
 		if (timerRef.current) {
@@ -71,12 +76,12 @@ export function DeviceVerificationFlow({
 	}
 
 	return (
-		<DeviceVerificationCard hideHeader={step === "success"}>
+		<DeviceVerificationCard showHeader={step === "authorize"}>
 			{step === "authorize" ? (
 				<>
 					<DeviceInfo
-						hostname={hostname}
-						ipAddress={ipAddress}
+						hostname={device.body?.hostname ?? undefined}
+						ipAddress={device.body?.ip_address ?? undefined}
 						location={location}
 					/>
 					<DeviceVerificationFormContainer

@@ -1,5 +1,4 @@
-import { LoginFormContainer } from "@/modules/session/feature/LoginFormContainer";
-import { Card, CardContent } from "@/shared/ui/card";
+import { LoginPage } from "@/modules/session/feature/LoginPage";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
@@ -10,21 +9,10 @@ const querySchema = z.object({
 
 export const Route = createFileRoute("/(public)/_mesh/login")({
 	validateSearch: querySchema,
-	component: RouteComponent,
+	component: LoginPage,
 	head() {
 		return {
 			meta: [{ title: buildPageTitles("Login") }],
 		};
 	},
 });
-
-function RouteComponent() {
-	return (
-		<Card className="w-full max-w-[400px] shadow-lg">
-			<CardContent className="space-y-3 p-8">
-				<h2 className="text-center text-lg font-semibold">Sign in to Kitaru</h2>
-				<LoginFormContainer />
-			</CardContent>
-		</Card>
-	);
-}

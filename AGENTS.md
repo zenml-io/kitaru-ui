@@ -92,12 +92,12 @@ All API interactions follow a consistent pattern. Request definitions belong to 
 - Export grouped query factories such as `xQueries`.
 - Build read APIs with `queryOptions(...)` or `infiniteQueryOptions(...)` so they are reusable from both route loaders and components.
 
-**Mutations** — define mutation option factories in `src/modules/<module>/business-logic/*`.
+**Mutations** — define and export mutations directly from `src/modules/<module>/business-logic/*`.
 
 - Keep the underlying write request function in `domain/`.
-- Export mutation factories built with `mutationOptions(...)` when needed.
+- Do not use `mutationOptions(...)` for module mutations; export the mutation directly.
 
-Components use `useMutation(xMutationOptions(...))` directly.
+Components use `useMutation(...)` with the exported mutation directly.
 
 **Cross-module orchestration** — when a mutation needs to chain multiple domain actions (e.g. activate server then login), define that orchestration in the owning module's `feature/` layer.
 
@@ -149,7 +149,7 @@ Forms use React Hook Form + Zod:
 - Define a Zod schema in `domain/<name>-schema.ts`
 - Use `zodResolver(schema)` with `useForm(...)` in the form container
 - Use `Controller` for controlled field components
-- Wire submission to `useMutation(xMutationOptions(...))`
+- Wire submission to `useMutation(...)` with the module's exported mutation
 - Show errors via toast notifications (Sonner)
 
 See `ServerActivationFormContainer.tsx` and `LoginFormContainer.tsx` for current examples in the intended naming scheme.

@@ -4,12 +4,9 @@ import {
 } from "@/modules/server-activation/domain/activate-server";
 import type { ServerActivationPayload } from "@/modules/server-activation/domain/server-activation-schema";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
-import {
-	type UseMutationOptions,
-	mutationOptions,
-} from "@tanstack/react-query";
+import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
 
-export function activateServerMutationOptions(
+export function useActivateServer(
 	options?: Omit<
 		UseMutationOptions<
 			ActivateServerResponse,
@@ -20,7 +17,7 @@ export function activateServerMutationOptions(
 		"mutationFn"
 	>
 ) {
-	return mutationOptions({
+	return useMutation({
 		...options,
 		mutationFn: activateServer,
 	});

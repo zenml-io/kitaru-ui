@@ -7,9 +7,7 @@ export type ActivateServerResponse =
 	| components["schemas"]["UserResponse"]
 	| null;
 
-export async function activateServer(
-	payload: ServerActivationPayload
-): Promise<ActivateServerResponse> {
+export async function activateServer(payload: ServerActivationPayload) {
 	const response = await apiClient.PUT("/api/v1/activate", {
 		body: payload,
 	});

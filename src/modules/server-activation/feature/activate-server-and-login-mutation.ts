@@ -6,10 +6,7 @@ import {
 	type LoginTokenResponse,
 } from "@/modules/session/domain/types";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
-import {
-	type UseMutationOptions,
-	mutationOptions,
-} from "@tanstack/react-query";
+import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 
 export async function activateServerAndLogin(
 	payload: ServerActivationPayload
@@ -22,7 +19,7 @@ export async function activateServerAndLogin(
 	return expectLoginTokenResponse(response);
 }
 
-export function activateServerAndLoginMutationOptions(
+export function useActivateServerAndLogin(
 	options?: Omit<
 		UseMutationOptions<
 			LoginTokenResponse,
@@ -33,7 +30,7 @@ export function activateServerAndLoginMutationOptions(
 		"mutationFn"
 	>
 ) {
-	return mutationOptions({
+	return useMutation({
 		...options,
 		mutationFn: activateServerAndLogin,
 	});

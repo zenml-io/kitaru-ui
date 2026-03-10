@@ -1,10 +1,10 @@
-export type Props = {
+type DeviceInfoProps = {
 	ipAddress: string | undefined;
 	location: string | undefined;
 	hostname: string | undefined;
 };
 
-export function DeviceInfo({ ipAddress, location, hostname }: Props) {
+export function DeviceInfo({ ipAddress, location, hostname }: DeviceInfoProps) {
 	return (
 		<div className="border-border rounded-md border text-sm">
 			{!!ipAddress && (

@@ -1,14 +1,14 @@
+import { serverInfoQueryKeys } from "@/modules/root/business-logic/server-info-queries";
 import {
 	serverActivationSchema,
 	type ServerActivationPayload,
 } from "@/modules/server-activation/domain/server-activation-schema";
-import { serverInfoQueryKeys } from "@/modules/root/business-logic/server-info-queries";
-import { activateServerAndLoginMutationOptions } from "@/modules/server-activation/feature/activate-server-and-login-mutation";
+import { useActivateServerAndLogin } from "@/modules/server-activation/feature/activate-server-and-login-mutation";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -33,21 +33,19 @@ export function ServerActivationFormContainer() {
 	});
 
 	const { mutate: activateServerAndLogin, isPending: isActivationFlowPending } =
-		useMutation(
-			activateServerAndLoginMutationOptions({
-				onSuccess: async () => {
-					await queryClient.invalidateQueries({
-						queryKey: serverInfoQueryKeys.all,
-						refetchType: "all",
-					});
+		useActivateServerAndLogin({
+			onSuccess: async () => {
+				await queryClient.invalidateQueries({
+					queryKey: serverInfoQueryKeys.all,
+					refetchType: "all",
+				});
 
-					router.navigate({ to: "/" });
-				},
-				onError: (error) => {
-					toast.error(getErrorMessage(error));
-				},
-			})
-		);
+				router.navigate({ to: "/" });
+			},
+			onError: (error) => {
+				toast.error(getErrorMessage(error));
+			},
+		});
 
 	async function onSubmit(data: ServerActivationPayload) {
 		activateServerAndLogin(data);

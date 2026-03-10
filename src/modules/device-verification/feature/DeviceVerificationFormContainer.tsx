@@ -1,18 +1,17 @@
-import { verifyDeviceMutationOptions } from "@/modules/device-verification/business-logic/verify-device-mutations";
-import { Controller, useForm } from "react-hook-form";
+import { useVerifyDevice } from "@/modules/device-verification/business-logic/verify-device-mutations";
 import {
 	verificationFormSchema,
 	type VerificationForm,
 } from "@/modules/device-verification/domain/device-verification-form-schema";
 import type { VerifyDeviceVariables } from "@/modules/device-verification/domain/verify-device";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
-import { useMutation } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-type Props = {
+type DeviceVerificationFormContainerProps = {
 	deviceId: string;
 	userCode: string;
 	onVerified: () => void;
@@ -22,7 +21,7 @@ export function DeviceVerificationFormContainer({
 	deviceId,
 	userCode,
 	onVerified,
-}: Props) {
+}: DeviceVerificationFormContainerProps) {
 	const form = useForm<VerificationForm>({
 		resolver: zodResolver(verificationFormSchema),
 		defaultValues: {
@@ -30,16 +29,15 @@ export function DeviceVerificationFormContainer({
 		},
 	});
 
-	const { mutate, isPending: isMutationPending } = useMutation(
-		verifyDeviceMutationOptions({
+	const { mutate: verifyDevice, isPending: isMutationPending } =
+		useVerifyDevice({
 			onSuccess: () => {
 				onVerified();
 			},
 			onError: (error) => {
 				toast.error(error.message);
 			},
-		})
-	);
+		});
 
 	function handleSubmit(data: VerificationForm) {
 		const variables: VerifyDeviceVariables = {
@@ -50,11 +48,13 @@ export function DeviceVerificationFormContainer({
 			},
 		};
 
-		mutate(variables);
+		verifyDevice(variables);
 	}
 
+	const handleFormSubmit = form.handleSubmit(handleSubmit);
+
 	return (
-		<form onSubmit={form.handleSubmit(handleSubmit)}>
+		<form onSubmit={handleFormSubmit}>
 			<FieldGroup className="gap-4">
 				<Controller
 					name="trustDevice"

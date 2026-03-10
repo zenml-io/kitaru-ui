@@ -2,12 +2,15 @@ import KitaruLogo from "@/assets/icons/kitaru-logo.svg?react";
 import type { ReactNode } from "react";
 import { MeshGradientBg, type MeshGradientVariant } from "./MeshGradientBg";
 
-type Props = {
+type MeshLayoutFrameProps = {
 	children: ReactNode;
 	variant?: MeshGradientVariant;
 };
 
-export function MeshLayoutFrame({ children, variant = "default" }: Props) {
+export function MeshLayoutFrame({
+	children,
+	variant = "default",
+}: MeshLayoutFrameProps) {
 	return (
 		<div className="relative flex min-h-dvh items-center justify-center">
 			<MeshGradientBg variant={variant} />

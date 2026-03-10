@@ -2,23 +2,23 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { cn } from "@/shared/utils/styles";
 import type { ComponentProps } from "react";
 
-type Props = ComponentProps<typeof Card> & {
-	hideHeader?: boolean;
+type DeviceVerificationCardProps = ComponentProps<typeof Card> & {
+	showHeader?: boolean;
 };
 
 export function DeviceVerificationCard({
 	children,
 	className,
-	hideHeader = false,
+	showHeader = true,
 	...props
-}: Props) {
+}: DeviceVerificationCardProps) {
 	return (
 		<Card
 			className={cn("w-full max-w-[400px] shadow-lg", className)}
 			{...props}
 		>
 			<CardContent className="space-y-4 p-8">
-				{!hideHeader && (
+				{showHeader && (
 					<div className="flex flex-col gap-1 text-center">
 						<h2 className="text-foreground text-lg font-semibold">
 							Authorize a new device

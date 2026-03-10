@@ -1,6 +1,6 @@
 import { Button } from "@/shared/ui/button";
 
-type Props = {
+type DeviceVerificationSuccessStateProps = {
 	countdown: number;
 	onContinue: () => void;
 };
@@ -8,7 +8,7 @@ type Props = {
 export function DeviceVerificationSuccessState({
 	countdown,
 	onContinue,
-}: Props) {
+}: DeviceVerificationSuccessStateProps) {
 	return (
 		<div className="flex flex-col items-center justify-center gap-5 text-center">
 			<svg
