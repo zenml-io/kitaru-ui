@@ -4,6 +4,7 @@ import { queryClient } from "@/modules/root/query-client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { DefaultErrorPage } from "./modules/root/ui/DefaultError";
 import { DefaultPageNotFound } from "./modules/root/ui/DefaultPageNotFound";
 
 // Import the generated route tree
@@ -19,6 +20,7 @@ const router = createRouter({
 	defaultPreloadStaleTime: 0,
 	scrollRestoration: true,
 	defaultNotFoundComponent: DefaultPageNotFound,
+	defaultErrorComponent: DefaultErrorPage,
 });
 
 // Register the router instance for type safety
