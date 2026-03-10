@@ -7,7 +7,7 @@ import {
 } from "@/shared/ui/breadcrumb";
 import { isMatch, useMatches } from "@tanstack/react-router";
 
-export function NavbarBreadcrumbs() {
+export function BreadcrumbsContainer() {
 	const matches = useMatches();
 
 	if (matches.some((match) => match.status === "pending")) return null;

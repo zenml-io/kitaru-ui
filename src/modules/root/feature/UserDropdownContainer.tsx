@@ -11,9 +11,9 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
-export function UserDropdown() {
+export function UserDropdownContainer() {
 	const { data } = useSuspenseQuery(currentUserQueries.detail());
 	const router = useRouter();
 
@@ -44,7 +44,7 @@ export function UserDropdown() {
 				}
 			></DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[180px]">
-				<ThemeSwitcher />
+				<ThemeSwitcherContainer />
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => logoutUser()}>
 					Sign out

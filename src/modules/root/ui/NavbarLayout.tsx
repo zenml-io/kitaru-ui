@@ -1,7 +1,7 @@
 import KitaruLogo from "@/assets/icons/kitaru-logo.svg?react";
 import { Link, Outlet } from "@tanstack/react-router";
-import { NavbarBreadcrumbs } from "../feature/NavbarBreadcrumbs";
-import { UserDropdown } from "../feature/UserDropdown";
+import { BreadcrumbsContainer } from "../feature/BreadcrumbsContainer";
+import { UserDropdownContainer } from "../feature/UserDropdownContainer";
 
 export function NavbarLayout() {
 	return (
@@ -13,10 +13,10 @@ export function NavbarLayout() {
 							<KitaruLogo className="h-4 w-auto" />
 						</Link>
 						<div className="bg-border mx-0.5 h-[3px] w-[3px] rounded-full" />
-						<NavbarBreadcrumbs />
+						<BreadcrumbsContainer />
 					</div>
 					<div className="flex items-center gap-1">
-						<UserDropdown />
+						<UserDropdownContainer />
 					</div>
 				</nav>
 			</div>

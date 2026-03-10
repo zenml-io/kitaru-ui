@@ -2,7 +2,7 @@ import { Button } from "@/shared/ui/button";
 import { Monitor02, Moon01, Sun } from "@untitledui/icons";
 import { useTheme } from "next-themes";
 
-export function ThemeSwitcher() {
+export function ThemeSwitcherContainer() {
 	const { theme, setTheme } = useTheme();
 	return (
 		<div className="px-2 py-1.5">
