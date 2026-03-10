@@ -1,7 +1,7 @@
 import { activateServer } from "@/modules/server-activation/domain/activate-server";
 import { loginUser } from "@/modules/session/domain/login-user";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { activateServerAndLogin } from "./activate-server-and-login-mutation";
+import { activateServerAndLogin } from "./use-activate-server-and-login";
 
 vi.mock("@/modules/server-activation/domain/activate-server", () => ({
 	activateServer: vi.fn(),

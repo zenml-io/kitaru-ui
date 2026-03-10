@@ -3,7 +3,7 @@ import {
 	serverActivationSchema,
 	type ServerActivationPayload,
 } from "@/modules/server-activation/domain/server-activation-schema";
-import { useActivateServerAndLogin } from "@/modules/server-activation/feature/activate-server-and-login-mutation";
+import { useActivateServerAndLogin } from "@/modules/server-activation/feature/use-activate-server-and-login";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
@@ -32,7 +32,7 @@ export function ServerActivationFormContainer() {
 		},
 	});
 
-	const { mutate: activateServerAndLogin, isPending: isActivationFlowPending } =
+	const { activateServerAndLogin, isPending: isActivationFlowPending } =
 		useActivateServerAndLogin({
 			onSuccess: async () => {
 				await queryClient.invalidateQueries({

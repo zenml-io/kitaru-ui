@@ -30,8 +30,14 @@ export function useActivateServerAndLogin(
 		"mutationFn"
 	>
 ) {
-	return useMutation({
+	const mutation = useMutation({
 		...options,
 		mutationFn: activateServerAndLogin,
 	});
+
+	return {
+		...mutation,
+		activateServerAndLogin: mutation.mutate,
+		activateServerAndLoginAsync: mutation.mutateAsync,
+	};
 }

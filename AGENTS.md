@@ -92,12 +92,14 @@ All API interactions follow a consistent pattern. Request definitions belong to 
 - Export grouped query factories such as `xQueries`.
 - Build read APIs with `queryOptions(...)` or `infiniteQueryOptions(...)` so they are reusable from both route loaders and components.
 
-**Mutations** — define and export mutations directly from `src/modules/<module>/business-logic/*`.
+**Mutations** — define and export mutation hooks from `src/modules/<module>/business-logic/*`.
 
 - Keep the underlying write request function in `domain/`.
-- Do not use `mutationOptions(...)` for module mutations; export the mutation directly.
+- Wrap `useMutation(...)` in a module hook (e.g. `useVerifyDevice`, `useLoginUser`).
+- Return the mutation result plus domain-named aliases for `mutate`/`mutateAsync` (e.g. `verifyDevice`, `verifyDeviceAsync`) for ergonomic usage in features.
+- Do not use `mutationOptions(...)` for module mutations.
 
-Components use `useMutation(...)` with the exported mutation directly.
+Components should consume the exported module mutation hooks directly.
 
 **Cross-module orchestration** — when a mutation needs to chain multiple domain actions (e.g. activate server then login), define that orchestration in the owning module's `feature/` layer.
 
@@ -127,7 +129,7 @@ export const deviceQueries = {
 **Current data loading flow:**
 
 - Route `beforeLoad` handlers call `context.queryClient.ensureQueryData(...)` to preload data
-- Components use `useMutation(...)` for write operations
+- Components use module mutation hooks for write operations
 - Global 401 handling: `QueryCache.onError` in `query-client.ts` redirects to `/login?next=...` on `FetchError` with status 401
 - Mutation errors are handled locally in the form/container that triggered them
 
@@ -149,7 +151,7 @@ Forms use React Hook Form + Zod:
 - Define a Zod schema in `domain/<name>-schema.ts`
 - Use `zodResolver(schema)` with `useForm(...)` in the form container
 - Use `Controller` for controlled field components
-- Wire submission to `useMutation(...)` with the module's exported mutation
+- Wire submission to the module's exported mutation hook
 - Show errors via toast notifications (Sonner)
 
 See `ServerActivationFormContainer.tsx` and `LoginFormContainer.tsx` for current examples in the intended naming scheme.

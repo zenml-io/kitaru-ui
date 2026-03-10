@@ -1,4 +1,4 @@
-import { useVerifyDevice } from "@/modules/device-verification/business-logic/verify-device-mutations";
+import { useVerifyDevice } from "@/modules/device-verification/business-logic/use-verify-device";
 import {
 	verificationFormSchema,
 	type VerificationForm,
@@ -29,15 +29,14 @@ export function DeviceVerificationFormContainer({
 		},
 	});
 
-	const { mutate: verifyDevice, isPending: isMutationPending } =
-		useVerifyDevice({
-			onSuccess: () => {
-				onVerified();
-			},
-			onError: (error) => {
-				toast.error(error.message);
-			},
-		});
+	const { verifyDevice, isPending: isMutationPending } = useVerifyDevice({
+		onSuccess: () => {
+			onVerified();
+		},
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
 
 	function handleSubmit(data: VerificationForm) {
 		const variables: VerifyDeviceVariables = {
