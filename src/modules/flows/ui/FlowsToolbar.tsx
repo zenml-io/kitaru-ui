@@ -1,7 +1,4 @@
-import {
-	type FlowStatusFilter,
-	flowStatusFilterValues,
-} from "../domain/flow-status";
+import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 import { Input } from "@/shared/ui/input";
 import { Separator } from "@/shared/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";

@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 
-import type { FlowRow } from "../domain/flow-row";
+import type { Flow } from "../domain/flow";
 import {
 	SortableHeader,
 	Table,
@@ -18,17 +18,11 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
+import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 
-import { formatRelativeTime } from "@/shared/utils/time";
-import {
-	MetricValueRenderer,
-	StatusRenderer,
-	TextRenderer,
-} from "@/shared/ui/Table/CellRenderer";
-
-export function FlowsTableContainer({ flowRows }: { flowRows: FlowRow[] }) {
+export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
-		{ id: "lastExecutedAt", desc: true },
+		{ id: "name", desc: false },
 	]);
 
 	const table = useReactTable({
@@ -91,49 +85,26 @@ export function FlowsTableContainer({ flowRows }: { flowRows: FlowRow[] }) {
 	);
 }
 
-const flowColumns: ColumnDef<FlowRow>[] = [
+const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
 	},
 	{
-		accessorKey: "description",
+		accessorKey: "latestExecId",
 		header: ({ column }) => (
-			<SortableHeader column={column} label="Description" />
+			<SortableHeader column={column} label="Latest Execution ID" />
 		),
 		cell: ({ row }) => (
-			<TextRenderer variant="muted">{row.original.description}</TextRenderer>
+			<TextRenderer>{row.original.latestExecId ?? "-"}</TextRenderer>
 		),
 	},
 	{
-		accessorKey: "status",
+		accessorKey: "latestExecStatus",
 		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
-	},
-	{
-		accessorKey: "lastExecutedAt",
-		header: ({ column }) => (
-			<SortableHeader column={column} label="Last Exec" />
-		),
 		cell: ({ row }) => (
-			<MetricValueRenderer>
-				{formatRelativeTime(row.original.lastExecutedAt)}
-			</MetricValueRenderer>
-		),
-	},
-	{
-		accessorKey: "executions",
-		header: ({ column }) => <SortableHeader column={column} label="Execs" />,
-		cell: ({ row }) => (
-			<MetricValueRenderer>{row.original.executions}</MetricValueRenderer>
-		),
-	},
-	{
-		accessorKey: "averageCostUsd",
-		header: ({ column }) => <SortableHeader column={column} label="Avg Cost" />,
-		cell: ({ row }) => (
-			<MetricValueRenderer>{row.original.averageCostUsd}</MetricValueRenderer>
+			<StatusRenderer status={row.original.latestExecStatus ?? undefined} />
 		),
 	},
 ];

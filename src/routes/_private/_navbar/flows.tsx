@@ -2,7 +2,7 @@ import { FlowsContainer } from "@/modules/flows/feature/FlowsContainer";
 import {
 	flowStatusFilterValues,
 	type FlowStatusFilter,
-} from "@/modules/flows/domain/flow-status";
+} from "@/modules/flows/domain/flow";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import {
 	type SearchSchemaInput,
