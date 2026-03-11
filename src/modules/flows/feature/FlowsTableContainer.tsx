@@ -9,8 +9,6 @@ import {
 } from "@tanstack/react-table";
 
 import type { FlowRow } from "../domain/flow-row";
-import type { FlowStatus } from "../domain/flow-status";
-import { StatusDot } from "@/shared/ui/StatusDot";
 import {
 	SortableHeader,
 	Table,
@@ -19,8 +17,13 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/shared/ui/Table";
+} from "@/shared/ui/Table/Table";
 import { formatRelativeTime } from "@/shared/utils/time";
+import {
+	MetricValueRenderer,
+	StatusRenderer,
+	TextRenderer,
+} from "@/shared/ui/Table/CellRenderer";
 
 export function FlowsTableContainer({ flowRows }: { flowRows: FlowRow[] }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
@@ -93,9 +96,7 @@ const flowColumns: ColumnDef<FlowRow>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => (
-			<span className="text-foreground font-medium">{row.original.name}</span>
-		),
+		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
 	},
 	{
 		accessorKey: "description",
@@ -103,22 +104,13 @@ const flowColumns: ColumnDef<FlowRow>[] = [
 			<SortableHeader column={column} label="Description" />
 		),
 		cell: ({ row }) => (
-			<span className="text-muted-foreground block max-w-xl truncate text-sm">
-				{row.original.description}
-			</span>
+			<TextRenderer variant="muted">{row.original.description}</TextRenderer>
 		),
 	},
 	{
 		accessorKey: "status",
 		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => (
-			<div className="flex items-center gap-2">
-				{getFlowStatusDot(row.original.status)}
-				<span className="text-foreground text-sm capitalize">
-					{row.original.status}
-				</span>
-			</div>
-		),
+		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
 	},
 	{
 		accessorKey: "lastExecutedAt",
@@ -126,39 +118,23 @@ const flowColumns: ColumnDef<FlowRow>[] = [
 			<SortableHeader column={column} label="Last Exec" />
 		),
 		cell: ({ row }) => (
-			<span className="text-muted-foreground font-mono text-xs">
+			<MetricValueRenderer>
 				{formatRelativeTime(row.original.lastExecutedAt)}
-			</span>
+			</MetricValueRenderer>
 		),
 	},
 	{
 		accessorKey: "executions",
 		header: ({ column }) => <SortableHeader column={column} label="Execs" />,
 		cell: ({ row }) => (
-			<span className="text-muted-foreground font-mono text-xs">
-				{row.original.executions}
-			</span>
+			<MetricValueRenderer>{row.original.executions}</MetricValueRenderer>
 		),
 	},
 	{
 		accessorKey: "averageCostUsd",
 		header: ({ column }) => <SortableHeader column={column} label="Avg Cost" />,
 		cell: ({ row }) => (
-			<span className="text-muted-foreground font-mono text-xs">
-				{row.original.averageCostUsd}
-			</span>
+			<MetricValueRenderer>{row.original.averageCostUsd}</MetricValueRenderer>
 		),
 	},
 ];
-
-function getFlowStatusDot(status: FlowStatus) {
-	if (status === "completed") {
-		return <StatusDot variant="success" />;
-	}
-
-	if (status === "failed") {
-		return <StatusDot variant="danger" />;
-	}
-
-	return <StatusDot variant="warning" />;
-}
