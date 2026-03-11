@@ -1,5 +1,4 @@
 import { activateServer } from "@/modules/server-activation/domain/activate-server";
-import type { ServerActivationPayload } from "@/modules/server-activation/domain/server-activation-schema";
 import { loginUser } from "@/modules/session/domain/login-user";
 import {
 	expectLoginTokenResponse,
@@ -7,11 +6,16 @@ import {
 } from "@/modules/session/domain/types";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
+import type { ServerActivationRequest } from "../domain/server-activation-types";
 
 export async function activateServerAndLogin(
-	payload: ServerActivationPayload
+	payload: ServerActivationRequest
 ): Promise<LoginTokenResponse> {
 	await activateServer(payload);
+	// just to guard the types
+	if (!payload.admin_username || !payload.admin_password) {
+		throw new Error("Username and password are required");
+	}
 	const response = await loginUser({
 		username: payload.admin_username,
 		password: payload.admin_password,
@@ -24,7 +28,7 @@ export function useActivateServerAndLogin(
 		UseMutationOptions<
 			LoginTokenResponse,
 			FetchError,
-			ServerActivationPayload,
+			ServerActivationRequest,
 			unknown
 		>,
 		"mutationFn"
