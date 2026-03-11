@@ -5,7 +5,7 @@ import { UserDropdownContainer } from "../feature/UserDropdownContainer";
 
 export function NavbarLayout() {
 	return (
-		<div>
+		<div className="flex flex-1 flex-col">
 			<div className="z-20 shrink-0">
 				<nav className="bg-card border-border flex h-12 items-center justify-between border-b px-5">
 					<div className="flex items-center gap-2.5">

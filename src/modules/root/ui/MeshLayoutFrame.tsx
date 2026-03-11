@@ -12,7 +12,7 @@ export function MeshLayoutFrame({
 	variant = "default",
 }: MeshLayoutFrameProps) {
 	return (
-		<div className="relative flex min-h-dvh items-center justify-center">
+		<div className="relative flex flex-1 items-center justify-center">
 			<MeshGradientBg variant={variant} />
 			<div className="flex w-full flex-col items-center gap-6 px-4">
 				<KitaruLogo className="h-5 w-auto" />
