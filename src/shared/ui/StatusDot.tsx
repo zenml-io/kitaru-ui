@@ -5,9 +5,9 @@ const statusDotVariants = cva(
 	{
 		variants: {
 			variant: {
-				success: "bg-emerald-500",
+				success: "bg-success",
 				danger: "bg-destructive",
-				warning: "bg-amber-500",
+				warning: "bg-warning",
 			},
 		},
 		defaultVariants: {

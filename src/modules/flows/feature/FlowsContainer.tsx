@@ -1,18 +1,26 @@
 import * as React from "react";
 
+import {
+	PageHeader,
+	PageHeaderActions,
+	PageHeaderBody,
+	PageHeaderContent,
+	PageHeaderDescription,
+	PageHeaderTitle,
+} from "@/shared/ui/PageHeader";
 import type { FlowRow } from "../domain/flow-row";
-import { flowStatusFilterOptions } from "../domain/flow-status";
-import { FlowsHeader, type StatItem } from "../ui/FlowsHeader";
+import type { StatProps } from "../ui/Stat";
 import { FlowsToolbar } from "../ui/FlowsToolbar";
-import { FlowsTableContainer } from "./FlowsTableContainer";
+import { Stats } from "../ui/Stats";
 import { useRouter, useSearch } from "@tanstack/react-router";
+import { FlowsTableContainer } from "./FlowsTableContainer";
 
 export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status } = useSearch({ from: "/_private/_navbar/flows" });
 
 	// TODO: Get stats from API
-	const stats: StatItem[] = [
+	const stats: StatProps[] = [
 		{ label: "Total", value: 12 },
 		{ label: "Running", value: 3, valueColor: "success" },
 		{ label: "Failed", value: 1, valueColor: "danger" },
@@ -159,13 +167,20 @@ export function FlowsContainer() {
 
 	return (
 		<>
-			<FlowsHeader
-				stats={stats}
-				title="Flows"
-				description="Manage your flows"
-			/>
+			<PageHeader>
+				<PageHeaderContent>
+					<PageHeaderBody>
+						<PageHeaderTitle>Flows</PageHeaderTitle>
+						<PageHeaderDescription>Manage your flows</PageHeaderDescription>
+					</PageHeaderBody>
+					{stats.length > 0 ? (
+						<PageHeaderActions>
+							<Stats stats={stats} />
+						</PageHeaderActions>
+					) : null}
+				</PageHeaderContent>
+			</PageHeader>
 			<FlowsToolbar
-				statusOptions={flowStatusFilterOptions}
 				searchValue={q}
 				statusFilter={status}
 				onSearchValueChange={(value) => {
@@ -189,7 +204,9 @@ export function FlowsContainer() {
 					});
 				}}
 			/>
-			<FlowsTableContainer flowRows={filteredRows} />
+			<div className="container mx-auto flex w-full flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
+				<FlowsTableContainer flowRows={filteredRows} />
+			</div>
 		</>
 	);
 }

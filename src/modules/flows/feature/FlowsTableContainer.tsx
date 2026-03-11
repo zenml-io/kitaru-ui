@@ -47,48 +47,46 @@ export function FlowsTableContainer({ flowRows }: { flowRows: FlowRow[] }) {
 	const emptyColSpan = table.getVisibleLeafColumns().length;
 
 	return (
-		<div className="mx-auto flex w-full max-w-[1480px] flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-			<Table>
-				<TableHeader>
-					{headerGroups.map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => (
-								<TableHead key={header.id}>
-									{header.isPlaceholder
-										? null
-										: flexRender(
-												header.column.columnDef.header,
-												header.getContext()
-											)}
-								</TableHead>
+		<Table>
+			<TableHeader>
+				{headerGroups.map((headerGroup) => (
+					<TableRow key={headerGroup.id}>
+						{headerGroup.headers.map((header) => (
+							<TableHead key={header.id}>
+								{header.isPlaceholder
+									? null
+									: flexRender(
+											header.column.columnDef.header,
+											header.getContext()
+										)}
+							</TableHead>
+						))}
+					</TableRow>
+				))}
+			</TableHeader>
+			<TableBody>
+				{rows.length > 0 ? (
+					rows.map((row) => (
+						<TableRow key={row.id}>
+							{row.getVisibleCells().map((cell) => (
+								<TableCell key={cell.id}>
+									{flexRender(cell.column.columnDef.cell, cell.getContext())}
+								</TableCell>
 							))}
 						</TableRow>
-					))}
-				</TableHeader>
-				<TableBody>
-					{rows.length > 0 ? (
-						rows.map((row) => (
-							<TableRow key={row.id}>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</TableCell>
-								))}
-							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell
-								colSpan={emptyColSpan}
-								className="text-muted-foreground py-10 text-center text-sm"
-							>
-								No flows match the current filters.
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
-		</div>
+					))
+				) : (
+					<TableRow>
+						<TableCell
+							colSpan={emptyColSpan}
+							className="text-muted-foreground py-10 text-center text-sm"
+						>
+							No flows match the current filters.
+						</TableCell>
+					</TableRow>
+				)}
+			</TableBody>
+		</Table>
 	);
 }
 
