@@ -18,6 +18,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
+
 import { formatRelativeTime } from "@/shared/utils/time";
 import {
 	MetricValueRenderer,

@@ -1,19 +1,8 @@
 import * as React from "react";
 
 import type { Column } from "@tanstack/react-table";
-
-import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
-
-function TableContainer({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			data-slot="table-container"
-			className={cn("relative w-full overflow-x-auto", className)}
-			{...props}
-		/>
-	);
-}
+import { Button } from "../button";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (
@@ -81,7 +70,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 		<th
 			data-slot="table-head"
 			className={cn(
-				"text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+				"text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0",
 				className
 			)}
 			{...props}
@@ -94,7 +83,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 		<td
 			data-slot="table-cell"
 			className={cn(
-				"px-2 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+				"px-2 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
 				className
 			)}
 			{...props}
@@ -153,14 +142,13 @@ function SortableHeader<RowData>({
 }
 
 export {
-	SortableHeader,
 	Table,
+	TableHeader,
 	TableBody,
-	TableCaption,
-	TableCell,
-	TableContainer,
 	TableFooter,
 	TableHead,
-	TableHeader,
 	TableRow,
+	TableCell,
+	TableCaption,
+	SortableHeader,
 };
