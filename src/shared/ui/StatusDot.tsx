@@ -4,28 +4,37 @@ const statusDotVariants = cva(
 	"inline-block h-[7px] w-[7px] shrink-0 rounded-full",
 	{
 		variants: {
-			variant: {
-				success: "bg-success",
-				danger: "bg-destructive",
-				warning: "bg-warning",
+			status: {
+				completed: "bg-success",
+				failed: "bg-destructive",
+				initializing: "bg-purple-500",
+				provisioning: "bg-purple-500",
+				running: "bg-warning",
+				retrying: "bg-warning",
+				cached: "bg-gray-400",
+				skipped: "bg-gray-400",
+				stopped: "bg-gray-400",
+				stopping: "bg-gray-400",
+				retried: "bg-gray-400",
+				unknown: "bg-blue-500",
 			},
 		},
 		defaultVariants: {
-			variant: "warning",
+			status: "unknown",
 		},
 	}
 );
 
 export type StatusDotVariant = NonNullable<
-	VariantProps<typeof statusDotVariants>["variant"]
+	VariantProps<typeof statusDotVariants>["status"]
 >;
 
-function StatusDot({ variant = "warning" }: { variant?: StatusDotVariant }) {
+function StatusDot({ status }: { status: StatusDotVariant }) {
 	return (
 		<span
 			data-slot="status-dot"
-			data-variant={variant}
-			className={statusDotVariants({ variant })}
+			data-status={status}
+			className={statusDotVariants({ status })}
 		/>
 	);
 }

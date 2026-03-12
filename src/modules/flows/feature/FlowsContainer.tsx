@@ -9,10 +9,11 @@ import {
 	PageHeaderTitle,
 } from "@/shared/ui/PageHeader";
 import { FlowsToolbar } from "../ui/FlowsToolbar";
-import { Stats, type StatsProps } from "../ui/Stats";
+import { Stats } from "../ui/Stats";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { FlowsTableContainer } from "./FlowsTableContainer";
 import { useFlows } from "../business-logic/use-flows";
+import type { StatProps } from "../ui/Stat";
 
 export function FlowsContainer() {
 	const router = useRouter();
@@ -20,7 +21,7 @@ export function FlowsContainer() {
 
 	const { flowRows } = useFlows();
 
-	const stats = React.useMemo<StatsProps>(() => {
+	const stats = React.useMemo<StatProps[]>(() => {
 		const runningCount = flowRows.filter(
 			(flow) => flow.latestExecStatus === "running"
 		).length;

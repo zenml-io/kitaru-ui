@@ -104,7 +104,7 @@ const flowColumns: ColumnDef<Flow>[] = [
 		accessorKey: "latestExecStatus",
 		header: ({ column }) => <SortableHeader column={column} label="Status" />,
 		cell: ({ row }) => (
-			<StatusRenderer status={row.original.latestExecStatus ?? undefined} />
+			<StatusRenderer status={row.original.latestExecStatus} />
 		),
 	},
 ];
