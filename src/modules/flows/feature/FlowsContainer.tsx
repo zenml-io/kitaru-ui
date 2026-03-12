@@ -21,24 +21,22 @@ export function FlowsContainer() {
 
 	const { flowsData } = useFlows();
 
-	const stats = React.useMemo<StatProps[]>(() => {
-		const runningCount = flowsData.filter(
-			(flow) => flow.latestExecStatus === "running"
-		).length;
-		const failedCount = flowsData.filter(
-			(flow) => flow.latestExecStatus === "failed"
-		).length;
-		const completedCount = flowsData.filter(
-			(flow) => flow.latestExecStatus === "completed"
-		).length;
+	const counts = flowsData.reduce(
+		(acc, flow) => {
+			if (flow.latestExecStatus === "running") acc.running++;
+			else if (flow.latestExecStatus === "failed") acc.failed++;
+			else if (flow.latestExecStatus === "completed") acc.completed++;
+			return acc;
+		},
+		{ running: 0, failed: 0, completed: 0 }
+	);
 
-		return [
-			{ label: "Total", value: flowsData.length },
-			{ label: "Running", value: runningCount, valueColor: "warning" },
-			{ label: "Failed", value: failedCount, valueColor: "danger" },
-			{ label: "Completed", value: completedCount, valueColor: "success" },
-		];
-	}, [flowsData]);
+	const stats: StatProps[] = [
+		{ label: "Total", value: flowsData.length },
+		{ label: "Running", value: counts.running, valueColor: "warning" },
+		{ label: "Failed", value: counts.failed, valueColor: "danger" },
+		{ label: "Completed", value: counts.completed, valueColor: "success" },
+	];
 
 	const filteredRows = React.useMemo(() => {
 		const normalizedSearch = q.trim().toLowerCase();
