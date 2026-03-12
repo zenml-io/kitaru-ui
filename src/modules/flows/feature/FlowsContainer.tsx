@@ -21,7 +21,7 @@ export function FlowsContainer() {
 
 	const { flowsData } = useFlows();
 
-	const counts = flowsData.reduce(
+	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
 			if (flow.latestExecStatus === "running") acc.running++;
 			else if (flow.latestExecStatus === "failed") acc.failed++;
@@ -33,9 +33,9 @@ export function FlowsContainer() {
 
 	const stats: StatProps[] = [
 		{ label: "Total", value: flowsData.length },
-		{ label: "Running", value: counts.running, valueColor: "warning" },
-		{ label: "Failed", value: counts.failed, valueColor: "danger" },
-		{ label: "Completed", value: counts.completed, valueColor: "success" },
+		{ label: "Running", value: statsCounts.running, valueColor: "warning" },
+		{ label: "Failed", value: statsCounts.failed, valueColor: "danger" },
+		{ label: "Completed", value: statsCounts.completed, valueColor: "success" },
 	];
 
 	const filteredRows = React.useMemo(() => {
