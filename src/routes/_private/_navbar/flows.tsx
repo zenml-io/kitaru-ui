@@ -10,6 +10,7 @@ import {
 	stripSearchParams,
 } from "@tanstack/react-router";
 import z from "zod";
+import { Suspense } from "react";
 
 const flowsSearchSchema = z.object({
 	q: z.string().catch(""),
@@ -21,13 +22,21 @@ type FlowsSearchSchemaInput = SearchSchemaInput & {
 	status?: FlowStatusFilter;
 };
 
+function FlowsRoute() {
+	return (
+		<Suspense>
+			<FlowsContainer />
+		</Suspense>
+	);
+}
+
 export const Route = createFileRoute("/_private/_navbar/flows")({
 	validateSearch: (search: FlowsSearchSchemaInput) =>
 		flowsSearchSchema.parse(search),
 	search: {
 		middlewares: [stripSearchParams({ q: "", status: "all" })],
 	},
-	component: FlowsContainer,
+	component: FlowsRoute,
 	head: () => ({
 		meta: [{ title: buildPageTitles("Flows") }],
 	}),
