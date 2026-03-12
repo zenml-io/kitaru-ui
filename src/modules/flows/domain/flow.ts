@@ -22,7 +22,6 @@ export type FlowStatusFilterOption = {
 	value: FlowStatusFilter;
 };
 
-// TODO: Add statuses from the API
 export const flowStatusFilterOptions: FlowStatusFilterOption[] = [
 	{ label: "All", value: "all" },
 	{ label: "Running", value: "running" },
