@@ -4,5 +4,5 @@ import { flowsQueries } from "./flows-queries";
 export function useFlows() {
 	const query = useSuspenseQuery(flowsQueries.all());
 
-	return { ...query, flowRows: query.data };
+	return { ...query, flowsData: query.data };
 }

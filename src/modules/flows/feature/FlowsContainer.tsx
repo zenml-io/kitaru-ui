@@ -19,31 +19,31 @@ export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status } = useSearch({ from: "/_private/_navbar/flows" });
 
-	const { flowRows } = useFlows();
+	const { flowsData } = useFlows();
 
 	const stats = React.useMemo<StatProps[]>(() => {
-		const runningCount = flowRows.filter(
+		const runningCount = flowsData.filter(
 			(flow) => flow.latestExecStatus === "running"
 		).length;
-		const failedCount = flowRows.filter(
+		const failedCount = flowsData.filter(
 			(flow) => flow.latestExecStatus === "failed"
 		).length;
-		const completedCount = flowRows.filter(
+		const completedCount = flowsData.filter(
 			(flow) => flow.latestExecStatus === "completed"
 		).length;
 
 		return [
-			{ label: "Total", value: flowRows.length },
+			{ label: "Total", value: flowsData.length },
 			{ label: "Running", value: runningCount, valueColor: "warning" },
 			{ label: "Failed", value: failedCount, valueColor: "danger" },
 			{ label: "Completed", value: completedCount, valueColor: "success" },
 		];
-	}, [flowRows]);
+	}, [flowsData]);
 
 	const filteredRows = React.useMemo(() => {
 		const normalizedSearch = q.trim().toLowerCase();
 
-		return flowRows.filter((flow) => {
+		return flowsData.filter((flow) => {
 			const matchesStatus =
 				status === "all" ? true : flow.latestExecStatus === status;
 			const matchesSearch =
@@ -55,7 +55,7 @@ export function FlowsContainer() {
 
 			return matchesStatus && matchesSearch;
 		});
-	}, [flowRows, q, status]);
+	}, [flowsData, q, status]);
 
 	return (
 		<>

@@ -1,20 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/execution/domain/execution";
 
-export const flowStatusValues: ExecutionStatus[] = [
-	"initializing",
-	"provisioning",
-	"running",
-	"failed",
-	"completed",
-	"cached",
-	"skipped",
-	"retrying",
-	"retried",
-	"stopped",
-	"stopping",
-];
-
 export const flowStatusFilterValues = [
 	"all",
 	"running",
