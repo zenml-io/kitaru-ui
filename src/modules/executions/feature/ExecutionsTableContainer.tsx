@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 
-import type { Flow } from "../domain/flow";
+import type { Execution } from "../domain/execution";
 import {
 	SortableHeader,
 	Table,
@@ -19,16 +19,19 @@ import {
 	TableRow,
 } from "@/shared/ui/Table/Table";
 import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
-import { Link } from "@tanstack/react-router";
 
-export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
+export function ExecutionsTableContainer({
+	executionRows,
+}: {
+	executionRows: Execution[];
+}) {
 	const [sorting, setSorting] = React.useState<SortingState>([
-		{ id: "createdAt", desc: true },
+		{ id: "name", desc: false },
 	]);
 
 	const table = useReactTable({
-		data: flowRows,
-		columns: flowColumns,
+		data: executionRows,
+		columns: executionColumns,
 		state: {
 			sorting,
 		},
@@ -77,7 +80,7 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 							colSpan={emptyColSpan}
 							className="text-muted-foreground py-10 text-center text-sm"
 						>
-							No flows match the current filters.
+							No executions match the current filters.
 						</TableCell>
 					</TableRow>
 				)}
@@ -86,43 +89,20 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 	);
 }
 
-const flowColumns: ColumnDef<Flow>[] = [
+const executionColumns: ColumnDef<Execution>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => (
-			<Link
-				to="/flows/$flowId/overview"
-				params={{ flowId: row.original.id }}
-				className="hover:underline"
-			>
-				<TextRenderer>{row.original.name}</TextRenderer>
-			</Link>
-		),
+		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
 	},
 	{
-		accessorKey: "latestExecId",
-		header: ({ column }) => (
-			<SortableHeader column={column} label="Latest Execution ID" />
-		),
-		cell: ({ row }) => (
-			<TextRenderer>{row.original.latestExecId ?? "-"}</TextRenderer>
-		),
+		accessorKey: "id",
+		header: ({ column }) => <SortableHeader column={column} label="ID" />,
+		cell: ({ row }) => <TextRenderer>{row.original.id}</TextRenderer>,
 	},
 	{
-		accessorKey: "latestExecStatus",
+		accessorKey: "status",
 		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => (
-			<StatusRenderer status={row.original.latestExecStatus} />
-		),
-	},
-	{
-		accessorKey: "createdAt",
-		header: ({ column }) => <SortableHeader column={column} label="Created" />,
-		cell: ({ row }) => (
-			<TextRenderer>
-				{row.original.createdAt?.toLocaleString() ?? "-"}
-			</TextRenderer>
-		),
+		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
 	},
 ];

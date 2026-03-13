@@ -24,7 +24,7 @@ type FlowsSearchSchemaInput = SearchSchemaInput & {
 	status?: FlowStatusFilter;
 };
 
-export const Route = createFileRoute("/_private/_navbar/flows")({
+export const Route = createFileRoute("/_private/_navbar/flows/")({
 	validateSearch: (search: FlowsSearchSchemaInput) =>
 		flowsSearchSchema.parse(search),
 	search: {
@@ -43,6 +43,6 @@ export const Route = createFileRoute("/_private/_navbar/flows")({
 				label: "Flows",
 				href: "/flows",
 			},
-		};
+		}
 	},
 });

@@ -39,7 +39,7 @@ export function FlowsContainer() {
 	];
 
 	const filteredRows = React.useMemo(() => {
-		const normalizedSearch = q.trim().toLowerCase();
+		const normalizedSearch = q.trim().toLowerCase() ?? "";
 
 		return flowsData.filter((flow) => {
 			const matchesStatus =
