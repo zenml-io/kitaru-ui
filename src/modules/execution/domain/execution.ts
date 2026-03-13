@@ -14,4 +14,4 @@ export const executionStatusValues: ExecutionStatus[] = [
 	"retried",
 	"stopped",
 	"stopping",
-];
+] as const;
