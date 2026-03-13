@@ -22,7 +22,7 @@ import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 
 export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
-		{ id: "name", desc: false },
+		{ id: "createdAt", desc: true },
 	]);
 
 	const table = useReactTable({
@@ -105,6 +105,15 @@ const flowColumns: ColumnDef<Flow>[] = [
 		header: ({ column }) => <SortableHeader column={column} label="Status" />,
 		cell: ({ row }) => (
 			<StatusRenderer status={row.original.latestExecStatus} />
+		),
+	},
+	{
+		accessorKey: "createdAt",
+		header: ({ column }) => <SortableHeader column={column} label="Created" />,
+		cell: ({ row }) => (
+			<TextRenderer>
+				{row.original.createdAt?.toLocaleString() ?? "-"}
+			</TextRenderer>
 		),
 	},
 ];
