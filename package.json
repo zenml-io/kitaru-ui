@@ -9,6 +9,7 @@
 		"format": "prettier --write .",
 		"generate:types": "node scripts/types.js",
 		"lint": "eslint .",
+		"check:types": "tsc --noEmit",
 		"preview": "vite preview",
 		"test:unit": "vitest"
 	},

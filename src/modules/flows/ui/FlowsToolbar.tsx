@@ -50,7 +50,7 @@ export function FlowsToolbar({
 	);
 }
 
-function getNextStatusFilter(nextValue: string[]): FlowStatusFilter {
+function getNextStatusFilter(nextValue: readonly string[]): FlowStatusFilter {
 	const candidate = nextValue[0];
 
 	if (candidate && isFlowStatusFilter(candidate)) {

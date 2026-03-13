@@ -16,8 +16,8 @@ export function FlowContextBarContainer() {
 	const { flowData } = useFlow(flowId);
 	const navigate = useNavigate();
 
-	const navigateToTab = (value: FlowTab) => {
-		navigate({ to: "/flows/$flowId/$tab", params: { flowId, tab: value } });
+	const navigateToTab = (tab: FlowTab) => {
+		navigate({ to: "/flows/$flowId/$tab", params: { flowId, tab } });
 	};
 
 	const metadata = [

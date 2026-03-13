@@ -1,5 +1,5 @@
 import type { components } from "@/shared/api/openapi";
-import type { ExecutionStatus } from "@/modules/execution/domain/execution";
+import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 
 export const flowTabs = ["overview", "logs"] as const;
 export type FlowTab = (typeof flowTabs)[number];

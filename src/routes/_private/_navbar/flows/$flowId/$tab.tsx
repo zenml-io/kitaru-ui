@@ -7,23 +7,17 @@ import { flowTabs, type FlowTab } from "@/modules/flows/domain/flow";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import z from "zod";
 
-const tabSchema = z.enum(flowTabs);
-
 const TAB_TITLES: Record<FlowTab, string> = {
 	overview: "Flow Overview",
 	logs: "Flow Logs",
 };
 
+const tabSchema = z.enum(flowTabs);
+
 const TAB_COMPONENTS: Record<FlowTab, React.ComponentType> = {
 	overview: FlowOverviewContainer,
 	logs: () => <div>Logs</div>,
 };
-
-function FlowTabPage() {
-	const { tab } = Route.useParams();
-	const Component = TAB_COMPONENTS[tab];
-	return <Component />;
-}
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 	params: {
@@ -43,10 +37,10 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 			});
 		}
 	},
-	loader: ({ params }) => ({
-		crumb: {
-			label: params.flowId,
-			href: `/flows/${params.flowId}/${params.tab}`,
-		},
-	}),
 });
+
+function FlowTabPage() {
+	const { tab } = Route.useParams();
+	const Component = TAB_COMPONENTS[tab];
+	return <Component />;
+}
