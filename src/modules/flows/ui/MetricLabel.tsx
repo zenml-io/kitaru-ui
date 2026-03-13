@@ -7,7 +7,7 @@ const metricLabelVariants = cva("font-semibold uppercase tracking-wider", {
 			muted: "text-muted-foreground",
 		},
 		size: {
-			default: "text-sm",
+			default: "text-xs",
 			xs: "text-xs",
 			sm: "text-sm",
 			lg: "text-lg",
