@@ -18,7 +18,12 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
+import {
+	StatusRenderer,
+	TextRenderer,
+	UserRenderer,
+} from "@/shared/ui/Table/CellRenderer";
+import { ExecutionName } from "../ui/ExecutionName";
 
 export function ExecutionsTableContainer({
 	executionRows,
@@ -26,7 +31,7 @@ export function ExecutionsTableContainer({
 	executionRows: Execution[];
 }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
-		{ id: "name", desc: false },
+		{ id: "createdAt", desc: true },
 	]);
 
 	const table = useReactTable({
@@ -91,9 +96,18 @@ export function ExecutionsTableContainer({
 
 const executionColumns: ColumnDef<Execution>[] = [
 	{
-		accessorKey: "name",
-		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
+		accessorKey: "execution",
+		header: ({ column }) => (
+			<SortableHeader column={column} label="Execution" />
+		),
+		cell: ({ row }) => (
+			<ExecutionName name={row.original.name} index={row.original.index} />
+		),
+	},
+	{
+		accessorKey: "status",
+		header: ({ column }) => <SortableHeader column={column} label="Status" />,
+		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
 	},
 	{
 		accessorKey: "id",
@@ -101,8 +115,26 @@ const executionColumns: ColumnDef<Execution>[] = [
 		cell: ({ row }) => <TextRenderer>{row.original.id}</TextRenderer>,
 	},
 	{
-		accessorKey: "status",
-		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
+		accessorKey: "Author",
+		header: ({ column }) => <SortableHeader column={column} label="Author" />,
+		cell: ({ row }) => <UserRenderer userName={row.original.authorName} />,
+	},
+	{
+		accessorKey: "updatedAt",
+		header: ({ column }) => <SortableHeader column={column} label="Updated" />,
+		cell: ({ row }) => (
+			<TextRenderer>
+				{row.original.updatedAt?.toLocaleString() ?? "-"}
+			</TextRenderer>
+		),
+	},
+	{
+		accessorKey: "createdAt",
+		header: ({ column }) => <SortableHeader column={column} label="Created" />,
+		cell: ({ row }) => (
+			<TextRenderer>
+				{row.original.createdAt?.toLocaleString() ?? "-"}
+			</TextRenderer>
+		),
 	},
 ];

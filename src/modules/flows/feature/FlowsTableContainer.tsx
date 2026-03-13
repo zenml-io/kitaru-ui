@@ -92,8 +92,8 @@ const flowColumns: ColumnDef<Flow>[] = [
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => (
 			<Link
-				to="/flows/$flowId/overview"
-				params={{ flowId: row.original.id }}
+				to="/flows/$flowId/$tab"
+				params={{ flowId: row.original.id, tab: "overview" }}
 				className="hover:underline"
 			>
 				<TextRenderer>{row.original.name}</TextRenderer>

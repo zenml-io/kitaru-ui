@@ -43,6 +43,6 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 				label: "Flows",
 				href: "/flows",
 			},
-		}
+		};
 	},
 });
