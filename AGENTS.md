@@ -164,6 +164,8 @@ See `ServerActivationFormContainer.tsx` and `LoginFormContainer.tsx` for current
 - Keep Tailwind utility classes; Prettier (with the Tailwind plugin) auto-sorts them
 - Prefer focused components over overly generic abstractions
 
+See [DESIGN.md](./DESIGN.md) for design-related guidelines.
+
 ### Coding Conventions
 
 - Define React components with `function` declarations instead of arrow functions

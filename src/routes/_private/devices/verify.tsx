@@ -2,7 +2,7 @@ import { deviceQueries } from "@/modules/device-verification/business-logic/devi
 import { DeviceVerificationPage } from "@/modules/device-verification/feature/DeviceVerificationPage";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
-import z from "zod";
+import { z } from "zod";
 
 const querySchema = z.object({
 	device_id: z.string().min(1, "Device ID is required"),
