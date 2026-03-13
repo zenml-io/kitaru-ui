@@ -2,7 +2,7 @@ import { FlowsContainer } from "@/modules/flows/feature/FlowsContainer";
 import {
 	flowStatusFilterValues,
 	type FlowStatusFilter,
-} from "@/modules/flows/domain/flow-status";
+} from "@/modules/flows/domain/flow";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import {
 	type SearchSchemaInput,
@@ -10,6 +10,9 @@ import {
 	stripSearchParams,
 } from "@tanstack/react-router";
 import z from "zod";
+
+import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
+import { PageSpinner } from "@/shared/ui/spinner";
 
 const flowsSearchSchema = z.object({
 	q: z.string().catch(""),
@@ -31,7 +34,10 @@ export const Route = createFileRoute("/_private/_navbar/flows")({
 	head: () => ({
 		meta: [{ title: buildPageTitles("Flows") }],
 	}),
-	loader: async () => {
+	pendingComponent: PageSpinner,
+	loader: async ({ context }) => {
+		await context.queryClient.ensureQueryData(flowsQueries.all());
+
 		return {
 			crumb: {
 				label: "Flows",

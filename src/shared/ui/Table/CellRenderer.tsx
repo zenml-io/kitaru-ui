@@ -1,4 +1,4 @@
-import { StatusDot } from "../StatusDot";
+import { StatusDot, type StatusDotVariant } from "../StatusDot";
 import { cn } from "@/shared/utils/styles";
 
 function TextRenderer({
@@ -26,21 +26,10 @@ function MetricValueRenderer({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function StatusRenderer({
-	status,
-}: {
-	status: "running" | "failed" | "completed";
-}) {
-	const statusDotVariant =
-		status === "running"
-			? "warning"
-			: status === "failed"
-				? "danger"
-				: "success";
-
+function StatusRenderer({ status = "unknown" }: { status?: StatusDotVariant }) {
 	return (
 		<div className="flex items-center gap-2">
-			<StatusDot variant={statusDotVariant} />
+			<StatusDot status={status} />
 			<span className="text-foreground text-sm capitalize">{status}</span>
 		</div>
 	);
