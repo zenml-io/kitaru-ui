@@ -1,15 +1,13 @@
-import { ExecutionIndexPrefix } from "./ExecutionIndexPrefix";
+import { formatExecutionIndex } from "../util/execution";
 
 type ExecutionNameProps = {
-	name: string;
-	index?: number;
+	index: number;
 };
 
-export function ExecutionName({ name, index }: ExecutionNameProps) {
+export function ExecutionName({ index }: ExecutionNameProps) {
 	return (
 		<span className="text-foreground font-semibold">
-			<ExecutionIndexPrefix index={index} />
-			{name}
+			#{formatExecutionIndex(index)}
 		</span>
 	);
 }

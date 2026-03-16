@@ -17,7 +17,7 @@ export function UserDropdownContainer() {
 	const { data } = useSuspenseQuery(currentUserQueries.detail());
 	const router = useRouter();
 
-	const username = data.body?.full_name || data.name;
+	const username = data.fullName || data.name;
 
 	const { logoutUser } = useLogoutUser({
 		onSuccess: () => {

@@ -1,5 +1,5 @@
 import type { components } from "@/shared/api/openapi";
-
+import { type User, userFromApiToDomain } from "@/modules/root/domain/user";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 
 export const executionStatusValues: ExecutionStatus[] = [
@@ -30,22 +30,26 @@ export type Execution = {
 	id: string;
 	name: string;
 	status: ExecutionStatus | undefined;
-	index?: number;
-	authorName?: string;
+	index: number;
+	user?: User;
 	createdAt?: Date;
-	updatedAt?: Date;
 };
 
 export function executionFromApiToDomain(
 	run: components["schemas"]["PipelineRunResponse"]
 ): Execution {
+	if (!run.body) {
+		throw new Error("Execution body is required");
+	}
+
 	return {
 		id: run.id,
 		name: run.name,
-		status: run.body?.status ?? undefined,
-		index: run.body?.index ?? undefined,
-		authorName: run?.resources?.user?.body?.full_name ?? undefined,
-		createdAt: run.body?.created ? new Date(run.body.created) : undefined,
-		updatedAt: run.body?.updated ? new Date(run.body.updated) : undefined,
+		status: run.body.status,
+		index: run.body.index,
+		user: run?.resources?.user
+			? userFromApiToDomain(run.resources.user)
+			: undefined,
+		createdAt: new Date(run.body.created),
 	};
 }

@@ -100,9 +100,7 @@ const executionColumns: ColumnDef<Execution>[] = [
 		header: ({ column }) => (
 			<SortableHeader column={column} label="Execution" />
 		),
-		cell: ({ row }) => (
-			<ExecutionName name={row.original.name} index={row.original.index} />
-		),
+		cell: ({ row }) => <ExecutionName index={row.original.index} />,
 	},
 	{
 		accessorKey: "status",
@@ -117,15 +115,10 @@ const executionColumns: ColumnDef<Execution>[] = [
 	{
 		accessorKey: "Author",
 		header: ({ column }) => <SortableHeader column={column} label="Author" />,
-		cell: ({ row }) => <UserRenderer userName={row.original.authorName} />,
-	},
-	{
-		accessorKey: "updatedAt",
-		header: ({ column }) => <SortableHeader column={column} label="Updated" />,
 		cell: ({ row }) => (
-			<TextRenderer>
-				{row.original.updatedAt?.toLocaleString() ?? "-"}
-			</TextRenderer>
+			<UserRenderer
+				userName={row.original.user?.fullName || row.original.user?.name}
+			/>
 		),
 	},
 	{

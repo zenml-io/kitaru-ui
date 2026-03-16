@@ -9,14 +9,12 @@ import z from "zod";
 
 const TAB_TITLES: Record<FlowTab, string> = {
 	overview: "Flow Overview",
-	logs: "Flow Logs",
 };
 
 const tabSchema = z.enum(flowTabs);
 
 const TAB_COMPONENTS: Record<FlowTab, React.ComponentType> = {
 	overview: FlowOverviewContainer,
-	logs: () => <div>Logs</div>,
 };
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
