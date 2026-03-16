@@ -29,7 +29,7 @@ export type ExecutionStatusFilter =
 export type Execution = {
 	id: string;
 	name: string;
-	status: ExecutionStatus | undefined;
+	status?: ExecutionStatus;
 	index: number;
 	user?: User;
 	createdAt?: Date;
