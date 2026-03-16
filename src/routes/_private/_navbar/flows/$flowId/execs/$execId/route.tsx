@@ -5,9 +5,15 @@ export const Route = createFileRoute(
 	"/_private/_navbar/flows/$flowId/execs/$execId"
 )({
 	loader: async ({ context, params }) => {
-		await context.queryClient.ensureQueryData(
-			executionsQueries.all(params.flowId)
-		);
+		await Promise.all([
+			context.queryClient.ensureQueryData(executionsQueries.all(params.flowId)),
+			context.queryClient.ensureQueryData(
+				executionsQueries.detail(params.execId)
+			),
+			context.queryClient.ensureQueryData(
+				executionsQueries.steps(params.execId)
+			),
+		]);
 
 		return {
 			crumb: {

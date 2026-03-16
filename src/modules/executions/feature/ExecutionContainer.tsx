@@ -1,6 +1,9 @@
 import * as React from "react";
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
+import { differenceInMilliseconds } from "date-fns";
 import { useExecutions } from "../business-logic/use-executions";
+import { useExecution } from "../business-logic/use-execution";
+import { useSteps } from "../business-logic/use-steps";
 import { Button } from "@/shared/ui/button";
 import { LayoutLeft, LayoutRight } from "@untitledui/icons";
 import {
@@ -16,17 +19,69 @@ import {
 	SidebarProvider,
 	SidebarResizeHandle,
 } from "@/shared/ui/sidebar";
+import { StatusDot } from "@/shared/ui/StatusDot";
+import { ExecutionName } from "../ui/ExecutionName";
+import { formatDuration } from "@/shared/utils/time";
+import {
+	PageHeader,
+	PageHeaderActions,
+	PageHeaderBody,
+	PageHeaderContent,
+} from "@/shared/ui/PageHeader";
+import { Stat } from "@/modules/flows/ui/Stat";
+import { SegmentedBar } from "../ui/SegmentedBar";
+import { SpanTree } from "../ui/traces/span-tree";
+import { TimelineAxis } from "../ui/traces/timeline-axis";
+import { StepDetailPanel } from "../ui/traces/step-detail-panel";
+import type { Span } from "../ui/traces/span-types";
 
 export function ExecutionContainer() {
 	const { flowId, execId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/execs/$execId/",
 	});
 	const { executionsData } = useExecutions(flowId);
+	const { executionData } = useExecution(execId);
+	const { stepsData } = useSteps(execId);
 
 	const [leftOpen, setLeftOpen] = React.useState(true);
 	const [rightOpen, setRightOpen] = React.useState(true);
 	const [leftWidth, setLeftWidth] = React.useState(256);
 	const [rightWidth, setRightWidth] = React.useState(256);
+	const [selectedSpanId, setSelectedSpanId] = React.useState<string | null>(
+		null
+	);
+
+	const baseline =
+		executionData.startTime ?? stepsData.find((s) => s.startTime)?.startTime;
+
+	const spans: Span[] = React.useMemo(() => {
+		if (!baseline) return [];
+		return stepsData
+			.filter((s) => s.startTime)
+			.map((s) => ({
+				id: s.id,
+				name: s.name,
+				status: s.status,
+				startMs: differenceInMilliseconds(s.startTime!, baseline),
+				durationMs: s.endTime
+					? differenceInMilliseconds(s.endTime, s.startTime!)
+					: differenceInMilliseconds(new Date(), s.startTime!),
+			}));
+	}, [stepsData, baseline]);
+
+	const totalMs = React.useMemo(() => {
+		if (spans.length === 0) return 0;
+		return Math.max(...spans.map((s) => s.startMs + s.durationMs));
+	}, [spans]);
+
+	const selectedSpan = spans.find((s) => s.id === selectedSpanId) ?? null;
+
+	const timedSteps = stepsData.filter(
+		(s): s is typeof s & { startTime: Date; endTime: Date } =>
+			!!s.startTime &&
+			!!s.endTime &&
+			differenceInMilliseconds(s.endTime, s.startTime) > 0
+	);
 
 	return (
 		<SidebarProvider
@@ -38,28 +93,46 @@ export function ExecutionContainer() {
 		>
 			<Sidebar side="left" collapsible="offcanvas">
 				<SidebarResizeHandle side="left" onResize={setLeftWidth} />
-				<SidebarContent>
-					<SidebarGroup>
-						<SidebarGroupLabel>Executions</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<SidebarMenu>
-								{executionsData.map((execution) => (
-									<SidebarMenuItem key={execution.id}>
-										<SidebarMenuButton isActive={execution.id === execId}>
-											{execution.name}
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								))}
-								{Array.from({ length: 40 }, (_, i) => (
-									<SidebarMenuItem key={`dummy-left-${i}`}>
-										<SidebarMenuButton>
-											Dummy execution {i + 1}
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								))}
-							</SidebarMenu>
-						</SidebarGroupContent>
-					</SidebarGroup>
+				<SidebarContent className="bg-card">
+					<SidebarGroupLabel>Executions</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{executionsData.map((execution) => (
+								<SidebarMenuItem key={execution.id}>
+									<SidebarMenuButton
+										isActive={execution.id === execId}
+										render={
+											<Link
+												to="/flows/$flowId/execs/$execId"
+												params={{ flowId, execId: execution.id }}
+											/>
+										}
+										className="flex items-center justify-between gap-2"
+									>
+										<ExecutionName index={execution.index} />
+										<div className="flex shrink-0 items-center gap-1.5">
+											<StatusDot status={execution.status ?? "unknown"} />
+											<span className="text-muted-foreground text-xs capitalize">
+												{execution.status ?? "unknown"}
+											</span>
+											{formatDuration(
+												execution.startTime,
+												execution.endTime
+											) && (
+												<span className="text-muted-foreground text-xs">
+													·{" "}
+													{formatDuration(
+														execution.startTime,
+														execution.endTime
+													)}
+												</span>
+											)}
+										</div>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
 				</SidebarContent>
 			</Sidebar>
 
@@ -92,30 +165,68 @@ export function ExecutionContainer() {
 								<span className="sr-only">Toggle right sidebar</span>
 							</Button>
 						</header>
-						<main className="flex-1 overflow-y-auto p-4">
-							{Array.from({ length: 40 }, (_, i) => (
-								<div key={i} className="border-b py-3 text-sm">
-									Content item {i + 1}
+						<main className="flex-1 overflow-y-auto">
+							<PageHeader>
+								<PageHeaderContent>
+									<PageHeaderBody>
+										<Stat
+											label="Duration"
+											value={
+												formatDuration(
+													executionData.startTime,
+													executionData.endTime
+												) ?? "—"
+											}
+											valueColor="default"
+											valueSize="sm"
+										/>
+									</PageHeaderBody>
+									{timedSteps.length > 0 && (
+										<PageHeaderActions>
+											<SegmentedBar
+												height="h-6"
+												gap
+												segments={timedSteps.map((s) => ({
+													key: s.id,
+													label: formatDuration(s.startTime, s.endTime),
+													value: differenceInMilliseconds(
+														s.endTime,
+														s.startTime
+													),
+													className: "bg-primary",
+													minWidth: "min-w-10",
+												}))}
+											/>
+										</PageHeaderActions>
+									)}
+								</PageHeaderContent>
+							</PageHeader>
+
+							{spans.length > 0 && (
+								<div className="flex items-center border-b px-3 py-1.5 pl-[calc(0.75rem+240px)]">
+									<TimelineAxis totalMs={totalMs} />
 								</div>
-							))}
+							)}
+
+							<SpanTree
+								spans={spans}
+								totalMs={totalMs}
+								selectedId={selectedSpanId}
+								onSelect={(id) => {
+									setSelectedSpanId(id);
+									setRightOpen(true);
+								}}
+							/>
 						</main>
 					</SidebarInset>
 
 					<Sidebar side="right" collapsible="offcanvas">
 						<SidebarResizeHandle side="right" onResize={setRightWidth} />
-						<SidebarContent>
+						<SidebarContent className="bg-card">
 							<SidebarGroup>
 								<SidebarGroupLabel>Details</SidebarGroupLabel>
 								<SidebarGroupContent>
-									<SidebarMenu>
-										{Array.from({ length: 40 }, (_, i) => (
-											<SidebarMenuItem key={`dummy-right-${i}`}>
-												<SidebarMenuButton>
-													Detail item {i + 1}
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										))}
-									</SidebarMenu>
+									<StepDetailPanel span={selectedSpan} />
 								</SidebarGroupContent>
 							</SidebarGroup>
 						</SidebarContent>
