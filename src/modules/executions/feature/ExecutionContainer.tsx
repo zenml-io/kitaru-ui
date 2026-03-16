@@ -14,6 +14,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
+	SidebarResizeHandle,
 } from "@/shared/ui/sidebar";
 
 export function ExecutionContainer() {
@@ -24,14 +25,19 @@ export function ExecutionContainer() {
 
 	const [leftOpen, setLeftOpen] = React.useState(true);
 	const [rightOpen, setRightOpen] = React.useState(true);
+	const [leftWidth, setLeftWidth] = React.useState(256);
+	const [rightWidth, setRightWidth] = React.useState(256);
 
 	return (
 		<SidebarProvider
 			open={leftOpen}
 			onOpenChange={setLeftOpen}
 			className="min-h-0 flex-1"
+			// TODO: remove type assertion
+			style={{ "--sidebar-width": `${leftWidth}px` } as React.CSSProperties}
 		>
 			<Sidebar side="left" collapsible="offcanvas">
+				<SidebarResizeHandle side="left" onResize={setLeftWidth} />
 				<SidebarContent>
 					<SidebarGroup>
 						<SidebarGroupLabel>Executions</SidebarGroupLabel>
@@ -62,6 +68,10 @@ export function ExecutionContainer() {
 					open={rightOpen}
 					onOpenChange={setRightOpen}
 					className="min-h-0 flex-1"
+					// TODO: remove type assertion
+					style={
+						{ "--sidebar-width": `${rightWidth}px` } as React.CSSProperties
+					}
 				>
 					<SidebarInset className="min-h-0">
 						<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
@@ -92,6 +102,7 @@ export function ExecutionContainer() {
 					</SidebarInset>
 
 					<Sidebar side="right" collapsible="offcanvas">
+						<SidebarResizeHandle side="right" onResize={setRightWidth} />
 						<SidebarContent>
 							<SidebarGroup>
 								<SidebarGroupLabel>Details</SidebarGroupLabel>

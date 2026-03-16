@@ -212,7 +212,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar-gap"
 				className={cn(
-					"relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+					"relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[resizing]/sidebar-wrapper:transition-none",
 					"group-data-[collapsible=offcanvas]:w-0",
 					"group-data-[side=right]:rotate-180",
 					variant === "floating" || variant === "inset"
@@ -224,7 +224,7 @@ function Sidebar({
 				data-slot="sidebar-container"
 				data-side={side}
 				className={cn(
-					"absolute inset-y-0 z-10 hidden w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=left]:left-0 data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] data-[side=right]:right-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] md:flex",
+					"absolute inset-y-0 z-10 hidden w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear group-data-[resizing]/sidebar-wrapper:transition-none data-[side=left]:left-0 data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] data-[side=right]:right-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] md:flex",
 					// Adjust the padding for floating and inset variants.
 					variant === "floating" || variant === "inset"
 						? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -236,7 +236,7 @@ function Sidebar({
 				<div
 					data-sidebar="sidebar"
 					data-slot="sidebar-inner"
-					className="bg-sidebar group-data-[variant=floating]:ring-sidebar-border flex size-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1"
+					className="bg-sidebar group-data-[variant=floating]:ring-sidebar-border relative flex size-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1"
 				>
 					{children}
 				</div>
@@ -689,6 +689,61 @@ function SidebarMenuSubButton({
 	});
 }
 
+function SidebarResizeHandle({
+	side = "left",
+	onResize,
+	minWidth = 150,
+	maxWidth = 500,
+}: {
+	side?: "left" | "right";
+	onResize: (width: number) => void;
+	minWidth?: number;
+	maxWidth?: number;
+}) {
+	const handleMouseDown = React.useCallback(
+		(e: React.MouseEvent) => {
+			e.preventDefault();
+			const container = (e.currentTarget as HTMLElement).closest(
+				'[data-slot="sidebar-container"]'
+			) as HTMLElement | null;
+			const wrapper = (e.currentTarget as HTMLElement).closest(
+				'[data-slot="sidebar-wrapper"]'
+			) as HTMLElement | null;
+			const startX = e.clientX;
+			const startWidth = container?.offsetWidth ?? 256;
+
+			wrapper?.setAttribute("data-resizing", "");
+
+			const handleMouseMove = (e: MouseEvent) => {
+				const delta =
+					side === "left" ? e.clientX - startX : startX - e.clientX;
+				onResize(Math.max(minWidth, Math.min(maxWidth, startWidth + delta)));
+			};
+
+			const handleMouseUp = () => {
+				wrapper?.removeAttribute("data-resizing");
+				document.removeEventListener("mousemove", handleMouseMove);
+				document.removeEventListener("mouseup", handleMouseUp);
+			};
+
+			document.addEventListener("mousemove", handleMouseMove);
+			document.addEventListener("mouseup", handleMouseUp);
+		},
+		[side, onResize, minWidth, maxWidth]
+	);
+
+	return (
+		<div
+			data-slot="sidebar-resize-handle"
+			onMouseDown={handleMouseDown}
+			className={cn(
+				"hover:bg-sidebar-border active:bg-sidebar-border absolute inset-y-0 z-20 w-1 cursor-col-resize transition-colors",
+				side === "left" ? "right-0" : "left-0"
+			)}
+		/>
+	);
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export {
 	Sidebar,
@@ -712,6 +767,7 @@ export {
 	SidebarMenuSubItem,
 	SidebarProvider,
 	SidebarRail,
+	SidebarResizeHandle,
 	SidebarSeparator,
 	SidebarTrigger,
 	useSidebar,
