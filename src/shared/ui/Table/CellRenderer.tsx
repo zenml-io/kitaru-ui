@@ -1,4 +1,5 @@
 import { StatusDot, type StatusDotVariant } from "../StatusDot";
+import { Avatar, AvatarFallback } from "../avatar";
 import { cn } from "@/shared/utils/styles";
 
 function TextRenderer({
@@ -35,4 +36,19 @@ function StatusRenderer({ status = "unknown" }: { status?: StatusDotVariant }) {
 	);
 }
 
-export { TextRenderer, MetricValueRenderer, StatusRenderer };
+function UserRenderer({ userName }: { userName?: string }) {
+	if (!userName) return <TextRenderer>-</TextRenderer>;
+
+	const initials = userName.slice(0, 2).toUpperCase();
+
+	return (
+		<div className="flex items-center gap-2">
+			<Avatar size="sm">
+				<AvatarFallback>{initials}</AvatarFallback>
+			</Avatar>
+			<span className="text-foreground text-sm">{userName}</span>
+		</div>
+	);
+}
+
+export { TextRenderer, MetricValueRenderer, StatusRenderer, UserRenderer };
