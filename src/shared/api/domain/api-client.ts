@@ -1,4 +1,5 @@
 import createClient, { type Middleware } from "openapi-fetch";
+import { z } from "zod";
 import { FetchError } from "./fetch-error";
 import type { paths } from "../openapi";
 import { throwFetchErrorFromResponse } from "../utils/throw-fetch-error-from-response";
@@ -8,8 +9,15 @@ const defaultHeaders = {
 	"Source-Context": "dashboard-v2",
 };
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-const normalizedApiBaseUrl = apiBaseUrl ? apiBaseUrl.replace(/\/+$/, "") : "";
+const apiBaseUrlSchema = z
+	.url()
+	.trim()
+	.transform((value) => value.replace(/\/+$/, ""))
+	.catch("");
+
+const normalizedApiBaseUrl = apiBaseUrlSchema.parse(
+	import.meta.env.VITE_API_BASE_URL
+);
 
 export const apiClient = createClient<paths>({
 	baseUrl: normalizedApiBaseUrl,
