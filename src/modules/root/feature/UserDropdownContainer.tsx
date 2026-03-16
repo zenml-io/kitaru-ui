@@ -10,7 +10,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
 export function UserDropdownContainer() {
@@ -44,6 +44,10 @@ export function UserDropdownContainer() {
 				}
 			></DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[180px]">
+				<DropdownMenuItem render={<Link to="/settings/profile" />}>
+					Profile
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
 				<ThemeSwitcherContainer />
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => logoutUser()}>
