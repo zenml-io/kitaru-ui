@@ -8,12 +8,21 @@ import {
 import { formatDurationShort } from "@/shared/utils/time";
 import { StatusDot } from "@/shared/ui/StatusDot";
 import type { Span } from "./span-types";
+import type { StepArtifacts } from "../../domain/step-artifacts";
+import { ArtifactBlock } from "./artifact-block";
+import { JsonViewer } from "./json-viewer";
 
 interface StepDetailPanelProps {
 	span: Span | null;
+	artifacts: StepArtifacts | null;
+	isLoadingArtifacts: boolean;
 }
 
-export function StepDetailPanel({ span }: StepDetailPanelProps) {
+export function StepDetailPanel({
+	span,
+	artifacts,
+	isLoadingArtifacts,
+}: StepDetailPanelProps) {
 	if (!span) {
 		return (
 			<Empty className="h-full border-none">
@@ -50,6 +59,47 @@ export function StepDetailPanel({ span }: StepDetailPanelProps) {
 						{span.startMs > 0 ? formatDurationShort(span.startMs) : "0ms"}
 					</span>
 				</div>
+			</div>
+
+			{isLoadingArtifacts && (
+				<p className="text-muted-foreground mt-4 text-xs">Loading artifacts…</p>
+			)}
+
+			{artifacts && (
+				<>
+					<ArtifactSection label="Inputs" entries={artifacts.inputs} />
+					<ArtifactSection label="Outputs" entries={artifacts.outputs} />
+				</>
+			)}
+		</div>
+	);
+}
+
+function ArtifactSection({
+	label,
+	entries,
+}: {
+	label: string;
+	entries: Record<string, unknown>;
+}) {
+	const keys = Object.keys(entries);
+	if (keys.length === 0) return null;
+
+	return (
+		<div className="mt-4">
+			<p className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
+				{label}
+			</p>
+			<div className="flex flex-col gap-1">
+				{keys.map((key) => (
+					<ArtifactBlock
+						key={key}
+						label={key}
+						copyText={JSON.stringify(entries[key], null, 2)}
+					>
+						<JsonViewer data={entries[key]} />
+					</ArtifactBlock>
+				))}
 			</div>
 		</div>
 	);

@@ -112,7 +112,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 					params={{ flowId, execId: row.original.id }}
 					className="hover:underline"
 				>
-					<ExecutionName name={row.original.name} index={row.original.index} />
+					<ExecutionName index={row.original.index} />
 				</Link>
 			),
 		},
@@ -129,17 +129,10 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 		{
 			accessorKey: "Author",
 			header: ({ column }) => <SortableHeader column={column} label="Author" />,
-			cell: ({ row }) => <UserRenderer userName={row.original.authorName} />,
-		},
-		{
-			accessorKey: "updatedAt",
-			header: ({ column }) => (
-				<SortableHeader column={column} label="Updated" />
-			),
 			cell: ({ row }) => (
-				<TextRenderer>
-					{row.original.updatedAt?.toLocaleString() ?? "-"}
-				</TextRenderer>
+				<UserRenderer
+					userName={row.original.user?.fullName ?? row.original.user?.name}
+				/>
 			),
 		},
 		{

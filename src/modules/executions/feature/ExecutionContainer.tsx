@@ -4,6 +4,7 @@ import { differenceInMilliseconds } from "date-fns";
 import { useExecutions } from "../business-logic/use-executions";
 import { useExecution } from "../business-logic/use-execution";
 import { useSteps } from "../business-logic/use-steps";
+import { useStepArtifacts } from "../business-logic/use-step-artifacts";
 import { Button } from "@/shared/ui/button";
 import { LayoutLeft, LayoutRight } from "@untitledui/icons";
 import {
@@ -75,6 +76,8 @@ export function ExecutionContainer() {
 	}, [spans]);
 
 	const selectedSpan = spans.find((s) => s.id === selectedSpanId) ?? null;
+	const { artifactsData, isLoading: isLoadingArtifacts } =
+		useStepArtifacts(selectedSpanId);
 
 	const timedSteps = stepsData.filter(
 		(s): s is typeof s & { startTime: Date; endTime: Date } =>
@@ -226,7 +229,11 @@ export function ExecutionContainer() {
 							<SidebarGroup>
 								<SidebarGroupLabel>Details</SidebarGroupLabel>
 								<SidebarGroupContent>
-									<StepDetailPanel span={selectedSpan} />
+									<StepDetailPanel
+										span={selectedSpan}
+										artifacts={artifactsData}
+										isLoadingArtifacts={isLoadingArtifacts}
+									/>
 								</SidebarGroupContent>
 							</SidebarGroup>
 						</SidebarContent>
