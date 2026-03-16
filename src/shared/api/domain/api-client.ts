@@ -8,8 +8,11 @@ const defaultHeaders = {
 	"Source-Context": "dashboard-v2",
 };
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const normalizedApiBaseUrl = apiBaseUrl ? apiBaseUrl.replace(/\/+$/, "") : "";
+
 export const apiClient = createClient<paths>({
-	baseUrl: "",
+	baseUrl: normalizedApiBaseUrl,
 	credentials: "include",
 	headers: defaultHeaders,
 });
