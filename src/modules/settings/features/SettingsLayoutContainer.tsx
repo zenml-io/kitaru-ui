@@ -3,9 +3,11 @@ import { SettingsNavigation } from "../ui/settings-navigation";
 
 export function SettingsLayoutContainer() {
 	return (
-		<div className="container mx-auto flex h-full flex-col gap-4 py-2 lg:flex-row">
+		<div className="container mx-auto flex h-full flex-col gap-4 py-8 lg:flex-row">
 			<SettingsNavigation />
-			<Outlet />
+			<main className="w-full">
+				<Outlet />
+			</main>
 		</div>
 	);
 }
