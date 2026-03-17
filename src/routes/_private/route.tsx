@@ -1,10 +1,10 @@
-import { currentUserQueries } from "@/modules/root/business-logic/current-user-queries";
+import { userQueries } from "@/modules/users/business-logic/user-queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private")({
 	component: PrivateLayout,
 	beforeLoad: async ({ context }) => {
-		await context.queryClient.ensureQueryData(currentUserQueries.detail());
+		await context.queryClient.ensureQueryData(userQueries.currentUser());
 	},
 });
 

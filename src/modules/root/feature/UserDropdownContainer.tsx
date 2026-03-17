@@ -1,6 +1,6 @@
-import { currentUserQueries } from "@/modules/root/business-logic/current-user-queries";
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
+import { userQueries } from "@/modules/users/business-logic/user-queries";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import {
 	DropdownMenu,
@@ -10,14 +10,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
 export function UserDropdownContainer() {
-	const { data } = useSuspenseQuery(currentUserQueries.detail());
+	const { data } = useSuspenseQuery(userQueries.currentUser());
 	const router = useRouter();
 
-	const username = data.fullName || data.name;
+	const resolvedName = data.resolvedName;
+	const avatarUrl = data.avatarUrl ?? undefined;
 
 	const { logoutUser } = useLogoutUser({
 		onSuccess: () => {
@@ -35,15 +36,20 @@ export function UserDropdownContainer() {
 						className="rounded-full"
 						aria-label="User menu"
 					>
-						<Avatar className="h-7 w-7">
+						<Avatar className="size-7">
+							<AvatarImage src={avatarUrl} alt={resolvedName} />
 							<AvatarFallback className="text-xs font-semibold">
-								{username.slice(0, 2).toUpperCase()}
+								{resolvedName.slice(0, 2).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>
 					</Button>
 				}
 			></DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-[180px]">
+				<DropdownMenuItem render={<Link to="/settings/profile" />}>
+					Profile
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
 				<ThemeSwitcherContainer />
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => logoutUser()}>
