@@ -15,6 +15,7 @@ import { Route as PrivateNavbarRouteRouteImport } from './routes/_private/_navba
 import { Route as publicMeshRouteRouteImport } from './routes/(public)/_mesh/route'
 import { Route as PrivateDevicesVerifyRouteImport } from './routes/_private/devices/verify'
 import { Route as publicMeshLoginRouteImport } from './routes/(public)/_mesh/login'
+import { Route as publicMeshActivateUserRouteImport } from './routes/(public)/_mesh/activate-user'
 import { Route as publicMeshActivateServerRouteImport } from './routes/(public)/_mesh/activate-server'
 import { Route as PrivateNavbarSettingsRouteRouteImport } from './routes/_private/_navbar/settings/route'
 import { Route as PrivateNavbarFlowsRouteRouteImport } from './routes/_private/_navbar/flows/route'
@@ -51,6 +52,11 @@ const PrivateDevicesVerifyRoute = PrivateDevicesVerifyRouteImport.update({
 const publicMeshLoginRoute = publicMeshLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => publicMeshRouteRoute,
+} as any)
+const publicMeshActivateUserRoute = publicMeshActivateUserRouteImport.update({
+  id: '/activate-user',
+  path: '/activate-user',
   getParentRoute: () => publicMeshRouteRoute,
 } as any)
 const publicMeshActivateServerRoute =
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/flows': typeof PrivateNavbarFlowsRouteRouteWithChildren
   '/settings': typeof PrivateNavbarSettingsRouteRouteWithChildren
   '/activate-server': typeof publicMeshActivateServerRoute
+  '/activate-user': typeof publicMeshActivateUserRoute
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof PrivateIndexRoute
   '/activate-server': typeof publicMeshActivateServerRoute
+  '/activate-user': typeof publicMeshActivateUserRoute
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
   '/settings/members': typeof PrivateNavbarSettingsMembersRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/_private/_navbar/flows': typeof PrivateNavbarFlowsRouteRouteWithChildren
   '/_private/_navbar/settings': typeof PrivateNavbarSettingsRouteRouteWithChildren
   '/(public)/_mesh/activate-server': typeof publicMeshActivateServerRoute
+  '/(public)/_mesh/activate-user': typeof publicMeshActivateUserRoute
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
   '/_private/devices/verify': typeof PrivateDevicesVerifyRoute
   '/_private/_navbar/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/flows'
     | '/settings'
     | '/activate-server'
+    | '/activate-user'
     | '/login'
     | '/devices/verify'
     | '/flows/$flowId'
@@ -178,6 +188,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activate-server'
+    | '/activate-user'
     | '/login'
     | '/devices/verify'
     | '/settings/members'
@@ -195,6 +206,7 @@ export interface FileRouteTypes {
     | '/_private/_navbar/flows'
     | '/_private/_navbar/settings'
     | '/(public)/_mesh/activate-server'
+    | '/(public)/_mesh/activate-user'
     | '/(public)/_mesh/login'
     | '/_private/devices/verify'
     | '/_private/_navbar/flows/$flowId'
@@ -253,6 +265,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof publicMeshLoginRouteImport
+      parentRoute: typeof publicMeshRouteRoute
+    }
+    '/(public)/_mesh/activate-user': {
+      id: '/(public)/_mesh/activate-user'
+      path: '/activate-user'
+      fullPath: '/activate-user'
+      preLoaderRoute: typeof publicMeshActivateUserRouteImport
       parentRoute: typeof publicMeshRouteRoute
     }
     '/(public)/_mesh/activate-server': {
@@ -410,11 +429,13 @@ const PrivateRouteRouteWithChildren = PrivateRouteRoute._addFileChildren(
 
 interface publicMeshRouteRouteChildren {
   publicMeshActivateServerRoute: typeof publicMeshActivateServerRoute
+  publicMeshActivateUserRoute: typeof publicMeshActivateUserRoute
   publicMeshLoginRoute: typeof publicMeshLoginRoute
 }
 
 const publicMeshRouteRouteChildren: publicMeshRouteRouteChildren = {
   publicMeshActivateServerRoute: publicMeshActivateServerRoute,
+  publicMeshActivateUserRoute: publicMeshActivateUserRoute,
   publicMeshLoginRoute: publicMeshLoginRoute,
 }
 
