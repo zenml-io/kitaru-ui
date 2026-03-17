@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useParams } from "@tanstack/react-router";
-import { differenceInMilliseconds } from "date-fns";
 import { useExecutions } from "../business-logic/use-executions";
 import { useExecution } from "../business-logic/use-execution";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
@@ -20,7 +19,6 @@ import {
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { CheckpointDetailPanel } from "@/modules/checkpoints/ui/CheckpointDetailPanel";
-import type { Span } from "../ui/traces/span-types";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
@@ -34,44 +32,16 @@ export function ExecutionContainer() {
 	const [rightOpen, setRightOpen] = React.useState(true);
 	const [leftWidth, setLeftWidth] = React.useState(256);
 	const [rightWidth, setRightWidth] = React.useState(256);
-	const [selectedSpanId, setSelectedSpanId] = React.useState<
+	const [selectedCheckpointId, setSelectedCheckpointId] = React.useState<
 		string | undefined
 	>();
 
-	const baseline =
-		executionData.startTime ??
-		checkpointsData.find((c) => c.startTime)?.startTime;
-
-	const spans: Span[] = React.useMemo(() => {
-		if (!baseline) return [];
-		return checkpointsData
-			.filter((c) => c.startTime)
-			.map((c) => ({
-				id: c.id,
-				name: c.name,
-				status: c.status,
-				startMs: differenceInMilliseconds(c.startTime!, baseline),
-				durationMs: c.endTime
-					? differenceInMilliseconds(c.endTime, c.startTime!)
-					: differenceInMilliseconds(new Date(), c.startTime!),
-			}));
-	}, [checkpointsData, baseline]);
-
-	const totalMs = React.useMemo(() => {
-		if (spans.length === 0) return 0;
-		return Math.max(...spans.map((s) => s.startMs + s.durationMs));
-	}, [spans]);
-
-	const selectedSpan = spans.find((s) => s.id === selectedSpanId);
-	const { artifactsData, isLoading: isLoadingArtifacts } =
-		useCheckpointArtifacts(selectedSpanId);
-
-	const timedCheckpoints = checkpointsData.filter(
-		(c): c is typeof c & { startTime: Date; endTime: Date } =>
-			!!c.startTime &&
-			!!c.endTime &&
-			differenceInMilliseconds(c.endTime, c.startTime) > 0
+	const selectedCheckpoint = checkpointsData?.find(
+		(c) => c.id === selectedCheckpointId
 	);
+
+	const { artifactsData, isLoading: isLoadingArtifacts } =
+		useCheckpointArtifacts(selectedCheckpointId);
 
 	return (
 		<SidebarProvider
@@ -126,12 +96,10 @@ export function ExecutionContainer() {
 						</header>
 						<ExecutionDetails
 							execution={executionData}
-							timedCheckpoints={timedCheckpoints}
-							spans={spans}
-							totalMs={totalMs}
-							selectedSpanId={selectedSpanId}
-							onSelectSpan={(id) => {
-								setSelectedSpanId(id);
+							checkpoints={checkpointsData}
+							selectedCheckpointId={selectedCheckpointId}
+							onSelectCheckpoint={(id) => {
+								setSelectedCheckpointId(id);
 								setRightOpen(true);
 							}}
 						/>
@@ -144,7 +112,7 @@ export function ExecutionContainer() {
 								<SidebarGroupLabel>Details</SidebarGroupLabel>
 								<SidebarGroupContent>
 									<CheckpointDetailPanel
-										span={selectedSpan}
+										checkpoint={selectedCheckpoint}
 										artifacts={artifactsData}
 										isLoadingArtifacts={isLoadingArtifacts}
 									/>

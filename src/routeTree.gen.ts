@@ -24,7 +24,6 @@ import { Route as PrivateNavbarSettingsProfileRouteImport } from './routes/_priv
 import { Route as PrivateNavbarFlowsFlowIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/route'
 import { Route as PrivateNavbarFlowsFlowIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/index'
 import { Route as PrivateNavbarFlowsFlowIdTabRouteImport } from './routes/_private/_navbar/flows/$flowId/$tab'
-import { Route as PrivateNavbarFlowsFlowIdExecutionsRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/route'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/index'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/route'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/index'
@@ -108,23 +107,17 @@ const PrivateNavbarFlowsFlowIdTabRoute =
     path: '/$tab',
     getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
   } as any)
-const PrivateNavbarFlowsFlowIdExecutionsRouteRoute =
-  PrivateNavbarFlowsFlowIdExecutionsRouteRouteImport.update({
-    id: '/executions',
-    path: '/executions',
-    getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
-  } as any)
 const PrivateNavbarFlowsFlowIdExecutionsIndexRoute =
   PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => PrivateNavbarFlowsFlowIdExecutionsRouteRoute,
+    id: '/executions/',
+    path: '/executions/',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
   } as any)
 const PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute =
   PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport.update({
-    id: '/$executionId',
-    path: '/$executionId',
-    getParentRoute: () => PrivateNavbarFlowsFlowIdExecutionsRouteRoute,
+    id: '/executions/$executionId',
+    path: '/executions/$executionId',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
   } as any)
 const PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute =
   PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRouteImport.update({
@@ -354,26 +347,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdTabRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
     }
-    '/_private/_navbar/flows/$flowId/executions': {
-      id: '/_private/_navbar/flows/$flowId/executions'
-      path: '/executions'
-      fullPath: '/flows/$flowId/executions'
-      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsRouteRouteImport
-      parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
-    }
     '/_private/_navbar/flows/$flowId/executions/': {
       id: '/_private/_navbar/flows/$flowId/executions/'
-      path: '/'
+      path: '/executions'
       fullPath: '/flows/$flowId/executions/'
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport
-      parentRoute: typeof PrivateNavbarFlowsFlowIdExecutionsRouteRoute
+      parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
     }
     '/_private/_navbar/flows/$flowId/executions/$executionId': {
       id: '/_private/_navbar/flows/$flowId/executions/$executionId'
-      path: '/$executionId'
+      path: '/executions/$executionId'
       fullPath: '/flows/$flowId/executions/$executionId'
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport
-      parentRoute: typeof PrivateNavbarFlowsFlowIdExecutionsRouteRoute
+      parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
     }
     '/_private/_navbar/flows/$flowId/executions/$executionId/': {
       id: '/_private/_navbar/flows/$flowId/executions/$executionId/'
@@ -400,36 +386,21 @@ const PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren =
     PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteChildren,
   )
 
-interface PrivateNavbarFlowsFlowIdExecutionsRouteRouteChildren {
+interface PrivateNavbarFlowsFlowIdRouteRouteChildren {
+  PrivateNavbarFlowsFlowIdTabRoute: typeof PrivateNavbarFlowsFlowIdTabRoute
+  PrivateNavbarFlowsFlowIdIndexRoute: typeof PrivateNavbarFlowsFlowIdIndexRoute
   PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
   PrivateNavbarFlowsFlowIdExecutionsIndexRoute: typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
 }
 
-const PrivateNavbarFlowsFlowIdExecutionsRouteRouteChildren: PrivateNavbarFlowsFlowIdExecutionsRouteRouteChildren =
+const PrivateNavbarFlowsFlowIdRouteRouteChildren: PrivateNavbarFlowsFlowIdRouteRouteChildren =
   {
+    PrivateNavbarFlowsFlowIdTabRoute: PrivateNavbarFlowsFlowIdTabRoute,
+    PrivateNavbarFlowsFlowIdIndexRoute: PrivateNavbarFlowsFlowIdIndexRoute,
     PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute:
       PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren,
     PrivateNavbarFlowsFlowIdExecutionsIndexRoute:
       PrivateNavbarFlowsFlowIdExecutionsIndexRoute,
-  }
-
-const PrivateNavbarFlowsFlowIdExecutionsRouteRouteWithChildren =
-  PrivateNavbarFlowsFlowIdExecutionsRouteRoute._addFileChildren(
-    PrivateNavbarFlowsFlowIdExecutionsRouteRouteChildren,
-  )
-
-interface PrivateNavbarFlowsFlowIdRouteRouteChildren {
-  PrivateNavbarFlowsFlowIdExecutionsRouteRoute: typeof PrivateNavbarFlowsFlowIdExecutionsRouteRouteWithChildren
-  PrivateNavbarFlowsFlowIdTabRoute: typeof PrivateNavbarFlowsFlowIdTabRoute
-  PrivateNavbarFlowsFlowIdIndexRoute: typeof PrivateNavbarFlowsFlowIdIndexRoute
-}
-
-const PrivateNavbarFlowsFlowIdRouteRouteChildren: PrivateNavbarFlowsFlowIdRouteRouteChildren =
-  {
-    PrivateNavbarFlowsFlowIdExecutionsRouteRoute:
-      PrivateNavbarFlowsFlowIdExecutionsRouteRouteWithChildren,
-    PrivateNavbarFlowsFlowIdTabRoute: PrivateNavbarFlowsFlowIdTabRoute,
-    PrivateNavbarFlowsFlowIdIndexRoute: PrivateNavbarFlowsFlowIdIndexRoute,
   }
 
 const PrivateNavbarFlowsFlowIdRouteRouteWithChildren =

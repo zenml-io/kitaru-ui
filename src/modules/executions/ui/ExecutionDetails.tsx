@@ -6,31 +6,42 @@ import {
 	PageHeaderContent,
 } from "@/shared/ui/PageHeader";
 import { Stat } from "@/modules/flows/ui/Stat";
-import { formatDuration } from "@/shared/utils/time";
+import { formatDuration, formatDurationShort } from "@/shared/utils/time";
 import type { Execution } from "../domain/execution";
 import type { Checkpoint } from "@/modules/checkpoints/domain/checkpoint";
-import type { Span } from "./traces/span-types";
 import { SegmentedBar } from "./SegmentedBar";
 import { TimelineAxis } from "./traces/TimelineAxis";
 import { TimelineSpans } from "./traces/TimelineSpans";
 
 interface ExecutionDetailsProps {
 	execution: Execution;
-	timedCheckpoints: (Checkpoint & { startTime: Date; endTime: Date })[];
-	spans: Span[];
-	totalMs: number;
-	selectedSpanId?: string;
-	onSelectSpan: (id: string) => void;
+	checkpoints: Checkpoint[];
+	selectedCheckpointId?: string;
+	onSelectCheckpoint: (id: string) => void;
 }
 
 export function ExecutionDetails({
 	execution,
-	timedCheckpoints,
-	spans,
-	totalMs,
-	selectedSpanId,
-	onSelectSpan,
+	checkpoints,
+	selectedCheckpointId,
+	onSelectCheckpoint,
 }: ExecutionDetailsProps) {
+	const totalMs =
+		execution.startTime && execution.endTime
+			? differenceInMilliseconds(execution.endTime, execution.startTime)
+			: checkpoints.reduce((sum, c) => sum + c.durationMs, 0);
+
+	const spans = checkpoints.map((c) => ({
+		id: c.id,
+		name: c.name,
+		status: c.status,
+		startMs:
+			c.startTime && execution.startTime
+				? differenceInMilliseconds(c.startTime, execution.startTime)
+				: 0,
+		durationMs: c.durationMs,
+	}));
+
 	return (
 		<main className="flex-1 overflow-y-auto">
 			<PageHeader>
@@ -45,7 +56,7 @@ export function ExecutionDetails({
 							valueSize="sm"
 						/>
 					</PageHeaderBody>
-					{timedCheckpoints.length > 0 && (
+					{checkpoints.length > 0 && (
 						<PageHeaderActions>
 							<div className="flex flex-1 flex-col gap-1">
 								<span className="text-2xs text-muted-foreground font-semibold tracking-wider uppercase">
@@ -54,10 +65,10 @@ export function ExecutionDetails({
 								<SegmentedBar
 									height="h-6"
 									gap
-									segments={timedCheckpoints.map((c) => ({
+									segments={checkpoints.map((c) => ({
 										key: c.id,
-										label: formatDuration(c.startTime, c.endTime),
-										value: differenceInMilliseconds(c.endTime, c.startTime),
+										label: formatDurationShort(c.durationMs),
+										value: c.durationMs,
 										className: "bg-primary",
 										minWidth: "min-w-10",
 									}))}
@@ -77,8 +88,8 @@ export function ExecutionDetails({
 			<TimelineSpans
 				spans={spans}
 				totalMs={totalMs}
-				selectedId={selectedSpanId}
-				onSelect={onSelectSpan}
+				selectedId={selectedCheckpointId}
+				onSelect={onSelectCheckpoint}
 			/>
 		</main>
 	);

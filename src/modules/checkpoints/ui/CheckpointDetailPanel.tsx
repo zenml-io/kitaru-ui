@@ -7,23 +7,23 @@ import {
 } from "@/shared/ui/empty";
 import { formatDurationShort } from "@/shared/utils/time";
 import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
-import type { Span } from "@/modules/executions/ui/traces/span-types";
+import type { Checkpoint } from "../domain/checkpoint";
 import type { CheckpointArtifacts } from "../domain/checkpoint-artifacts";
 import { ArtifactBlock } from "./ArtifactBlock";
 import { JsonViewer } from "./JsonViewer";
 
 interface CheckpointDetailPanelProps {
-	span?: Span;
+	checkpoint?: Checkpoint;
 	artifacts: CheckpointArtifacts | null;
 	isLoadingArtifacts: boolean;
 }
 
 export function CheckpointDetailPanel({
-	span,
+	checkpoint,
 	artifacts,
 	isLoadingArtifacts,
 }: CheckpointDetailPanelProps) {
-	if (span === undefined) {
+	if (checkpoint === undefined) {
 		return (
 			<Empty className="h-full border-none">
 				<EmptyHeader>
@@ -38,25 +38,23 @@ export function CheckpointDetailPanel({
 
 	return (
 		<div className="p-4">
-			<p className="font-mono text-sm font-semibold break-all">{span.name}</p>
+			<p className="font-mono text-sm font-semibold break-all">
+				{checkpoint.name}
+			</p>
 			<div className="mt-4 flex flex-col divide-y">
 				<div className="flex items-center justify-between py-2">
 					<span className="text-muted-foreground text-xs">Status</span>
 					<div className="flex items-center gap-1.5">
-						<StatusDot status={span.status as StatusDotVariant} />
-						<span className="text-xs capitalize">{span.status}</span>
+						<StatusDot status={checkpoint.status as StatusDotVariant} />
+						<span className="text-xs capitalize">{checkpoint.status}</span>
 					</div>
 				</div>
 				<div className="flex items-center justify-between py-2">
 					<span className="text-muted-foreground text-xs">Duration</span>
 					<span className="font-mono text-xs">
-						{span.durationMs > 0 ? formatDurationShort(span.durationMs) : "—"}
-					</span>
-				</div>
-				<div className="flex items-center justify-between py-2">
-					<span className="text-muted-foreground text-xs">Start offset</span>
-					<span className="font-mono text-xs">
-						{span.startMs > 0 ? formatDurationShort(span.startMs) : "0ms"}
+						{checkpoint.durationMs > 0
+							? formatDurationShort(checkpoint.durationMs)
+							: "—"}
 					</span>
 				</div>
 			</div>

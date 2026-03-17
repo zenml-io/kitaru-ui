@@ -1,29 +1,26 @@
 import type { components } from "@/shared/api/openapi";
-
-export type CheckpointStatus = components["schemas"]["ExecutionStatus"];
+import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 
 export type Checkpoint = {
 	id: string;
 	name: string;
-	status: CheckpointStatus;
+	type: string;
+	durationMs: number;
+	status: ExecutionStatus;
 	startTime?: Date;
-	endTime?: Date;
 };
 
 export function checkpointFromApiToDomain(
-	step: components["schemas"]["StepRunResponse"]
+	node: components["schemas"]["Node"]
 ): Checkpoint {
-	if (!step.body) {
-		throw new Error("Checkpoint body is required");
-	}
-
 	return {
-		id: step.id,
-		name: step.name,
-		status: step.body.status,
-		startTime: step.body.start_time
-			? new Date(step.body.start_time)
+		id: node.id ?? node.node_id,
+		name: node.name,
+		type: node.type,
+		durationMs: (Number(node.metadata?.duration) || 0) * 1000,
+		status: node.metadata?.status as ExecutionStatus,
+		startTime: node.metadata?.start_time
+			? new Date(node.metadata?.start_time as string)
 			: undefined,
-		endTime: step.body.end_time ? new Date(step.body.end_time) : undefined,
 	};
 }
