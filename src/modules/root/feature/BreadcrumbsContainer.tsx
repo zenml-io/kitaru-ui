@@ -26,11 +26,13 @@ export function BreadcrumbsContainer() {
 						<BreadcrumbItem>
 							{index === matchesWithCrumbs.length - 1 ? (
 								<BreadcrumbPage className="font-semibold">
-									{match.loaderData?.crumb}
+									{match.loaderData?.crumb.label}
 								</BreadcrumbPage>
+							) : match.loaderData?.crumb.disabled ? (
+								<BreadcrumbPage>{match.loaderData?.crumb.label}</BreadcrumbPage>
 							) : (
 								<BreadcrumbLink render={<Link to={match.fullPath} />}>
-									{match.loaderData?.crumb}
+									{match.loaderData?.crumb.label}
 								</BreadcrumbLink>
 							)}
 						</BreadcrumbItem>

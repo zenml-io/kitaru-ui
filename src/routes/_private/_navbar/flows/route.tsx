@@ -4,7 +4,10 @@ export const Route = createFileRoute("/_private/_navbar/flows")({
 	component: Outlet,
 	loader: () => {
 		return {
-			crumb: "Flows",
+			crumb: {
+				label: "Flows",
+				disabled: false,
+			},
 		};
 	},
 });
