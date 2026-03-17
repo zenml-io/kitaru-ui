@@ -48,13 +48,14 @@ cp .env.example .env
 pnpm dev
 ```
 
-The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL`, so the frontend and backend appear on the same origin. This is required for cookie-based auth (`credentials: "include"`).
+By default, the app sends requests to relative paths (for example `/api/v1/current-user`). In local development, the Vite dev server proxies `/api` requests to `VITE_BACKEND_URL`, so the frontend and backend appear on the same origin.
 
 ### Environment Variables
 
-| Variable           | Default                 | Description                                 |
-| ------------------ | ----------------------- | ------------------------------------------- |
-| `VITE_BACKEND_URL` | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy |
+| Variable            | Default                 | Description                                                                                                                                      |
+| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_BACKEND_URL`  | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy                                                                                                      |
+| `VITE_API_BASE_URL` | _(unset)_               | Optional API origin override (build-time). If set (for example `https://backend.test.com`), requests are sent to `<origin>/api/v1/...` directly. |
 
 ### Scripts
 
@@ -134,7 +135,8 @@ Both are excluded from ESLint.
 
 ### Authentication
 
-- `apiClient` sends all requests to `/api/v1` with `credentials: "include"` (cookie auth)
+- `apiClient` sends all requests with `credentials: "include"` (cookie auth)
+- By default requests are relative (`/api/v1/...`); optionally set `VITE_API_BASE_URL` to target a full backend origin
 - Vite proxies `/api` to `VITE_BACKEND_URL` in development
 - Login uses `application/x-www-form-urlencoded` content type (exception to the default JSON headers)
 

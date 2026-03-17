@@ -1,6 +1,13 @@
 import type { LoginPayload } from "@/modules/session/domain/login-schema";
-import type { LoginSuccessResponse } from "@/modules/session/domain/types";
+import {
+	isLoginTokenResponse,
+	type LoginSuccessResponse,
+} from "@/modules/session/domain/types";
 import { apiClient } from "@/shared/api/domain/api-client";
+import {
+	clearCsrfToken,
+	setCsrfToken,
+} from "@/shared/api/utils/csrf-token-cookie";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
 
 export async function loginUser(
@@ -13,5 +20,15 @@ export async function loginUser(
 		body: new URLSearchParams(payload),
 	});
 
-	return expectData(response);
+	const loginResponse = expectData(response);
+
+	if (isLoginTokenResponse(loginResponse)) {
+		if (loginResponse.csrf_token) {
+			setCsrfToken(loginResponse.csrf_token);
+		} else {
+			clearCsrfToken();
+		}
+	}
+
+	return loginResponse;
 }

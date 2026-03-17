@@ -19,7 +19,7 @@ pnpm generate:types   # Generate OpenAPI types: pnpm generate:types -- <base-url
 
 ### Authentication & Proxy
 
-The Vite dev server proxies `/api` requests to `VITE_BACKEND_URL` (default `http://localhost:8237`). The app uses cookie-based auth with `credentials: "include"`, so the frontend and backend must appear on the same origin.
+By default, API requests are relative (`/api/v1/...`). In development, the Vite dev server proxies `/api` requests to `VITE_BACKEND_URL` (default `http://localhost:8237`) so frontend and backend appear on the same origin. For cross-origin deployments, set `VITE_API_BASE_URL` to an absolute backend origin (for example `https://backend.test.com`) and ensure backend CORS/cookie settings allow credentialed requests from the frontend origin.
 
 ## Architecture Overview
 
@@ -177,7 +177,8 @@ See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 
 ### Networking
 
-- `apiClient` prefixes all requests with `/api/v1` and sends `credentials: "include"`
+- `apiClient` sends `credentials: "include"` and targets `/api/v1/...` by default
+- Optional override: set `VITE_API_BASE_URL` to send requests to `<origin>/api/v1/...`
 - Default headers: `Content-Type: application/json`, `Source-Context: dashboard-v2`
 - Login is a special case that overrides content type to `application/x-www-form-urlencoded`
 - Vite proxies `/api` to `VITE_BACKEND_URL` in development
