@@ -1,6 +1,6 @@
-import { currentUserQueries } from "@/modules/root/business-logic/current-user-queries";
+import { userQueries } from "@/modules/user/business-logic/user-queries";
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import {
 	DropdownMenu,
@@ -14,10 +14,13 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
 export function UserDropdownContainer() {
-	const { data } = useSuspenseQuery(currentUserQueries.detail());
+	const { data } = useSuspenseQuery(userQueries.currentUser());
 	const router = useRouter();
 
 	const username = data.body?.full_name || data.name;
+	const avatarUrl = data.body?.avatar_url ?? undefined;
+
+	console.log(avatarUrl);
 
 	const { logoutUser } = useLogoutUser({
 		onSuccess: () => {
@@ -35,7 +38,8 @@ export function UserDropdownContainer() {
 						className="rounded-full"
 						aria-label="User menu"
 					>
-						<Avatar className="h-7 w-7">
+						<Avatar className="size-7">
+							<AvatarImage src={avatarUrl} alt={username} />
 							<AvatarFallback className="text-xs font-semibold">
 								{username.slice(0, 2).toUpperCase()}
 							</AvatarFallback>

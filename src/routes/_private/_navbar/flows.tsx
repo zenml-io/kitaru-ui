@@ -9,7 +9,7 @@ import {
 	createFileRoute,
 	stripSearchParams,
 } from "@tanstack/react-router";
-import z from "zod";
+import { z } from "zod";
 
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { PageSpinner } from "@/shared/ui/spinner";

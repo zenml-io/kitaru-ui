@@ -1,13 +1,16 @@
+import { userQueries } from "@/modules/user/business-logic/user-queries";
+import { UpdateCurrentUserPage } from "@/modules/user/features/UpdateCurrentUserPageContainer";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/_navbar/settings/profile")({
-	component: RouteComponent,
+	component: UpdateCurrentUserPage,
+	loader: async ({ context }) => {
+		return Promise.all([
+			context.queryClient.ensureQueryData(userQueries.currentUser()),
+		]);
+	},
 	head: () => ({
 		meta: [{ title: buildPageTitles("Profile") }],
 	}),
 });
-
-function RouteComponent() {
-	return <div>Hello "/_private/_navbar/settings/profile"!</div>;
-}
