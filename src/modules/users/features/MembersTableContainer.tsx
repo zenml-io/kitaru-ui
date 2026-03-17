@@ -17,19 +17,33 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
 import type { User } from "../domain/users";
 
-export function MembersTableContainer() {
+type MembersTableContainerProps = {
+	searchValue: string;
+};
+
+export function MembersTableContainer({
+	searchValue,
+}: MembersTableContainerProps) {
 	const { data } = useSuspenseQuery(userQueries.list());
+
+	const filteredMembers = useMemo(
+		() =>
+			data.items.filter((member) =>
+				member.name.toLowerCase().includes(searchValue.toLowerCase())
+			),
+		[data.items, searchValue]
+	);
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
 	const table = useReactTable({
-		data: data.items,
+		data: filteredMembers,
 		columns: columns,
 		state: {
 			sorting,
