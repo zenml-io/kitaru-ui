@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId")({
 			flowName: flow.name,
 			crumb: {
 				label: flow.name,
-				disabled: true,
+				disabled: false,
 			},
 		};
 	},

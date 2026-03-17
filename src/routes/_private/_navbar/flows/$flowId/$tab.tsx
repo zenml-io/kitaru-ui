@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 			flowName: flow.name,
 			crumb: {
 				label: "Overview",
-				disabled: true,
+				disabled: false,
 			},
 		};
 	},
