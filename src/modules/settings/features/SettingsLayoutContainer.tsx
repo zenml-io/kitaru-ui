@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { SettingsNavigation } from "../ui/settings-navigation";
+import { SettingsNavigation } from "../ui/SettingsNavigation";
 
 export function SettingsLayoutContainer() {
 	return (

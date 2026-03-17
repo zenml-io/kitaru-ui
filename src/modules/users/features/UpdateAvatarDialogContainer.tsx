@@ -23,7 +23,7 @@ import {
 import { useUpdateCurrentUser } from "../business-logic/use-update-current-user";
 import { userQueries, userQueryKeys } from "../business-logic/user-queries";
 
-export function UpdateAvatarDialog({ children }: PropsWithChildren) {
+export function UpdateAvatarDialogContainer({ children }: PropsWithChildren) {
 	const formId = useId();
 	const [open, setOpen] = useState(false);
 	const { data } = useSuspenseQuery(userQueries.currentUser());

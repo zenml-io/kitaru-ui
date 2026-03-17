@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { UpdateAvatarContainer } from "./UpdateAvatarContainer";
-import { UpdateCurrentUserForm } from "./UpdateCurrentUserFormContainer";
+import { UpdateCurrentUserFormContainer } from "./UpdateCurrentUserFormContainer";
 
-export function UpdateCurrentUserPage() {
+export function UpdateCurrentUserPageContainer() {
 	return (
 		<Card>
 			<CardHeader>
@@ -10,7 +10,7 @@ export function UpdateCurrentUserPage() {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<UpdateAvatarContainer />
-				<UpdateCurrentUserForm />
+				<UpdateCurrentUserFormContainer />
 			</CardContent>
 		</Card>
 	);

@@ -12,7 +12,7 @@ import { useUpdateCurrentUser } from "../business-logic/use-update-current-user"
 import { userQueries, userQueryKeys } from "../business-logic/user-queries";
 import { toast } from "sonner";
 
-export function UpdateCurrentUserForm() {
+export function UpdateCurrentUserFormContainer() {
 	const { data } = useSuspenseQuery(userQueries.currentUser());
 	const queryClient = useQueryClient();
 	const { current } = userQueryKeys;

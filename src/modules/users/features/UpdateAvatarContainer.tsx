@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { userQueries } from "../business-logic/user-queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
-import { UpdateAvatarDialog } from "./UpdateAvatarDialog";
+import { UpdateAvatarDialogContainer } from "./UpdateAvatarDialogContainer";
 
 export function UpdateAvatarContainer() {
 	const { data } = useSuspenseQuery(userQueries.currentUser());
@@ -17,7 +17,7 @@ export function UpdateAvatarContainer() {
 					{resolvedName.slice(0, 2).toUpperCase()}
 				</AvatarFallback>
 			</Avatar>
-			<UpdateAvatarDialog>Change Avatar</UpdateAvatarDialog>
+			<UpdateAvatarDialogContainer>Change Avatar</UpdateAvatarDialogContainer>
 		</section>
 	);
 }
