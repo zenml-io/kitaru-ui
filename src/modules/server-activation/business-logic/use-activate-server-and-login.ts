@@ -12,10 +12,6 @@ export async function activateServerAndLogin(
 	payload: ServerActivationRequest
 ): Promise<LoginTokenResponse> {
 	await activateServer(payload);
-	// just to guard the types
-	if (!payload.admin_username || !payload.admin_password) {
-		throw new Error("Username and password are required");
-	}
 	const response = await loginUser({
 		username: payload.admin_username,
 		password: payload.admin_password,
