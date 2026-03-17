@@ -174,6 +174,7 @@ See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 - Use PascalCase for React component and context files (e.g. `Dashboard.tsx`, `DashboardContainer.tsx`, `AuthContext.tsx`)
 - Use kebab-case for hooks, utilities, API calls, and domain-layer files (e.g. `use-pipeline.tsx`, `api-client.ts`, `fetch-device.ts`)
 - Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions)
+- define optional props/params like this: `selectedId?: string` instead of `selectedId: string | null` or `selectedId: string | undefined`
 
 ### Networking
 

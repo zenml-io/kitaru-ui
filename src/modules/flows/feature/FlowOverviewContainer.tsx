@@ -39,7 +39,10 @@ export function FlowOverviewContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<div className="container mx-auto flex w-full flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-				<ExecutionsTableContainer executionRows={executionsData} />
+				<ExecutionsTableContainer
+					executionRows={executionsData}
+					flowId={flowId}
+				/>
 			</div>
 		</>
 	);

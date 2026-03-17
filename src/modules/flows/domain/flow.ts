@@ -17,7 +17,7 @@ export type Flow = {
 	id: string;
 	name: string;
 	latestExecStatus?: ExecutionStatus;
-	latestExecId?: string;
+	latestexecutionId?: string;
 	createdAt?: Date;
 };
 
@@ -40,7 +40,7 @@ export function flowFromApiToDomain(
 		id: flow.id,
 		name: flow.name,
 		latestExecStatus: flow.resources?.latest_run_status ?? undefined,
-		latestExecId: flow.resources?.latest_run_id ?? undefined,
+		latestexecutionId: flow.resources?.latest_run_id ?? undefined,
 		createdAt: flow.body?.created ? new Date(flow.body.created) : undefined,
 	};
 }

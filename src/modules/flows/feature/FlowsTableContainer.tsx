@@ -101,12 +101,12 @@ const flowColumns: ColumnDef<Flow>[] = [
 		),
 	},
 	{
-		accessorKey: "latestExecId",
+		accessorKey: "latestexecutionId",
 		header: ({ column }) => (
 			<SortableHeader column={column} label="Latest Execution ID" />
 		),
 		cell: ({ row }) => (
-			<TextRenderer>{row.original.latestExecId ?? "-"}</TextRenderer>
+			<TextRenderer>{row.original.latestexecutionId ?? "-"}</TextRenderer>
 		),
 	},
 	{

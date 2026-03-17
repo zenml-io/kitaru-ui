@@ -35,6 +35,8 @@ export type Execution = {
 	index: number;
 	user?: User;
 	createdAt?: Date;
+	startTime?: Date;
+	endTime?: Date;
 };
 
 export function executionFromApiToDomain(
@@ -53,5 +55,11 @@ export function executionFromApiToDomain(
 			? userFromApiToDomain(run.resources.user)
 			: undefined,
 		createdAt: new Date(run.body.created),
+		startTime: run.metadata?.start_time
+			? new Date(run.metadata.start_time)
+			: undefined,
+		endTime: run.metadata?.end_time
+			? new Date(run.metadata.end_time)
+			: undefined,
 	};
 }

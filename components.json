@@ -17,7 +17,7 @@
 		"utils": "@/shared/utils",
 		"ui": "@/shared/ui",
 		"lib": "@/shared/utils",
-		"hooks": "@/shared/hooks"
+		"hooks": "@/shared/business-logic"
 	},
 	"menuColor": "default",
 	"menuAccent": "subtle",
