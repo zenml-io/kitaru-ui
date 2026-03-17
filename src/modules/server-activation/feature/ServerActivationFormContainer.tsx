@@ -3,7 +3,7 @@ import {
 	serverActivationSchema,
 	type ServerActivationPayload,
 } from "@/modules/server-activation/domain/server-activation-schema";
-import { useActivateServerAndLogin } from "@/modules/server-activation/feature/use-activate-server-and-login";
+import { useActivateServerAndLogin } from "@/modules/server-activation/business-logic/use-activate-server-and-login";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
@@ -12,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { ServerActivationRequest } from "../domain/server-activation-types";
 
 function getErrorMessage(error: unknown): string {
 	if (error instanceof Error) {
@@ -29,6 +30,7 @@ export function ServerActivationFormContainer() {
 			server_name: "My Kitaru Server",
 			admin_username: "",
 			admin_password: "",
+			admin_password_confirmation: "",
 		},
 	});
 
@@ -48,7 +50,13 @@ export function ServerActivationFormContainer() {
 		});
 
 	async function onSubmit(data: ServerActivationPayload) {
-		activateServerAndLogin(data);
+		const payload: ServerActivationRequest = {
+			server_name: data.server_name,
+			admin_username: data.admin_username,
+			admin_password: data.admin_password,
+		};
+
+		activateServerAndLogin(payload);
 	}
 
 	return (
@@ -97,6 +105,25 @@ export function ServerActivationFormContainer() {
 								id="admin_password"
 								type="password"
 								placeholder="Enter admin password"
+								aria-invalid={fieldState.invalid}
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
+					)}
+				/>
+				<Controller
+					name="admin_password_confirmation"
+					control={form.control}
+					render={({ field, fieldState }) => (
+						<Field data-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="admin_password_confirmation">
+								Confirm admin password
+							</FieldLabel>
+							<Input
+								{...field}
+								id="admin_password_confirmation"
+								type="password"
+								placeholder="Re-enter admin password"
 								aria-invalid={fieldState.invalid}
 							/>
 							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
