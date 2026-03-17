@@ -8,20 +8,16 @@ import {
 import { formatDurationShort } from "@/shared/utils/time";
 import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
 import type { Checkpoint } from "../domain/checkpoint";
-import type { CheckpointArtifacts } from "../domain/checkpoint-artifacts";
+import { useCheckpointArtifacts } from "../business-logic/use-checkpoint-artifacts";
 import { ArtifactBlock } from "./ArtifactBlock";
 import { JsonViewer } from "./JsonViewer";
 
 interface CheckpointDetailPanelProps {
 	checkpoint?: Checkpoint;
-	artifacts: CheckpointArtifacts | null;
-	isLoadingArtifacts: boolean;
 }
 
 export function CheckpointDetailPanel({
 	checkpoint,
-	artifacts,
-	isLoadingArtifacts,
 }: CheckpointDetailPanelProps) {
 	if (checkpoint === undefined) {
 		return (
@@ -30,11 +26,19 @@ export function CheckpointDetailPanel({
 					<EmptyMedia variant="icon">
 						<InfoCircle className="size-5" />
 					</EmptyMedia>
-					<EmptyDescription>Select a step to view details</EmptyDescription>
+					<EmptyDescription>
+						Select a checkpoint to view details
+					</EmptyDescription>
 				</EmptyHeader>
 			</Empty>
 		);
 	}
+
+	return <CheckpointDetailContent checkpoint={checkpoint} />;
+}
+
+function CheckpointDetailContent({ checkpoint }: { checkpoint: Checkpoint }) {
+	const { artifactsData } = useCheckpointArtifacts(checkpoint.id);
 
 	return (
 		<div className="p-4">
@@ -59,14 +63,10 @@ export function CheckpointDetailPanel({
 				</div>
 			</div>
 
-			{isLoadingArtifacts && (
-				<p className="text-muted-foreground mt-4 text-xs">Loading artifacts…</p>
-			)}
-
-			{artifacts && (
+			{artifactsData && (
 				<>
-					<ArtifactSection label="Inputs" entries={artifacts.inputs} />
-					<ArtifactSection label="Outputs" entries={artifacts.outputs} />
+					<ArtifactSection label="Inputs" entries={artifactsData.inputs} />
+					<ArtifactSection label="Outputs" entries={artifactsData.outputs} />
 				</>
 			)}
 		</div>

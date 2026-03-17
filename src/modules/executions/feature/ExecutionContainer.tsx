@@ -3,7 +3,6 @@ import { useParams } from "@tanstack/react-router";
 import { useExecutions } from "../business-logic/use-executions";
 import { useExecution } from "../business-logic/use-execution";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
-import { useCheckpointArtifacts } from "@/modules/checkpoints/business-logic/use-checkpoint-artifacts";
 import { Button } from "@/shared/ui/button";
 import { LayoutLeft, LayoutRight } from "@untitledui/icons";
 import {
@@ -39,9 +38,6 @@ export function ExecutionContainer() {
 	const selectedCheckpoint = checkpointsData?.find(
 		(c) => c.id === selectedCheckpointId
 	);
-
-	const { artifactsData, isLoading: isLoadingArtifacts } =
-		useCheckpointArtifacts(selectedCheckpointId);
 
 	return (
 		<SidebarProvider
@@ -111,11 +107,9 @@ export function ExecutionContainer() {
 							<SidebarGroup>
 								<SidebarGroupLabel>Details</SidebarGroupLabel>
 								<SidebarGroupContent>
-									<CheckpointDetailPanel
-										checkpoint={selectedCheckpoint}
-										artifacts={artifactsData}
-										isLoadingArtifacts={isLoadingArtifacts}
-									/>
+									<React.Suspense>
+										<CheckpointDetailPanel checkpoint={selectedCheckpoint} />
+									</React.Suspense>
 								</SidebarGroupContent>
 							</SidebarGroup>
 						</SidebarContent>
