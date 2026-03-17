@@ -4,16 +4,16 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { formatExecutionIndex } from "@/modules/executions/util/execution";
 
 export const Route = createFileRoute(
-	"/_private/_navbar/flows/$flowId/execs/$execId"
+	"/_private/_navbar/flows/$flowId/executions/$executionId"
 )({
 	loader: async ({ context, params }) => {
 		const [, execution] = await Promise.all([
 			context.queryClient.ensureQueryData(executionsQueries.all(params.flowId)),
 			context.queryClient.ensureQueryData(
-				executionsQueries.detail(params.execId)
+				executionsQueries.detail(params.executionId)
 			),
 			context.queryClient.ensureQueryData(
-				checkpointsQueries.all(params.execId)
+				checkpointsQueries.all(params.executionId)
 			),
 		]);
 

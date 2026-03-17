@@ -108,8 +108,8 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 			),
 			cell: ({ row }) => (
 				<Link
-					to="/flows/$flowId/execs/$execId"
-					params={{ flowId, execId: row.original.id }}
+					to="/flows/$flowId/executions/$executionId"
+					params={{ flowId, executionId: row.original.id }}
 					className="hover:underline"
 				>
 					<ExecutionName index={row.original.index} />

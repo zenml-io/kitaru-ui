@@ -8,24 +8,26 @@ import { ExecutionName } from "./ExecutionName";
 interface ExecutionsListProps {
 	executions: Execution[];
 	flowId: string;
-	activeExecId: string;
+	activeexecutionId: string;
 }
 
 export function ExecutionsList({
 	executions,
 	flowId,
-	activeExecId,
+	activeexecutionId,
 }: ExecutionsListProps) {
 	return (
 		<div className="flex flex-col">
 			{executions.map((execution) => (
 				<Link
 					key={execution.id}
-					to="/flows/$flowId/execs/$execId"
-					params={{ flowId, execId: execution.id }}
+					to="/flows/$flowId/executions/$executionId"
+					params={{ flowId, executionId: execution.id }}
 					className={cn(
 						"flex items-center justify-between gap-2 px-3 py-1.5 text-sm transition-colors",
-						execution.id === activeExecId ? "bg-accent" : "hover:bg-accent/50"
+						execution.id === activeexecutionId
+							? "bg-accent"
+							: "hover:bg-accent/50"
 					)}
 				>
 					<ExecutionName index={execution.index} />

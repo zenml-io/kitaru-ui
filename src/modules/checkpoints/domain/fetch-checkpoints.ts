@@ -6,10 +6,12 @@ import { type Checkpoint, checkpointFromApiToDomain } from "./checkpoint";
 const DEFAULT_PAGE = 1;
 const MAX_PAGE_SIZE = 1000;
 
-export async function fetchCheckpoints(execId: string): Promise<Checkpoint[]> {
+export async function fetchCheckpoints(
+	executionId: string
+): Promise<Checkpoint[]> {
 	const response = await apiClient.GET("/api/v1/runs/{run_id}/steps", {
 		params: {
-			path: { run_id: execId },
+			path: { run_id: executionId },
 			query: {
 				page: DEFAULT_PAGE,
 				size: MAX_PAGE_SIZE,

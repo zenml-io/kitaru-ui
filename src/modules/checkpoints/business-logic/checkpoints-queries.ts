@@ -3,16 +3,16 @@ import { fetchCheckpoints } from "../domain/fetch-checkpoints";
 import { fetchCheckpointArtifacts } from "../domain/checkpoint-artifacts";
 
 export const checkpointsQueryKeys = {
-	all: (execId: string) => ["checkpoints", execId] as const,
+	all: (executionId: string) => ["checkpoints", executionId] as const,
 	artifacts: (checkpointId: string) =>
 		["checkpoints", "artifacts", checkpointId] as const,
 };
 
 export const checkpointsQueries = {
-	all: (execId: string) =>
+	all: (executionId: string) =>
 		queryOptions({
-			queryKey: checkpointsQueryKeys.all(execId),
-			queryFn: () => fetchCheckpoints(execId),
+			queryKey: checkpointsQueryKeys.all(executionId),
+			queryFn: () => fetchCheckpoints(executionId),
 		}),
 	artifacts: (checkpointId: string) =>
 		queryOptions({

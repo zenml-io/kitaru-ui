@@ -23,12 +23,12 @@ import { CheckpointDetailPanel } from "@/modules/checkpoints/ui/CheckpointDetail
 import type { Span } from "../ui/traces/span-types";
 
 export function ExecutionContainer() {
-	const { flowId, execId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/execs/$execId/",
+	const { flowId, executionId } = useParams({
+		from: "/_private/_navbar/flows/$flowId/executions/$executionId/",
 	});
 	const { executionsData } = useExecutions(flowId);
-	const { executionData } = useExecution(execId);
-	const { checkpointsData } = useCheckpoints(execId);
+	const { executionData } = useExecution(executionId);
+	const { checkpointsData } = useCheckpoints(executionId);
 
 	const [leftOpen, setLeftOpen] = React.useState(true);
 	const [rightOpen, setRightOpen] = React.useState(true);
@@ -89,7 +89,7 @@ export function ExecutionContainer() {
 						<ExecutionsList
 							executions={executionsData}
 							flowId={flowId}
-							activeExecId={execId}
+							activeexecutionId={executionId}
 						/>
 					</SidebarGroupContent>
 				</SidebarContent>

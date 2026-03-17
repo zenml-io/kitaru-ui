@@ -4,7 +4,8 @@ import { fetchExecution } from "../domain/fetch-execution";
 
 export const executionsQueryKeys = {
 	all: (flowId: string) => ["executions", flowId] as const,
-	detail: (execId: string) => ["executions", "detail", execId] as const,
+	detail: (executionId: string) =>
+		["executions", "detail", executionId] as const,
 };
 
 export const executionsQueries = {
@@ -13,9 +14,9 @@ export const executionsQueries = {
 			queryKey: executionsQueryKeys.all(flowId),
 			queryFn: () => fetchExecutions(flowId),
 		}),
-	detail: (execId: string) =>
+	detail: (executionId: string) =>
 		queryOptions({
-			queryKey: executionsQueryKeys.detail(execId),
-			queryFn: () => fetchExecution(execId),
+			queryKey: executionsQueryKeys.detail(executionId),
+			queryFn: () => fetchExecution(executionId),
 		}),
 };
