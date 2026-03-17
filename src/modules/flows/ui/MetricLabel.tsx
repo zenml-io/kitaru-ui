@@ -1,24 +1,19 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-const metricLabelVariants = cva(
-	"text-xs font-semibold uppercase tracking-wider",
-	{
-		variants: {
-			color: {
-				default: "text-foreground",
-				muted: "text-muted-foreground",
-			},
-			size: {
-				default: "",
-				sm: "text-sm",
-			},
+const metricLabelVariants = cva("font-semibold uppercase tracking-wider", {
+	variants: {
+		color: {
+			default: "text-foreground",
+			muted: "text-muted-foreground",
 		},
-		defaultVariants: {
-			color: "muted",
-			size: "default",
+		size: {
+			default: "text-xs",
+			xs: "text-xs",
+			sm: "text-sm",
+			lg: "text-lg",
 		},
-	}
-);
+	},
+});
 
 export type MetricLabelProps = {
 	children: React.ReactNode;
