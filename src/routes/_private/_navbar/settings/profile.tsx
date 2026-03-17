@@ -6,9 +6,16 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/_private/_navbar/settings/profile")({
 	component: UpdateCurrentUserPage,
 	loader: async ({ context }) => {
-		return Promise.all([
+		await Promise.all([
 			context.queryClient.ensureQueryData(userQueries.currentUser()),
 		]);
+
+		return {
+			crumb: {
+				label: "Profile",
+				disabled: false,
+			},
+		};
 	},
 	head: () => ({
 		meta: [{ title: buildPageTitles("Profile") }],
