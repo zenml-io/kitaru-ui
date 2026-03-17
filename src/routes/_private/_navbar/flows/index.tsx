@@ -9,7 +9,7 @@ import {
 	createFileRoute,
 	stripSearchParams,
 } from "@tanstack/react-router";
-import z from "zod";
+import { z } from "zod";
 
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { PageSpinner } from "@/shared/ui/spinner";
@@ -37,12 +37,5 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 	pendingComponent: PageSpinner,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(flowsQueries.all());
-
-		return {
-			crumb: {
-				label: "Flows",
-				href: "/flows",
-			},
-		};
 	},
 });
