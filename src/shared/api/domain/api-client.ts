@@ -1,6 +1,8 @@
 import createClient, { type Middleware } from "openapi-fetch";
+import { z } from "zod";
 import { FetchError } from "./fetch-error";
 import type { paths } from "../openapi";
+import { getCsrfToken } from "../utils/csrf-token-cookie";
 import { throwFetchErrorFromResponse } from "../utils/throw-fetch-error-from-response";
 
 const defaultHeaders = {
@@ -8,11 +10,35 @@ const defaultHeaders = {
 	"Source-Context": "dashboard-v2",
 };
 
+const apiBaseUrlSchema = z
+	.url()
+	.trim()
+	.transform((value) => value.replace(/\/+$/, ""))
+	.catch("");
+
+const normalizedApiBaseUrl = apiBaseUrlSchema.parse(
+	import.meta.env.VITE_API_BASE_URL
+);
+
 export const apiClient = createClient<paths>({
-	baseUrl: "",
+	baseUrl: normalizedApiBaseUrl,
 	credentials: "include",
 	headers: defaultHeaders,
 });
+
+const csrfMiddleware: Middleware = {
+	onRequest({ request }) {
+		const csrfToken = getCsrfToken();
+		if (!csrfToken) {
+			return;
+		}
+
+		const headers = new Headers(request.headers);
+		headers.set("X-CSRF-Token", csrfToken);
+
+		return new Request(request, { headers });
+	},
+};
 
 const errorHandlingMiddleware: Middleware = {
 	async onResponse({ request, response }) {
@@ -38,4 +64,5 @@ const errorHandlingMiddleware: Middleware = {
 	},
 };
 
+apiClient.use(csrfMiddleware);
 apiClient.use(errorHandlingMiddleware);
