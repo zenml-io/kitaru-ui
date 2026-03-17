@@ -28,7 +28,7 @@ export function MembersRowActions({
 	return (
 		<>
 			<RemoveMemberAlertDialog
-				member={member}
+				toDeleteMember={member}
 				open={showDeleteDialog}
 				onOpenChange={setShowDeleteDialog}
 			/>

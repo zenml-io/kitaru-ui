@@ -15,18 +15,18 @@ import { userQueryKeys } from "../business-logic/user-queries";
 import type { User } from "../domain/users";
 
 type RemoveMemberAlertDialogProps = {
-	member: User | null;
+	toDeleteMember: User;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 };
 
 export function RemoveMemberAlertDialog({
-	member,
+	toDeleteMember,
 	open,
 	onOpenChange,
 }: RemoveMemberAlertDialogProps) {
 	const queryClient = useQueryClient();
-	const memberName = member?.name ?? "this member";
+	const memberName = toDeleteMember?.name ?? "this member";
 
 	const { deleteUser, isPending: isDeletePending } = useDeleteUser({
 		onSuccess: () => {
@@ -40,11 +40,7 @@ export function RemoveMemberAlertDialog({
 	});
 
 	function handleConfirm() {
-		if (!member) {
-			return;
-		}
-
-		deleteUser(member.id);
+		deleteUser(toDeleteMember.id);
 	}
 
 	return (
@@ -61,7 +57,7 @@ export function RemoveMemberAlertDialog({
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<AlertDialogAction
 						variant="destructive"
-						disabled={isDeletePending || !member}
+						disabled={isDeletePending}
 						onClick={handleConfirm}
 					>
 						{isDeletePending ? "Removing..." : "Remove member"}
