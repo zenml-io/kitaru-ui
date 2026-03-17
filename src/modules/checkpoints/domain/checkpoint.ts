@@ -1,20 +1,20 @@
 import type { components } from "@/shared/api/openapi";
 
-export type StepStatus = components["schemas"]["ExecutionStatus"];
+export type CheckpointStatus = components["schemas"]["ExecutionStatus"];
 
-export type Step = {
+export type Checkpoint = {
 	id: string;
 	name: string;
-	status: StepStatus;
+	status: CheckpointStatus;
 	startTime?: Date;
 	endTime?: Date;
 };
 
-export function stepFromApiToDomain(
+export function checkpointFromApiToDomain(
 	step: components["schemas"]["StepRunResponse"]
-): Step {
+): Checkpoint {
 	if (!step.body) {
-		throw new Error("Step body is required");
+		throw new Error("Checkpoint body is required");
 	}
 
 	return {

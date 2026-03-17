@@ -27,14 +27,16 @@ export function SegmentedBar({
 
 	if (total === 0) {
 		return (
-			<div className={cn("flex overflow-hidden rounded", height, className)} />
+			<div
+				className={cn("flex w-full overflow-hidden rounded", height, className)}
+			/>
 		);
 	}
 
 	return (
 		<div
 			className={cn(
-				"flex overflow-hidden rounded",
+				"flex w-full overflow-hidden rounded",
 				gap && "gap-px",
 				height,
 				className
@@ -42,6 +44,7 @@ export function SegmentedBar({
 		>
 			{segments.map((seg) => {
 				const pct = (seg.value / total) * 100;
+				console.log({ pct, value: seg.value, total });
 				return (
 					<div
 						key={seg.key}

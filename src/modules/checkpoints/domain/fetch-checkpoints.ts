@@ -1,12 +1,12 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import { type Step, stepFromApiToDomain } from "./step";
+import { type Checkpoint, checkpointFromApiToDomain } from "./checkpoint";
 
 // TODO: Remove these constants and use the API pagination instead
 const DEFAULT_PAGE = 1;
 const MAX_PAGE_SIZE = 1000;
 
-export async function fetchSteps(execId: string): Promise<Step[]> {
+export async function fetchCheckpoints(execId: string): Promise<Checkpoint[]> {
 	const response = await apiClient.GET("/api/v1/runs/{run_id}/steps", {
 		params: {
 			path: { run_id: execId },
@@ -16,7 +16,7 @@ export async function fetchSteps(execId: string): Promise<Step[]> {
 			},
 		},
 	});
-	const stepsPage = expectData(response);
+	const checkpointsPage = expectData(response);
 
-	return stepsPage.items.map(stepFromApiToDomain);
+	return checkpointsPage.items.map(checkpointFromApiToDomain);
 }

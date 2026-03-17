@@ -6,24 +6,24 @@ import {
 	EmptyMedia,
 } from "@/shared/ui/empty";
 import { formatDurationShort } from "@/shared/utils/time";
-import { StatusDot } from "@/shared/ui/StatusDot";
-import type { Span } from "./span-types";
-import type { StepArtifacts } from "../../domain/step-artifacts";
-import { ArtifactBlock } from "./artifact-block";
-import { JsonViewer } from "./json-viewer";
+import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
+import type { Span } from "@/modules/executions/ui/traces/span-types";
+import type { CheckpointArtifacts } from "../domain/checkpoint-artifacts";
+import { ArtifactBlock } from "./ArtifactBlock";
+import { JsonViewer } from "./JsonViewer";
 
-interface StepDetailPanelProps {
-	span: Span | null;
-	artifacts: StepArtifacts | null;
+interface CheckpointDetailPanelProps {
+	span?: Span;
+	artifacts: CheckpointArtifacts | null;
 	isLoadingArtifacts: boolean;
 }
 
-export function StepDetailPanel({
+export function CheckpointDetailPanel({
 	span,
 	artifacts,
 	isLoadingArtifacts,
-}: StepDetailPanelProps) {
-	if (!span) {
+}: CheckpointDetailPanelProps) {
+	if (span === undefined) {
 		return (
 			<Empty className="h-full border-none">
 				<EmptyHeader>
@@ -43,7 +43,7 @@ export function StepDetailPanel({
 				<div className="flex items-center justify-between py-2">
 					<span className="text-muted-foreground text-xs">Status</span>
 					<div className="flex items-center gap-1.5">
-						<StatusDot status={span.status} />
+						<StatusDot status={span.status as StatusDotVariant} />
 						<span className="text-xs capitalize">{span.status}</span>
 					</div>
 				</div>

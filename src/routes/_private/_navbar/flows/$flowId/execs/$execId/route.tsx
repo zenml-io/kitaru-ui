@@ -1,4 +1,5 @@
 import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
+import { checkpointsQueries } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
@@ -11,7 +12,7 @@ export const Route = createFileRoute(
 				executionsQueries.detail(params.execId)
 			),
 			context.queryClient.ensureQueryData(
-				executionsQueries.steps(params.execId)
+				checkpointsQueries.all(params.execId)
 			),
 		]);
 

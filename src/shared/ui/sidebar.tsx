@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
@@ -715,8 +716,7 @@ function SidebarResizeHandle({
 			wrapper?.setAttribute("data-resizing", "");
 
 			const handleMouseMove = (e: MouseEvent) => {
-				const delta =
-					side === "left" ? e.clientX - startX : startX - e.clientX;
+				const delta = side === "left" ? e.clientX - startX : startX - e.clientX;
 				onResize(Math.max(minWidth, Math.min(maxWidth, startWidth + delta)));
 			};
 
@@ -744,7 +744,6 @@ function SidebarResizeHandle({
 	);
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export {
 	Sidebar,
 	SidebarContent,

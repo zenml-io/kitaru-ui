@@ -1,19 +1,19 @@
 import { SpanRow } from "./span-row";
 import type { Span } from "./span-types";
 
-interface SpanTreeProps {
+interface TimelineSpansProps {
 	spans: Span[];
 	totalMs: number;
-	selectedId: string | null;
+	selectedId?: string;
 	onSelect: (id: string) => void;
 }
 
-export function SpanTree({
+export function TimelineSpans({
 	spans,
 	totalMs,
 	selectedId,
 	onSelect,
-}: SpanTreeProps) {
+}: TimelineSpansProps) {
 	return (
 		<div className="overflow-x-hidden">
 			{spans.map((span) => (
