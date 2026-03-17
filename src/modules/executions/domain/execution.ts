@@ -12,6 +12,8 @@ export const executionStatusValues: ExecutionStatus[] = [
 	"skipped",
 	"retrying",
 	"retried",
+	"paused",
+	"resuming",
 	"stopped",
 	"stopping",
 ] as const;
