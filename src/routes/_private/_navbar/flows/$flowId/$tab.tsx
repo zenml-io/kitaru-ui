@@ -5,7 +5,7 @@ import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { flowTabs, type FlowTab } from "@/modules/flows/domain/flow";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import z from "zod";
+import { z } from "zod";
 
 const TAB_TITLES: Record<FlowTab, string> = {
 	overview: "Flow Overview",
