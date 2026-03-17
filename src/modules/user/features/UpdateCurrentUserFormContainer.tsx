@@ -30,9 +30,9 @@ export function UpdateCurrentUserForm() {
 	const form = useForm<UpdateProfileForm>({
 		resolver: zodResolver(UpdateProfileFormSchema),
 		defaultValues: {
-			fullName: data.body?.full_name ?? "",
+			fullName: data.fullName ?? "",
 			username: data.name ?? "",
-			email: data.metadata?.email ?? "",
+			email: data.email ?? "",
 		},
 	});
 

@@ -28,7 +28,7 @@ export function UpdateAvatarDialog({ children }: PropsWithChildren) {
 	const [open, setOpen] = useState(false);
 	const { data } = useSuspenseQuery(userQueries.currentUser());
 
-	const avatarUrl = data.body?.avatar_url ?? undefined;
+	const avatarUrl = data.avatarUrl ?? undefined;
 
 	function handleSuccess() {
 		setOpen(false);

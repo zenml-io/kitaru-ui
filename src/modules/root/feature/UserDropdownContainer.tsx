@@ -1,5 +1,5 @@
-import { userQueries } from "@/modules/user/business-logic/user-queries";
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
+import { userQueries } from "@/modules/user/business-logic/user-queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import {
@@ -17,10 +17,8 @@ export function UserDropdownContainer() {
 	const { data } = useSuspenseQuery(userQueries.currentUser());
 	const router = useRouter();
 
-	const username = data.body?.full_name || data.name;
-	const avatarUrl = data.body?.avatar_url ?? undefined;
-
-	console.log(avatarUrl);
+	const resolvedName = data.resolvedName;
+	const avatarUrl = data.avatarUrl ?? undefined;
 
 	const { logoutUser } = useLogoutUser({
 		onSuccess: () => {
@@ -39,9 +37,9 @@ export function UserDropdownContainer() {
 						aria-label="User menu"
 					>
 						<Avatar className="size-7">
-							<AvatarImage src={avatarUrl} alt={username} />
+							<AvatarImage src={avatarUrl} alt={resolvedName} />
 							<AvatarFallback className="text-xs font-semibold">
-								{username.slice(0, 2).toUpperCase()}
+								{resolvedName.slice(0, 2).toUpperCase()}
 							</AvatarFallback>
 						</Avatar>
 					</Button>
