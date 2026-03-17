@@ -20,6 +20,7 @@ import {
 import { useMemo, useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
 import type { User } from "../domain/users";
+import { MembersRowActions } from "./MembersRowActions";
 
 type MembersTableContainerProps = {
 	searchValue: string;
@@ -29,6 +30,7 @@ export function MembersTableContainer({
 	searchValue,
 }: MembersTableContainerProps) {
 	const { data } = useSuspenseQuery(userQueries.list());
+	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 
 	const filteredMembers = useMemo(
 		() =>
@@ -37,6 +39,8 @@ export function MembersTableContainer({
 			),
 		[data.items, searchValue]
 	);
+
+	const columns = createColumns(currentUser.id);
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
@@ -100,49 +104,66 @@ export function MembersTableContainer({
 	);
 }
 
-const columns: ColumnDef<User>[] = [
-	{
-		accessorKey: "name",
-		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => (
-			<UserRenderer
-				name={row.original.name}
-				avatarUrl={row.original.avatarUrl}
-			/>
-		),
-	},
-	{
-		accessorKey: "isAdmin",
-		header: ({ column }) => <SortableHeader column={column} label="Role" />,
-		cell: ({ row }) => (
-			<TextRenderer>
-				<Badge variant="outline">
-					{row.original.isAdmin ? "Admin" : "Member"}
-				</Badge>
-			</TextRenderer>
-		),
-	},
-	{
-		accessorKey: "isActive",
-		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => {
-			const isActive = row.original.isActive;
-			return (
+function createColumns(currentUserId: string): ColumnDef<User>[] {
+	return [
+		{
+			accessorKey: "name",
+			header: ({ column }) => <SortableHeader column={column} label="Name" />,
+			cell: ({ row }) => (
+				<UserRenderer
+					name={row.original.name}
+					avatarUrl={row.original.avatarUrl}
+				/>
+			),
+		},
+		{
+			accessorKey: "isAdmin",
+			header: ({ column }) => <SortableHeader column={column} label="Role" />,
+			cell: ({ row }) => (
 				<TextRenderer>
-					<Badge variant={isActive ? "success" : "secondary"}>
-						{isActive ? "Active" : "Inactive"}
+					<Badge variant="outline">
+						{row.original.isAdmin ? "Admin" : "Member"}
 					</Badge>
 				</TextRenderer>
-			);
+			),
 		},
-	},
-	{
-		accessorKey: "createdAt",
-		header: ({ column }) => <SortableHeader column={column} label="Created" />,
-		cell: ({ row }) => (
-			<TextRenderer>
-				{row.original.createdAt?.toLocaleString() ?? "-"}
-			</TextRenderer>
-		),
-	},
-];
+		{
+			accessorKey: "isActive",
+			header: ({ column }) => <SortableHeader column={column} label="Status" />,
+			cell: ({ row }) => {
+				const isActive = row.original.isActive;
+				return (
+					<TextRenderer>
+						<Badge variant={isActive ? "success" : "secondary"}>
+							{isActive ? "Active" : "Inactive"}
+						</Badge>
+					</TextRenderer>
+				);
+			},
+		},
+		{
+			accessorKey: "createdAt",
+			header: ({ column }) => (
+				<SortableHeader column={column} label="Created" />
+			),
+			cell: ({ row }) => (
+				<TextRenderer>
+					{row.original.createdAt?.toLocaleString() ?? "-"}
+				</TextRenderer>
+			),
+		},
+		{
+			id: "actions",
+			enableSorting: false,
+			header: () => <span className="sr-only">Actions</span>,
+			cell: ({ row }) => (
+				<div className="flex justify-end">
+					<MembersRowActions
+						member={row.original}
+						isCurrentUser={row.original.id === currentUserId}
+					/>
+				</div>
+			),
+		},
+	];
+}

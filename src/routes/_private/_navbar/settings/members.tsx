@@ -8,6 +8,7 @@ export const Route = createFileRoute("/_private/_navbar/settings/members")({
 	loader: async ({ context }) => {
 		await Promise.all([
 			context.queryClient.ensureQueryData(userQueries.list()),
+			context.queryClient.ensureQueryData(userQueries.currentUser()),
 		]);
 
 		return {
