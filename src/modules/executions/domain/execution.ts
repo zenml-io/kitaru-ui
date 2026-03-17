@@ -1,5 +1,5 @@
 import type { components } from "@/shared/api/openapi";
-import { type User, userFromApiToDomain } from "@/modules/user/domain/users";
+import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 
 export const executionStatusValues: ExecutionStatus[] = [

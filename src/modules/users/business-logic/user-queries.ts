@@ -1,4 +1,4 @@
-import { fetchCurrentUser } from "@/modules/user/domain/fetch-current-user";
+import { fetchCurrentUser } from "@/modules/users/domain/fetch-current-user";
 import { queryOptions } from "@tanstack/react-query";
 
 export const userQueryKeys = {

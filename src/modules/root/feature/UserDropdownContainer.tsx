@@ -1,5 +1,5 @@
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
-import { userQueries } from "@/modules/user/business-logic/user-queries";
+import { userQueries } from "@/modules/users/business-logic/user-queries";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
 import { Button } from "@/shared/ui/button";
 import {

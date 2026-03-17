@@ -1,4 +1,4 @@
-import { userQueries } from "@/modules/user/business-logic/user-queries";
+import { userQueries } from "@/modules/users/business-logic/user-queries";
 import { NavbarLayout } from "@/modules/root/ui/NavbarLayout";
 import { createFileRoute } from "@tanstack/react-router";
 
