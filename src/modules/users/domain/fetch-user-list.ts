@@ -6,6 +6,7 @@ export async function fetchUserList() {
 	const response = await apiClient.GET("/api/v1/users", {
 		params: {
 			query: {
+				sort_by: "desc:created",
 				page: 1,
 				size: 100,
 			},
