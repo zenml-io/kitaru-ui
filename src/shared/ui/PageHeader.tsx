@@ -26,7 +26,7 @@ export function PageHeaderContent({
 		<div
 			data-slot="page-header-content"
 			className={cn(
-				"mx-auto flex max-w-[1480px] flex-col gap-6 px-4 py-5 sm:px-6 sm:py-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8 lg:px-8",
+				"container mx-auto flex flex-col gap-6 px-4 py-5 sm:px-6 sm:py-6 lg:flex-row lg:items-start lg:justify-between lg:gap-8 lg:px-8",
 				className
 			)}
 			{...props}

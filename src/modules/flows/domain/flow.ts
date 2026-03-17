@@ -1,5 +1,8 @@
 import type { components } from "@/shared/api/openapi";
-import type { ExecutionStatus } from "@/modules/execution/domain/execution";
+import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+
+export const flowTabs = ["overview"] as const;
+export type FlowTab = (typeof flowTabs)[number];
 
 export const flowStatusFilterValues = [
 	"all",
@@ -13,8 +16,8 @@ export type FlowStatusFilter = (typeof flowStatusFilterValues)[number];
 export type Flow = {
 	id: string;
 	name: string;
-	latestExecStatus: ExecutionStatus | undefined;
-	latestExecId: string | undefined;
+	latestExecStatus?: ExecutionStatus;
+	latestExecId?: string;
 	createdAt?: Date;
 };
 
