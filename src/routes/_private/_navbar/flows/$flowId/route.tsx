@@ -6,14 +6,15 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId")({
 	component: FlowLayout,
 	loader: async ({ context, params }) => {
-		await ensureQueryDataOr404(
+		const flow = await ensureQueryDataOr404(
 			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
 		);
 
 		return {
+			flowName: flow.name,
 			crumb: {
-				label: params.flowId,
-				href: `/flows/${params.flowId}`,
+				label: flow.name,
+				disabled: false,
 			},
 		};
 	},

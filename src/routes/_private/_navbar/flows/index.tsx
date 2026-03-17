@@ -37,12 +37,5 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 	pendingComponent: PageSpinner,
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(flowsQueries.all());
-
-		return {
-			crumb: {
-				label: "Flows",
-				href: "/flows",
-			},
-		};
 	},
 });
