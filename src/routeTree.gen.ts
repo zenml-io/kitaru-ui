@@ -21,6 +21,7 @@ import { Route as PrivateNavbarFlowsRouteRouteImport } from './routes/_private/_
 import { Route as PrivateNavbarSettingsIndexRouteImport } from './routes/_private/_navbar/settings/index'
 import { Route as PrivateNavbarFlowsIndexRouteImport } from './routes/_private/_navbar/flows/index'
 import { Route as PrivateNavbarSettingsProfileRouteImport } from './routes/_private/_navbar/settings/profile'
+import { Route as PrivateNavbarSettingsMembersRouteImport } from './routes/_private/_navbar/settings/members'
 import { Route as PrivateNavbarFlowsFlowIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/route'
 import { Route as PrivateNavbarFlowsFlowIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/index'
 import { Route as PrivateNavbarFlowsFlowIdTabRouteImport } from './routes/_private/_navbar/flows/$flowId/$tab'
@@ -86,6 +87,12 @@ const PrivateNavbarSettingsProfileRoute =
     path: '/profile',
     getParentRoute: () => PrivateNavbarSettingsRouteRoute,
   } as any)
+const PrivateNavbarSettingsMembersRoute =
+  PrivateNavbarSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => PrivateNavbarSettingsRouteRoute,
+  } as any)
 const PrivateNavbarFlowsFlowIdRouteRoute =
   PrivateNavbarFlowsFlowIdRouteRouteImport.update({
     id: '/$flowId',
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
+  '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/settings/': typeof PrivateNavbarSettingsIndexRoute
@@ -124,6 +132,7 @@ export interface FileRoutesByTo {
   '/activate-server': typeof publicMeshActivateServerRoute
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
+  '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/flows': typeof PrivateNavbarFlowsIndexRoute
   '/settings': typeof PrivateNavbarSettingsIndexRoute
@@ -142,6 +151,7 @@ export interface FileRoutesById {
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
   '/_private/devices/verify': typeof PrivateDevicesVerifyRoute
   '/_private/_navbar/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
+  '/_private/_navbar/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/_private/_navbar/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/_private/_navbar/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/_private/_navbar/settings/': typeof PrivateNavbarSettingsIndexRoute
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/devices/verify'
     | '/flows/$flowId'
+    | '/settings/members'
     | '/settings/profile'
     | '/flows/'
     | '/settings/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/activate-server'
     | '/login'
     | '/devices/verify'
+    | '/settings/members'
     | '/settings/profile'
     | '/flows'
     | '/settings'
@@ -186,6 +198,7 @@ export interface FileRouteTypes {
     | '/(public)/_mesh/login'
     | '/_private/devices/verify'
     | '/_private/_navbar/flows/$flowId'
+    | '/_private/_navbar/settings/members'
     | '/_private/_navbar/settings/profile'
     | '/_private/_navbar/flows/'
     | '/_private/_navbar/settings/'
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarSettingsProfileRouteImport
       parentRoute: typeof PrivateNavbarSettingsRouteRoute
     }
+    '/_private/_navbar/settings/members': {
+      id: '/_private/_navbar/settings/members'
+      path: '/members'
+      fullPath: '/settings/members'
+      preLoaderRoute: typeof PrivateNavbarSettingsMembersRouteImport
+      parentRoute: typeof PrivateNavbarSettingsRouteRoute
+    }
     '/_private/_navbar/flows/$flowId': {
       id: '/_private/_navbar/flows/$flowId'
       path: '/$flowId'
@@ -342,12 +362,14 @@ const PrivateNavbarFlowsRouteRouteWithChildren =
   )
 
 interface PrivateNavbarSettingsRouteRouteChildren {
+  PrivateNavbarSettingsMembersRoute: typeof PrivateNavbarSettingsMembersRoute
   PrivateNavbarSettingsProfileRoute: typeof PrivateNavbarSettingsProfileRoute
   PrivateNavbarSettingsIndexRoute: typeof PrivateNavbarSettingsIndexRoute
 }
 
 const PrivateNavbarSettingsRouteRouteChildren: PrivateNavbarSettingsRouteRouteChildren =
   {
+    PrivateNavbarSettingsMembersRoute: PrivateNavbarSettingsMembersRoute,
     PrivateNavbarSettingsProfileRoute: PrivateNavbarSettingsProfileRoute,
     PrivateNavbarSettingsIndexRoute: PrivateNavbarSettingsIndexRoute,
   }

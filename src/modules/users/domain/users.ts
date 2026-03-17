@@ -7,6 +7,9 @@ export type User = {
 	fullName?: string;
 	avatarUrl?: string;
 	email?: string;
+	isAdmin?: boolean;
+	isActive?: boolean;
+	createdAt?: Date;
 };
 
 export function userFromApiToDomain(
@@ -19,6 +22,9 @@ export function userFromApiToDomain(
 		fullName: user.body?.full_name,
 		avatarUrl: user.body?.avatar_url ?? undefined,
 		email: user.metadata?.email ?? undefined,
+		isAdmin: user.body?.is_admin ?? undefined,
+		isActive: user.body?.active ?? undefined,
+		createdAt: user.body?.created ? new Date(user.body.created) : undefined,
 	};
 }
 
