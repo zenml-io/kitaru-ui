@@ -21,7 +21,7 @@ import { CheckpointDetailPanel } from "@/modules/checkpoints/ui/CheckpointDetail
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/executions/$executionId/",
+		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
 	const { executionsData } = useExecutions(flowId);
 	const { executionData } = useExecution(executionId);

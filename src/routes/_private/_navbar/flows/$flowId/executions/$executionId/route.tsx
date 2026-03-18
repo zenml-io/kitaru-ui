@@ -8,7 +8,7 @@ import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-	"/_private/_navbar/flows/$flowId/executions/$executionId/"
+	"/_private/_navbar/flows/$flowId/executions/$executionId"
 )({
 	component: ExecutionContainer,
 	pendingComponent: PageSpinner,
