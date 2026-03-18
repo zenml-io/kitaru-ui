@@ -60,6 +60,7 @@ function CreateUserDialogContent({
 			</DialogHeader>
 			{successState ? (
 				<CreateUserSuccess
+					username={successState.username}
 					userId={successState.userId}
 					activationToken={successState.activationToken}
 				/>

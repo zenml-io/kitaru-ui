@@ -3,6 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 type CreateUserSuccessProps = {
+	username: string;
 	userId: string;
 	activationToken: string;
 };
@@ -10,9 +11,10 @@ type CreateUserSuccessProps = {
 export function CreateUserSuccess({
 	userId,
 	activationToken,
+	username,
 }: CreateUserSuccessProps) {
 	const router = useRouter();
-	const activationLink = `${window.location.origin}${router.buildLocation({ to: "/activate-user", search: { user: userId, token: activationToken } }).publicHref}`;
+	const activationLink = `${window.location.origin}${router.buildLocation({ to: "/activate-user", search: { user: userId, token: activationToken, username: username } }).publicHref}`;
 
 	async function handleCopyLink() {
 		try {

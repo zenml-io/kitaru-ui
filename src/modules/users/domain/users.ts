@@ -33,4 +33,5 @@ export type UserUpdate = components["schemas"]["UserUpdate"];
 export type CreateUserDialogSuccess = {
 	userId: string;
 	activationToken: string;
+	username: string;
 };

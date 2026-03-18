@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const querySchema = z.object({
 	user: z.string().min(1),
+	username: z.string(),
 	token: z.string().min(1),
 });
 

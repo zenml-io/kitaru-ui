@@ -26,6 +26,7 @@ export async function createUserRequest(
 
 	return {
 		userId: data.id,
+		username: data.name,
 		activationToken,
 	};
 }

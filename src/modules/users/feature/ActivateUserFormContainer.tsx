@@ -13,7 +13,9 @@ import { useActivateUserAndLogin } from "../business-logic/use-activate-user";
 
 export function ActivateUserFormContainer() {
 	const navigate = useNavigate();
-	const { user, token } = useSearch({ from: "/(public)/_mesh/activate-user" });
+	const { user, token, username } = useSearch({
+		from: "/(public)/_mesh/activate-user",
+	});
 	const { activateUser, isPending: isActivationFlowPending } =
 		useActivateUserAndLogin({
 			onSuccess: () => {
@@ -26,7 +28,7 @@ export function ActivateUserFormContainer() {
 	const form = useForm<ActivateUserPayload>({
 		resolver: zodResolver(activateUserSchema),
 		defaultValues: {
-			username: "",
+			username: username,
 			password: "",
 			password_confirmation: "",
 		},
@@ -72,7 +74,6 @@ export function ActivateUserFormContainer() {
 								{...field}
 								id="password"
 								type="password"
-								placeholder="admin"
 								aria-invalid={fieldState.invalid}
 							/>
 							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -91,7 +92,6 @@ export function ActivateUserFormContainer() {
 								{...field}
 								id="password_confirmation"
 								type="password"
-								placeholder="Enter admin password"
 								aria-invalid={fieldState.invalid}
 							/>
 							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
