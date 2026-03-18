@@ -197,6 +197,9 @@
 	--animate-drift-2: drift-2 25s ease-in-out infinite;
 	--animate-drift-3: drift-3 30s ease-in-out infinite;
 	--animate-drift-4: drift-4 22s ease-in-out infinite;
+
+	/* Text */
+	--text-2xs: 0.625rem;
 }
 
 @layer base {

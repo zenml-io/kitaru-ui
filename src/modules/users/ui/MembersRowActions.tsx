@@ -5,7 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { DotsHorizontal } from "@untitledui/icons";
+import { DotsHorizontal, Trash01 } from "@untitledui/icons";
 import type { User } from "../domain/users";
 import { useState } from "react";
 import { RemoveMemberAlertDialog } from "../features/RemoveMemberAlertDialog";
@@ -50,7 +50,7 @@ export function MembersRowActions({
 						variant="destructive"
 						onClick={() => setShowDeleteDialog(true)}
 					>
-						Remove member
+						<Trash01 className="size-4" /> Remove member
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
