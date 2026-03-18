@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { InfoCircle } from "@untitledui/icons";
 import {
 	Empty,
@@ -8,9 +9,10 @@ import {
 import { formatDurationShort } from "@/shared/utils/time";
 import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
 import type { Checkpoint } from "../domain/checkpoint";
+import type { ArtifactEntry } from "../domain/checkpoint-artifacts";
 import { useCheckpointArtifacts } from "../business-logic/use-checkpoint-artifacts";
 import { ArtifactBlock } from "./ArtifactBlock";
-import { JsonViewer } from "./JsonViewer";
+import { ArtifactVisualization } from "./ArtifactVisualization";
 
 interface CheckpointDetailPanelProps {
 	checkpoint?: Checkpoint;
@@ -78,10 +80,9 @@ function ArtifactSection({
 	entries,
 }: {
 	label: string;
-	entries: Record<string, unknown>;
+	entries: ArtifactEntry[];
 }) {
-	const keys = Object.keys(entries);
-	if (keys.length === 0) return null;
+	if (entries.length === 0) return null;
 
 	return (
 		<div className="mt-4">
@@ -89,13 +90,15 @@ function ArtifactSection({
 				{label}
 			</p>
 			<div className="flex flex-col gap-1">
-				{keys.map((key) => (
-					<ArtifactBlock
-						key={key}
-						label={key}
-						copyText={JSON.stringify(entries[key], null, 2)}
-					>
-						<JsonViewer data={entries[key]} />
+				{entries.map((entry) => (
+					<ArtifactBlock key={entry.id} label={entry.name}>
+						<Suspense
+							fallback={
+								<p className="text-muted-foreground text-xs">Loading…</p>
+							}
+						>
+							<ArtifactVisualization artifactVersionId={entry.id} />
+						</Suspense>
 					</ArtifactBlock>
 				))}
 			</div>
