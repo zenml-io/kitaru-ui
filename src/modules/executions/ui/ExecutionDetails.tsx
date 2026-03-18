@@ -34,12 +34,13 @@ export function ExecutionDetails({
 	const spans = checkpoints.map((c) => ({
 		id: c.id,
 		name: c.name,
+		type: c.type,
 		status: c.status,
+		durationMs: c.durationMs,
 		startMs:
 			c.startTime && execution.startTime
 				? differenceInMilliseconds(c.startTime, execution.startTime)
 				: 0,
-		durationMs: c.durationMs,
 	}));
 
 	return (

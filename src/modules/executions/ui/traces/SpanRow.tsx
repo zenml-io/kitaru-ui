@@ -1,6 +1,7 @@
 import { cn } from "@/shared/utils/styles";
 import { formatDurationShort } from "@/shared/utils/time";
-import type { Span } from "./span-types";
+import { CheckpointTypeDot } from "@/modules/checkpoints/ui/CheckpointTypeIndicator";
+import type { Span } from "@/modules/executions/domain/span";
 
 interface SpanRowProps {
 	span: Span;
@@ -29,9 +30,10 @@ export function SpanRow({ span, isSelected, totalMs, onSelect }: SpanRowProps) {
 
 			<div className="flex w-full items-center">
 				<div
-					className="flex shrink-0 items-center overflow-hidden pl-3"
+					className="flex shrink-0 items-center gap-2 overflow-hidden pl-3"
 					style={{ width: 240 }}
 				>
+					{span.type && <CheckpointTypeDot type={span.type} />}
 					<span className="text-foreground truncate font-mono text-xs">
 						{span.name}
 					</span>
