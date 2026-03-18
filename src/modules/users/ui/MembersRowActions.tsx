@@ -8,7 +8,7 @@ import {
 import { DotsHorizontal } from "@untitledui/icons";
 import type { User } from "../domain/users";
 import { useState } from "react";
-import { RemoveMemberAlertDialog } from "./RemoveMemberAlertDialog";
+import { RemoveMemberAlertDialog } from "../features/RemoveMemberAlertDialog";
 
 type MembersRowActionsProps = {
 	member: User;

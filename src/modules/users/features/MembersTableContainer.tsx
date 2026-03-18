@@ -20,17 +20,18 @@ import {
 import { useMemo, useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
 import type { User } from "../domain/users";
-import { MembersRowActions } from "./MembersRowActions";
+import { MembersRowActions } from "../ui/MembersRowActions";
 
 type MembersTableContainerProps = {
 	searchValue: string;
+	currentUserId: string;
 };
 
 export function MembersTableContainer({
 	searchValue,
+	currentUserId,
 }: MembersTableContainerProps) {
 	const { data } = useSuspenseQuery(userQueries.list());
-	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 
 	const filteredMembers = useMemo(
 		() =>
@@ -40,7 +41,7 @@ export function MembersTableContainer({
 		[data.items, searchValue]
 	);
 
-	const columns = createColumns(currentUser.id);
+	const columns = createColumns(currentUserId);
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },

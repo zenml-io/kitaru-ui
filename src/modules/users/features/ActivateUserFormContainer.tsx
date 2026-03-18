@@ -14,14 +14,15 @@ import { useActivateUserAndLogin } from "../business-logic/use-activate-user";
 export function ActivateUserFormContainer() {
 	const navigate = useNavigate();
 	const { user, token } = useSearch({ from: "/(public)/_mesh/activate-user" });
-	const { activateUser } = useActivateUserAndLogin({
-		onSuccess: () => {
-			navigate({ to: "/flows" });
-		},
-		onError: (error) => {
-			toast.error(error.message);
-		},
-	});
+	const { activateUser, isPending: isActivationFlowPending } =
+		useActivateUserAndLogin({
+			onSuccess: () => {
+				navigate({ to: "/flows" });
+			},
+			onError: (error) => {
+				toast.error(error.message);
+			},
+		});
 	const form = useForm<ActivateUserPayload>({
 		resolver: zodResolver(activateUserSchema),
 		defaultValues: {
@@ -98,7 +99,7 @@ export function ActivateUserFormContainer() {
 					)}
 				/>
 
-				<Button disabled={form.formState.isSubmitting} type="submit">
+				<Button disabled={isActivationFlowPending} type="submit">
 					Activate User
 				</Button>
 			</FieldGroup>

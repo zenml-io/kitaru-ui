@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Input } from "@/shared/ui/input";
 import { useState } from "react";
+import { MembersListToolbar } from "../ui/MembersListToolbar";
 import { MembersTableContainer } from "./MembersTableContainer";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { userQueries } from "../business-logic/user-queries";
 
 export function MembersListPageContainer() {
+	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 	const [searchValue, setSearchValue] = useState("");
 
 	return (
@@ -12,13 +15,15 @@ export function MembersListPageContainer() {
 				<CardTitle className="text-lg font-semibold">Members</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-6">
-				<Input
-					placeholder="Search members..."
-					value={searchValue}
-					onChange={(event) => setSearchValue(event.target.value)}
-					className="w-full sm:w-48"
+				<MembersListToolbar
+					isUserAdmin={currentUser.isAdmin ?? false}
+					searchValue={searchValue}
+					setSearchValue={setSearchValue}
 				/>
-				<MembersTableContainer searchValue={searchValue} />
+				<MembersTableContainer
+					currentUserId={currentUser.id}
+					searchValue={searchValue}
+				/>
 			</CardContent>
 		</Card>
 	);
