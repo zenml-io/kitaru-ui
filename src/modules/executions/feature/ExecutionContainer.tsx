@@ -24,10 +24,6 @@ export function ExecutionContainer() {
 	>();
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
 
-	const selectedCheckpoint = checkpointsData?.find(
-		(c) => c.id === selectedCheckpointId
-	);
-
 	return (
 		<ThreePanelLayout
 			ref={layoutRef}
@@ -52,7 +48,7 @@ export function ExecutionContainer() {
 			right={
 				<CheckpointDetailPanelContainer
 					key={selectedCheckpointId}
-					checkpoint={selectedCheckpoint}
+					checkpointId={selectedCheckpointId}
 				/>
 			}
 		/>

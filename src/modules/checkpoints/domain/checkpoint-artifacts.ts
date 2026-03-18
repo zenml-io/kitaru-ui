@@ -1,13 +1,21 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
 import type { components } from "@/shared/api/openapi";
+import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 
 export type ArtifactEntry = {
 	name: string;
 	id: string;
 };
 
-export type CheckpointArtifacts = {
+export type Checkpoint = {
+	id: string;
+	name: string;
+	durationMs: number;
+	status?: ExecutionStatus;
+	startTime?: Date;
+	type?: components["schemas"]["StepType"];
+	costUsd: number;
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
 };
@@ -28,9 +36,9 @@ function extractArtifactEntries(
 	});
 }
 
-export async function fetchCheckpointArtifacts(
+export async function fetchCheckpointDetails(
 	checkpointId: string
-): Promise<CheckpointArtifacts> {
+): Promise<Checkpoint> {
 	const response = await apiClient.GET("/api/v1/steps/{step_id}", {
 		params: {
 			path: { step_id: checkpointId },
@@ -40,7 +48,18 @@ export async function fetchCheckpointArtifacts(
 	const checkpoint = expectData(response);
 
 	return {
+		id: checkpoint.id,
+		name: checkpoint.name,
+		status: checkpoint.body?.status || undefined,
 		inputs: extractArtifactEntries(checkpoint.resources?.inputs),
 		outputs: extractArtifactEntries(checkpoint.resources?.outputs),
+		durationMs: (Number(checkpoint.body) || 0) * 1000,
+		startTime: checkpoint.body?.start_time
+			? new Date(checkpoint.body.start_time)
+			: undefined,
+		type: checkpoint.body?.type ?? undefined,
+		// @ts-expect-error - TODO: fix this
+		costUsd:
+			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 	};
 }

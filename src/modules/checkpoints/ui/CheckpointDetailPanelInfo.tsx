@@ -3,8 +3,7 @@ import {
 	CheckpointDetailPanelRows as DetailRows,
 } from "./CheckpointDetailPanelRow";
 import { formatDurationShort } from "@/shared/utils/time";
-import type { Checkpoint } from "../domain/checkpoint";
-import type { ArtifactEntry } from "../domain/checkpoint-artifacts";
+import type { ArtifactEntry, Checkpoint } from "../domain/checkpoint-artifacts";
 
 interface CheckpointDetailPanelInfoProps {
 	checkpoint: Checkpoint;
