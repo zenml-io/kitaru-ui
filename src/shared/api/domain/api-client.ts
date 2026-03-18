@@ -7,7 +7,7 @@ import { throwFetchErrorFromResponse } from "../utils/throw-fetch-error-from-res
 
 const defaultHeaders = {
 	"Content-Type": "application/json",
-	"Source-Context": "dashboard-v2",
+	"Source-Context": "kitaru-ui",
 };
 
 const apiBaseUrlSchema = z
