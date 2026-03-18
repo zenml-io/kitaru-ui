@@ -24,19 +24,24 @@ import {
 	UserRenderer,
 } from "@/shared/ui/Table/CellRenderer";
 import { ExecutionName } from "../ui/ExecutionName";
+import { Link } from "@tanstack/react-router";
 
 export function ExecutionsTableContainer({
 	executionRows,
+	flowId,
 }: {
 	executionRows: Execution[];
+	flowId: string;
 }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
+	const columns = buildExecutionColumns(flowId);
+
 	const table = useReactTable({
 		data: executionRows,
-		columns: executionColumns,
+		columns,
 		state: {
 			sorting,
 		},
@@ -94,41 +99,53 @@ export function ExecutionsTableContainer({
 	);
 }
 
-const executionColumns: ColumnDef<Execution>[] = [
-	{
-		accessorKey: "execution",
-		header: ({ column }) => (
-			<SortableHeader column={column} label="Execution" />
-		),
-		cell: ({ row }) => <ExecutionName index={row.original.index} />,
-	},
-	{
-		accessorKey: "status",
-		header: ({ column }) => <SortableHeader column={column} label="Status" />,
-		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
-	},
-	{
-		accessorKey: "id",
-		header: ({ column }) => <SortableHeader column={column} label="ID" />,
-		cell: ({ row }) => <TextRenderer>{row.original.id}</TextRenderer>,
-	},
-	{
-		accessorKey: "Author",
-		header: ({ column }) => <SortableHeader column={column} label="Author" />,
-		cell: ({ row }) => (
-			<UserRenderer
-				name={row.original.user?.name ?? ""}
-				avatarUrl={row.original.user?.avatarUrl}
-			/>
-		),
-	},
-	{
-		accessorKey: "createdAt",
-		header: ({ column }) => <SortableHeader column={column} label="Created" />,
-		cell: ({ row }) => (
-			<TextRenderer>
-				{row.original.createdAt?.toLocaleString() ?? "-"}
-			</TextRenderer>
-		),
-	},
-];
+function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
+	return [
+		{
+			accessorKey: "execution",
+			header: ({ column }) => (
+				<SortableHeader column={column} label="Execution" />
+			),
+			cell: ({ row }) => (
+				<Link
+					to="/flows/$flowId/executions/$executionId"
+					params={{ flowId, executionId: row.original.id }}
+					className="hover:underline"
+				>
+					<ExecutionName index={row.original.index} />
+				</Link>
+			),
+		},
+		{
+			accessorKey: "status",
+			header: ({ column }) => <SortableHeader column={column} label="Status" />,
+			cell: ({ row }) => <StatusRenderer status={row.original.status} />,
+		},
+		{
+			accessorKey: "id",
+			header: ({ column }) => <SortableHeader column={column} label="ID" />,
+			cell: ({ row }) => <TextRenderer>{row.original.id}</TextRenderer>,
+		},
+		{
+			accessorKey: "Author",
+			header: ({ column }) => <SortableHeader column={column} label="Author" />,
+			cell: ({ row }) => (
+				<UserRenderer
+					name={row.original.user?.name ?? ""}
+					avatarUrl={row.original.user?.avatarUrl}
+				/>
+			),
+		},
+		{
+			accessorKey: "createdAt",
+			header: ({ column }) => (
+				<SortableHeader column={column} label="Created" />
+			),
+			cell: ({ row }) => (
+				<TextRenderer>
+					{row.original.createdAt?.toLocaleString() ?? "-"}
+				</TextRenderer>
+			),
+		},
+	];
+}

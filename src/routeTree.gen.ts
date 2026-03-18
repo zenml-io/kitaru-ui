@@ -25,6 +25,9 @@ import { Route as PrivateNavbarSettingsMembersRouteImport } from './routes/_priv
 import { Route as PrivateNavbarFlowsFlowIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/route'
 import { Route as PrivateNavbarFlowsFlowIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/index'
 import { Route as PrivateNavbarFlowsFlowIdTabRouteImport } from './routes/_private/_navbar/flows/$flowId/$tab'
+import { Route as PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/index'
+import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/route'
+import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/index'
 
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
@@ -111,6 +114,25 @@ const PrivateNavbarFlowsFlowIdTabRoute =
     path: '/$tab',
     getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
   } as any)
+const PrivateNavbarFlowsFlowIdExecutionsIndexRoute =
+  PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport.update({
+    id: '/executions/',
+    path: '/executions/',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
+  } as any)
+const PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute =
+  PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport.update({
+    id: '/executions/$executionId',
+    path: '/executions/$executionId',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
+  } as any)
+const PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute =
+  PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () =>
+      PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PrivateIndexRoute
@@ -126,6 +148,9 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof PrivateNavbarSettingsIndexRoute
   '/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
   '/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
+  '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
+  '/flows/$flowId/executions/': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
+  '/flows/$flowId/executions/$executionId/': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PrivateIndexRoute
@@ -138,6 +163,8 @@ export interface FileRoutesByTo {
   '/settings': typeof PrivateNavbarSettingsIndexRoute
   '/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdIndexRoute
+  '/flows/$flowId/executions': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
+  '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,6 +184,9 @@ export interface FileRoutesById {
   '/_private/_navbar/settings/': typeof PrivateNavbarSettingsIndexRoute
   '/_private/_navbar/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
   '/_private/_navbar/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
+  '/_private/_navbar/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
+  '/_private/_navbar/flows/$flowId/executions/': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
+  '/_private/_navbar/flows/$flowId/executions/$executionId/': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,6 +204,9 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/flows/$flowId/$tab'
     | '/flows/$flowId/'
+    | '/flows/$flowId/executions/$executionId'
+    | '/flows/$flowId/executions/'
+    | '/flows/$flowId/executions/$executionId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,6 +219,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/flows/$flowId/$tab'
     | '/flows/$flowId'
+    | '/flows/$flowId/executions'
+    | '/flows/$flowId/executions/$executionId'
   id:
     | '__root__'
     | '/_private'
@@ -204,6 +239,9 @@ export interface FileRouteTypes {
     | '/_private/_navbar/settings/'
     | '/_private/_navbar/flows/$flowId/$tab'
     | '/_private/_navbar/flows/$flowId/'
+    | '/_private/_navbar/flows/$flowId/executions/$executionId'
+    | '/_private/_navbar/flows/$flowId/executions/'
+    | '/_private/_navbar/flows/$flowId/executions/$executionId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -325,18 +363,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdTabRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
     }
+    '/_private/_navbar/flows/$flowId/executions/': {
+      id: '/_private/_navbar/flows/$flowId/executions/'
+      path: '/executions'
+      fullPath: '/flows/$flowId/executions/'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
+    }
+    '/_private/_navbar/flows/$flowId/executions/$executionId': {
+      id: '/_private/_navbar/flows/$flowId/executions/$executionId'
+      path: '/executions/$executionId'
+      fullPath: '/flows/$flowId/executions/$executionId'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
+    }
+    '/_private/_navbar/flows/$flowId/executions/$executionId/': {
+      id: '/_private/_navbar/flows/$flowId/executions/$executionId/'
+      path: '/'
+      fullPath: '/flows/$flowId/executions/$executionId/'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
+    }
   }
 }
+
+interface PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteChildren {
+  PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute
+}
+
+const PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteChildren: PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteChildren =
+  {
+    PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute:
+      PrivateNavbarFlowsFlowIdExecutionsExecutionIdIndexRoute,
+  }
+
+const PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren =
+  PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute._addFileChildren(
+    PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteChildren,
+  )
 
 interface PrivateNavbarFlowsFlowIdRouteRouteChildren {
   PrivateNavbarFlowsFlowIdTabRoute: typeof PrivateNavbarFlowsFlowIdTabRoute
   PrivateNavbarFlowsFlowIdIndexRoute: typeof PrivateNavbarFlowsFlowIdIndexRoute
+  PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute: typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
+  PrivateNavbarFlowsFlowIdExecutionsIndexRoute: typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
 }
 
 const PrivateNavbarFlowsFlowIdRouteRouteChildren: PrivateNavbarFlowsFlowIdRouteRouteChildren =
   {
     PrivateNavbarFlowsFlowIdTabRoute: PrivateNavbarFlowsFlowIdTabRoute,
     PrivateNavbarFlowsFlowIdIndexRoute: PrivateNavbarFlowsFlowIdIndexRoute,
+    PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute:
+      PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren,
+    PrivateNavbarFlowsFlowIdExecutionsIndexRoute:
+      PrivateNavbarFlowsFlowIdExecutionsIndexRoute,
   }
 
 const PrivateNavbarFlowsFlowIdRouteRouteWithChildren =

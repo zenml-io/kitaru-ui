@@ -7,7 +7,7 @@ import { Skeleton } from "@/shared/ui/skeleton";
 
 export function NavbarLayout() {
 	return (
-		<div className="flex flex-1 flex-col">
+		<div className="flex flex-1 flex-col overflow-hidden">
 			<div className="z-20 shrink-0">
 				<nav className="bg-card border-border flex h-12 items-center justify-between border-b px-5">
 					<div className="flex items-center gap-2.5">
@@ -24,7 +24,9 @@ export function NavbarLayout() {
 					</div>
 				</nav>
 			</div>
-			<Outlet />
+			<div className="flex flex-1 flex-col overflow-y-auto">
+				<Outlet />
+			</div>
 		</div>
 	);
 }
