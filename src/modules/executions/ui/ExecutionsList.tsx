@@ -17,7 +17,10 @@ export function ExecutionsList({
 	activeexecutionId,
 }: ExecutionsListProps) {
 	return (
-		<div className="flex flex-col">
+		<div className="flex h-full flex-col">
+			<div className="text-muted-foreground px-3 py-2 text-xs font-semibold">
+				Executions
+			</div>
 			{executions.map((execution) => (
 				<Link
 					key={execution.id}
