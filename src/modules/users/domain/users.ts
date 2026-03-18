@@ -28,4 +28,10 @@ export function userFromApiToDomain(
 	};
 }
 
-export type UpdateCurrentUser = components["schemas"]["UserUpdate"];
+export type UserUpdate = components["schemas"]["UserUpdate"];
+
+export type CreateUserDialogSuccess = {
+	userId: string;
+	activationToken: string;
+	username: string;
+};
