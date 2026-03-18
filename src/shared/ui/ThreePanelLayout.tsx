@@ -8,7 +8,7 @@ import {
 	ResizablePanelGroup,
 } from "./resizable";
 
-const PANEL_IDS = { left: "left", right: "right" } as const;
+const PANEL_IDS = { left: "left", center: "center", right: "right" } as const;
 
 const DEFAULT_SIZES = {
 	left: { default: 20, min: 10 },
@@ -41,9 +41,12 @@ export function ThreePanelLayout({
 		expandRight() {
 			const layout = groupRef.current?.getLayout();
 			if (layout?.[PANEL_IDS.right] === 0) {
+				const right = DEFAULT_SIZES.right.default;
+				const left = layout[PANEL_IDS.left];
 				groupRef.current?.setLayout({
-					...layout,
-					[PANEL_IDS.right]: DEFAULT_SIZES.right.default,
+					[PANEL_IDS.left]: left,
+					[PANEL_IDS.center]: 100 - left - right,
+					[PANEL_IDS.right]: right,
 				});
 			}
 		},
@@ -52,24 +55,40 @@ export function ThreePanelLayout({
 	function toggleLeft() {
 		const layout = groupRef.current?.getLayout();
 		if (layout?.[PANEL_IDS.left] === 0) {
+			const left = DEFAULT_SIZES.left.default;
+			const right = layout[PANEL_IDS.right];
 			groupRef.current?.setLayout({
-				...layout,
-				[PANEL_IDS.left]: DEFAULT_SIZES.left.default,
+				[PANEL_IDS.left]: left,
+				[PANEL_IDS.center]: 100 - left - right,
+				[PANEL_IDS.right]: right,
 			});
 		} else {
-			groupRef.current?.setLayout({ ...layout, [PANEL_IDS.left]: 0 });
+			const right = layout?.[PANEL_IDS.right] ?? 0;
+			groupRef.current?.setLayout({
+				[PANEL_IDS.left]: 0,
+				[PANEL_IDS.center]: 100 - right,
+				[PANEL_IDS.right]: right,
+			});
 		}
 	}
 
 	function toggleRight() {
 		const layout = groupRef.current?.getLayout();
 		if (layout?.[PANEL_IDS.right] === 0) {
+			const right = DEFAULT_SIZES.right.default;
+			const left = layout[PANEL_IDS.left];
 			groupRef.current?.setLayout({
-				...layout,
-				[PANEL_IDS.right]: DEFAULT_SIZES.right.default,
+				[PANEL_IDS.left]: left,
+				[PANEL_IDS.center]: 100 - left - right,
+				[PANEL_IDS.right]: right,
 			});
 		} else {
-			groupRef.current?.setLayout({ ...layout, [PANEL_IDS.right]: 0 });
+			const left = layout?.[PANEL_IDS.left] ?? 0;
+			groupRef.current?.setLayout({
+				[PANEL_IDS.left]: left,
+				[PANEL_IDS.center]: 100 - left,
+				[PANEL_IDS.right]: 0,
+			});
 		}
 	}
 
@@ -93,6 +112,7 @@ export function ThreePanelLayout({
 			<ResizableHandle />
 
 			<ResizablePanel
+				id={PANEL_IDS.center}
 				defaultSize={DEFAULT_SIZES.center.default}
 				minSize={DEFAULT_SIZES.center.min}
 			>
