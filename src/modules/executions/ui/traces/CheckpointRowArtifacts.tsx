@@ -2,7 +2,7 @@ import { Suspense, useState } from "react";
 import { ArtifactChip } from "./ArtifactChip";
 import { ArrowRight } from "@untitledui/icons";
 import { useCheckpointArtifacts } from "@/modules/checkpoints/business-logic/use-checkpoint-artifacts";
-import { ArtifactVisualization } from "@/modules/checkpoints/ui/ArtifactVisualization";
+import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint-artifacts";
 
 function CheckpointRowArtifactsContent({
@@ -89,7 +89,9 @@ function CheckpointRowArtifactsContent({
 								</p>
 							}
 						>
-							<ArtifactVisualization artifactVersionId={selected.entry.id} />
+							<ArtifactVisualizationContainer
+								artifactVersionId={selected.entry.id}
+							/>
 						</Suspense>
 					</div>
 				</div>

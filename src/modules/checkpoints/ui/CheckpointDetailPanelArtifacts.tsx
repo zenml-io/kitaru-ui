@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
-import { ArtifactVisualization } from "./ArtifactVisualization";
+import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import type { ArtifactEntry } from "../domain/checkpoint-artifacts";
 
 type SelectedArtifact = {
@@ -35,14 +35,8 @@ export function CheckpointDetailPanelArtifacts({
 			{selectedArtifact ? (
 				<div className="min-h-0 flex-1 overflow-y-auto">
 					<div className="bg-background min-h-full">
-						<Suspense
-							fallback={
-								<p className="text-2xs text-muted-foreground px-4 py-3">
-									Loading…
-								</p>
-							}
-						>
-							<ArtifactVisualization
+						<Suspense>
+							<ArtifactVisualizationContainer
 								artifactVersionId={selectedArtifact.artifact.id}
 							/>
 						</Suspense>

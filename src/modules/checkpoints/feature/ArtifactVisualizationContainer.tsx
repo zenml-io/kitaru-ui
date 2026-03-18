@@ -1,16 +1,14 @@
 import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
 import { VisualizationViewer } from "@/modules/executions/ui/traces/VisualizationViewer";
 
-interface ArtifactVisualizationProps {
+interface ArtifactVisualizationContainerProps {
 	artifactVersionId: string;
 }
 
-export function ArtifactVisualization({
+export function ArtifactVisualizationContainer({
 	artifactVersionId,
-}: ArtifactVisualizationProps) {
+}: ArtifactVisualizationContainerProps) {
 	const { visualizationData } = useArtifactVisualization(artifactVersionId);
-
-	if (!visualizationData) return null;
 
 	return <VisualizationViewer artifact={visualizationData} />;
 }
