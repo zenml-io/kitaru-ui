@@ -49,6 +49,9 @@ export function UserDropdownContainer() {
 				<DropdownMenuItem render={<Link to="/settings/profile" />}>
 					Profile
 				</DropdownMenuItem>
+				<DropdownMenuItem render={<Link to="/settings/members" />}>
+					Settings
+				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<ThemeSwitcherContainer />
 				<DropdownMenuSeparator />

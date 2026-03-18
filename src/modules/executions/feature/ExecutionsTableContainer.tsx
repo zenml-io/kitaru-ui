@@ -131,7 +131,8 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 			header: ({ column }) => <SortableHeader column={column} label="Author" />,
 			cell: ({ row }) => (
 				<UserRenderer
-					userName={row.original.user?.fullName ?? row.original.user?.name}
+					name={row.original.user?.name ?? ""}
+					avatarUrl={row.original.user?.avatarUrl}
 				/>
 			),
 		},

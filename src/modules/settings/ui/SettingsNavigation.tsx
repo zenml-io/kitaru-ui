@@ -1,5 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { User01 } from "@untitledui/icons";
+import { User01, Users01 } from "@untitledui/icons";
 
 export function SettingsNavigation() {
 	const { buildLocation } = useRouter();
@@ -9,6 +9,11 @@ export function SettingsNavigation() {
 			label: "Profile",
 			to: buildLocation({ to: "/settings/profile" }).pathname,
 			icon: User01,
+		},
+		{
+			label: "Members",
+			to: buildLocation({ to: "/settings/members" }).pathname,
+			icon: Users01,
 		},
 	];
 
