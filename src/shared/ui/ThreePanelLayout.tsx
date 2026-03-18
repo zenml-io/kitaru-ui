@@ -1,5 +1,5 @@
 import { useImperativeHandle, type Ref } from "react";
-import { useGroupRef } from "react-resizable-panels";
+import { useGroupRef, usePanelRef } from "react-resizable-panels";
 import { LayoutLeft, LayoutRight } from "@untitledui/icons";
 import { Button } from "./button";
 import {
@@ -36,59 +36,39 @@ export function ThreePanelLayout({
 	centerHeader,
 }: ThreePanelLayoutProps) {
 	const groupRef = useGroupRef();
+	const leftPanelRef = usePanelRef();
+	const rightPanelRef = usePanelRef();
 
 	useImperativeHandle(ref, () => ({
 		expandRight() {
-			const layout = groupRef.current?.getLayout();
-			if (layout?.[PANEL_IDS.right] === 0) {
-				const right = DEFAULT_SIZES.right.default;
-				const left = layout[PANEL_IDS.left];
-				groupRef.current?.setLayout({
-					[PANEL_IDS.left]: left,
-					[PANEL_IDS.center]: 100 - left - right,
-					[PANEL_IDS.right]: right,
-				});
+			if (rightPanelRef.current?.isCollapsed()) {
+				rightPanelRef.current.expand();
 			}
 		},
 	}));
 
 	function toggleLeft() {
-		const layout = groupRef.current?.getLayout();
-		if (layout?.[PANEL_IDS.left] === 0) {
-			const left = DEFAULT_SIZES.left.default;
-			const right = layout[PANEL_IDS.right];
-			groupRef.current?.setLayout({
-				[PANEL_IDS.left]: left,
-				[PANEL_IDS.center]: 100 - left - right,
-				[PANEL_IDS.right]: right,
-			});
+		if (leftPanelRef.current?.isCollapsed()) {
+			leftPanelRef.current.expand();
 		} else {
-			const right = layout?.[PANEL_IDS.right] ?? 0;
-			groupRef.current?.setLayout({
-				[PANEL_IDS.left]: 0,
-				[PANEL_IDS.center]: 100 - right,
-				[PANEL_IDS.right]: right,
-			});
+			leftPanelRef.current?.collapse();
 		}
 	}
 
 	function toggleRight() {
-		const layout = groupRef.current?.getLayout();
-		if (layout?.[PANEL_IDS.right] === 0) {
-			const right = DEFAULT_SIZES.right.default;
-			const left = layout[PANEL_IDS.left];
-			groupRef.current?.setLayout({
-				[PANEL_IDS.left]: left,
-				[PANEL_IDS.center]: 100 - left - right,
-				[PANEL_IDS.right]: right,
-			});
+		if (rightPanelRef.current?.isCollapsed()) {
+			rightPanelRef.current.expand();
 		} else {
-			const left = layout?.[PANEL_IDS.left] ?? 0;
-			groupRef.current?.setLayout({
-				[PANEL_IDS.left]: left,
-				[PANEL_IDS.center]: 100 - left,
-				[PANEL_IDS.right]: 0,
-			});
+			rightPanelRef.current?.collapse();
+		}
+	}
+
+	function restoreCollapsedOnDragEnd() {
+		if (leftPanelRef.current?.isCollapsed()) {
+			leftPanelRef.current.expand();
+		}
+		if (rightPanelRef.current?.isCollapsed()) {
+			rightPanelRef.current.expand();
 		}
 	}
 
@@ -100,8 +80,9 @@ export function ThreePanelLayout({
 		>
 			<ResizablePanel
 				id={PANEL_IDS.left}
-				defaultSize={DEFAULT_SIZES.left.default}
-				minSize={DEFAULT_SIZES.left.min}
+				panelRef={leftPanelRef}
+				defaultSize={`${DEFAULT_SIZES.left.default}`}
+				minSize={`${DEFAULT_SIZES.left.min}`}
 				collapsible
 				collapsedSize={0}
 				className="bg-card overflow-y-auto"
@@ -109,12 +90,12 @@ export function ThreePanelLayout({
 				{left}
 			</ResizablePanel>
 
-			<ResizableHandle />
+			<ResizableHandle onDragEnd={restoreCollapsedOnDragEnd} />
 
 			<ResizablePanel
 				id={PANEL_IDS.center}
-				defaultSize={DEFAULT_SIZES.center.default}
-				minSize={DEFAULT_SIZES.center.min}
+				defaultSize={`${DEFAULT_SIZES.center.default}`}
+				minSize={`${DEFAULT_SIZES.center.min}`}
 			>
 				<div className="flex h-full flex-col">
 					<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
@@ -132,12 +113,13 @@ export function ThreePanelLayout({
 				</div>
 			</ResizablePanel>
 
-			<ResizableHandle />
+			<ResizableHandle onDragEnd={restoreCollapsedOnDragEnd} />
 
 			<ResizablePanel
 				id={PANEL_IDS.right}
-				defaultSize={DEFAULT_SIZES.right.default}
-				minSize={DEFAULT_SIZES.right.min}
+				panelRef={rightPanelRef}
+				defaultSize={`${DEFAULT_SIZES.right.default}`}
+				minSize={`${DEFAULT_SIZES.right.min}`}
 				collapsible
 				collapsedSize={0}
 				className="bg-card overflow-y-auto"
