@@ -44,7 +44,6 @@ export function SegmentedBar({
 		>
 			{segments.map((seg) => {
 				const pct = (seg.value / total) * 100;
-				console.log({ pct, value: seg.value, total });
 				return (
 					<div
 						key={seg.key}
