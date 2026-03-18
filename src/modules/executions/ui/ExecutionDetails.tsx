@@ -32,14 +32,11 @@ export function ExecutionDetails({
 			: checkpoints.reduce((sum, c) => sum + c.durationMs, 0);
 
 	const spans = checkpoints.map((c) => ({
-		id: c.id,
-		name: c.name,
-		status: c.status,
+		...c,
 		startMs:
 			c.startTime && execution.startTime
 				? differenceInMilliseconds(c.startTime, execution.startTime)
 				: 0,
-		durationMs: c.durationMs,
 	}));
 
 	return (

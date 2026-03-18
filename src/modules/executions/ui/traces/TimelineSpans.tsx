@@ -1,12 +1,12 @@
-import { SpanRow } from "./span-row";
-import type { Span } from "./span-types";
+import { SpanRow } from "./SpanRow";
+import type { Span } from "@/modules/executions/domain/span";
 
-interface TimelineSpansProps {
+type TimelineSpansProps = {
 	spans: Span[];
 	totalMs: number;
 	selectedId?: string;
 	onSelect: (id: string) => void;
-}
+};
 
 export function TimelineSpans({
 	spans,
