@@ -33,6 +33,7 @@ jobs:
           pnpm build
         env:
           VITE_UI_VERSION: ${{ steps.get_version.outputs.VERSION }}
+          VITE_ANALYTICS_SERVER_URL: https://analytics.zenml.io/batch
 
       - name: Create release archive
         run: |
