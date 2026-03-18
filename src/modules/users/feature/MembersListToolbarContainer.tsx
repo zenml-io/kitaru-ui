@@ -1,5 +1,5 @@
 import { Input } from "@/shared/ui/input";
-import { CreateUserDialogContainer } from "../features/CreateUserDialogContainer";
+import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
 
 type Props = {
 	isUserAdmin: boolean;
@@ -7,7 +7,7 @@ type Props = {
 	setSearchValue: (value: string) => void;
 };
 
-export function MembersListToolbar({
+export function MembersListToolbarContainer({
 	isUserAdmin,
 	searchValue,
 	setSearchValue,

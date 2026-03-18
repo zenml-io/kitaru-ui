@@ -18,7 +18,7 @@ type CreateUserFormProps = {
 	onSuccess: (data: CreateUserDialogSuccess) => void;
 };
 
-export function CreateUserForm({ onSuccess }: CreateUserFormProps) {
+export function CreateUserFormContainer({ onSuccess }: CreateUserFormProps) {
 	const queryClient = useQueryClient();
 	const form = useForm<CreateUserFormType>({
 		resolver: zodResolver(createUserSchema),

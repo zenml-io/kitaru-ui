@@ -10,7 +10,7 @@ import {
 import { UserPlus01 } from "@untitledui/icons";
 import { useState } from "react";
 import type { CreateUserDialogSuccess } from "../domain/users";
-import { CreateUserForm } from "../ui/CreateUserForm";
+import { CreateUserFormContainer } from "./CreateUserFormContainer";
 import { CreateUserSuccess } from "../ui/CreateUserSuccess";
 
 export function CreateUserDialogContainer() {
@@ -64,7 +64,7 @@ function CreateUserDialogContent({
 					activationToken={successState.activationToken}
 				/>
 			) : (
-				<CreateUserForm onSuccess={onSuccess} />
+				<CreateUserFormContainer onSuccess={onSuccess} />
 			)}
 		</DialogContent>
 	);

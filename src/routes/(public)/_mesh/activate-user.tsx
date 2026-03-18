@@ -1,4 +1,4 @@
-import { ActivateUserPageContainer } from "@/modules/users/features/ActivateUserPageContainer";
+import { ActivateUserPageContainer } from "@/modules/users/feature/ActivateUserPageContainer";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";

@@ -1,5 +1,5 @@
 import { userQueries } from "@/modules/users/business-logic/user-queries";
-import { UpdateCurrentUserPageContainer } from "@/modules/users/features/UpdateCurrentUserPageContainer";
+import { UpdateCurrentUserPageContainer } from "@/modules/users/feature/UpdateCurrentUserPageContainer";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 
