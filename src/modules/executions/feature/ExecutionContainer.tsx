@@ -1,4 +1,4 @@
-import { useState, useRef, Suspense } from "react";
+import { useState, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useExecutions } from "../business-logic/use-executions";
 import { useExecution } from "../business-logic/use-execution";
@@ -9,7 +9,7 @@ import {
 } from "@/shared/ui/ThreePanelLayout";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
-import { CheckpointDetailPanel } from "@/modules/checkpoints/ui/CheckpointDetailPanel";
+import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
@@ -50,16 +50,10 @@ export function ExecutionContainer() {
 				/>
 			}
 			right={
-				<div className="flex h-full flex-col">
-					<div className="text-muted-foreground px-3 py-2 text-xs font-semibold">
-						Details
-					</div>
-					<div className="min-h-0 flex-1 overflow-y-auto">
-						<Suspense>
-							<CheckpointDetailPanel checkpoint={selectedCheckpoint} />
-						</Suspense>
-					</div>
-				</div>
+				<CheckpointDetailPanelContainer
+					key={selectedCheckpointId}
+					checkpoint={selectedCheckpoint}
+				/>
 			}
 		/>
 	);

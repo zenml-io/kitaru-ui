@@ -5,11 +5,11 @@ import { cn } from "@/shared/utils/styles";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "./ExecutionName";
 
-interface ExecutionsListProps {
+type ExecutionsListProps = {
 	executions: Execution[];
 	flowId: string;
 	activeexecutionId: string;
-}
+};
 
 export function ExecutionsList({
 	executions,

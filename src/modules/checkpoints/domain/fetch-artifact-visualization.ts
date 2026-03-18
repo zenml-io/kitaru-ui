@@ -1,9 +1,6 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import type { components } from "@/shared/api/openapi";
-
-export type ArtifactVisualization =
-	components["schemas"]["LoadedVisualization"];
+import type { ArtifactVisualization } from "./visualization";
 
 export async function fetchArtifactVisualization(
 	artifactVersionId: string
