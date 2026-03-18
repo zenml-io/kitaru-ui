@@ -138,7 +138,6 @@ export interface FileRoutesByFullPath {
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/settings/': typeof PrivateNavbarSettingsIndexRoute
-  '/flows/$flowId/executions': typeof PrivateNavbarFlowsFlowIdExecutionsRouteRouteWithChildren
   '/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
   '/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
@@ -173,7 +172,6 @@ export interface FileRoutesById {
   '/_private/_navbar/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/_private/_navbar/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/_private/_navbar/settings/': typeof PrivateNavbarSettingsIndexRoute
-  '/_private/_navbar/flows/$flowId/executions': typeof PrivateNavbarFlowsFlowIdExecutionsRouteRouteWithChildren
   '/_private/_navbar/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
   '/_private/_navbar/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
   '/_private/_navbar/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteWithChildren
@@ -192,7 +190,6 @@ export interface FileRouteTypes {
     | '/flows/$flowId'
     | '/settings/profile'
     | '/flows/'
-    | '/flows/$flowId/executions'
     | '/settings/'
     | '/flows/$flowId/$tab'
     | '/flows/$flowId/'
@@ -227,7 +224,6 @@ export interface FileRouteTypes {
     | '/_private/_navbar/settings/profile'
     | '/_private/_navbar/flows/'
     | '/_private/_navbar/settings/'
-    | '/_private/_navbar/flows/$flowId/executions'
     | '/_private/_navbar/flows/$flowId/$tab'
     | '/_private/_navbar/flows/$flowId/'
     | '/_private/_navbar/flows/$flowId/executions/$executionId'
