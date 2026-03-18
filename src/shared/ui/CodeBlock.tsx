@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 import { codeToHtml } from "shiki";
 import {
 	kitaruLight,
@@ -82,7 +83,7 @@ export function CodeBlock({
 					: "[&_pre]:overflow-x-auto [&_pre]:whitespace-pre",
 				className
 			)}
-			dangerouslySetInnerHTML={{ __html: html }}
+			dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
 		/>
 	);
 }
