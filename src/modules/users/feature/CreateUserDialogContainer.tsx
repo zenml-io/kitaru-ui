@@ -11,7 +11,7 @@ import { UserPlus01 } from "@untitledui/icons";
 import { useState } from "react";
 import type { CreateUserDialogSuccess } from "../domain/users";
 import { CreateUserFormContainer } from "./CreateUserFormContainer";
-import { CreateUserSuccess } from "../ui/CreateUserSuccess";
+import { CreateUserSuccessContainer } from "./CreateUserSuccessContainer";
 
 export function CreateUserDialogContainer() {
 	const [open, setOpen] = useState(false);
@@ -59,7 +59,7 @@ function CreateUserDialogContent({
 				</DialogDescription>
 			</DialogHeader>
 			{successState ? (
-				<CreateUserSuccess
+				<CreateUserSuccessContainer
 					username={successState.username}
 					userId={successState.userId}
 					activationToken={successState.activationToken}

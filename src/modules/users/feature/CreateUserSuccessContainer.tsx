@@ -8,7 +8,7 @@ type CreateUserSuccessProps = {
 	activationToken: string;
 };
 
-export function CreateUserSuccess({
+export function CreateUserSuccessContainer({
 	userId,
 	activationToken,
 	username,
