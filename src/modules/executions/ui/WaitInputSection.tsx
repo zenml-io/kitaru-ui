@@ -1,16 +1,15 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 import { Button } from "@/shared/ui/button";
 import { ColorDot } from "@/shared/ui/ColorDot";
-import { ChevronDown, Send01 } from "@untitledui/icons";
+import { ChevronDown, ChevronUp, Send01 } from "@untitledui/icons";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
 import { widgets, templates } from "./wait-form/rjsf-widgets";
 
 type WaitInputSectionProps = {
 	waitCondition: WaitCondition;
-	onToggle?: () => void;
 	onResolve?: (params: ResolveWaitConditionParams) => void;
 };
 
@@ -20,9 +19,9 @@ const UI_SCHEMA = {
 
 export function WaitInputSection({
 	waitCondition,
-	onToggle,
 	onResolve,
 }: WaitInputSectionProps) {
+	const [isOpen, setIsOpen] = useState(true);
 	const formRef = useRef<Form>(null);
 
 	function handleAccept() {
@@ -43,6 +42,28 @@ export function WaitInputSection({
 		});
 	}
 
+	if (!isOpen) {
+		return (
+			<button
+				type="button"
+				className="bg-card hover:bg-accent/30 flex h-10 w-full shrink-0 cursor-pointer items-center gap-2 px-4 text-left transition-colors"
+				aria-label="Expand wait input panel"
+				onClick={() => setIsOpen(true)}
+			>
+				<ColorDot shape="round" size="sm" className="bg-warning" />
+				<span className="text-foreground truncate font-mono text-xs font-semibold">
+					{waitCondition.name}
+				</span>
+				{waitCondition.question && (
+					<span className="text-muted-foreground flex-1 truncate text-xs">
+						{waitCondition.question}
+					</span>
+				)}
+				<ChevronUp className="text-muted-foreground size-3.5 shrink-0" />
+			</button>
+		);
+	}
+
 	return (
 		<div className="bg-card flex flex-col">
 			<div className="border-border flex shrink-0 flex-col gap-1 border-b px-4 py-2">
@@ -51,16 +72,14 @@ export function WaitInputSection({
 					<span className="text-foreground truncate font-mono text-xs font-semibold">
 						{waitCondition.name}
 					</span>
-					{onToggle && (
-						<button
-							type="button"
-							onClick={onToggle}
-							className="text-muted-foreground hover:text-foreground ml-auto shrink-0"
-							aria-label="Collapse wait input"
-						>
-							<ChevronDown className="size-3.5" />
-						</button>
-					)}
+					<button
+						type="button"
+						onClick={() => setIsOpen(false)}
+						className="text-muted-foreground hover:text-foreground ml-auto shrink-0"
+						aria-label="Collapse wait input"
+					>
+						<ChevronDown className="size-3.5" />
+					</button>
 				</div>
 				{waitCondition.question && (
 					<span className="text-muted-foreground text-xs">

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
 	PageHeader,
 	PageHeaderBody,
@@ -12,8 +11,6 @@ import type { ResolveWaitConditionParams } from "../domain/resolve-wait-conditio
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { CheckpointThread } from "./traces/CheckpointThread";
 import { WaitInputSection } from "./WaitInputSection";
-import { ColorDot } from "@/shared/ui/ColorDot";
-import { ChevronUp } from "@untitledui/icons";
 
 type ExecutionDetailsProps = {
 	execution: Execution;
@@ -31,8 +28,6 @@ export function ExecutionDetails({
 	waitCondition,
 	onResolveWaitCondition,
 }: ExecutionDetailsProps) {
-	const [waitPanelOpen, setWaitPanelOpen] = useState(true);
-
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
 			<PageHeader>
@@ -59,33 +54,10 @@ export function ExecutionDetails({
 			{waitCondition && (
 				<>
 					<div className="bg-border h-px shrink-0" />
-					{waitPanelOpen ? (
-						<div className="bg-card shrink-0">
-							<WaitInputSection
-								waitCondition={waitCondition}
-								onToggle={() => setWaitPanelOpen(false)}
-								onResolve={onResolveWaitCondition}
-							/>
-						</div>
-					) : (
-						<button
-							type="button"
-							className="bg-card hover:bg-accent/30 flex h-10 shrink-0 cursor-pointer items-center gap-2 px-4 text-left transition-colors"
-							aria-label="Expand wait input panel"
-							onClick={() => setWaitPanelOpen(true)}
-						>
-							<ColorDot shape="round" size="sm" className="bg-warning" />
-							<span className="text-foreground truncate font-mono text-xs font-semibold">
-								{waitCondition.name}
-							</span>
-							{waitCondition.question && (
-								<span className="text-muted-foreground flex-1 truncate text-xs">
-									{waitCondition.question}
-								</span>
-							)}
-							<ChevronUp className="text-muted-foreground size-3.5 shrink-0" />
-						</button>
-					)}
+					<WaitInputSection
+						waitCondition={waitCondition}
+						onResolve={onResolveWaitCondition}
+					/>
 				</>
 			)}
 		</main>
