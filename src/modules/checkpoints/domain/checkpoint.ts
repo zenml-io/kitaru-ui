@@ -8,6 +8,7 @@ export type Checkpoint = {
 	status: ExecutionStatus;
 	startTime?: Date;
 	type: components["schemas"]["StepType"];
+	costUsd: number;
 };
 
 export function checkpointFromApiToDomain(
@@ -22,5 +23,7 @@ export function checkpointFromApiToDomain(
 			? new Date(node.metadata?.start_time as string)
 			: undefined,
 		type: node.metadata?.type as components["schemas"]["StepType"],
+		// @ts-expect-error - TODO: fix this
+		costUsd: node.metadata?.run_metadata?.llm_usage?.cost_usd ?? 0,
 	};
 }

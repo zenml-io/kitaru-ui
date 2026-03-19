@@ -1,0 +1,36 @@
+import { cn } from "@/shared/utils/styles";
+
+export type PanelTab = "checkpoint" | "artifacts";
+
+interface CheckpointDetailPanelTabsProps {
+	activeTab: PanelTab;
+	onTabChange: (tab: PanelTab) => void;
+}
+
+export function CheckpointDetailPanelTabs({
+	activeTab,
+	onTabChange,
+}: CheckpointDetailPanelTabsProps) {
+	return (
+		<div className="border-border bg-background flex shrink-0 items-center border-b">
+			{(["checkpoint", "artifacts"] as const).map((tab) => (
+				<button
+					key={tab}
+					type="button"
+					className={cn(
+						"relative cursor-pointer px-4 py-2 text-xs font-medium transition-colors",
+						activeTab === tab
+							? "text-foreground"
+							: "text-muted-foreground hover:text-foreground"
+					)}
+					onClick={() => onTabChange(tab)}
+				>
+					<span className="capitalize">{tab}</span>
+					{activeTab === tab && (
+						<span className="bg-primary absolute right-4 bottom-0 left-4 h-0.5 rounded-full" />
+					)}
+				</button>
+			))}
+		</div>
+	);
+}
