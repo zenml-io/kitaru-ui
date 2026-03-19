@@ -3,18 +3,14 @@ import {
 	CheckpointDetailPanelRows as DetailRows,
 } from "./CheckpointDetailPanelRow";
 import { formatDurationShort } from "@/shared/utils/time";
-import type { ArtifactEntry, Checkpoint } from "../domain/checkpoint-details";
+import type { Checkpoint } from "../domain/checkpoint";
 
 interface CheckpointDetailPanelInfoProps {
 	checkpoint: Checkpoint;
-	inputs: ArtifactEntry[];
-	outputs: ArtifactEntry[];
 }
 
 export function CheckpointDetailPanelInfo({
 	checkpoint,
-	inputs,
-	outputs,
 }: CheckpointDetailPanelInfoProps) {
 	return (
 		<div className="space-y-4 p-4">
@@ -33,10 +29,10 @@ export function CheckpointDetailPanelInfo({
 						{formatDurationShort(checkpoint.durationMs)}
 					</DetailRow>
 				)}
-				{(inputs.length > 0 || outputs.length > 0) && (
+				{(checkpoint.inputs.length > 0 || checkpoint.outputs.length > 0) && (
 					<>
-						<DetailRow label="Inputs">{inputs.length}</DetailRow>
-						<DetailRow label="Outputs">{outputs.length}</DetailRow>
+						<DetailRow label="Inputs">{checkpoint.inputs.length}</DetailRow>
+						<DetailRow label="Outputs">{checkpoint.outputs.length}</DetailRow>
 					</>
 				)}
 			</DetailRows>

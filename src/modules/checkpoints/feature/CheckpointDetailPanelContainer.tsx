@@ -9,7 +9,7 @@ import {
 import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { checkpointsQueries } from "../business-logic/checkpoints-queries";
-import type { ArtifactEntry } from "../domain/checkpoint-details";
+import type { ArtifactEntry } from "../domain/checkpoint";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
@@ -58,11 +58,7 @@ export function CheckpointDetailPanelContainer({
 			/>
 			<div className="min-h-0 flex-1 overflow-y-auto">
 				{activeTab === "checkpoint" && (
-					<CheckpointDetailPanelInfo
-						checkpoint={checkpointData}
-						inputs={inputs}
-						outputs={outputs}
-					/>
+					<CheckpointDetailPanelInfo checkpoint={checkpointData} />
 				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts

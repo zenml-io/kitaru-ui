@@ -1,5 +1,5 @@
 import { CheckpointTypeBadge } from "@/modules/executions/ui/traces/CheckpointTypeBadge";
-import type { Checkpoint } from "../domain/checkpoint-details";
+import type { Checkpoint } from "../domain/checkpoint";
 import { Badge } from "@/shared/ui/badge";
 import { formatCost } from "@/shared/utils/currency";
 import { formatDurationShort } from "@/shared/utils/time";

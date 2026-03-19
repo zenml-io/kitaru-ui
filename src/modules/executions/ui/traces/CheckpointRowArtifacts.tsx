@@ -3,7 +3,7 @@ import { ArtifactChip } from "./ArtifactChip";
 import { ArrowRight } from "@untitledui/icons";
 import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
-import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint-details";
+import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
@@ -12,8 +12,7 @@ function CheckpointRowArtifactsContent({
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId);
 
-	const inputs = detailsData?.inputs ?? [];
-	const outputs = detailsData?.outputs ?? [];
+	const { inputs, outputs } = detailsData;
 
 	const [selected, setSelected] = useState<{
 		entry: ArtifactEntry;

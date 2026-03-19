@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchCheckpoints } from "../domain/fetch-checkpoints";
+import { fetchCheckpointEntries } from "../domain/fetch-checkpoint-entries";
 import { fetchArtifactVisualization } from "../domain/fetch-artifact-visualization";
-import { fetchCheckpointDetails } from "../domain/checkpoint-details";
+import { fetchCheckpointDetails } from "../domain/fetch-checkpoint";
 
 export const checkpointsQueryKeys = {
 	all: (executionId: string) => ["checkpoints", executionId] as const,
@@ -15,7 +15,7 @@ export const checkpointsQueries = {
 	all: (executionId: string) =>
 		queryOptions({
 			queryKey: checkpointsQueryKeys.all(executionId),
-			queryFn: () => fetchCheckpoints(executionId),
+			queryFn: () => fetchCheckpointEntries(executionId),
 		}),
 	details: (checkpointId: string) =>
 		queryOptions({
