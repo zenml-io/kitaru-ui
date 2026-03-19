@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
 import { MembersListToolbarContainer } from "./MembersListToolbarContainer";
 import { MembersTableContainer } from "./MembersTableContainer";
@@ -10,12 +10,8 @@ export function MembersListPageContainer() {
 	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 	const { data, isRefetching, refetch } = useSuspenseQuery(userQueries.list());
 
-	const filteredMembers = useMemo(
-		() =>
-			data.items.filter((member) =>
-				member.name.toLowerCase().includes(searchValue.toLowerCase())
-			),
-		[data.items, searchValue]
+	const filteredMembers = data.items.filter((member) =>
+		member.name.toLowerCase().includes(searchValue.toLowerCase())
 	);
 
 	return (

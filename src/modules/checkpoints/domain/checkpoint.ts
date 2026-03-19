@@ -87,5 +87,5 @@ export function checkpointEntryFromApiToDomain(
 
 export type DagResponse = {
 	executionStatus: ExecutionStatus;
-	nodes: CheckpointEntry[];
+	checkpoints: CheckpointEntry[];
 };

@@ -14,7 +14,7 @@ export async function fetchCheckpointEntries(
 
 	return {
 		executionStatus: dag.status,
-		nodes: dag.nodes
+		checkpoints: dag.nodes
 			.filter((node) => node.type === "step")
 			.map(checkpointEntryFromApiToDomain),
 	};

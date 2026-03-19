@@ -73,7 +73,7 @@ export function ExecutionContainer() {
 			center={
 				<ExecutionDetails
 					execution={executionData}
-					checkpoints={checkpointsData.nodes}
+					checkpoints={checkpointsData.checkpoints}
 					selectedCheckpointId={selectedCheckpointId}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);

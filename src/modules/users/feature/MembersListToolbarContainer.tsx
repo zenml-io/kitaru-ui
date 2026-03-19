@@ -30,7 +30,7 @@ export function MembersListToolbarContainer({
 					variant="outline"
 					isLoading={isRefetching}
 					onClick={() => refetch()}
-				></RefreshButton>
+				/>
 				{isUserAdmin && <CreateUserDialogContainer />}
 			</div>
 		</div>
