@@ -1,4 +1,10 @@
+const usdFormatter = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 4,
+});
+
 export function formatCost(cost: number): string {
-	if (cost < 0.001) return `$${(cost * 1000).toFixed(3)}m`;
-	return `$${cost.toFixed(4)}`;
+	return usdFormatter.format(cost);
 }
