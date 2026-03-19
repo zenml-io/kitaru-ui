@@ -1,19 +1,18 @@
 import { Suspense, useState } from "react";
 import { ArtifactChip } from "./ArtifactChip";
 import { ArrowRight } from "@untitledui/icons";
-import { useCheckpointArtifacts } from "@/modules/checkpoints/business-logic/use-checkpoint-artifacts";
+import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
-import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint-artifacts";
+import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
 }: {
 	checkpointId: string;
 }) {
-	const { artifactsData } = useCheckpointArtifacts(checkpointId);
+	const { detailsData } = useCheckpointDetails(checkpointId);
 
-	const inputs = artifactsData?.inputs ?? [];
-	const outputs = artifactsData?.outputs ?? [];
+	const { inputs, outputs } = detailsData;
 
 	const [selected, setSelected] = useState<{
 		entry: ArtifactEntry;
