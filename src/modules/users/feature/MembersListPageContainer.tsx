@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
+import { MembersTable } from "../ui/MembersTable";
 import { MembersListToolbarContainer } from "./MembersListToolbarContainer";
-import { MembersTableContainer } from "./MembersTableContainer";
 
 export function MembersListPageContainer() {
 	const [searchValue, setSearchValue] = useState("");
@@ -27,10 +27,7 @@ export function MembersListPageContainer() {
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
 				/>
-				<MembersTableContainer
-					currentUserId={currentUser.id}
-					users={filteredMembers}
-				/>
+				<MembersTable currentUserId={currentUser.id} users={filteredMembers} />
 			</CardContent>
 		</Card>
 	);

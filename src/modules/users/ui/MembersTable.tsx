@@ -18,14 +18,14 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import type { User } from "../domain/users";
-import { MembersRowActions } from "../ui/MembersRowActions";
+import { MembersRowActions } from "./MembersRowActions";
 
 type MembersTableContainerProps = {
 	users: User[];
 	currentUserId: string;
 };
 
-export function MembersTableContainer({
+export function MembersTable({
 	users,
 	currentUserId,
 }: MembersTableContainerProps) {
