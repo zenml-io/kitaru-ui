@@ -24,7 +24,7 @@ export function WaitInputSection({
 	const [isOpen, setIsOpen] = useState(true);
 	const formRef = useRef<Form>(null);
 
-	function handleAccept() {
+	function handleSubmit() {
 		if (waitCondition.dataSchema) {
 			formRef.current?.submit();
 		} else {
@@ -121,10 +121,10 @@ export function WaitInputSection({
 						type="button"
 						size="sm"
 						className="flex-1"
-						onClick={handleAccept}
+						onClick={handleSubmit}
 					>
 						<Send01 className="size-3.5" />
-						Accept
+						Submit
 					</Button>
 				</div>
 			</div>
