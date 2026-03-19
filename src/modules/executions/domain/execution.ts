@@ -37,6 +37,10 @@ export type Execution = {
 	createdAt?: Date;
 	startTime?: Date;
 	endTime?: Date;
+	activeWaitConditionEntry?: {
+		id?: string;
+		name?: string;
+	};
 };
 
 export function executionFromApiToDomain(
@@ -61,5 +65,13 @@ export function executionFromApiToDomain(
 		endTime: run.metadata?.end_time
 			? new Date(run.metadata.end_time)
 			: undefined,
+		activeWaitConditionEntry:
+			run.resources?.active_wait_condition?.id ||
+			run.resources?.active_wait_condition?.name
+				? {
+						id: run.resources?.active_wait_condition?.id,
+						name: run.resources?.active_wait_condition?.name,
+					}
+				: undefined,
 	};
 }
