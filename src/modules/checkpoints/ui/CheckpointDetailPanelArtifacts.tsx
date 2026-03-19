@@ -1,4 +1,4 @@
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/ErrorBoundary";
+import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";

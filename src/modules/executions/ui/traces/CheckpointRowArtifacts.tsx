@@ -5,7 +5,7 @@ import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ArtifactChip } from "./ArtifactChip";
-import { VisualizationErrorBoundary } from "../ErrorBoundary";
+import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
