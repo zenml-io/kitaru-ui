@@ -27,3 +27,8 @@ export function checkpointFromApiToDomain(
 		costUsd: node.metadata?.run_metadata?.llm_usage?.cost_usd ?? 0,
 	};
 }
+
+export type DagResponse = {
+	executionStatus: ExecutionStatus;
+	nodes: Checkpoint[];
+};

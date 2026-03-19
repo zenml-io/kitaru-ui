@@ -24,7 +24,7 @@ export function ExecutionContainer() {
 	>();
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
 
-	const selectedCheckpoint = checkpointsData?.find(
+	const selectedCheckpoint = checkpointsData.nodes.find(
 		(c) => c.id === selectedCheckpointId
 	);
 
@@ -41,7 +41,7 @@ export function ExecutionContainer() {
 			center={
 				<ExecutionDetails
 					execution={executionData}
-					checkpoints={checkpointsData}
+					checkpoints={checkpointsData.nodes}
 					selectedCheckpointId={selectedCheckpointId}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);
