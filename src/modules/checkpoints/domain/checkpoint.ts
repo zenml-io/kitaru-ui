@@ -7,7 +7,7 @@ export type CheckpointEntry = {
 	durationMs: number;
 	status: ExecutionStatus;
 	startTime?: Date;
-	type: components["schemas"]["StepType"];
+	type?: components["schemas"]["StepType"];
 };
 export type ArtifactEntry = {
 	name: string;

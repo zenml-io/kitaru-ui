@@ -45,7 +45,7 @@ export function CheckpointRow({
 						isExpanded && "rotate-90"
 					)}
 				/>
-				<CheckpointTypeBadge type={checkpoint.type} />
+				{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
 				<span className="text-foreground truncate font-mono text-xs font-semibold">
 					{checkpoint.name}
 				</span>
