@@ -1,17 +1,20 @@
 import { useRef, useState } from "react";
-import Form from "@rjsf/core";
+import { withTheme } from "@rjsf/core";
+import type RjsfForm from "@rjsf/core";
+import { Theme as shadcnTheme } from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 import { Button } from "@/shared/ui/button";
 import { ColorDot } from "@/shared/ui/ColorDot";
 import { ChevronDown, ChevronUp, Send01 } from "@untitledui/icons";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
-import { widgets, templates } from "./wait-form/rjsf-widgets";
 
 type WaitInputSectionProps = {
 	waitCondition: WaitCondition;
 	onResolve?: (params: ResolveWaitConditionParams) => void;
 };
+
+const Form = withTheme(shadcnTheme);
 
 const UI_SCHEMA = {
 	"ui:submitButtonOptions": { norender: true },
@@ -22,7 +25,7 @@ export function WaitInputSection({
 	onResolve,
 }: WaitInputSectionProps) {
 	const [isOpen, setIsOpen] = useState(true);
-	const formRef = useRef<Form>(null);
+	const formRef = useRef<RjsfForm>(null);
 
 	function handleSubmit() {
 		if (waitCondition.dataSchema) {
@@ -88,44 +91,46 @@ export function WaitInputSection({
 				)}
 			</div>
 
-			<div className="flex flex-col gap-4 p-4">
-				{waitCondition.dataSchema && (
-					<Form
-						ref={formRef}
-						schema={waitCondition.dataSchema as object}
-						validator={validator}
-						widgets={widgets}
-						templates={templates}
-						uiSchema={UI_SCHEMA}
-						onSubmit={({ formData }) =>
-							onResolve?.({
-								waitConditionId: waitCondition.id,
-								resolution: "continue",
-								result: formData,
-							})
-						}
-					/>
-				)}
+			<div className="max-h-80 overflow-y-auto">
+				<div className="flex flex-col gap-4 p-4">
+					{waitCondition.dataSchema && (
+						<div className="text-xs [&_button]:text-xs [&_input]:text-xs [&_label]:text-xs">
+							<Form
+								ref={formRef}
+								schema={waitCondition.dataSchema as object}
+								validator={validator}
+								uiSchema={UI_SCHEMA}
+								onSubmit={({ formData }) =>
+									onResolve?.({
+										waitConditionId: waitCondition.id,
+										resolution: "continue",
+										result: formData,
+									})
+								}
+							/>
+						</div>
+					)}
 
-				<div className="flex gap-2">
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						className="flex-1"
-						onClick={handleDecline}
-					>
-						Decline
-					</Button>
-					<Button
-						type="button"
-						size="sm"
-						className="flex-1"
-						onClick={handleSubmit}
-					>
-						<Send01 className="size-3.5" />
-						Submit
-					</Button>
+					<div className="flex gap-2">
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							className="flex-1"
+							onClick={handleDecline}
+						>
+							Decline
+						</Button>
+						<Button
+							type="button"
+							size="sm"
+							className="flex-1"
+							onClick={handleSubmit}
+						>
+							<Send01 className="size-3.5" />
+							Submit
+						</Button>
+					</div>
 				</div>
 			</div>
 		</div>
