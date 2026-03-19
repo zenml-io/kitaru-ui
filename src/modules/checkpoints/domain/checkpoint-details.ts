@@ -48,7 +48,6 @@ export async function fetchCheckpointDetails(
 	});
 	const checkpoint = expectData(response);
 
-	console.log(checkpoint);
 	return {
 		id: checkpoint.id,
 		name: checkpoint.name,

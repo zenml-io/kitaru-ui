@@ -11,7 +11,6 @@ type CheckpointDetailPanelHeaderProps = {
 export function CheckpointDetailPanelHeader({
 	checkpoint,
 }: CheckpointDetailPanelHeaderProps) {
-	console.log(checkpoint);
 	return (
 		<div className="border-border flex h-10 shrink-0 items-center gap-2 border-b px-4">
 			{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
