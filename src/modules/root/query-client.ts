@@ -15,6 +15,11 @@ function redirectToLogin() {
 }
 
 export const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+		},
+	},
 	queryCache: new QueryCache({
 		onError: (error) => {
 			if (isFetchError(error) && error.status === 401) {
