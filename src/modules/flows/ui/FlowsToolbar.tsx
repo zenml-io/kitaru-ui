@@ -1,5 +1,5 @@
 import { Input } from "@/shared/ui/input";
-import { LoadingButton } from "@/shared/ui/LoadingButton";
+import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { Separator } from "@/shared/ui/separator";
 import {
 	TableToolbarContent,
@@ -27,40 +27,40 @@ export function FlowsToolbar({
 
 	return (
 		<TableToolbarRoot>
-			<TableToolbarContent>
-				<ToggleGroup
-					value={selectedStatusValues}
-					onValueChange={(nextValue) => {
-						onStatusFilterChange(getNextStatusFilter(nextValue));
-					}}
-					variant="outline"
-					size="sm"
-					spacing={1}
-				>
-					{flowStatusFilterValues.map((status) => (
-						<ToggleGroupItem
-							key={status}
-							value={status}
-							className="aria-pressed:bg-primary aria-pressed:text-primary-foreground capitalize"
-						>
-							{status}
-						</ToggleGroupItem>
-					))}
-				</ToggleGroup>
-				<Separator orientation="vertical" />
-				<Input
-					placeholder="Search flows..."
-					value={searchValue}
-					onChange={(event) => onSearchValueChange(event.target.value)}
-					className="w-full font-mono sm:w-48"
-				/>
-				<LoadingButton
+			<TableToolbarContent className="justify-between">
+				<div className="flex items-center gap-2">
+					<ToggleGroup
+						value={selectedStatusValues}
+						onValueChange={(nextValue) => {
+							onStatusFilterChange(getNextStatusFilter(nextValue));
+						}}
+						variant="outline"
+						size="sm"
+						spacing={1}
+					>
+						{flowStatusFilterValues.map((status) => (
+							<ToggleGroupItem
+								key={status}
+								value={status}
+								className="aria-pressed:bg-primary aria-pressed:text-primary-foreground capitalize"
+							>
+								{status}
+							</ToggleGroupItem>
+						))}
+					</ToggleGroup>
+					<Separator orientation="vertical" />
+					<Input
+						placeholder="Search flows..."
+						value={searchValue}
+						onChange={(event) => onSearchValueChange(event.target.value)}
+						className="w-full font-mono sm:w-48"
+					/>
+				</div>
+				<RefreshButton
 					variant="outline"
 					isLoading={isRefreshing}
 					onClick={onRefresh}
-				>
-					Refresh
-				</LoadingButton>
+				></RefreshButton>
 			</TableToolbarContent>
 		</TableToolbarRoot>
 	);

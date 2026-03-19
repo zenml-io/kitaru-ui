@@ -3,7 +3,6 @@ import { ExecutionsTableContainer } from "@/modules/executions/feature/Execution
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import type { StatProps } from "@/modules/flows/ui/Stat";
 import { Stats } from "@/modules/flows/ui/Stats";
-import { LoadingButton } from "@/shared/ui/LoadingButton";
 import {
 	PageHeader,
 	PageHeaderActions,
@@ -12,6 +11,7 @@ import {
 	PageHeaderDescription,
 	PageHeaderTitle,
 } from "@/shared/ui/PageHeader";
+import { RefreshButton } from "@/shared/ui/RefreshButton";
 import {
 	TableToolbarContent,
 	TableToolbarRoot,
@@ -44,14 +44,12 @@ export function FlowOverviewContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<TableToolbarRoot>
-				<TableToolbarContent>
-					<LoadingButton
+				<TableToolbarContent className="justify-end">
+					<RefreshButton
 						variant="outline"
 						isLoading={isRefetching}
 						onClick={() => refetch()}
-					>
-						Refresh
-					</LoadingButton>
+					></RefreshButton>
 				</TableToolbarContent>
 			</TableToolbarRoot>
 			<div className="container mx-auto flex w-full flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">

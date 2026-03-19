@@ -1,6 +1,6 @@
 import { Input } from "@/shared/ui/input";
+import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
-import { LoadingButton } from "@/shared/ui/LoadingButton";
 
 type Props = {
 	isUserAdmin: boolean;
@@ -26,13 +26,11 @@ export function MembersListToolbarContainer({
 				className="w-full sm:w-48"
 			/>
 			<div className="flex items-center gap-4">
-				<LoadingButton
+				<RefreshButton
 					variant="outline"
 					isLoading={isRefetching}
 					onClick={() => refetch()}
-				>
-					Refresh
-				</LoadingButton>
+				></RefreshButton>
 				{isUserAdmin && <CreateUserDialogContainer />}
 			</div>
 		</div>
