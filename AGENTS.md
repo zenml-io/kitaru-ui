@@ -206,6 +206,24 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Good: "Add workflow to require release label on PRs"
 - Bad: "ci: add workflow to require release label on PRs"
 
+## Testing
+
+### Unit Tests
+
+```bash
+pnpm test:unit        # Run unit tests (Vitest)
+```
+
+### Local Integration Testing
+
+To test the UI against a real ZenML server locally:
+
+1. Install the ZenML server from the `develop` branch: `./scripts/install-kitaru-branch.sh develop`
+2. Start the server: `zenml login --local`
+3. Start the UI: `pnpm dev` (proxies `/api` to `http://localhost:8237`)
+
+See [TESTING.md](./TESTING.md) for the full step-by-step guide including troubleshooting.
+
 ## CI
 
 GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
