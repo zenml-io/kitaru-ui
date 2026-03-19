@@ -50,9 +50,11 @@ export function CheckpointRow({
 					{checkpoint.name}
 				</span>
 				<span className="flex-1" />
-				<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-					{formatDurationShort(checkpoint.durationMs)}
-				</span>
+				{checkpoint.durationMs && (
+					<span className="text-2xs text-muted-foreground font-mono tabular-nums">
+						{formatDurationShort(checkpoint.durationMs)}
+					</span>
+				)}
 				<StatusDot status={checkpoint.status} />
 			</button>
 
