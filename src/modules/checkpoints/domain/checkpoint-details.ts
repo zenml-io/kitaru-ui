@@ -66,8 +66,8 @@ export async function fetchCheckpointDetails(
 					new Date(checkpoint.body.start_time).getTime()
 				: undefined,
 		type: checkpoint.body?.type ?? undefined,
-		// @ts-expect-error - TODO: fix this
 		costUsd:
+			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 	};
 }
