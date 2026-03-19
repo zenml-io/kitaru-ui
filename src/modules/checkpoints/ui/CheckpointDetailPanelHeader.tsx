@@ -22,7 +22,7 @@ export function CheckpointDetailPanelHeader({
 			</span>
 			<span className="flex-1" />
 			{checkpoint.durationMs !== undefined && (
-				<span className="text-2xs text-muted-foreground tabular-num s font-mono">
+				<span className="text-2xs text-muted-foreground font-mono tabular-nums">
 					{formatDurationShort(checkpoint.durationMs)}
 				</span>
 			)}
