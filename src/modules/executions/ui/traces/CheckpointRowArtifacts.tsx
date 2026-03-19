@@ -5,6 +5,7 @@ import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ArtifactChip } from "./ArtifactChip";
+import { VisualizationErrorBoundary } from "../ErrorBoundary";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
@@ -82,7 +83,7 @@ function CheckpointRowArtifactsContent({
 						</span>
 					</div>
 					<div className="bg-background">
-						<ErrorBoundary fallbackRender={() => <p>Error</p>}>
+						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense
 								fallback={
 									<p className="text-2xs text-muted-foreground px-4 py-3">

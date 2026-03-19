@@ -1,8 +1,9 @@
-import { Suspense } from "react";
+import { VisualizationErrorBoundary } from "@/modules/executions/ui/ErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
-import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
-import type { ArtifactEntry } from "../domain/checkpoint";
+import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import type { ArtifactEntry } from "../domain/checkpoint";
+import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -36,7 +37,7 @@ export function CheckpointDetailPanelArtifacts({
 			{selectedArtifact ? (
 				<div className="min-h-0 flex-1 overflow-y-auto">
 					<div className="bg-background min-h-full">
-						<ErrorBoundary fallbackRender={() => <p>Error</p>}>
+						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
