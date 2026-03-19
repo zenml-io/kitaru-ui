@@ -51,6 +51,11 @@ function getErrorMessage(errorData: unknown): string {
 		}
 
 		if (isArray(detail)) {
+			const message = detail[1];
+			if (isString(message) && message.trim().length > 0) {
+				return message;
+			}
+
 			const detailMessage = detail.find(
 				(item): item is string => isString(item) && item.trim().length > 0
 			);

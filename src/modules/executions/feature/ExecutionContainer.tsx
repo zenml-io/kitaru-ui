@@ -37,9 +37,9 @@ export function ExecutionContainer() {
 	>();
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
 
-	const selectedCheckpoint = checkpointsData.nodes.find(
-		(c) => c.id === selectedCheckpointId
-	);
+	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
+		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
+	});
 
 	function handleRefresh() {
 		refetchExecutions();
@@ -65,7 +65,7 @@ export function ExecutionContainer() {
 			ref={layoutRef}
 			left={
 				<ExecutionsList
-					executions={executionsData}
+					executions={executionsSortedByCreatedAtDesc}
 					flowId={flowId}
 					activeexecutionId={executionId}
 				/>
@@ -84,7 +84,7 @@ export function ExecutionContainer() {
 			right={
 				<CheckpointDetailPanelContainer
 					key={selectedCheckpointId}
-					checkpoint={selectedCheckpoint}
+					checkpointId={selectedCheckpointId}
 				/>
 			}
 		/>

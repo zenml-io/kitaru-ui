@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
 import { CheckpointRow } from "./CheckpointRow";
-import type { Checkpoint } from "@/modules/checkpoints/domain/checkpoint";
+import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 
 interface CheckpointThreadProps {
-	checkpoints: Checkpoint[];
+	checkpoints: CheckpointEntry[];
 	onSelect: (id: string) => void;
 }
 

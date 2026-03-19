@@ -1,8 +1,8 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import { checkpointFromApiToDomain, type DagResponse } from "./checkpoint";
+import { checkpointEntryFromApiToDomain, type DagResponse } from "./checkpoint";
 
-export async function fetchCheckpoints(
+export async function fetchCheckpointEntries(
 	executionId: string
 ): Promise<DagResponse> {
 	const response = await apiClient.GET("/api/v1/runs/{run_id}/dag", {
@@ -16,6 +16,6 @@ export async function fetchCheckpoints(
 		executionStatus: dag.status,
 		nodes: dag.nodes
 			.filter((node) => node.type === "step")
-			.map(checkpointFromApiToDomain),
+			.map(checkpointEntryFromApiToDomain),
 	};
 }

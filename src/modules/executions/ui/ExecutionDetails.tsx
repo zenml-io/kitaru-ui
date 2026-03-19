@@ -6,12 +6,12 @@ import {
 import { Stat } from "@/modules/flows/ui/Stat";
 import { formatDuration } from "@/shared/utils/time";
 import type { Execution } from "../domain/execution";
-import type { Checkpoint } from "@/modules/checkpoints/domain/checkpoint";
+import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { CheckpointThread } from "./traces/CheckpointThread";
 
 type ExecutionDetailsProps = {
 	execution: Execution;
-	checkpoints: Checkpoint[];
+	checkpoints: CheckpointEntry[];
 	selectedCheckpointId?: string;
 	onSelectCheckpoint: (id: string) => void;
 };

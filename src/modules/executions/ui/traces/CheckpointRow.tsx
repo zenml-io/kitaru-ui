@@ -1,13 +1,13 @@
 import { StatusDot } from "@/shared/ui/StatusDot";
 import { CheckpointTypeBadge } from "./CheckpointTypeBadge";
 import { ChevronRight } from "@untitledui/icons";
-import { formatCost } from "@/shared/utils/currency";
 import { cn } from "@/shared/utils/styles";
 import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
-import type { Checkpoint } from "@/modules/checkpoints/domain/checkpoint";
+import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
+import { formatDurationShort } from "@/shared/utils/time";
 
 type CheckpointRowProps = {
-	checkpoint: Checkpoint;
+	checkpoint: CheckpointEntry;
 	isExpanded: boolean;
 	onSelect: (id: string) => void;
 	onToggle: (id: string) => void;
@@ -45,16 +45,14 @@ export function CheckpointRow({
 						isExpanded && "rotate-90"
 					)}
 				/>
-				<CheckpointTypeBadge type={checkpoint.type} />
+				{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
 				<span className="text-foreground truncate font-mono text-xs font-semibold">
 					{checkpoint.name}
 				</span>
-				{checkpoint.costUsd != null && checkpoint.costUsd > 0 && (
-					<span className="text-2xs text-foreground/70 shrink-0 font-mono tabular-nums">
-						{formatCost(checkpoint.costUsd)}
-					</span>
-				)}
 				<span className="flex-1" />
+				<span className="text-2xs text-muted-foreground font-mono tabular-nums">
+					{formatDurationShort(checkpoint.durationMs)}
+				</span>
 				<StatusDot status={checkpoint.status} />
 			</button>
 
