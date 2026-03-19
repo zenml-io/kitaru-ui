@@ -22,7 +22,7 @@ export type Checkpoint = {
 	startTime?: Date;
 	endTime?: Date;
 	type?: components["schemas"]["StepType"];
-	costUsd: number;
+	costUsd?: number;
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
 };

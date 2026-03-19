@@ -24,9 +24,10 @@ export function ExecutionContainer() {
 	>();
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
 
-	const executionsSortedByCreatedAtDesc = executionsData.sort((a, b) => {
+	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
 		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
 	});
+
 	return (
 		<ThreePanelLayout
 			ref={layoutRef}
