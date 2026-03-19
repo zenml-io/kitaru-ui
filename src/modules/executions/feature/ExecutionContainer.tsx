@@ -15,6 +15,8 @@ import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
+import { StatusDot } from "@/shared/ui/StatusDot";
+import { CopyCommand } from "@/shared/ui/CopyCommand";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
@@ -51,6 +53,31 @@ export function ExecutionContainer() {
 		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
 	});
 
+	const shouldShowResumeHint =
+		executionData?.status === "paused" &&
+		!executionData?.activeWaitConditionEntry;
+
+	const resumeHint = shouldShowResumeHint ? (
+		<div className="bg-card flex flex-col">
+			<div className="flex shrink-0 flex-col gap-4 px-4 py-4">
+				<div className="flex items-center gap-2">
+					<StatusDot status="paused" />
+					<span className="text-foreground truncate font-mono text-xs font-semibold">
+						Execution paused
+					</span>
+				</div>
+				<div className="flex flex-col gap-1">
+					<span className="text-muted-foreground text-xs">
+						Resume by running this command in your Kitaru CLI:
+					</span>
+					<CopyCommand
+						code={`kitaru executions resume --exec-id ${executionId}`}
+					/>
+				</div>
+			</div>
+		</div>
+	) : null;
+
 	return (
 		<ThreePanelLayout
 			ref={layoutRef}
@@ -72,6 +99,7 @@ export function ExecutionContainer() {
 					}}
 					waitCondition={waitConditionData}
 					onResolveWaitCondition={resolveWaitCondition}
+					resumeHint={resumeHint}
 				/>
 			}
 			right={

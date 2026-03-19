@@ -65,9 +65,13 @@ export function executionFromApiToDomain(
 		endTime: run.metadata?.end_time
 			? new Date(run.metadata.end_time)
 			: undefined,
-		activeWaitConditionEntry: {
-			id: run.resources?.active_wait_condition?.id,
-			name: run.resources?.active_wait_condition?.name,
-		},
+		activeWaitConditionEntry:
+			run.resources?.active_wait_condition?.id ||
+			run.resources?.active_wait_condition?.name
+				? {
+						id: run.resources?.active_wait_condition?.id,
+						name: run.resources?.active_wait_condition?.name,
+					}
+				: undefined,
 	};
 }

@@ -19,6 +19,7 @@ type ExecutionDetailsProps = {
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
+	resumeHint?: React.ReactNode;
 };
 
 export function ExecutionDetails({
@@ -27,6 +28,7 @@ export function ExecutionDetails({
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
+	resumeHint,
 }: ExecutionDetailsProps) {
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
@@ -51,6 +53,12 @@ export function ExecutionDetails({
 				/>
 			</div>
 
+			{resumeHint && (
+				<>
+					<div className="bg-border h-px shrink-0" />
+					{resumeHint}
+				</>
+			)}
 			{waitCondition && (
 				<>
 					<div className="bg-border h-px shrink-0" />
