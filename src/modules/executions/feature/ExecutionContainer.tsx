@@ -1,7 +1,11 @@
 import { useState, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useExecutions } from "../business-logic/use-executions";
 import { useExecution } from "../business-logic/use-execution";
+import { useWaitCondition } from "../business-logic/use-wait-condition";
+import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
+import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import {
 	ThreePanelLayout,
@@ -10,6 +14,7 @@ import {
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
@@ -18,6 +23,24 @@ export function ExecutionContainer() {
 	const { executionsData } = useExecutions(flowId);
 	const { executionData } = useExecution(executionId);
 	const { checkpointsData } = useCheckpoints(executionId);
+	const { waitConditionData } = useWaitCondition(
+		executionData?.activeWaitConditionEntry?.id
+	);
+
+	const queryClient = useQueryClient();
+	const { resolveWaitCondition } = useResolveWaitCondition({
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: executionsQueryKeys.all(flowId),
+			});
+			queryClient.invalidateQueries({
+				queryKey: executionsQueryKeys.detail(executionId),
+			});
+			queryClient.invalidateQueries({
+				queryKey: checkpointsQueryKeys.all(executionId),
+			});
+		},
+	});
 
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
@@ -47,6 +70,8 @@ export function ExecutionContainer() {
 						setSelectedCheckpointId(id);
 						layoutRef.current?.expandRight();
 					}}
+					waitCondition={waitConditionData}
+					onResolveWaitCondition={resolveWaitCondition}
 				/>
 			}
 			right={

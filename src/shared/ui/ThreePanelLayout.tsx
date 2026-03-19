@@ -97,7 +97,7 @@ export function ThreePanelLayout({
 				defaultSize={`${DEFAULT_SIZES.center.default}`}
 				minSize={`${DEFAULT_SIZES.center.min}`}
 			>
-				<div className="flex h-full flex-col">
+				<div className="flex h-full flex-col overflow-hidden">
 					<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
 						<Button variant="ghost" size="icon-sm" onClick={toggleLeft}>
 							<LayoutLeft />
