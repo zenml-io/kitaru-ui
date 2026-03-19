@@ -45,25 +45,27 @@ export function WaitInputSection({
 
 	return (
 		<div className="bg-card flex flex-col">
-			<div className="border-border flex h-10 shrink-0 items-center gap-2 border-b px-4">
-				<ColorDot shape="round" size="sm" className="bg-warning" />
-				<span className="text-foreground truncate font-mono text-xs font-semibold">
-					{waitCondition.name}
-				</span>
+			<div className="border-border flex shrink-0 flex-col gap-1 border-b px-4 py-2">
+				<div className="flex items-center gap-2">
+					<ColorDot shape="round" size="sm" className="bg-warning" />
+					<span className="text-foreground truncate font-mono text-xs font-semibold">
+						{waitCondition.name}
+					</span>
+					{onToggle && (
+						<button
+							type="button"
+							onClick={onToggle}
+							className="text-muted-foreground hover:text-foreground ml-auto shrink-0"
+							aria-label="Collapse wait input"
+						>
+							<ChevronDown className="size-3.5" />
+						</button>
+					)}
+				</div>
 				{waitCondition.question && (
-					<span className="text-muted-foreground flex-1 truncate text-xs">
+					<span className="text-muted-foreground text-xs">
 						{waitCondition.question}
 					</span>
-				)}
-				{onToggle && (
-					<button
-						type="button"
-						onClick={onToggle}
-						className="text-muted-foreground hover:text-foreground shrink-0"
-						aria-label="Collapse wait input"
-					>
-						<ChevronDown className="size-3.5" />
-					</button>
 				)}
 			</div>
 
