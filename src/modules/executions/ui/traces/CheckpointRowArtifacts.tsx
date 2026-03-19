@@ -1,9 +1,11 @@
-import { Suspense, useState } from "react";
-import { ArtifactChip } from "./ArtifactChip";
-import { ArrowRight } from "@untitledui/icons";
 import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
-import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
+import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
+import { ArrowRight } from "@untitledui/icons";
+import { Suspense, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { ArtifactChip } from "./ArtifactChip";
+import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
@@ -81,17 +83,19 @@ function CheckpointRowArtifactsContent({
 						</span>
 					</div>
 					<div className="bg-background">
-						<Suspense
-							fallback={
-								<p className="text-2xs text-muted-foreground px-4 py-3">
-									Loading…
-								</p>
-							}
-						>
-							<ArtifactVisualizationContainer
-								artifactVersionId={selected.entry.id}
-							/>
-						</Suspense>
+						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
+							<Suspense
+								fallback={
+									<p className="text-2xs text-muted-foreground px-4 py-3">
+										Loading…
+									</p>
+								}
+							>
+								<ArtifactVisualizationContainer
+									artifactVersionId={selected.entry.id}
+								/>
+							</Suspense>
+						</ErrorBoundary>
 					</div>
 				</div>
 			)}
