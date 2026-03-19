@@ -8,7 +8,7 @@ export async function fetchUserList() {
 			query: {
 				sort_by: "desc:created",
 				page: 1,
-				size: 100,
+				size: 1000,
 			},
 		},
 	});

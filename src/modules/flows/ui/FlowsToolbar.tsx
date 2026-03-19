@@ -1,24 +1,33 @@
-import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 import { Input } from "@/shared/ui/input";
+import { LoadingButton } from "@/shared/ui/LoadingButton";
 import { Separator } from "@/shared/ui/separator";
+import {
+	TableToolbarContent,
+	TableToolbarRoot,
+} from "@/shared/ui/TableToolbar";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
+import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 
 export function FlowsToolbar({
 	searchValue,
 	statusFilter,
 	onSearchValueChange,
 	onStatusFilterChange,
+	onRefresh,
+	isRefreshing,
 }: {
 	searchValue: string;
 	statusFilter: FlowStatusFilter;
 	onSearchValueChange: (value: string) => void;
 	onStatusFilterChange: (value: FlowStatusFilter) => void;
+	onRefresh: () => void;
+	isRefreshing: boolean;
 }) {
 	const selectedStatusValues = [statusFilter];
 
 	return (
-		<div className="border-border w-full border-b">
-			<div className="container mx-auto flex w-full flex-wrap items-center gap-2 px-4 py-3 sm:px-6 lg:px-8">
+		<TableToolbarRoot>
+			<TableToolbarContent>
 				<ToggleGroup
 					value={selectedStatusValues}
 					onValueChange={(nextValue) => {
@@ -45,8 +54,15 @@ export function FlowsToolbar({
 					onChange={(event) => onSearchValueChange(event.target.value)}
 					className="w-full font-mono sm:w-48"
 				/>
-			</div>
-		</div>
+				<LoadingButton
+					variant="outline"
+					isLoading={isRefreshing}
+					onClick={onRefresh}
+				>
+					Refresh
+				</LoadingButton>
+			</TableToolbarContent>
+		</TableToolbarRoot>
 	);
 }
 
