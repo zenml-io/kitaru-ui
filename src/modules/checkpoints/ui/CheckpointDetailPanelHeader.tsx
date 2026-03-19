@@ -1,5 +1,5 @@
 import { CheckpointTypeBadge } from "@/modules/executions/ui/traces/CheckpointTypeBadge";
-import type { Checkpoint } from "../domain/checkpoint-artifacts";
+import type { Checkpoint } from "../domain/checkpoint-details";
 import { Badge } from "@/shared/ui/badge";
 import { formatCost } from "@/shared/utils/currency";
 import { formatDurationShort } from "@/shared/utils/time";
@@ -22,9 +22,11 @@ export function CheckpointDetailPanelHeader({
 				{checkpoint.name}
 			</span>
 			<span className="flex-1" />
-			<span className="text-2xs text-muted-foreground tabular-num s font-mono">
-				{formatDurationShort(checkpoint.durationMs)}
-			</span>
+			{checkpoint.durationMs !== undefined && (
+				<span className="text-2xs text-muted-foreground tabular-num s font-mono">
+					{formatDurationShort(checkpoint.durationMs)}
+				</span>
+			)}
 		</div>
 	);
 }

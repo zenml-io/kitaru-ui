@@ -9,7 +9,7 @@ import {
 import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { checkpointsQueries } from "../business-logic/checkpoints-queries";
-import type { ArtifactEntry } from "../domain/checkpoint-artifacts";
+import type { ArtifactEntry } from "../domain/checkpoint-details";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;

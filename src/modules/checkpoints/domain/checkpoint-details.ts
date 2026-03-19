@@ -11,9 +11,10 @@ export type ArtifactEntry = {
 export type Checkpoint = {
 	id: string;
 	name: string;
-	durationMs: number;
+	durationMs?: number;
 	status?: ExecutionStatus;
 	startTime?: Date;
+	endTime?: Date;
 	type?: components["schemas"]["StepType"];
 	costUsd: number;
 	inputs: ArtifactEntry[];
@@ -47,16 +48,24 @@ export async function fetchCheckpointDetails(
 	});
 	const checkpoint = expectData(response);
 
+	console.log(checkpoint);
 	return {
 		id: checkpoint.id,
 		name: checkpoint.name,
 		status: checkpoint.body?.status || undefined,
 		inputs: extractArtifactEntries(checkpoint.resources?.inputs),
 		outputs: extractArtifactEntries(checkpoint.resources?.outputs),
-		durationMs: (Number(checkpoint.body) || 0) * 1000,
 		startTime: checkpoint.body?.start_time
 			? new Date(checkpoint.body.start_time)
 			: undefined,
+		endTime: checkpoint.body?.end_time
+			? new Date(checkpoint.body.end_time)
+			: undefined,
+		durationMs:
+			checkpoint.body?.end_time && checkpoint.body?.start_time
+				? new Date(checkpoint.body.end_time).getTime() -
+					new Date(checkpoint.body.start_time).getTime()
+				: undefined,
 		type: checkpoint.body?.type ?? undefined,
 		// @ts-expect-error - TODO: fix this
 		costUsd:

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
-import type { ArtifactEntry } from "../domain/checkpoint-artifacts";
+import type { ArtifactEntry } from "../domain/checkpoint-details";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;

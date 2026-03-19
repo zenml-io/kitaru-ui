@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { fetchCheckpoints } from "../domain/fetch-checkpoints";
 import { fetchArtifactVisualization } from "../domain/fetch-artifact-visualization";
-import { fetchCheckpointDetails } from "../domain/checkpoint-artifacts";
+import { fetchCheckpointDetails } from "../domain/checkpoint-details";
 
 export const checkpointsQueryKeys = {
 	all: (executionId: string) => ["checkpoints", executionId] as const,
