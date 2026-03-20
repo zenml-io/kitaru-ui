@@ -1,6 +1,7 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import type { ExecutionStatus } from "../domain/execution";
-import { useQueryClient } from "@tanstack/react-query";
+import { executionsQueryKeys } from "./executions-queries";
 
 export function useSyncExecutionStatus(
 	executionStatus: ExecutionStatus | undefined,
@@ -26,7 +27,7 @@ export function useSyncExecutionStatus(
 
 		if (hasExecutionStatusChanged || hasWaitConditionChangedToPending) {
 			queryClient.invalidateQueries({
-				queryKey: ["executions"],
+				queryKey: executionsQueryKeys.base,
 			});
 		}
 
