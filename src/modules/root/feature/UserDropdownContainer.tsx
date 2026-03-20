@@ -11,6 +11,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
+import { LoginCommandContainer } from "./LoginCommandContainer";
 import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
 export function UserDropdownContainer() {
@@ -45,7 +46,7 @@ export function UserDropdownContainer() {
 					</Button>
 				}
 			></DropdownMenuTrigger>
-			<DropdownMenuContent align="end" className="w-[180px]">
+			<DropdownMenuContent align="end" className="w-[220px]">
 				<DropdownMenuItem render={<Link to="/settings/profile" />}>
 					Profile
 				</DropdownMenuItem>
@@ -54,6 +55,8 @@ export function UserDropdownContainer() {
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<ThemeSwitcherContainer />
+				<DropdownMenuSeparator />
+				<LoginCommandContainer />
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={() => logoutUser()}>
 					Sign out

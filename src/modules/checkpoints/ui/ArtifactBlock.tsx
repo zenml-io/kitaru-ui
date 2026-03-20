@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Check, ChevronDown, Copy01 } from "@untitledui/icons";
+import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
+import { Check, ChevronDown, Copy01 } from "@untitledui/icons";
+import { useState } from "react";
 
 interface ArtifactBlockProps {
 	label: string;
@@ -21,15 +22,8 @@ export function ArtifactBlock({
 	children,
 }: ArtifactBlockProps) {
 	const [open, setOpen] = useState(defaultOpen);
-	const [copied, setCopied] = useState(false);
-
 	const textToCopy = copyText ?? content ?? "";
-
-	const handleCopy = () => {
-		navigator.clipboard.writeText(textToCopy);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 1500);
-	};
+	const { copied, copy } = useCopy();
 
 	return (
 		<div className="group/artifact border-border mb-2.5 overflow-hidden rounded-md border">
@@ -53,7 +47,7 @@ export function ArtifactBlock({
 					variant="ghost"
 					size="icon-sm"
 					className="opacity-0 transition-opacity group-hover/artifact:opacity-100"
-					onClick={handleCopy}
+					onClick={() => copy(textToCopy)}
 				>
 					{copied ? (
 						<Check className="text-success h-3.5 w-3.5" />

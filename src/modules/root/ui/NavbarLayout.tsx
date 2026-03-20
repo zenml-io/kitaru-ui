@@ -1,9 +1,9 @@
 import KitaruLogo from "@/assets/icons/kitaru-logo.svg?react";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { Link, Outlet } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { BreadcrumbsContainer } from "../feature/BreadcrumbsContainer";
 import { UserDropdownContainer } from "../feature/UserDropdownContainer";
-import { Suspense } from "react";
-import { Skeleton } from "@/shared/ui/skeleton";
 
 export function NavbarLayout() {
 	return (
@@ -17,7 +17,7 @@ export function NavbarLayout() {
 						<div className="bg-border mx-0.5 h-[3px] w-[3px] rounded-full" />
 						<BreadcrumbsContainer />
 					</div>
-					<div className="flex items-center gap-1">
+					<div className="flex items-center gap-2">
 						<Suspense fallback={<Skeleton className="h-7 w-7 rounded-full" />}>
 							<UserDropdownContainer />
 						</Suspense>
