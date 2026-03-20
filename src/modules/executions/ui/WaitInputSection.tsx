@@ -18,6 +18,8 @@ const Form = withTheme(shadcnTheme);
 
 const UI_SCHEMA = {
 	"ui:submitButtonOptions": { norender: true },
+	"ui:title": "",
+	"ui:description": "",
 };
 
 export function WaitInputSection({

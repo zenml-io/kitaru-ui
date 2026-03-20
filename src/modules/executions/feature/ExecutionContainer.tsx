@@ -15,6 +15,7 @@ import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
+import { toast } from "sonner";
 import { StatusDot } from "@/shared/ui/StatusDot";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 
@@ -30,17 +31,23 @@ export function ExecutionContainer() {
 	);
 
 	const queryClient = useQueryClient();
+	function invalidateExecutionQueries() {
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.all(flowId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.detail(executionId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: checkpointsQueryKeys.all(executionId),
+		});
+	}
+
 	const { resolveWaitCondition } = useResolveWaitCondition({
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: executionsQueryKeys.all(flowId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: executionsQueryKeys.detail(executionId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: checkpointsQueryKeys.all(executionId),
-			});
+		onSuccess: invalidateExecutionQueries,
+		onError: () => {
+			invalidateExecutionQueries();
+			toast.error("Failed to submit");
 		},
 	});
 
