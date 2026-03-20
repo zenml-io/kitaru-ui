@@ -12,13 +12,11 @@ const metricValueVariants = cva(
 				danger: "text-destructive",
 			},
 			size: {
-				default: "text-base",
-				lg: "text-xl",
+				default: "text-lg",
+				xs: "text-xs",
+				sm: "text-sm",
+				lg: "text-lg",
 			},
-		},
-		defaultVariants: {
-			color: "default",
-			size: "default",
 		},
 	}
 );

@@ -4,8 +4,10 @@ import {
 	BreadcrumbLink,
 	BreadcrumbList,
 	BreadcrumbPage,
+	BreadcrumbSeparator,
 } from "@/shared/ui/breadcrumb";
-import { isMatch, useMatches } from "@tanstack/react-router";
+import { isMatch, Link, useMatches } from "@tanstack/react-router";
+import { Fragment } from "react";
 
 export function BreadcrumbsContainer() {
 	const matches = useMatches();
@@ -20,15 +22,24 @@ export function BreadcrumbsContainer() {
 		<Breadcrumb>
 			<BreadcrumbList>
 				{matchesWithCrumbs.map((match, index) => (
-					<BreadcrumbItem key={match.id}>
-						{index === matchesWithCrumbs.length - 1 ? (
-							<BreadcrumbPage>{match.loaderData?.crumb.label}</BreadcrumbPage>
-						) : (
-							<BreadcrumbLink href={match.loaderData?.crumb.href}>
-								{match.loaderData?.crumb.label}
-							</BreadcrumbLink>
-						)}
-					</BreadcrumbItem>
+					<Fragment key={match.id}>
+						<BreadcrumbItem>
+							{index === matchesWithCrumbs.length - 1 ? (
+								<BreadcrumbPage className="font-semibold">
+									{match.loaderData?.crumb.label}
+								</BreadcrumbPage>
+							) : match.loaderData?.crumb.disabled ? (
+								<BreadcrumbPage>{match.loaderData?.crumb.label}</BreadcrumbPage>
+							) : (
+								<BreadcrumbLink render={<Link to={match.fullPath} />}>
+									{match.loaderData?.crumb.label}
+								</BreadcrumbLink>
+							)}
+						</BreadcrumbItem>
+						{index < matchesWithCrumbs.length - 1 ? (
+							<BreadcrumbSeparator />
+						) : null}
+					</Fragment>
 				))}
 			</BreadcrumbList>
 		</Breadcrumb>

@@ -17,9 +17,9 @@ import type { StatProps } from "../ui/Stat";
 
 export function FlowsContainer() {
 	const router = useRouter();
-	const { q, status } = useSearch({ from: "/_private/_navbar/flows" });
+	const { q, status } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData } = useFlows();
+	const { flowsData, refetch, isRefetching } = useFlows();
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
@@ -71,6 +71,8 @@ export function FlowsContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<FlowsToolbar
+				onRefresh={refetch}
+				isRefreshing={isRefetching}
 				searchValue={q}
 				statusFilter={status}
 				onSearchValueChange={(value) => {

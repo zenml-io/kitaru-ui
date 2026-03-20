@@ -25,7 +25,7 @@ export function Stat({
 			<MetricLabel color={labelColor} size={labelSize}>
 				{label}
 			</MetricLabel>
-			<MetricValue color={valueColor} size={valueSize ?? "lg"}>
+			<MetricValue color={valueColor} size={valueSize}>
 				{value}
 			</MetricValue>
 		</div>

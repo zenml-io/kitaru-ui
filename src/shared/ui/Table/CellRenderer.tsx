@@ -1,4 +1,6 @@
+import type { User } from "@/modules/users/domain/users";
 import { StatusDot, type StatusDotVariant } from "../StatusDot";
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { cn } from "@/shared/utils/styles";
 
 function TextRenderer({
@@ -35,4 +37,20 @@ function StatusRenderer({ status = "unknown" }: { status?: StatusDotVariant }) {
 	);
 }
 
-export { TextRenderer, MetricValueRenderer, StatusRenderer };
+function UserRenderer({ name, avatarUrl }: Pick<User, "name" | "avatarUrl">) {
+	if (!name) return <TextRenderer>-</TextRenderer>;
+
+	const initials = name.slice(0, 2).toUpperCase();
+
+	return (
+		<div className="flex items-center gap-2">
+			<Avatar size="sm">
+				<AvatarImage src={avatarUrl} alt={name} />
+				<AvatarFallback>{initials}</AvatarFallback>
+			</Avatar>
+			<span className="text-foreground text-sm">{name}</span>
+		</div>
+	);
+}
+
+export { TextRenderer, MetricValueRenderer, StatusRenderer, UserRenderer };

@@ -19,6 +19,7 @@ import {
 	TableRow,
 } from "@/shared/ui/Table/Table";
 import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
+import { Link } from "@tanstack/react-router";
 
 export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 	const [sorting, setSorting] = React.useState<SortingState>([
@@ -89,15 +90,23 @@ const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
+		cell: ({ row }) => (
+			<Link
+				to="/flows/$flowId/$tab"
+				params={{ flowId: row.original.id, tab: "overview" }}
+				className="hover:underline"
+			>
+				<TextRenderer>{row.original.name}</TextRenderer>
+			</Link>
+		),
 	},
 	{
-		accessorKey: "latestExecId",
+		accessorKey: "latestexecutionId",
 		header: ({ column }) => (
 			<SortableHeader column={column} label="Latest Execution ID" />
 		),
 		cell: ({ row }) => (
-			<TextRenderer>{row.original.latestExecId ?? "-"}</TextRenderer>
+			<TextRenderer>{row.original.latestexecutionId ?? "-"}</TextRenderer>
 		),
 	},
 	{
