@@ -43,7 +43,10 @@ export function ExecutionContainer() {
 		executionData?.activeWaitConditionEntry?.id
 	);
 
-	useSyncExecutionStatus(executionData.status);
+	useSyncExecutionStatus(
+		checkpointsData.executionStatus,
+		checkpointsData.hasPendingWaitConditionNode
+	);
 
 	const queryClient = useQueryClient();
 	const { resolveWaitCondition } = useResolveWaitCondition({

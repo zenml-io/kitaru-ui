@@ -14,6 +14,10 @@ export async function fetchCheckpointEntries(
 
 	return {
 		executionStatus: dag.status,
+		hasPendingWaitConditionNode: dag.nodes.some(
+			(node) =>
+				node.type === "wait_condition" && node.metadata?.status === "pending"
+		),
 		checkpoints: dag.nodes
 			.filter((node) => node.type === "step")
 			.map(checkpointEntryFromApiToDomain),

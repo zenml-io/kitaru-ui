@@ -90,5 +90,6 @@ export function checkpointEntryFromApiToDomain(
 
 export type DagResponse = {
 	executionStatus: ExecutionStatus;
+	hasPendingWaitConditionNode: boolean;
 	checkpoints: CheckpointEntry[];
 };

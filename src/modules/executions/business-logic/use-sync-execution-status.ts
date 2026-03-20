@@ -3,22 +3,34 @@ import type { ExecutionStatus } from "../domain/execution";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function useSyncExecutionStatus(
-	executionStatus: ExecutionStatus | undefined
+	executionStatus: ExecutionStatus | undefined,
+	hasPendingWaitConditionNode: boolean
 ) {
 	const previousExecutionStatus = useRef<ExecutionStatus | null>(null);
+	const previousHasPendingWaitConditionNode = useRef<boolean | null>(null);
 	const queryClient = useQueryClient();
+
 	useEffect(() => {
-		if (executionStatus) {
-			const currentStatus = executionStatus;
-			if (
-				previousExecutionStatus.current !== null &&
-				previousExecutionStatus.current !== currentStatus
-			) {
-				queryClient.invalidateQueries({
-					queryKey: ["executions"],
-				});
-			}
-			previousExecutionStatus.current = currentStatus;
+		if (!executionStatus) {
+			return;
 		}
-	}, [executionStatus, queryClient]);
+
+		const currentStatus = executionStatus;
+		const hasExecutionStatusChanged =
+			previousExecutionStatus.current !== null &&
+			previousExecutionStatus.current !== currentStatus;
+		const hasWaitConditionChangedToPending =
+			previousHasPendingWaitConditionNode.current !== null &&
+			previousHasPendingWaitConditionNode.current === false &&
+			hasPendingWaitConditionNode;
+
+		if (hasExecutionStatusChanged || hasWaitConditionChangedToPending) {
+			queryClient.invalidateQueries({
+				queryKey: ["executions"],
+			});
+		}
+
+		previousExecutionStatus.current = currentStatus;
+		previousHasPendingWaitConditionNode.current = hasPendingWaitConditionNode;
+	}, [executionStatus, hasPendingWaitConditionNode, queryClient]);
 }
