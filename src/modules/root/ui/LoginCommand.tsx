@@ -3,7 +3,7 @@ import { useCopy } from "@/shared/business-logic/use-copy";
 
 export function LoginCommand({ url }: { url: string }) {
 	const command = `kitaru login ${url}`;
-	const { copied, copy } = useCopy(command);
+	const { copied, copy } = useCopy();
 
 	return (
 		<div className="border-border text-muted-foreground bg-muted/30 hidden w-full max-w-3xs items-center gap-1 rounded-lg border px-3 py-1.5 sm:flex">
@@ -12,7 +12,7 @@ export function LoginCommand({ url }: { url: string }) {
 			</code>
 			<button
 				type="button"
-				onClick={copy}
+				onClick={() => copy(command)}
 				className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
 				aria-label={copied ? "Copied" : "Copy command"}
 			>

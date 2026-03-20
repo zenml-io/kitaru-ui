@@ -5,11 +5,11 @@ type UseCopyOptions = {
 	delay?: number;
 };
 
-export function useCopy(text: string, options?: UseCopyOptions) {
+export function useCopy(options?: UseCopyOptions) {
 	const { delay = 1500 } = options ?? {};
 	const [copied, setCopied] = useState(false);
 
-	async function copy() {
+	async function copy(text: string) {
 		try {
 			await navigator.clipboard.writeText(text);
 			setCopied(true);
