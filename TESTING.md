@@ -37,7 +37,7 @@ uv sync --extra local
 ### 2. Start the Kitaru Server
 
 ```bash
-uv run kitaru login --local
+uv run kitaru login
 ```
 
 This starts the server on `http://localhost:8237` by default.
@@ -116,7 +116,7 @@ When reporting a bug, include:
 
 | Problem | Fix |
 |---------|-----|
-| `ECONNREFUSED` on API calls | Make sure the server is running (`uv run kitaru login --local` for Option A, or check `docker ps` for Option B) |
+| `ECONNREFUSED` on API calls | Make sure the server is running (`uv run kitaru login` for Option A, or check `docker ps` for Option B) |
 | 401 errors / redirect to login | Your session may have expired — log in again through the UI |
 | Stale types or API mismatches | Regenerate types: `pnpm generate:types -- http://localhost:8237` |
 | UI not reflecting code changes | Hard-refresh the browser (`Cmd+Shift+R` / `Ctrl+Shift+R`) |
