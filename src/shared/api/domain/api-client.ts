@@ -1,24 +1,16 @@
+import { env } from "@/modules/root/domain/env";
 import createClient, { type Middleware } from "openapi-fetch";
-import { z } from "zod";
-import { FetchError } from "./fetch-error";
 import type { paths } from "../openapi";
 import { getCsrfToken } from "../utils/csrf-token-cookie";
 import { throwFetchErrorFromResponse } from "../utils/throw-fetch-error-from-response";
+import { FetchError } from "./fetch-error";
 
 const defaultHeaders = {
 	"Content-Type": "application/json",
-	"Source-Context": "dashboard-v2",
+	"Source-Context": "kitaru-ui",
 };
 
-const apiBaseUrlSchema = z
-	.url()
-	.trim()
-	.transform((value) => value.replace(/\/+$/, ""))
-	.catch("");
-
-const normalizedApiBaseUrl = apiBaseUrlSchema.parse(
-	import.meta.env.VITE_API_BASE_URL
-);
+const normalizedApiBaseUrl = env.VITE_API_BASE_URL;
 
 export const apiClient = createClient<paths>({
 	baseUrl: normalizedApiBaseUrl,

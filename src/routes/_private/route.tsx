@@ -1,3 +1,4 @@
+import { PageAnalyticsContainer } from "@/modules/analytics/feature/PageAnalyticsContainer";
 import { userQueries } from "@/modules/users/business-logic/user-queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
@@ -9,5 +10,10 @@ export const Route = createFileRoute("/_private")({
 });
 
 function PrivateLayout() {
-	return <Outlet />;
+	return (
+		<>
+			<PageAnalyticsContainer />
+			<Outlet />
+		</>
+	);
 }
