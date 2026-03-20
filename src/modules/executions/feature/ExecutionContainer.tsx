@@ -9,6 +9,7 @@ import { useParams } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
+import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
 
@@ -40,6 +41,8 @@ export function ExecutionContainer() {
 	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
 		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
 	});
+
+	useSyncExecutionStatus(executionData.status);
 
 	function handleRefresh() {
 		refetchExecutions();
