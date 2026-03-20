@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-type copyOptions = {
+type CopyOptions = {
 	delay?: number;
 };
 
 export function useCopy() {
 	const [copied, setCopied] = useState(false);
 
-	async function copy(text: string, options?: copyOptions) {
+	async function copy(text: string, options?: CopyOptions) {
 		const { delay = 1500 } = options ?? {};
 		try {
 			await navigator.clipboard.writeText(text);
