@@ -7,7 +7,7 @@ export function LoginCommand({ url }: { url: string }) {
 
 	return (
 		<div className="border-border text-muted-foreground bg-muted/30 hidden w-full max-w-3xs items-center gap-1 rounded-lg border px-3 py-1.5 sm:flex">
-			<code className="min-w-0 flex-1 truncate text-left font-mono text-xs text-pretty">
+			<code className="min-w-0 flex-1 truncate text-left font-mono text-xs">
 				{command}
 			</code>
 			<button
