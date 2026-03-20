@@ -1,52 +1,68 @@
-import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 import { Input } from "@/shared/ui/input";
+import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { Separator } from "@/shared/ui/separator";
+import {
+	TableToolbarContent,
+	TableToolbarRoot,
+} from "@/shared/ui/TableToolbar";
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
+import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 
 export function FlowsToolbar({
 	searchValue,
 	statusFilter,
 	onSearchValueChange,
 	onStatusFilterChange,
+	onRefresh,
+	isRefreshing,
 }: {
 	searchValue: string;
 	statusFilter: FlowStatusFilter;
 	onSearchValueChange: (value: string) => void;
 	onStatusFilterChange: (value: FlowStatusFilter) => void;
+	onRefresh: () => void;
+	isRefreshing: boolean;
 }) {
 	const selectedStatusValues = [statusFilter];
 
 	return (
-		<div className="border-border w-full border-b">
-			<div className="container mx-auto flex w-full flex-wrap items-center gap-2 px-4 py-3 sm:px-6 lg:px-8">
-				<ToggleGroup
-					value={selectedStatusValues}
-					onValueChange={(nextValue) => {
-						onStatusFilterChange(getNextStatusFilter(nextValue));
-					}}
+		<TableToolbarRoot>
+			<TableToolbarContent className="justify-between">
+				<div className="flex items-center gap-2">
+					<ToggleGroup
+						value={selectedStatusValues}
+						onValueChange={(nextValue) => {
+							onStatusFilterChange(getNextStatusFilter(nextValue));
+						}}
+						variant="outline"
+						size="sm"
+						spacing={1}
+					>
+						{flowStatusFilterValues.map((status) => (
+							<ToggleGroupItem
+								key={status}
+								value={status}
+								className="aria-pressed:bg-primary aria-pressed:text-primary-foreground capitalize"
+							>
+								{status}
+							</ToggleGroupItem>
+						))}
+					</ToggleGroup>
+					<Separator orientation="vertical" />
+					<Input
+						placeholder="Search flows..."
+						value={searchValue}
+						onChange={(event) => onSearchValueChange(event.target.value)}
+						className="w-full font-mono sm:w-48"
+					/>
+				</div>
+				<RefreshButton
 					variant="outline"
-					size="sm"
-					spacing={1}
-				>
-					{flowStatusFilterValues.map((status) => (
-						<ToggleGroupItem
-							key={status}
-							value={status}
-							className="aria-pressed:bg-primary aria-pressed:text-primary-foreground capitalize"
-						>
-							{status}
-						</ToggleGroupItem>
-					))}
-				</ToggleGroup>
-				<Separator orientation="vertical" />
-				<Input
-					placeholder="Search flows..."
-					value={searchValue}
-					onChange={(event) => onSearchValueChange(event.target.value)}
-					className="w-full font-mono sm:w-48"
-				/>
-			</div>
-		</div>
+					isLoading={isRefreshing}
+					onClick={onRefresh}
+				></RefreshButton>
+			</TableToolbarContent>
+		</TableToolbarRoot>
 	);
 }
 

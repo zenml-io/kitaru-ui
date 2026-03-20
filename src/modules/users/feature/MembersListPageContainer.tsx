@@ -2,12 +2,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
+import { MembersTable } from "../ui/MembersTable";
 import { MembersListToolbarContainer } from "./MembersListToolbarContainer";
-import { MembersTableContainer } from "./MembersTableContainer";
 
 export function MembersListPageContainer() {
-	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 	const [searchValue, setSearchValue] = useState("");
+	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
+	const { data, isRefetching, refetch } = useSuspenseQuery(userQueries.list());
+
+	const filteredMembers = data.items.filter((member) =>
+		member.name.toLowerCase().includes(searchValue.toLowerCase())
+	);
 
 	return (
 		<Card>
@@ -16,14 +21,13 @@ export function MembersListPageContainer() {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<MembersListToolbarContainer
+					isRefetching={isRefetching}
+					refetch={refetch}
 					isUserAdmin={currentUser.isAdmin ?? false}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
 				/>
-				<MembersTableContainer
-					currentUserId={currentUser.id}
-					searchValue={searchValue}
-				/>
+				<MembersTable currentUserId={currentUser.id} users={filteredMembers} />
 			</CardContent>
 		</Card>
 	);

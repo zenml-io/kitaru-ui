@@ -4,11 +4,12 @@ import { fetchExecution } from "../domain/fetch-execution";
 import { fetchWaitCondition } from "../domain/fetch-wait-condition";
 
 export const executionsQueryKeys = {
-	all: (flowId: string) => ["executions", flowId] as const,
+	base: ["executions"] as const,
+	all: (flowId: string) => [...executionsQueryKeys.base, flowId] as const,
 	detail: (executionId: string) =>
-		["executions", "detail", executionId] as const,
+		[...executionsQueryKeys.base, "detail", executionId] as const,
 	waitCondition: (waitConditionId: string) =>
-		["executions", "waitCondition", waitConditionId] as const,
+		[...executionsQueryKeys.base, "waitCondition", waitConditionId] as const,
 };
 
 export const executionsQueries = {

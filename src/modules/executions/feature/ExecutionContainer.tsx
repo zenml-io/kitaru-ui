@@ -1,33 +1,52 @@
-import { useState, useRef } from "react";
-import { useParams } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { useExecutions } from "../business-logic/use-executions";
-import { useExecution } from "../business-logic/use-execution";
-import { useWaitCondition } from "../business-logic/use-wait-condition";
-import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
-import { executionsQueryKeys } from "../business-logic/executions-queries";
+import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
+import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import { CopyCommand } from "@/shared/ui/CopyCommand";
+import { RefreshButton } from "@/shared/ui/RefreshButton";
+import { StatusDot } from "@/shared/ui/StatusDot";
 import {
 	ThreePanelLayout,
 	type ThreePanelLayoutHandle,
 } from "@/shared/ui/ThreePanelLayout";
-import { ExecutionsList } from "../ui/ExecutionsList";
-import { ExecutionDetails } from "../ui/ExecutionDetails";
-import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
-import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
+import { useQueryClient } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { StatusDot } from "@/shared/ui/StatusDot";
-import { CopyCommand } from "@/shared/ui/CopyCommand";
+import { executionsQueryKeys } from "../business-logic/executions-queries";
+import { useExecution } from "../business-logic/use-execution";
+import { useExecutions } from "../business-logic/use-executions";
+import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
+import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
+import { useWaitCondition } from "../business-logic/use-wait-condition";
+import { ExecutionDetails } from "../ui/ExecutionDetails";
+import { ExecutionsList } from "../ui/ExecutionsList";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const { executionsData } = useExecutions(flowId);
-	const { executionData } = useExecution(executionId);
-	const { checkpointsData } = useCheckpoints(executionId);
+	const {
+		executionsData,
+		refetch: refetchExecutions,
+		isRefetching: isRefetchingExecutions,
+	} = useExecutions(flowId);
+	const {
+		executionData,
+		refetch: refetchExecution,
+		isRefetching: isRefetchingExecution,
+	} = useExecution(executionId);
+	const {
+		checkpointsData,
+		refetch: refetchCheckpoints,
+		isRefetching: isRefetchingCheckpoints,
+	} = useCheckpoints(executionId);
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
+	);
+
+	useSyncExecutionStatus(
+		checkpointsData.executionStatus,
+		checkpointsData.hasPendingWaitConditionNode
 	);
 
 	const queryClient = useQueryClient();
@@ -47,9 +66,18 @@ export function ExecutionContainer() {
 		onSuccess: invalidateExecutionQueries,
 		onError: () => {
 			invalidateExecutionQueries();
-			toast.error("Failed to submit");
+			toast.error("Failed to resolve wait condition");
 		},
 	});
+
+	function handleRefresh() {
+		refetchExecutions();
+		refetchExecution();
+		refetchCheckpoints();
+	}
+
+	const isRefreshing =
+		isRefetchingExecutions || isRefetchingExecution || isRefetchingCheckpoints;
 
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
@@ -87,6 +115,16 @@ export function ExecutionContainer() {
 
 	return (
 		<ThreePanelLayout
+			centerHeader={
+				<div className="mr-2 flex flex-1 items-center justify-end">
+					<RefreshButton
+						size="sm"
+						variant="outline"
+						onClick={handleRefresh}
+						isLoading={isRefreshing}
+					/>
+				</div>
+			}
 			ref={layoutRef}
 			left={
 				<ExecutionsList
@@ -98,7 +136,7 @@ export function ExecutionContainer() {
 			center={
 				<ExecutionDetails
 					execution={executionData}
-					checkpoints={checkpointsData}
+					checkpoints={checkpointsData.checkpoints}
 					selectedCheckpointId={selectedCheckpointId}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);

@@ -9,7 +9,6 @@ import {
 } from "@/shared/ui/Table";
 import { TextRenderer, UserRenderer } from "@/shared/ui/Table/CellRenderer";
 import { Badge } from "@/shared/ui/badge";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
 	flexRender,
@@ -17,30 +16,19 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-import { userQueries } from "../business-logic/user-queries";
+import { useState } from "react";
 import type { User } from "../domain/users";
-import { MembersRowActions } from "../ui/MembersRowActions";
+import { MembersRowActions } from "./MembersRowActions";
 
 type MembersTableContainerProps = {
-	searchValue: string;
+	users: User[];
 	currentUserId: string;
 };
 
-export function MembersTableContainer({
-	searchValue,
+export function MembersTable({
+	users,
 	currentUserId,
 }: MembersTableContainerProps) {
-	const { data } = useSuspenseQuery(userQueries.list());
-
-	const filteredMembers = useMemo(
-		() =>
-			data.items.filter((member) =>
-				member.name.toLowerCase().includes(searchValue.toLowerCase())
-			),
-		[data.items, searchValue]
-	);
-
 	const columns = createColumns(currentUserId);
 
 	const [sorting, setSorting] = useState<SortingState>([
@@ -48,7 +36,7 @@ export function MembersTableContainer({
 	]);
 
 	const table = useReactTable({
-		data: filteredMembers,
+		data: users,
 		columns: columns,
 		state: {
 			sorting,

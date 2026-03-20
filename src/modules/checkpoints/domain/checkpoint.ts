@@ -87,3 +87,9 @@ export function checkpointEntryFromApiToDomain(
 		type: node.metadata?.type as components["schemas"]["StepType"],
 	};
 }
+
+export type DagResponse = {
+	executionStatus: ExecutionStatus;
+	hasPendingWaitConditionNode: boolean;
+	checkpoints: CheckpointEntry[];
+};
