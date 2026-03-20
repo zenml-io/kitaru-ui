@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export type ArtifactEntry = {
 	name: string;
@@ -29,15 +30,15 @@ export function checkpointFromApiToDomain(
 		inputs: extractArtifactEntries(checkpoint.resources?.inputs),
 		outputs: extractArtifactEntries(checkpoint.resources?.outputs),
 		startTime: checkpoint.body?.start_time
-			? new Date(checkpoint.body.start_time)
+			? parseBackendTimestamp(checkpoint.body.start_time)
 			: undefined,
 		endTime: checkpoint.body?.end_time
-			? new Date(checkpoint.body.end_time)
+			? parseBackendTimestamp(checkpoint.body.end_time)
 			: undefined,
 		durationMs:
 			checkpoint.body?.end_time && checkpoint.body?.start_time
-				? new Date(checkpoint.body.end_time).getTime() -
-					new Date(checkpoint.body.start_time).getTime()
+				? parseBackendTimestamp(checkpoint.body.end_time).getTime() -
+					parseBackendTimestamp(checkpoint.body.start_time).getTime()
 				: undefined,
 		type: checkpoint.body?.type ?? undefined,
 		costUsd:
@@ -82,7 +83,7 @@ export function checkpointEntryFromApiToDomain(
 			: undefined,
 		status: node.metadata?.status as ExecutionStatus,
 		startTime: node.metadata?.start_time
-			? new Date(node.metadata?.start_time as string)
+			? parseBackendTimestamp(node.metadata?.start_time as string)
 			: undefined,
 		type: node.metadata?.type as components["schemas"]["StepType"],
 	};

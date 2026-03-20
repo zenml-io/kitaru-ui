@@ -48,3 +48,13 @@ export function formatRelativeTime(value: Date | string) {
 		addSuffix: true,
 	});
 }
+
+export function parseBackendTimestamp(dateString: string | number) {
+	if (typeof dateString === "number") {
+		return new Date(dateString);
+	}
+	if (!dateString.endsWith("Z")) {
+		return new Date(dateString + "Z");
+	}
+	return new Date(dateString);
+}

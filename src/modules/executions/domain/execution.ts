@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
+import { parseBackendTimestamp } from "@/shared/utils/time";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 
 export const executionStatusValues: ExecutionStatus[] = [
@@ -58,12 +59,12 @@ export function executionFromApiToDomain(
 		user: run?.resources?.user
 			? userFromApiToDomain(run.resources.user)
 			: undefined,
-		createdAt: new Date(run.body.created),
+		createdAt: parseBackendTimestamp(run.body.created),
 		startTime: run.metadata?.start_time
-			? new Date(run.metadata.start_time)
+			? parseBackendTimestamp(run.metadata.start_time)
 			: undefined,
 		endTime: run.metadata?.end_time
-			? new Date(run.metadata.end_time)
+			? parseBackendTimestamp(run.metadata.end_time)
 			: undefined,
 		activeWaitConditionEntry:
 			run.resources?.active_wait_condition?.id ||
