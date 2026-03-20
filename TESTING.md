@@ -1,44 +1,52 @@
 # Testing Kitaru UI Locally
 
-This guide walks you through testing the Kitaru UI against a local ZenML/Kitaru server. There are two approaches depending on what you need:
+This guide walks you through testing the Kitaru UI against a local Kitaru server. There are two approaches depending on what you need:
 
-- **Option A: Dev server** (hot reload, fastest iteration) — run `pnpm dev` and proxy to a local ZenML server
+- **Option A: Dev server** (hot reload, fastest iteration) — run `pnpm dev` and proxy to a local Kitaru server
 - **Option B: Docker** (production-like) — build the UI and bundle it into the Kitaru server image
 
 ## Prerequisites
 
 - Node.js (LTS)
 - [pnpm](https://pnpm.io/)
-- [uv](https://docs.astral.sh/uv/getting-started/installation/) (for installing ZenML/Kitaru)
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) (for installing Kitaru)
 - A Python virtual environment (recommended)
 
 ## Option A: Dev Server (Hot Reload)
 
-This is the fastest path for frontend development. The Vite dev server proxies `/api` requests to the ZenML backend.
+This is the fastest path for frontend development. The Vite dev server proxies `/api` requests to the Kitaru backend.
 
-### 1. Install the ZenML Server
+### 1. Install Kitaru with Server Extras
 
 ```bash
-# From any directory, with your Python venv active:
-uv pip install "zenml[server]>=0.94.1"
+# Clone the kitaru repo (if you haven't already)
+git clone https://github.com/zenml-io/kitaru.git
+cd kitaru
+
+# Install with server extras (pulls ZenML automatically)
+uv sync --extra local
 ```
 
-> **Testing against unreleased ZenML?** Use the helper script instead:
+> **Testing against a specific Kitaru branch?** Just check out that branch
+> before running `uv sync`:
 > ```bash
-> ./scripts/install-kitaru-branch.sh develop
+> git checkout feat/my-branch
+> uv sync --extra local
 > ```
 
-### 2. Start the ZenML Server
+### 2. Start the Kitaru Server
 
 ```bash
-zenml login --local
+uv run kitaru login --local
 ```
 
-This starts the ZenML server on `http://localhost:8237` by default.
+This starts the server on `http://localhost:8237` by default.
 
 ### 3. Start the Kitaru UI
 
 ```bash
+# From the kitaru-ui repo root
+
 # Install frontend dependencies (first time or after lockfile changes)
 pnpm install
 
@@ -49,13 +57,13 @@ cp .env.example .env
 pnpm dev
 ```
 
-The dev server starts at `http://localhost:5173` and proxies all `/api` requests to the ZenML backend at `VITE_BACKEND_URL` (defaults to `http://localhost:8237`).
+The dev server starts at `http://localhost:5173` and proxies all `/api` requests to the Kitaru backend at `VITE_BACKEND_URL` (defaults to `http://localhost:8237`).
 
-If your ZenML server is running on a different port, update `VITE_BACKEND_URL` in your `.env` file.
+If your server is running on a different port, update `VITE_BACKEND_URL` in your `.env` file.
 
 ### 4. Open the App
 
-Open `http://localhost:5173` in your browser. You should see the Kitaru UI connected to your local ZenML server.
+Open `http://localhost:5173` in your browser. You should see the Kitaru UI connected to your local server.
 
 ## Option B: Docker (Production-like)
 
@@ -108,7 +116,7 @@ When reporting a bug, include:
 
 | Problem | Fix |
 |---------|-----|
-| `ECONNREFUSED` on API calls | Make sure the ZenML server is running (`zenml login --local` for Option A, or check `docker ps` for Option B) |
+| `ECONNREFUSED` on API calls | Make sure the server is running (`uv run kitaru login --local` for Option A, or check `docker ps` for Option B) |
 | 401 errors / redirect to login | Your session may have expired — log in again through the UI |
 | Stale types or API mismatches | Regenerate types: `pnpm generate:types -- http://localhost:8237` |
 | UI not reflecting code changes | Hard-refresh the browser (`Cmd+Shift+R` / `Ctrl+Shift+R`) |
