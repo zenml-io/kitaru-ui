@@ -11,14 +11,15 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
 import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
+import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
 import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
-import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
@@ -49,17 +50,23 @@ export function ExecutionContainer() {
 	);
 
 	const queryClient = useQueryClient();
+	function invalidateExecutionQueries() {
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.all(flowId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.detail(executionId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: checkpointsQueryKeys.all(executionId),
+		});
+	}
+
 	const { resolveWaitCondition } = useResolveWaitCondition({
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: executionsQueryKeys.all(flowId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: executionsQueryKeys.detail(executionId),
-			});
-			queryClient.invalidateQueries({
-				queryKey: checkpointsQueryKeys.all(executionId),
-			});
+		onSuccess: invalidateExecutionQueries,
+		onError: () => {
+			invalidateExecutionQueries();
+			toast.error("Failed to resolve wait condition");
 		},
 	});
 
