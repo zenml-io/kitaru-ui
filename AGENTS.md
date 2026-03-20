@@ -206,6 +206,23 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Good: "Add workflow to require release label on PRs"
 - Bad: "ci: add workflow to require release label on PRs"
 
+## Testing
+
+### Unit Tests
+
+```bash
+pnpm test:unit        # Run unit tests (Vitest)
+```
+
+### Local Integration Testing
+
+Two ways to test against a real server:
+
+- **Dev server** (hot reload): Clone kitaru repo → `uv sync --extra local` → `uv run kitaru login` → `pnpm dev` (proxies `/api` to `http://localhost:8237`)
+- **Docker** (production-like): `pnpm build` → copy `dist/` to kitaru repo's `docker/kitaru-ui-dist/` → `just server-dev-image` → `docker run -p 8080:8080 kitaru-server-dev`
+
+See [TESTING.md](./TESTING.md) for the full step-by-step guide including troubleshooting.
+
 ## CI
 
 GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
