@@ -3,7 +3,8 @@ import type {
 	PageEventContext,
 	PageEventPage,
 	PageEventProperties,
-} from "./domain/analytics-events";
+} from "../domain/analytics-events";
+import { sanitizeUuidFromPath } from "../util/sanize-uuid";
 
 export function buildPageEvent(
 	category: string,
@@ -12,7 +13,7 @@ export function buildPageEvent(
 	properties: Record<string, unknown>
 ) {
 	const page: PageEventPage = {
-		path: location.pathname,
+		path: sanitizeUuidFromPath(location.pathname),
 		referrer: document.referrer,
 		search: location.search,
 		title: document.title,
