@@ -216,11 +216,10 @@ pnpm test:unit        # Run unit tests (Vitest)
 
 ### Local Integration Testing
 
-To test the UI against a real ZenML server locally:
+Two ways to test against a real server:
 
-1. Install the ZenML server from the `develop` branch: `./scripts/install-kitaru-branch.sh develop`
-2. Start the server: `zenml login --local`
-3. Start the UI: `pnpm dev` (proxies `/api` to `http://localhost:8237`)
+- **Dev server** (hot reload): `uv pip install "zenml[server]>=0.94.1"` → `zenml login --local` → `pnpm dev` (proxies `/api` to `http://localhost:8237`)
+- **Docker** (production-like): `pnpm build` → copy `dist/` to kitaru repo's `docker/kitaru-ui-dist/` → `just server-dev-image` → `docker run -p 8080:8080 kitaru-server-dev`
 
 See [TESTING.md](./TESTING.md) for the full step-by-step guide including troubleshooting.
 
