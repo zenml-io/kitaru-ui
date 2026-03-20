@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export const flowTabs = ["overview"] as const;
 export type FlowTab = (typeof flowTabs)[number];
@@ -41,6 +42,8 @@ export function flowFromApiToDomain(
 		name: flow.name,
 		latestExecStatus: flow.resources?.latest_run_status ?? undefined,
 		latestexecutionId: flow.resources?.latest_run_id ?? undefined,
-		createdAt: flow.body?.created ? new Date(flow.body.created) : undefined,
+		createdAt: flow.body?.created
+			? parseBackendTimestamp(flow.body.created)
+			: undefined,
 	};
 }

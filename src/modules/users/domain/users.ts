@@ -1,4 +1,5 @@
 import type { components } from "@/shared/api/openapi";
+import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export type User = {
 	id: string;
@@ -24,7 +25,9 @@ export function userFromApiToDomain(
 		email: user.metadata?.email ?? undefined,
 		isAdmin: user.body?.is_admin ?? undefined,
 		isActive: user.body?.active ?? undefined,
-		createdAt: user.body?.created ? new Date(user.body.created) : undefined,
+		createdAt: user.body?.created
+			? parseBackendTimestamp(user.body.created)
+			: undefined,
 	};
 }
 
