@@ -10,5 +10,7 @@ export function ArtifactVisualizationContainer({
 }: ArtifactVisualizationContainerProps) {
 	const { visualizationData } = useArtifactVisualization(artifactVersionId);
 
-	return <VisualizationViewer artifact={visualizationData} />;
+	return (
+		<VisualizationViewer key={artifactVersionId} artifact={visualizationData} />
+	);
 }
