@@ -1,10 +1,10 @@
-// src/modules/checkpoints/feature/ArtifactVisualizationContainer.tsx
+import { Download01 } from "@untitledui/icons";
+
 import { useDownloadVisualization } from "../business-logic/use-download-visualization";
 import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
 import { VisualizationViewer } from "@/modules/executions/ui/traces/VisualizationViewer";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
-import { Download01 } from "@untitledui/icons";
 
 interface ArtifactVisualizationContainerProps {
 	artifactVersionId: string;
