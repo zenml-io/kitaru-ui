@@ -115,7 +115,9 @@ describe("downloadVisualization", () => {
 		const mockBlob = new Blob(["fake-image"], { type: "image/jpeg" });
 		vi.stubGlobal(
 			"fetch",
-			vi.fn().mockResolvedValue({ blob: () => Promise.resolve(mockBlob) })
+			vi
+				.fn()
+				.mockResolvedValue({ ok: true, blob: () => Promise.resolve(mockBlob) })
 		);
 
 		const viz: ArtifactVisualization = {
@@ -131,5 +133,21 @@ describe("downloadVisualization", () => {
 		});
 		expect(anchor.download).toBe("photo.jpg");
 		expect(anchor.click).toHaveBeenCalled();
+	});
+
+	it("throws when image URL fetch returns non-ok response", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({ ok: false, status: 404, blob: vi.fn() })
+		);
+
+		const viz: ArtifactVisualization = {
+			type: "image",
+			value: "/api/v1/missing-image",
+		};
+
+		await expect(downloadVisualization(viz, "photo")).rejects.toThrow(
+			"Failed to fetch image: 404"
+		);
 	});
 });

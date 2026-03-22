@@ -1,17 +1,10 @@
 import type { ArtifactVisualization } from "../domain/visualization";
 
-const MIME_TYPES: Record<string, string> = {
-	json: "application/json",
-	markdown: "text/markdown",
-	html: "text/html",
-	csv: "text/csv",
-};
-
-const TEXT_EXTENSIONS: Record<string, string> = {
-	json: ".json",
-	markdown: ".md",
-	html: ".html",
-	csv: ".csv",
+const TEXT_TYPE_MAP: Record<string, { mime: string; ext: string }> = {
+	json: { mime: "application/json", ext: ".json" },
+	markdown: { mime: "text/markdown", ext: ".md" },
+	html: { mime: "text/html", ext: ".html" },
+	csv: { mime: "text/csv", ext: ".csv" },
 };
 
 const IMAGE_EXTENSIONS: Record<string, string> = {
@@ -23,6 +16,7 @@ const IMAGE_EXTENSIONS: Record<string, string> = {
 };
 
 function mimeToImageExtension(mimeType: string): string {
+	// Falls back to .png for unrecognised image MIME types (e.g. image/avif)
 	return IMAGE_EXTENSIONS[mimeType] ?? ".png";
 }
 
@@ -33,6 +27,7 @@ function triggerDownload(blob: Blob, filename: string): void {
 	a.download = filename;
 	document.body.appendChild(a);
 	a.click();
+	// Revoke after the browser has queued the download
 	setTimeout(() => {
 		URL.revokeObjectURL(url);
 		document.body.removeChild(a);
@@ -48,10 +43,11 @@ export async function downloadVisualization(
 		return;
 	}
 
-	const extension = TEXT_EXTENSIONS[visualization.type] ?? "";
-	const mimeType = MIME_TYPES[visualization.type] ?? "text/plain";
-	const blob = new Blob([visualization.value], { type: mimeType });
-	triggerDownload(blob, filename + extension);
+	const config = TEXT_TYPE_MAP[visualization.type];
+	const ext = config?.ext ?? "";
+	const mime = config?.mime ?? "text/plain";
+	const blob = new Blob([visualization.value], { type: mime });
+	triggerDownload(blob, filename + ext);
 }
 
 async function downloadImage(value: string, filename: string): Promise<void> {
@@ -63,6 +59,9 @@ async function downloadImage(value: string, filename: string): Promise<void> {
 		triggerDownload(blob, filename + mimeToImageExtension(mimeType));
 	} else {
 		const response = await fetch(value, { credentials: "include" });
+		if (!response.ok) {
+			throw new Error(`Failed to fetch image: ${response.status}`);
+		}
 		const blob = await response.blob();
 		triggerDownload(blob, filename + mimeToImageExtension(blob.type));
 	}
