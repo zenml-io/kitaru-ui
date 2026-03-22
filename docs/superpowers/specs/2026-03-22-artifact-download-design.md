@@ -44,7 +44,13 @@ This approach:
 
 ### New: `src/modules/checkpoints/util/download-visualization.ts`
 
-Pure async utility. Takes `visualization: ArtifactVisualization` and `filename: string`, triggers a browser file download.
+Pure async utility. Takes `visualization: ArtifactVisualization` and `filename: string` (base name, no extension), triggers a browser file download.
+
+**Filename extension:** The utility appends the correct extension based on `visualization.type`: `.json`, `.md`, `.html`, `.csv`, or `.png` (image fallback). For images, if the data URL or response Content-Type specifies a more specific type (e.g. `image/jpeg`), use the corresponding extension. Filename sanitization (stripping characters invalid on common OS filesystems such as `/`, `\`, `:`) is out of scope for this iteration.
+
+**Data URL parsing for images:** Extract the MIME type from the data URL prefix by taking the substring between `data:` and the first `;` (e.g. `data:image/png;base64,...` → `image/png`). Extract the base64 payload as the substring after the last `,` in the data URL (not after the first `;`, which would include `base64,`). Decode via `atob`, then convert to `Uint8Array` using `Uint8Array.from(atob(payload), c => c.charCodeAt(0))`, and create a `Blob` from it.
+
+**Image URL assumptions:** The utility assumes image URLs are same-origin (served from the same host as the app). Cross-origin image URLs are not supported and out of scope.
 
 **Per type:**
 
@@ -54,22 +60,22 @@ Pure async utility. Takes `visualization: ArtifactVisualization` and `filename: 
 | `markdown`            | `Blob(value)` → object URL → `<a download>`                       | `text/markdown`       |
 | `html`                | `Blob(value)` → object URL → `<a download>`                       | `text/html`           |
 | `csv`                 | `Blob(value)` → object URL → `<a download>`                       | `text/csv`            |
-| `image` (data URL)    | Parse base64, decode to `Blob`, download                          | from data URL prefix  |
+| `image` (data URL)    | Parse base64 (see above), decode to `Blob`, download              | from data URL prefix  |
 | `image` (regular URL) | `fetch(value, { credentials: 'include' })` → `.blob()` → download | from response headers |
 
-Object URLs are revoked after use.
+Object URLs are revoked after use: append the `<a>` to the document, call `.click()`, then revoke the URL and remove the element in a `setTimeout(..., 0)` callback to ensure the browser has queued the download before the URL is invalidated.
 
 ### New: `src/modules/checkpoints/business-logic/use-download-visualization.ts`
 
 Hook that wraps `downloadVisualization` with UI state.
 
-```
+```ts
 { download(visualization, filename): void, isDownloading: boolean }
 ```
 
 - Sets `isDownloading = true` before calling the utility
 - Sets `isDownloading = false` after completion or on error
-- On error: shows an error toast, resets state
+- On error: calls `toast.error(...)` from `sonner` (consistent with the rest of the codebase), resets state
 
 ### Modified: `src/modules/checkpoints/feature/ArtifactVisualizationContainer.tsx`
 
@@ -77,9 +83,12 @@ Hook that wraps `downloadVisualization` with UI state.
 - Wrap `VisualizationViewer` in a `relative group/viz` div
 - Render an overlay download `Button` (variant `ghost`, size `icon-sm`):
   - Positioned `absolute top-2 right-2`
-  - `opacity-0 group-hover/viz:opacity-100 transition-opacity`
-  - `disabled` when `isDownloading`
+  - For all types except `html`: `opacity-0 group-hover/viz:opacity-100 transition-opacity`
+  - For `html` type: always `opacity-100` (the iframe consumes pointer events and blocks CSS group-hover from the parent)
+  - `disabled` when `isDownloading`; no loading spinner — disabled state is the only feedback during download
   - Uses `Download01` icon from `@untitledui/icons`
+  - Needs `z-10` to ensure it renders above the iframe in the `html` type case (iframes create a stacking context and can paint over absolutely-positioned siblings)
+- `visualizationData` is guaranteed non-null at render time due to the `useSuspenseQuery` in `useArtifactVisualization` and the `<Suspense>` boundary at the call site
 
 ### Modified: `src/modules/executions/ui/traces/CheckpointRowArtifacts.tsx`
 
@@ -113,3 +122,10 @@ Pass `filename={selectedArtifact.artifact.name}` to `ArtifactVisualizationContai
 
 - `isDownloading` transitions: `false` → `true` on call start → `false` on success
 - Error path: `false` → `true` → `false` after rejection, error toast shown
+
+### `ArtifactVisualizationContainer.tsx` (component)
+
+- Download button is present in the DOM after render
+- Button is disabled when `isDownloading` is true
+- For non-html types: button has opacity-0 class (hover-triggered)
+- For html type: button has opacity-100 class (always visible)
