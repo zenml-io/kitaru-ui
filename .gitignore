@@ -41,3 +41,6 @@ devenv.local.nix
 .worktrees
 
 .playwright-mcp
+
+*storybook.log
+storybook-static

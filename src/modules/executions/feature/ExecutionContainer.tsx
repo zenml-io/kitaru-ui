@@ -132,6 +132,7 @@ export function ExecutionContainer() {
 			}
 			center={
 				<ExecutionDetails
+					key={executionId}
 					execution={executionData}
 					checkpointsEntries={checkpointsData.checkpoints}
 					onSelectCheckpoint={(id) => {
