@@ -93,6 +93,7 @@ function CheckpointRowArtifactsContent({
 							>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}
+									filename={selected.entry.name}
 								/>
 							</Suspense>
 						</ErrorBoundary>

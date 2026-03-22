@@ -41,6 +41,7 @@ export function CheckpointDetailPanelArtifacts({
 							<Suspense>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
+									filename={selectedArtifact.artifact.name}
 								/>
 							</Suspense>
 						</ErrorBoundary>
