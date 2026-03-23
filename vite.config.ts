@@ -26,6 +26,9 @@ export default defineConfig(({ mode }) => {
 					secure: false,
 				},
 			},
+			watch: {
+				ignored: ["**/dist/**", "**/.playwright-mcp/**"],
+			},
 		},
 		plugins: [
 			tanstackRouter({
