@@ -16,7 +16,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { User } from "../domain/users";
 import { MembersRowActions } from "./MembersRowActions";
 
@@ -29,7 +29,7 @@ export function MembersTable({
 	users,
 	currentUserId,
 }: MembersTableContainerProps) {
-	const columns = createColumns(currentUserId);
+	const columns = useMemo(() => createColumns(currentUserId), [currentUserId]);
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },

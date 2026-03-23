@@ -23,7 +23,9 @@ export function FlowOverviewContainer() {
 		from: "/_private/_navbar/flows/$flowId/$tab",
 	});
 
-	const { executionsData, refetch, isRefetching } = useExecutions(flowId);
+	const { executionsData, refetch, isRefetching } = useExecutions(flowId, {
+		refetchInterval: 5000,
+	});
 	const { flowData } = useFlow(flowId);
 
 	const stats: StatProps[] = [
