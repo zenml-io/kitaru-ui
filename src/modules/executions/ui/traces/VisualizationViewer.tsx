@@ -172,7 +172,6 @@ function ArtifactContent({
 				<div className={maxH || "h-full"}>
 					<iframe
 						srcDoc={artifact.value}
-						sandbox="allow-scripts"
 						className="h-full min-h-64 w-full border-0 bg-white"
 						title="visualization"
 					/>
