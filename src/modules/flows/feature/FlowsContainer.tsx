@@ -19,7 +19,9 @@ export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData, refetch, isRefetching } = useFlows();
+	const { flowsData, refetch, isRefetching } = useFlows({
+		refetchInterval: 5000,
+	});
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
