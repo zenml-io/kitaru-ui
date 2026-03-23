@@ -37,7 +37,7 @@ export function CheckpointDetailPanelArtifacts({
 				onSelectArtifact={onSelectArtifact}
 			/>
 			{selectedArtifact ? (
-				<div className="min-h-0 flex-1 overflow-y-auto">
+				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">
 							{selectedArtifact.artifact.name}
@@ -47,7 +47,7 @@ export function CheckpointDetailPanelArtifacts({
 						/>
 					</div>
 					<Separator />
-					<div className="bg-background">
+					<div className="bg-background flex-1">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense>
 								<ArtifactVisualizationContainer
