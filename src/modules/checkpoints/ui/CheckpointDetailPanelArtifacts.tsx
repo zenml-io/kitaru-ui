@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
+import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -36,7 +37,15 @@ export function CheckpointDetailPanelArtifacts({
 			/>
 			{selectedArtifact ? (
 				<div className="min-h-0 flex-1 overflow-y-auto">
-					<div className="bg-background min-h-full">
+					<div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-2">
+						<span className="text-foreground truncate text-xs font-semibold">
+							{selectedArtifact.artifact.name}
+						</span>
+						<DownloadArtifactButtonContainer
+							artifactVersionId={selectedArtifact.artifact.id}
+						/>
+					</div>
+					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense>
 								<ArtifactVisualizationContainer

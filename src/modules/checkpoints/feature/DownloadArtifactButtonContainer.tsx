@@ -1,0 +1,23 @@
+import { Download01 } from "@untitledui/icons";
+import { Button } from "@/shared/ui/button";
+import { useDownloadArtifact } from "../business-logic/use-download-artifact";
+
+type Props = {
+	artifactVersionId: string;
+};
+
+export function DownloadArtifactButtonContainer({ artifactVersionId }: Props) {
+	const { download, isDownloading } = useDownloadArtifact();
+
+	return (
+		<Button
+			variant="ghost"
+			size="icon-sm"
+			disabled={isDownloading}
+			onClick={() => download(artifactVersionId)}
+		>
+			<Download01 className="text-muted-foreground h-3.5 w-3.5" />
+			<span className="sr-only">Download artifact</span>
+		</Button>
+	);
+}

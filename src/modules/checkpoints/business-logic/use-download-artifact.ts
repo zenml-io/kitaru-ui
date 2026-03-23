@@ -1,0 +1,23 @@
+import { env } from "@/modules/root/domain/env";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { fetchArtifactDownloadToken } from "../domain/fetch-artifact-download-token";
+
+export function useDownloadArtifact() {
+	const { mutate: download, isPending: isDownloading } = useMutation({
+		mutationFn: async (artifactVersionId: string) => {
+			const token = await fetchArtifactDownloadToken(artifactVersionId);
+			const dataPath = `/api/v1/artifact_versions/${artifactVersionId}/data`;
+			const params = new URLSearchParams({ token });
+			const url = env.VITE_API_BASE_URL
+				? `${env.VITE_API_BASE_URL}${dataPath}?${params}`
+				: `${dataPath}?${params}`;
+			window.open(url, "_blank");
+		},
+		onError: () => {
+			toast.error("Failed to download artifact");
+		},
+	});
+
+	return { download, isDownloading };
+}

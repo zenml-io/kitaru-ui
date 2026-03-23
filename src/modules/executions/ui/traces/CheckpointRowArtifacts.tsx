@@ -1,6 +1,7 @@
 import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
+import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -77,10 +78,13 @@ function CheckpointRowArtifactsContent({
 
 			{selected && (
 				<div className="border-border overflow-hidden rounded-lg border">
-					<div className="bg-muted/50 border-border border-b px-4 py-2">
+					<div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">
 							{selected.entry.name}
 						</span>
+						<DownloadArtifactButtonContainer
+							artifactVersionId={selected.entry.id}
+						/>
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
