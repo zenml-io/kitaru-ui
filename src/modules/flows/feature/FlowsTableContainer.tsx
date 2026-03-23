@@ -1,14 +1,4 @@
-import * as React from "react";
-
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import {
-	flexRender,
-	getCoreRowModel,
-	getSortedRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-
-import type { Flow } from "../domain/flow";
+import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 import {
 	SortableHeader,
 	Table,
@@ -18,17 +8,27 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 import { Link } from "@tanstack/react-router";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import {
+	flexRender,
+	getCoreRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import type { Flow } from "../domain/flow";
 
 export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
-	const [sorting, setSorting] = React.useState<SortingState>([
+	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
+	const columns = useMemo(() => flowColumns, []);
+
 	const table = useReactTable({
 		data: flowRows,
-		columns: flowColumns,
+		columns: columns,
 		state: {
 			sorting,
 		},
