@@ -48,6 +48,17 @@ By default, API requests are relative (`/api/v1/...`). In development, the Vite 
   - **util/** — small module-scoped utilities
   - **ui/** — stateless presentational components
 - Keep modules split by layer from the start rather than growing a flat module and reorganizing later.
+
+**Layer import rules** — each layer may only import from layers marked ✅:
+
+| Importer →         | feature | business-logic |     domain      | ui  | util |
+| ------------------ | :-----: | :------------: | :-------------: | :-: | :--: |
+| **feature**        |   ✅    |       ✅       |       ✅        | ✅  |  ✅  |
+| **business-logic** |   ❌    |       ✅       |       ✅        | ❌  |  ✅  |
+| **domain**         |   ❌    |       ❌       |       ✅        | ❌  |  ✅  |
+| **ui**             |   ❌    |       ❌       | ✅ (types only) | ✅  |  ✅  |
+| **util**           |   ❌    |       ❌       |       ❌        | ❌  |  ✅  |
+
 - `src/routes/*` — file-based TanStack Router route definitions; these contain `beforeLoad` logic for data preloading and redirects, plus page metadata
 - `src/shared/api/domain/*` — transport layer: `apiClient`, endpoint path constants, `FetchError` class
 - `src/shared/api/utils/*` — URL builders, querystring helpers, error response handling
@@ -172,7 +183,9 @@ See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 - Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage
 - No type casting
 - Use PascalCase for React component and context files (e.g. `Dashboard.tsx`, `DashboardContainer.tsx`, `AuthContext.tsx`)
-- Use kebab-case for hooks, utilities, API calls, and domain-layer files (e.g. `use-pipeline.tsx`, `api-client.ts`, `fetch-device.ts`)
+- Suffix feature-layer smart components (stateful containers) with `Container` (e.g. `ExecutionContainer.tsx`, `LoginFormContainer.tsx`)
+- Use camelCase for hook files; names must start with `use` (e.g. `usePipeline.tsx`, `useDownloadArtifact.ts`)
+- Use kebab-case for utilities, API calls, and all domain-layer files (e.g. `api-client.ts`, `fetch-device.ts`, `device-queries.ts`)
 - Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions)
 - define optional props/params like this: `selectedId?: string` instead of `selectedId: string | null` or `selectedId: string | undefined`
 
