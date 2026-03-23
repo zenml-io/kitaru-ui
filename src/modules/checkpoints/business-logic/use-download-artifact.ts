@@ -9,9 +9,10 @@ export function useDownloadArtifact() {
 			const token = await fetchArtifactDownloadToken(artifactVersionId);
 			const dataPath = `/api/v1/artifact_versions/${artifactVersionId}/data`;
 			const params = new URLSearchParams({ token });
-			const url = env.VITE_API_BASE_URL
-				? `${env.VITE_API_BASE_URL}${dataPath}?${params}`
-				: `${dataPath}?${params}`;
+
+			const baseUrl = env.VITE_API_BASE_URL || env.VITE_BACKEND_URL || "";
+			const url = `${baseUrl}${dataPath}?${params}`;
+
 			window.open(url, "_blank");
 		},
 		onError: () => {
