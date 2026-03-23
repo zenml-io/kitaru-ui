@@ -8,7 +8,7 @@ import {
 	ThreePanelLayout,
 	type ThreePanelLayoutHandle,
 } from "@/shared/ui/ThreePanelLayout";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -25,21 +25,11 @@ export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const {
-		executionsData,
-		refetch: refetchExecutions,
-		isRefetching: isRefetchingExecutions,
-	} = useExecutions(flowId);
-	const {
-		executionData,
-		refetch: refetchExecution,
-		isRefetching: isRefetchingExecution,
-	} = useExecution(executionId);
-	const {
-		checkpointsData,
-		refetch: refetchCheckpoints,
-		isRefetching: isRefetchingCheckpoints,
-	} = useCheckpoints(executionId);
+	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId);
+	const { executionData, refetch: refetchExecution } =
+		useExecution(executionId);
+	const { checkpointsData, refetch: refetchCheckpoints } =
+		useCheckpoints(executionId);
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
 	);
@@ -70,14 +60,16 @@ export function ExecutionContainer() {
 		},
 	});
 
-	function handleRefresh() {
-		refetchExecutions();
-		refetchExecution();
-		refetchCheckpoints();
-	}
-
-	const isRefreshing =
-		isRefetchingExecutions || isRefetchingExecution || isRefetchingCheckpoints;
+	const { mutate: refreshExecutionData, isPending: isManualRefreshPending } =
+		useMutation({
+			mutationFn: async () => {
+				await Promise.all([
+					refetchExecutions(),
+					refetchExecution(),
+					refetchCheckpoints(),
+				]);
+			},
+		});
 
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
@@ -120,8 +112,8 @@ export function ExecutionContainer() {
 					<RefreshButton
 						size="sm"
 						variant="outline"
-						onClick={handleRefresh}
-						isLoading={isRefreshing}
+						onClick={() => refreshExecutionData()}
+						isLoading={isManualRefreshPending}
 					/>
 				</div>
 			}

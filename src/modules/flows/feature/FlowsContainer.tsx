@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useMutation } from "@tanstack/react-query";
 
 import {
 	PageHeader,
@@ -19,9 +20,15 @@ export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData, refetch, isRefetching } = useFlows({
+	const { flowsData, refetch } = useFlows({
 		refetchInterval: 5000,
 	});
+	const { mutate: refreshFlows, isPending: isManualRefreshPending } =
+		useMutation({
+			mutationFn: async () => {
+				await refetch();
+			},
+		});
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
@@ -73,8 +80,8 @@ export function FlowsContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<FlowsToolbar
-				onRefresh={refetch}
-				isRefreshing={isRefetching}
+				onRefresh={() => refreshFlows()}
+				isRefreshing={isManualRefreshPending}
 				searchValue={q}
 				statusFilter={status}
 				onSearchValueChange={(value) => {

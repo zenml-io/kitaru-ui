@@ -16,6 +16,7 @@ import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
+import { useMutation } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 export function FlowOverviewContainer() {
@@ -23,10 +24,16 @@ export function FlowOverviewContainer() {
 		from: "/_private/_navbar/flows/$flowId/$tab",
 	});
 
-	const { executionsData, refetch, isRefetching } = useExecutions(flowId, {
+	const { executionsData, refetch } = useExecutions(flowId, {
 		refetchInterval: 5000,
 	});
 	const { flowData } = useFlow(flowId);
+	const { mutate: refreshExecutions, isPending: isManualRefreshPending } =
+		useMutation({
+			mutationFn: async () => {
+				await refetch();
+			},
+		});
 
 	const stats: StatProps[] = [
 		{ label: "Executions", value: executionsData.length },
@@ -49,8 +56,8 @@ export function FlowOverviewContainer() {
 				<TableToolbarContent className="justify-end">
 					<RefreshButton
 						variant="outline"
-						isLoading={isRefetching}
-						onClick={() => refetch()}
+						isLoading={isManualRefreshPending}
+						onClick={() => refreshExecutions()}
 					></RefreshButton>
 				</TableToolbarContent>
 			</TableToolbarRoot>
