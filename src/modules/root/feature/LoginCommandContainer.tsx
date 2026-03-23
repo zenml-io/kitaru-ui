@@ -1,10 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { serverInfoQueries } from "../business-logic/server-info-queries";
+import { env } from "../domain/env";
 import { LoginCommand } from "../ui/LoginCommand";
 
 export function LoginCommandContainer() {
-	const { data: serverInfo } = useSuspenseQuery(serverInfoQueries.detail());
-	const url = serverInfo.server_url || location.origin;
+	const url = env.VITE_API_BASE_URL || env.VITE_BACKEND_URL || location.origin;
 	return (
 		<div className="px-2 py-1.5">
 			<span className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
