@@ -15,8 +15,8 @@ export function useDownloadArtifact() {
 
 			window.open(url, "_blank");
 		},
-		onError: () => {
-			toast.error("Failed to download artifact");
+		onError: (error) => {
+			toast.error(error.message);
 		},
 	});
 
