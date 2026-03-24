@@ -25,7 +25,7 @@ export function MembersListPageContainer() {
 			<CardContent className="space-y-6">
 				<MembersListToolbarContainer
 					isRefreshing={isManualRefreshPending}
-					onRefresh={() => refreshMembers()}
+					onRefresh={refreshMembers}
 					isUserAdmin={currentUser.isAdmin ?? false}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
