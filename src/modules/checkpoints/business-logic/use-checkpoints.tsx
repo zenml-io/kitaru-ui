@@ -1,14 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
+import { getIsActiveStatus } from "@/shared/business-logic/status";
 
 export function useCheckpoints(executionId: string) {
 	const query = useSuspenseQuery({
 		...checkpointsQueries.all(executionId),
 		refetchInterval(query) {
-			return query.state.data?.executionStatus === "running" ||
-				query.state.data?.executionStatus === "initializing" ||
-				query.state.data?.executionStatus === "provisioning" ||
-				query.state.data?.executionStatus === "resuming"
+			return getIsActiveStatus(query.state.data?.executionStatus)
 				? 3000
 				: false;
 		},

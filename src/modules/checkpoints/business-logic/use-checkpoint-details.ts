@@ -1,11 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
 import type { Checkpoint } from "../domain/checkpoint";
+import { getIsActiveStatus } from "@/shared/business-logic/status";
 
 export function getCheckpointDetailsPollingInterval(query: {
 	state: { data?: Checkpoint };
 }) {
-	return query.state.data?.status === "running" ? 3000 : false;
+	return getIsActiveStatus(query.state.data?.status) ? 3000 : false;
 }
 
 type Options = Omit<
