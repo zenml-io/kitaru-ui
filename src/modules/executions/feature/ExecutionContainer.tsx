@@ -24,12 +24,13 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
+import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 
 export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId);
+	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL});
 	const { executionData, refetch: refetchExecution } =
 		useExecution(executionId);
 	const { checkpointsData, refetch: refetchCheckpoints } =

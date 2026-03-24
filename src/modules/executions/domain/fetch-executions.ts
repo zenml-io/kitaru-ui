@@ -5,6 +5,7 @@ import { type Execution, executionFromApiToDomain } from "./execution";
 // TODO: Remove these constants and use the API pagination instead
 const DEFAULT_PAGE = 1;
 const MAX_PAGE_SIZE = 1000;
+export const DEFAULT_EXECUTIONS_POLLING_INTERVAL = 5000;
 
 export async function fetchExecutions(flowId: string): Promise<Execution[]> {
 	const response = await apiClient.GET("/api/v1/runs", {
