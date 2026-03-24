@@ -1,4 +1,7 @@
-import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
+import {
+	getCheckpointDetailsPollingInterval,
+	useCheckpointDetails,
+} from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
@@ -14,8 +17,7 @@ function CheckpointRowArtifactsContent({
 	checkpointId: string;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
-		refetchInterval: (query) =>
-			query.state.data?.status === "running" ? 3000 : false,
+		refetchInterval: getCheckpointDetailsPollingInterval,
 	});
 
 	const { inputs, outputs } = detailsData;

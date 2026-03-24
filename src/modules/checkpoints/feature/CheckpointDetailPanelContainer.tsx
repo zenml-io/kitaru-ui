@@ -1,5 +1,8 @@
 import { Suspense, useState } from "react";
-import { useCheckpointDetails } from "../business-logic/use-checkpoint-details";
+import {
+	getCheckpointDetailsPollingInterval,
+	useCheckpointDetails,
+} from "../business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
@@ -34,8 +37,7 @@ function CheckpointDetailPanelContentContainer({
 	checkpointId: string;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
-		refetchInterval: (query) =>
-			query.state.data?.status === "running" ? 3000 : false,
+		refetchInterval: getCheckpointDetailsPollingInterval,
 	});
 
 	const inputs = detailsData?.inputs ?? [];
