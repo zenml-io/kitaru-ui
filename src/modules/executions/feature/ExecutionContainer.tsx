@@ -1,6 +1,7 @@
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { StatusDot } from "@/shared/ui/StatusDot";
@@ -25,21 +26,11 @@ export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const {
-		executionsData,
-		refetch: refetchExecutions,
-		isRefetching: isRefetchingExecutions,
-	} = useExecutions(flowId);
-	const {
-		executionData,
-		refetch: refetchExecution,
-		isRefetching: isRefetchingExecution,
-	} = useExecution(executionId);
-	const {
-		checkpointsData,
-		refetch: refetchCheckpoints,
-		isRefetching: isRefetchingCheckpoints,
-	} = useCheckpoints(executionId);
+	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId);
+	const { executionData, refetch: refetchExecution } =
+		useExecution(executionId);
+	const { checkpointsData, refetch: refetchCheckpoints } =
+		useCheckpoints(executionId);
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
 	);
@@ -70,14 +61,14 @@ export function ExecutionContainer() {
 		},
 	});
 
-	function handleRefresh() {
-		refetchExecutions();
-		refetchExecution();
-		refetchCheckpoints();
-	}
-
-	const isRefreshing =
-		isRefetchingExecutions || isRefetchingExecution || isRefetchingCheckpoints;
+	const { refresh: refreshExecutionData, isPending: isManualRefreshPending } =
+		useManualRefresh(async () => {
+			await Promise.all([
+				refetchExecutions(),
+				refetchExecution(),
+				refetchCheckpoints(),
+			]);
+		});
 
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
@@ -120,8 +111,8 @@ export function ExecutionContainer() {
 					<RefreshButton
 						size="sm"
 						variant="outline"
-						onClick={handleRefresh}
-						isLoading={isRefreshing}
+						onClick={refreshExecutionData}
+						isLoading={isManualRefreshPending}
 					/>
 				</div>
 			}

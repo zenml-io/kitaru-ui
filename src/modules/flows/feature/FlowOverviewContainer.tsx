@@ -3,6 +3,7 @@ import { ExecutionsTableContainer } from "@/modules/executions/feature/Execution
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import type { StatProps } from "@/modules/flows/ui/Stat";
 import { Stats } from "@/modules/flows/ui/Stats";
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import {
 	PageHeader,
 	PageHeaderActions,
@@ -23,10 +24,12 @@ export function FlowOverviewContainer() {
 		from: "/_private/_navbar/flows/$flowId/$tab",
 	});
 
-	const { executionsData, refetch, isRefetching } = useExecutions(flowId, {
+	const { executionsData, refetch } = useExecutions(flowId, {
 		refetchInterval: 5000,
 	});
 	const { flowData } = useFlow(flowId);
+	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
+		useManualRefresh(refetch);
 
 	const stats: StatProps[] = [
 		{ label: "Executions", value: executionsData.length },
@@ -49,8 +52,8 @@ export function FlowOverviewContainer() {
 				<TableToolbarContent className="justify-end">
 					<RefreshButton
 						variant="outline"
-						isLoading={isRefetching}
-						onClick={() => refetch()}
+						isLoading={isManualRefreshPending}
+						onClick={refreshExecutions}
 					></RefreshButton>
 				</TableToolbarContent>
 			</TableToolbarRoot>

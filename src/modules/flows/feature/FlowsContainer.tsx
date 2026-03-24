@@ -1,5 +1,4 @@
-import * as React from "react";
-
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import {
 	PageHeader,
 	PageHeaderActions,
@@ -8,20 +7,23 @@ import {
 	PageHeaderDescription,
 	PageHeaderTitle,
 } from "@/shared/ui/PageHeader";
-import { FlowsToolbar } from "../ui/FlowsToolbar";
-import { Stats } from "../ui/Stats";
 import { useRouter, useSearch } from "@tanstack/react-router";
-import { FlowsTableContainer } from "./FlowsTableContainer";
+import { useMemo } from "react";
 import { useFlows } from "../business-logic/use-flows";
+import { FlowsToolbar } from "../ui/FlowsToolbar";
 import type { StatProps } from "../ui/Stat";
+import { Stats } from "../ui/Stats";
+import { FlowsTableContainer } from "./FlowsTableContainer";
 
 export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData, refetch, isRefetching } = useFlows({
+	const { flowsData, refetch } = useFlows({
 		refetchInterval: 5000,
 	});
+	const { refresh: refreshFlows, isPending: isManualRefreshPending } =
+		useManualRefresh(refetch);
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
@@ -40,7 +42,7 @@ export function FlowsContainer() {
 		{ label: "Completed", value: statsCounts.completed, valueColor: "success" },
 	];
 
-	const filteredRows = React.useMemo(() => {
+	const filteredRows = useMemo(() => {
 		const normalizedSearch = q.trim().toLowerCase();
 
 		return flowsData.filter((flow) => {
@@ -73,8 +75,8 @@ export function FlowsContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<FlowsToolbar
-				onRefresh={refetch}
-				isRefreshing={isRefetching}
+				onRefresh={refreshFlows}
+				isRefreshing={isManualRefreshPending}
 				searchValue={q}
 				statusFilter={status}
 				onSearchValueChange={(value) => {

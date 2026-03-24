@@ -6,16 +6,16 @@ type Props = {
 	isUserAdmin: boolean;
 	searchValue: string;
 	setSearchValue: (value: string) => void;
-	isRefetching: boolean;
-	refetch: () => void;
+	isRefreshing: boolean;
+	onRefresh: () => void;
 };
 
 export function MembersListToolbarContainer({
 	isUserAdmin,
 	searchValue,
 	setSearchValue,
-	isRefetching,
-	refetch,
+	isRefreshing,
+	onRefresh,
 }: Props) {
 	return (
 		<div className="flex items-center justify-between">
@@ -28,8 +28,8 @@ export function MembersListToolbarContainer({
 			<div className="flex items-center gap-4">
 				<RefreshButton
 					variant="outline"
-					isLoading={isRefetching}
-					onClick={() => refetch()}
+					isLoading={isRefreshing}
+					onClick={onRefresh}
 				/>
 				{isUserAdmin && <CreateUserDialogContainer />}
 			</div>
