@@ -53,12 +53,12 @@ export function CheckpointRow({
 				</span>
 				<span className="flex-1" />
 				<LiveDurationMs
-					status={checkpoint.status}
-					startTime={checkpoint.startTime}
-					durationMs={checkpoint.durationMs}
+					status={checkpointEntry.status}
+					startTime={checkpointEntry.startTime}
+					durationMs={checkpointEntry.durationMs}
 					className="text-2xs text-muted-foreground font-mono tabular-nums"
 				/>
-				<StatusDot status={checkpoint.status} />
+				<StatusDot status={checkpointEntry.status} />
 			</button>
 
 			{isExpanded && (
