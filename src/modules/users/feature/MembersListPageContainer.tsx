@@ -1,5 +1,6 @@
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { userQueries } from "../business-logic/user-queries";
 import { MembersTable } from "../ui/MembersTable";
@@ -9,11 +10,9 @@ export function MembersListPageContainer() {
 	const [searchValue, setSearchValue] = useState("");
 	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 	const { data, refetch } = useSuspenseQuery(userQueries.list());
-	const { mutate: refreshMembers, isPending: isManualRefreshPending } =
-		useMutation({
-			mutationFn: async () => {
-				await refetch();
-			},
+	const { refresh: refreshMembers, isPending: isManualRefreshPending } =
+		useManualRefresh(async () => {
+			await refetch();
 		});
 
 	const filteredMembers = data.items.filter((member) =>

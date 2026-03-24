@@ -3,6 +3,7 @@ import { ExecutionsTableContainer } from "@/modules/executions/feature/Execution
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import type { StatProps } from "@/modules/flows/ui/Stat";
 import { Stats } from "@/modules/flows/ui/Stats";
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import {
 	PageHeader,
 	PageHeaderActions,
@@ -16,7 +17,6 @@ import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
-import { useMutation } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 
 export function FlowOverviewContainer() {
@@ -28,11 +28,9 @@ export function FlowOverviewContainer() {
 		refetchInterval: 5000,
 	});
 	const { flowData } = useFlow(flowId);
-	const { mutate: refreshExecutions, isPending: isManualRefreshPending } =
-		useMutation({
-			mutationFn: async () => {
-				await refetch();
-			},
+	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
+		useManualRefresh(async () => {
+			await refetch();
 		});
 
 	const stats: StatProps[] = [

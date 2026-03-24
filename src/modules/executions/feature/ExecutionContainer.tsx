@@ -1,6 +1,7 @@
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { StatusDot } from "@/shared/ui/StatusDot";
@@ -8,7 +9,7 @@ import {
 	ThreePanelLayout,
 	type ThreePanelLayoutHandle,
 } from "@/shared/ui/ThreePanelLayout";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -60,15 +61,13 @@ export function ExecutionContainer() {
 		},
 	});
 
-	const { mutate: refreshExecutionData, isPending: isManualRefreshPending } =
-		useMutation({
-			mutationFn: async () => {
-				await Promise.all([
-					refetchExecutions(),
-					refetchExecution(),
-					refetchCheckpoints(),
-				]);
-			},
+	const { refresh: refreshExecutionData, isPending: isManualRefreshPending } =
+		useManualRefresh(async () => {
+			await Promise.all([
+				refetchExecutions(),
+				refetchExecution(),
+				refetchCheckpoints(),
+			]);
 		});
 
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
