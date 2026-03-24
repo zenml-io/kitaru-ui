@@ -5,10 +5,10 @@ import type { components } from "@/shared/api/openapi";
 type Status = components["schemas"]["ExecutionStatus"];
 
 type LiveDurationMsProps = {
-	status: Status | undefined;
-	startTime: Date | undefined;
-	endTime?: Date | undefined;
-	durationMs?: number | undefined;
+	status?: Status;
+	startTime?: Date;
+	endTime?: Date;
+	durationMs?: number;
 	className?: string;
 };
 
