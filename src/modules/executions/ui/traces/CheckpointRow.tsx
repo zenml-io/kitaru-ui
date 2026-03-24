@@ -4,8 +4,7 @@ import { ChevronRight } from "@untitledui/icons";
 import { cn } from "@/shared/utils/styles";
 import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
-import { useLiveDurationMs } from "@/shared/business-logic/use-live-duration-ms";
-import { formatDurationShort } from "@/shared/utils/time";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 
 type CheckpointRowProps = {
 	checkpointEntry: CheckpointEntry;
@@ -20,12 +19,6 @@ export function CheckpointRow({
 	onSelect,
 	onToggle,
 }: CheckpointRowProps) {
-	const durationMs = useLiveDurationMs({
-		status: checkpointEntry.status,
-		startTime: checkpointEntry.startTime,
-		durationMs: checkpointEntry.durationMs,
-	});
-
 	return (
 		<div
 			className={cn(
@@ -59,12 +52,13 @@ export function CheckpointRow({
 					{checkpointEntry.name}
 				</span>
 				<span className="flex-1" />
-				{durationMs !== undefined && durationMs > 0 && (
-					<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-						{formatDurationShort(durationMs)}
-					</span>
-				)}
-				<StatusDot status={checkpointEntry.status} />
+				<LiveDurationMs
+					status={checkpoint.status}
+					startTime={checkpoint.startTime}
+					durationMs={checkpoint.durationMs}
+					className="text-2xs text-muted-foreground font-mono tabular-nums"
+				/>
+				<StatusDot status={checkpoint.status} />
 			</button>
 
 			{isExpanded && (

@@ -4,9 +4,7 @@ import {
 	PageHeaderContent,
 } from "@/shared/ui/PageHeader";
 import { Stat } from "@/modules/flows/ui/Stat";
-import { getIsActiveStatus } from "@/shared/business-logic/status";
-import { useNow } from "@/shared/business-logic/use-now";
-import { formatDuration } from "@/shared/utils/time";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import type { Execution } from "../domain/execution";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
@@ -31,9 +29,6 @@ export function ExecutionDetails({
 	onResolveWaitCondition,
 	resumeHint,
 }: ExecutionDetailsProps) {
-	const isActive = getIsActiveStatus(execution.status);
-	const now = useNow(isActive);
-
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
 			<PageHeader>
@@ -42,10 +37,15 @@ export function ExecutionDetails({
 						<Stat
 							label="Duration"
 							value={
-								formatDuration(
-									execution.startTime,
-									isActive ? now : execution.endTime
-								) ?? "—"
+								execution.startTime ? (
+									<LiveDurationMs
+										status={execution.status}
+										startTime={execution.startTime}
+										endTime={execution.endTime}
+									/>
+								) : (
+									"—"
+								)
 							}
 							valueColor="default"
 							valueSize="sm"

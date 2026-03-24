@@ -7,17 +7,21 @@ type Status = components["schemas"]["ExecutionStatus"];
 export function useLiveDurationMs({
 	status,
 	startTime,
+	endTime,
 	durationMs,
 }: {
 	status: Status | undefined;
 	startTime: Date | undefined;
-	durationMs: number | undefined;
+	endTime?: Date | undefined;
+	durationMs?: number | undefined;
 }): number | undefined {
 	const isActive = getIsActiveStatus(status);
 	const now = useNow(isActive);
 
-	if (isActive && startTime) {
-		return now.getTime() - startTime.getTime();
+	const effectiveEnd = isActive ? now : endTime;
+
+	if (startTime && effectiveEnd) {
+		return effectiveEnd.getTime() - startTime.getTime();
 	}
 	return durationMs;
 }
