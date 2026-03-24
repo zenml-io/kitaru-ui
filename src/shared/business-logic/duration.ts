@@ -9,10 +9,10 @@ export function getCanShowDuration({
 	durationMs,
 	endTime,
 }: {
-	status: Status | undefined;
-	startTime: Date | undefined;
-	durationMs?: number | undefined;
-	endTime?: Date | undefined;
+	status?: Status;
+	startTime?: Date;
+	durationMs?: number;
+	endTime?: Date;
 }): boolean {
 	if (getIsActiveStatus(status)) return startTime !== undefined;
 	if (startTime !== undefined && endTime !== undefined) return true;

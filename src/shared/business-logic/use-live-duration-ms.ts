@@ -10,10 +10,10 @@ export function useLiveDurationMs({
 	endTime,
 	durationMs,
 }: {
-	status: Status | undefined;
-	startTime: Date | undefined;
-	endTime?: Date | undefined;
-	durationMs?: number | undefined;
+	status?: Status;
+	startTime?: Date;
+	endTime?: Date;
+	durationMs?: number;
 }): number | undefined {
 	const isActive = getIsActiveStatus(status);
 	const now = useNow(isActive);
