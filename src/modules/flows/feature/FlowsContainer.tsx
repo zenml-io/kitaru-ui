@@ -23,9 +23,7 @@ export function FlowsContainer() {
 		refetchInterval: 5000,
 	});
 	const { refresh: refreshFlows, isPending: isManualRefreshPending } =
-		useManualRefresh(async () => {
-			await refetch();
-		});
+		useManualRefresh(refetch);
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
@@ -77,7 +75,7 @@ export function FlowsContainer() {
 				</PageHeaderContent>
 			</PageHeader>
 			<FlowsToolbar
-				onRefresh={() => refreshFlows()}
+				onRefresh={refreshFlows}
 				isRefreshing={isManualRefreshPending}
 				searchValue={q}
 				statusFilter={status}

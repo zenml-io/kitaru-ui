@@ -29,9 +29,7 @@ export function FlowOverviewContainer() {
 	});
 	const { flowData } = useFlow(flowId);
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
-		useManualRefresh(async () => {
-			await refetch();
-		});
+		useManualRefresh(refetch);
 
 	const stats: StatProps[] = [
 		{ label: "Executions", value: executionsData.length },
@@ -55,7 +53,7 @@ export function FlowOverviewContainer() {
 					<RefreshButton
 						variant="outline"
 						isLoading={isManualRefreshPending}
-						onClick={() => refreshExecutions()}
+						onClick={refreshExecutions}
 					></RefreshButton>
 				</TableToolbarContent>
 			</TableToolbarRoot>

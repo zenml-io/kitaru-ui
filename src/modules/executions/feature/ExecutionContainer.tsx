@@ -111,7 +111,7 @@ export function ExecutionContainer() {
 					<RefreshButton
 						size="sm"
 						variant="outline"
-						onClick={() => refreshExecutionData()}
+						onClick={refreshExecutionData}
 						isLoading={isManualRefreshPending}
 					/>
 				</div>

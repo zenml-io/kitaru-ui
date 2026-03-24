@@ -11,9 +11,7 @@ export function MembersListPageContainer() {
 	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
 	const { data, refetch } = useSuspenseQuery(userQueries.list());
 	const { refresh: refreshMembers, isPending: isManualRefreshPending } =
-		useManualRefresh(async () => {
-			await refetch();
-		});
+		useManualRefresh(refetch);
 
 	const filteredMembers = data.items.filter((member) =>
 		member.name.toLowerCase().includes(searchValue.toLowerCase())
