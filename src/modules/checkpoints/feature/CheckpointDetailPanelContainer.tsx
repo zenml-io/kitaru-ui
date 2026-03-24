@@ -1,15 +1,18 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
+import { Suspense, useState } from "react";
+import {
+	getCheckpointDetailsPollingInterval,
+	useCheckpointDetails,
+} from "../business-logic/use-checkpoint-details";
+import type { ArtifactEntry } from "../domain/checkpoint";
+import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
+import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
 import {
 	CheckpointDetailPanelTabs,
 	type PanelTab,
 } from "../ui/CheckpointDetailPanelTabs";
-import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
-import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
-import { checkpointsQueries } from "../business-logic/checkpoints-queries";
-import type { ArtifactEntry } from "../domain/checkpoint";
+import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
+import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
@@ -18,13 +21,28 @@ type CheckpointDetailPanelContainerProps = {
 export function CheckpointDetailPanelContainer({
 	checkpointId,
 }: CheckpointDetailPanelContainerProps) {
-	const { data: checkpointData } = useQuery({
-		...checkpointsQueries.details(checkpointId ?? ""),
-		enabled: !!checkpointId,
+	if (!checkpointId) {
+		return <CheckpointDetailsEmptyView />;
+	}
+
+	return (
+		<Suspense fallback={<CheckpointDetailPanelSkeleton />}>
+			<CheckpointDetailPanelContentContainer checkpointId={checkpointId} />
+		</Suspense>
+	);
+}
+
+function CheckpointDetailPanelContentContainer({
+	checkpointId,
+}: {
+	checkpointId: string;
+}) {
+	const { detailsData } = useCheckpointDetails(checkpointId, {
+		refetchInterval: getCheckpointDetailsPollingInterval,
 	});
 
-	const inputs = checkpointData?.inputs ?? [];
-	const outputs = checkpointData?.outputs ?? [];
+	const inputs = detailsData?.inputs ?? [];
+	const outputs = detailsData?.outputs ?? [];
 
 	const [activeTab, setActiveTab] = useState<PanelTab>("checkpoint");
 	const [selectedArtifact, setSelectedArtifact] = useState<{
@@ -45,20 +63,16 @@ export function CheckpointDetailPanelContainer({
 		}
 	}
 
-	if (!checkpointData) {
-		return <CheckpointDetailsEmptyView />;
-	}
-
 	return (
 		<div className="flex h-full flex-col">
-			<CheckpointDetailPanelHeader checkpoint={checkpointData} />
+			<CheckpointDetailPanelHeader checkpoint={detailsData} />
 			<CheckpointDetailPanelTabs
 				activeTab={activeTab}
 				onTabChange={handleTabChange}
 			/>
 			<div className="min-h-0 flex-1 overflow-y-auto">
 				{activeTab === "checkpoint" && (
-					<CheckpointDetailPanelInfo checkpoint={checkpointData} />
+					<CheckpointDetailPanelInfo checkpoint={detailsData} />
 				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts

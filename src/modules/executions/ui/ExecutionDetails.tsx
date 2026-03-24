@@ -14,8 +14,7 @@ import { WaitInputSection } from "./WaitInputSection";
 
 type ExecutionDetailsProps = {
 	execution: Execution;
-	checkpoints: CheckpointEntry[];
-	selectedCheckpointId?: string;
+	checkpointsEntries: CheckpointEntry[];
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
@@ -24,7 +23,7 @@ type ExecutionDetailsProps = {
 
 export function ExecutionDetails({
 	execution,
-	checkpoints,
+	checkpointsEntries,
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
@@ -48,7 +47,7 @@ export function ExecutionDetails({
 			</PageHeader>
 			<div className="flex-1 overflow-y-auto">
 				<CheckpointThread
-					checkpoints={checkpoints}
+					checkpointsEntries={checkpointsEntries}
 					onSelect={onSelectCheckpoint}
 				/>
 			</div>

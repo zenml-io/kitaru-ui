@@ -3,12 +3,12 @@ import { CheckpointRow } from "./CheckpointRow";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 
 interface CheckpointThreadProps {
-	checkpoints: CheckpointEntry[];
+	checkpointsEntries: CheckpointEntry[];
 	onSelect: (id: string) => void;
 }
 
 export function CheckpointThread({
-	checkpoints,
+	checkpointsEntries,
 	onSelect,
 }: CheckpointThreadProps) {
 	const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -27,11 +27,11 @@ export function CheckpointThread({
 
 	return (
 		<div className="flex-1 space-y-3 overflow-y-auto p-6">
-			{checkpoints.map((checkpoint) => (
+			{checkpointsEntries.map((checkpointEntry) => (
 				<CheckpointRow
-					key={checkpoint.id}
-					checkpoint={checkpoint}
-					isExpanded={expandedIds.has(checkpoint.id)}
+					key={checkpointEntry.id}
+					checkpointEntry={checkpointEntry}
+					isExpanded={expandedIds.has(checkpointEntry.id)}
 					onSelect={onSelect}
 					onToggle={handleToggle}
 				/>

@@ -1,17 +1,23 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
+import { getIsActiveStatus } from "@/shared/business-logic/status";
+import type { DagResponse } from "../domain/checkpoint";
 
-export function useCheckpoints(executionId: string) {
+export function getCheckpointsPollingInterval(query: {
+	state: { data?: DagResponse };
+}) {
+	return getIsActiveStatus(query.state.data?.executionStatus) ? 3000 : false;
+}
+
+type Options = Omit<
+	ReturnType<typeof checkpointsQueries.all>,
+	"queryKey" | "queryFn"
+>;
+
+export function useCheckpoints(executionId: string, opts: Options = {}) {
 	const query = useSuspenseQuery({
 		...checkpointsQueries.all(executionId),
-		refetchInterval(query) {
-			return query.state.data?.executionStatus === "running" ||
-				query.state.data?.executionStatus === "initializing" ||
-				query.state.data?.executionStatus === "provisioning" ||
-				query.state.data?.executionStatus === "resuming"
-				? 3000
-				: false;
-		},
+		...opts,
 	});
 
 	return { ...query, checkpointsData: query.data };

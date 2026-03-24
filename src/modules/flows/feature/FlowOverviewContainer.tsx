@@ -18,6 +18,7 @@ import {
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
 import { useParams } from "@tanstack/react-router";
+import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "@/modules/executions/domain/fetch-executions";
 
 export function FlowOverviewContainer() {
 	const { flowId } = useParams({
@@ -25,7 +26,7 @@ export function FlowOverviewContainer() {
 	});
 
 	const { executionsData, refetch } = useExecutions(flowId, {
-		refetchInterval: 5000,
+		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { flowData } = useFlow(flowId);
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
