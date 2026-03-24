@@ -2,8 +2,8 @@ import {
 	CheckpointDetailPanelRow as DetailRow,
 	CheckpointDetailPanelRows as DetailRows,
 } from "./CheckpointDetailPanelRow";
-import { useLiveDurationMs } from "@/shared/business-logic/use-live-duration-ms";
-import { formatDurationShort } from "@/shared/utils/time";
+import { getCanShowDuration } from "@/shared/business-logic/duration";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import type { Checkpoint } from "../domain/checkpoint";
 
 interface CheckpointDetailPanelInfoProps {
@@ -13,12 +13,11 @@ interface CheckpointDetailPanelInfoProps {
 export function CheckpointDetailPanelInfo({
 	checkpoint,
 }: CheckpointDetailPanelInfoProps) {
-	const durationMs = useLiveDurationMs({
+	const canShowDuration = getCanShowDuration({
 		status: checkpoint.status,
 		startTime: checkpoint.startTime,
 		durationMs: checkpoint.durationMs,
 	});
-
 	return (
 		<div className="space-y-4 p-4">
 			<DetailRows>
@@ -31,9 +30,14 @@ export function CheckpointDetailPanelInfo({
 						{checkpoint.status}
 					</DetailRow>
 				)}
-				{durationMs !== undefined && durationMs > 0 && (
+				{canShowDuration && (
 					<DetailRow label="Duration" className="tabular-nums">
-						{formatDurationShort(durationMs)}
+						<LiveDurationMs
+							status={checkpoint.status}
+							startTime={checkpoint.startTime}
+							endTime={checkpoint.endTime}
+							durationMs={checkpoint.durationMs}
+						/>
 					</DetailRow>
 				)}
 				{(checkpoint.inputs.length > 0 || checkpoint.outputs.length > 0) && (
