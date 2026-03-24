@@ -11,6 +11,7 @@ import {
 	CheckpointDetailPanelTabs,
 	type PanelTab,
 } from "../ui/CheckpointDetailPanelTabs";
+import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
 
 type CheckpointDetailPanelContainerProps = {
@@ -25,7 +26,7 @@ export function CheckpointDetailPanelContainer({
 	}
 
 	return (
-		<Suspense fallback={<CheckpointDetailsEmptyView />}>
+		<Suspense fallback={<CheckpointDetailPanelSkeleton />}>
 			<CheckpointDetailPanelContentContainer checkpointId={checkpointId} />
 		</Suspense>
 	);
