@@ -1,5 +1,8 @@
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
-import { useCheckpoints } from "@/modules/checkpoints/business-logic/use-checkpoints";
+import {
+	getCheckpointsPollingInterval,
+	useCheckpoints,
+} from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
@@ -30,7 +33,9 @@ export function ExecutionContainer() {
 	const { executionData, refetch: refetchExecution } =
 		useExecution(executionId);
 	const { checkpointsData, refetch: refetchCheckpoints } =
-		useCheckpoints(executionId);
+		useCheckpoints(executionId, {
+			refetchInterval: getCheckpointsPollingInterval,
+		});
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
 	);
