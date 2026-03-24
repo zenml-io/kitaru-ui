@@ -7,14 +7,14 @@ import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { formatDurationShort } from "@/shared/utils/time";
 
 type CheckpointRowProps = {
-	checkpoint: CheckpointEntry;
+	checkpointEntry: CheckpointEntry;
 	isExpanded: boolean;
 	onSelect: (id: string) => void;
 	onToggle: (id: string) => void;
 };
 
 export function CheckpointRow({
-	checkpoint,
+	checkpointEntry,
 	isExpanded,
 	onSelect,
 	onToggle,
@@ -35,8 +35,8 @@ export function CheckpointRow({
 					isExpanded && "border-border border-b"
 				)}
 				onClick={() => {
-					onSelect(checkpoint.id);
-					onToggle(checkpoint.id);
+					onSelect(checkpointEntry.id);
+					onToggle(checkpointEntry.id);
 				}}
 			>
 				<ChevronRight
@@ -45,20 +45,24 @@ export function CheckpointRow({
 						isExpanded && "rotate-90"
 					)}
 				/>
-				{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
+				{checkpointEntry.type && (
+					<CheckpointTypeBadge type={checkpointEntry.type} />
+				)}
 				<span className="text-foreground truncate font-mono text-xs font-semibold">
-					{checkpoint.name}
+					{checkpointEntry.name}
 				</span>
 				<span className="flex-1" />
-				{checkpoint.durationMs && (
+				{checkpointEntry.durationMs && (
 					<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-						{formatDurationShort(checkpoint.durationMs)}
+						{formatDurationShort(checkpointEntry.durationMs)}
 					</span>
 				)}
-				<StatusDot status={checkpoint.status} />
+				<StatusDot status={checkpointEntry.status} />
 			</button>
 
-			{isExpanded && <CheckpointRowArtifacts checkpointId={checkpoint.id} />}
+			{isExpanded && (
+				<CheckpointRowArtifacts checkpointId={checkpointEntry.id} />
+			)}
 		</div>
 	);
 }

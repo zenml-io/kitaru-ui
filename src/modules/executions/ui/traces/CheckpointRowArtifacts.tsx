@@ -13,7 +13,10 @@ function CheckpointRowArtifactsContent({
 }: {
 	checkpointId: string;
 }) {
-	const { detailsData } = useCheckpointDetails(checkpointId);
+	const { detailsData } = useCheckpointDetails(checkpointId, {
+		refetchInterval: (query) =>
+			query.state.data?.status === "running" ? 3000 : false,
+	});
 
 	const { inputs, outputs } = detailsData;
 

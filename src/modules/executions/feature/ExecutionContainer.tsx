@@ -127,8 +127,7 @@ export function ExecutionContainer() {
 			center={
 				<ExecutionDetails
 					execution={executionData}
-					checkpoints={checkpointsData.checkpoints}
-					selectedCheckpointId={selectedCheckpointId}
+					checkpointsEntries={checkpointsData.checkpoints}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);
 						layoutRef.current?.expandRight();
