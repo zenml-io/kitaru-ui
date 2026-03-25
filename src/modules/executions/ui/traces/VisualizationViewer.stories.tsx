@@ -167,13 +167,6 @@ export const Html: Story = {
 	args: {
 		artifact: htmlArtifact,
 	},
-	decorators: [
-		(Story) => (
-			<div style={{ height: "400px" }}>
-				<Story />
-			</div>
-		),
-	],
 };
 
 export const Image: Story = {
