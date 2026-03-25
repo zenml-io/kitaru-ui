@@ -8,7 +8,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
 	flexRender,
@@ -19,10 +19,21 @@ import {
 import { useMemo, useState } from "react";
 import type { Flow } from "../domain/flow";
 
+function navigateToFlow(
+	navigate: ReturnType<typeof useNavigate>,
+	flowId: string
+) {
+	void navigate({
+		to: "/flows/$flowId/$tab",
+		params: { flowId, tab: "overview" },
+	});
+}
+
 export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
+	const navigate = useNavigate();
 
 	const columns = useMemo(() => flowColumns, []);
 
@@ -63,7 +74,10 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 			<TableBody>
 				{rows.length > 0 ? (
 					rows.map((row) => (
-						<TableRow key={row.id}>
+						<TableRow
+							key={row.id}
+							onClick={() => navigateToFlow(navigate, row.original.id)}
+						>
 							{row.getVisibleCells().map((cell) => (
 								<TableCell key={cell.id}>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -90,15 +104,7 @@ const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
-		cell: ({ row }) => (
-			<Link
-				to="/flows/$flowId/$tab"
-				params={{ flowId: row.original.id, tab: "overview" }}
-				className="hover:underline"
-			>
-				<TextRenderer>{row.original.name}</TextRenderer>
-			</Link>
-		),
+		cell: ({ row }) => <TextRenderer>{row.original.name}</TextRenderer>,
 	},
 	{
 		accessorKey: "latestexecutionId",
