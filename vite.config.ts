@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		test: {
-			exclude: ["node_modules/**/*", "dist/**/*"],
+			include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
 		},
 		server: {
 			proxy: {
@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => {
 					changeOrigin: true,
 					secure: false,
 				},
+			},
+			watch: {
+				ignored: ["**/dist/**", "**/.playwright-mcp/**", "**/node_modules/**"],
 			},
 		},
 		plugins: [

@@ -4,12 +4,13 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
+import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ArtifactChip } from "./ArtifactChip";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
+import { ArtifactChip } from "./ArtifactChip";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
@@ -87,9 +88,15 @@ function CheckpointRowArtifactsContent({
 						<span className="text-foreground truncate text-xs font-semibold">
 							{selected.entry.name}
 						</span>
-						<DownloadArtifactButtonContainer
-							artifactVersionId={selected.entry.id}
-						/>
+						<div className="flex items-center gap-1">
+							<DownloadArtifactButtonContainer
+								artifactVersionId={selected.entry.id}
+							/>
+							<FullscreenArtifactButtonContainer
+								artifactVersionId={selected.entry.id}
+								name={selected.entry.name}
+							/>
+						</div>
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
