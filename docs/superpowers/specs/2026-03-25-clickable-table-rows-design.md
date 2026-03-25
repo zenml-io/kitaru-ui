@@ -40,7 +40,7 @@ function TableRow({
 }
 ```
 
-Header rows are unaffected — they never receive `onClick`.
+Header rows are unaffected — they never receive `onClick`. Empty-state rows also pass no `onClick`, so they render without `cursor-pointer` as expected.
 
 ### 2. `FlowsTableContainer`
 
@@ -48,6 +48,7 @@ Header rows are unaffected — they never receive `onClick`.
 - Extract navigation to a module-level helper function.
 - Pass `onClick` to each body `TableRow`.
 - Remove the `<Link>` wrapper from the name column cell (redundant — row navigates to the same destination). Replace with plain `<TextRenderer>`.
+- `flowColumns` stays a static module-level constant — `navigate` is captured at the row render site (in the `onClick` closure), not inside column cell renderers, so no factory function is needed.
 
 ```tsx
 function navigateToFlow(navigate: ReturnType<typeof useNavigate>, flowId: string) {
@@ -84,4 +85,5 @@ function navigateToExecution(
 
 - Members table — no navigation destination; row actions dropdown stays as-is.
 - cmd+click / right-click "open in new tab" — not supported (no `<a>` tag). Acceptable trade-off.
+- Keyboard navigation and screen reader support — `<tr onClick>` is not keyboard-focusable or activatable via Enter/Space without additional `tabIndex` and `onKeyDown` handling. This replaces the existing `<Link>` which was fully keyboard-navigable. Deferred; can be addressed in a follow-up by adding `tabIndex={0}` and `onKeyDown` to `TableRow` when `onClick` is present.
 - Future tables with interactive row elements (buttons, dropdowns) — those elements should call `e.stopPropagation()` to prevent the row handler from firing.
