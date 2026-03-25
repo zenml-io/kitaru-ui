@@ -15,14 +15,12 @@ type LiveDurationMsProps = {
 export function LiveDurationMs({
 	status,
 	startTime,
-	endTime,
 	durationMs,
 	className,
 }: LiveDurationMsProps) {
 	const liveDurationMs = useLiveDurationMs({
 		status,
 		startTime,
-		endTime,
 		durationMs,
 	});
 
