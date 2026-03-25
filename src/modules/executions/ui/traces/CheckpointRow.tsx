@@ -16,6 +16,8 @@ export function CheckpointRow({
 	checkpointEntry,
 	onSelect,
 }: CheckpointRowProps) {
+	const [isExpanded, setIsExpanded] = useState(false);
+
 	return (
 		<div
 			className={cn(
