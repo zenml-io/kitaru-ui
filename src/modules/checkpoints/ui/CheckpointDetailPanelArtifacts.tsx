@@ -4,6 +4,7 @@ import { Separator } from "@/shared/ui/separator";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { ArtifactEntry } from "../domain/checkpoint";
+import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
 
@@ -42,9 +43,15 @@ export function CheckpointDetailPanelArtifacts({
 						<span className="text-foreground truncate text-xs font-semibold">
 							{selectedArtifact.artifact.name}
 						</span>
-						<DownloadArtifactButtonContainer
-							artifactVersionId={selectedArtifact.artifact.id}
-						/>
+						<div className="flex items-center gap-1">
+							<DownloadArtifactButtonContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+							/>
+							<FullscreenArtifactButtonContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+								name={selectedArtifact.artifact.name}
+							/>
+						</div>
 					</div>
 					<Separator />
 					<div className="bg-background flex-1">

@@ -84,6 +84,7 @@ Two files are auto-generated and excluded from ESLint. Do not hand-edit them:
 - Keep components focused; lift state only as needed
 - Use component variants (via `cva`) for styling variations rather than inline conditionals
 - Prefer writing Tailwind classes in the `ui` layer, but feature/layout shells may use them when intentional
+- Keep `feature/` components as thin orchestrators: they wire data and compose UI, but delegate markup and styling to `ui/` components. If a feature component is growing Tailwind-heavy JSX, extract presentational pieces to `ui/`
 - Avoid duplicating code or inventing hyper-generic abstractions: inspect existing flows before writing new components or helpers
 - Prefer focused components over catch-all versions; duplicating two purposeful components is often clearer than a single complex abstraction
 - Reference existing implementations for similar features
