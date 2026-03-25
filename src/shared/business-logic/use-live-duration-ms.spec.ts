@@ -39,6 +39,15 @@ describe("useLiveDurationMs", () => {
 			expect(result.current).toBeUndefined();
 		});
 
+		it("returns undefined when elapsed is zero", () => {
+			mockNow.value = start;
+			const { result } = renderHook(() =>
+				useLiveDurationMs({ status: "running", startTime: start })
+			);
+			expect(result.current).toBeUndefined();
+			mockNow.value = new Date("2024-01-01T00:01:00Z");
+		});
+
 		it("updates duration as time advances", () => {
 			mockNow.value = start;
 
@@ -46,7 +55,7 @@ describe("useLiveDurationMs", () => {
 				useLiveDurationMs({ status: "running", startTime: start })
 			);
 
-			expect(result.current).toBe(0);
+			expect(result.current).toBeUndefined();
 
 			act(() => {
 				mockNow.value = new Date(start.getTime() + 3000);
@@ -80,6 +89,13 @@ describe("useLiveDurationMs", () => {
 				})
 			);
 			expect(result.current).toBe(5000);
+		});
+
+		it("returns undefined when durationMs is zero or negative", () => {
+			const { result } = renderHook(() =>
+				useLiveDurationMs({ status: "completed", durationMs: 0 })
+			);
+			expect(result.current).toBeUndefined();
 		});
 
 		it("returns undefined when neither start/end nor durationMs is available", () => {

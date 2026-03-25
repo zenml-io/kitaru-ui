@@ -26,7 +26,7 @@ export function LiveDurationMs({
 		durationMs,
 	});
 
-	if (!liveDurationMs || liveDurationMs <= 0) return null;
+	if (!liveDurationMs) return null;
 
 	return (
 		<span className={className}>{formatDurationShort(liveDurationMs)}</span>

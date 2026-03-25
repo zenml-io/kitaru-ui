@@ -21,7 +21,11 @@ export function useLiveDurationMs({
 	const effectiveEnd = isActive ? now : endTime;
 
 	if (startTime && effectiveEnd) {
-		return effectiveEnd.getTime() - startTime.getTime();
+		const elapsed = effectiveEnd.getTime() - startTime.getTime();
+		if (elapsed > 0) return elapsed;
 	}
-	return durationMs;
+
+	if (durationMs && durationMs > 0) return durationMs;
+
+	return undefined;
 }
