@@ -37,4 +37,7 @@ devenv.local.nix
 # pre-commit
 .pre-commit-config.yaml
 
+# Git worktrees
+.worktrees
+
 .playwright-mcp

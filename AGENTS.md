@@ -222,6 +222,14 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Good: "Add workflow to require release label on PRs"
 - Bad: "ci: add workflow to require release label on PRs"
 
+## Testing
+
+- Test files must be named `*.spec.ts` or `*.spec.tsx` and colocated next to the file they test
+- Run tests with `pnpm test:unit`
+- Write unit tests for non-trivial logic in `util/` and `business-logic/` layers — if a function has edge cases, branching, or data transformation that could silently break, it needs a test
+- Hooks with complex state transitions or derived logic are good candidates for testing with `renderHook` from Testing Library
+- Don't test presentational UI components unless they contain logic; prefer testing the logic in isolation
+
 ## CI
 
 GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:

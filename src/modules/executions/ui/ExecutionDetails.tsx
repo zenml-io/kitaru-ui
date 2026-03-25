@@ -4,7 +4,8 @@ import {
 	PageHeaderContent,
 } from "@/shared/ui/PageHeader";
 import { Stat } from "@/modules/flows/ui/Stat";
-import { formatDuration } from "@/shared/utils/time";
+import { getCanShowDuration } from "@/shared/business-logic/duration";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import type { Execution } from "../domain/execution";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
@@ -29,19 +30,31 @@ export function ExecutionDetails({
 	onResolveWaitCondition,
 	resumeHint,
 }: ExecutionDetailsProps) {
+	const canShowDuration = getCanShowDuration({
+		status: execution.status,
+		startTime: execution.startTime,
+		endTime: execution.endTime,
+	});
+
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
 			<PageHeader>
 				<PageHeaderContent>
 					<PageHeaderBody>
-						<Stat
-							label="Duration"
-							value={
-								formatDuration(execution.startTime, execution.endTime) ?? "—"
-							}
-							valueColor="default"
-							valueSize="sm"
-						/>
+						{canShowDuration && (
+							<Stat
+								label="Duration"
+								value={
+									<LiveDurationMs
+										status={execution.status}
+										startTime={execution.startTime}
+										endTime={execution.endTime}
+									/>
+								}
+								valueColor="default"
+								valueSize="sm"
+							/>
+						)}
 					</PageHeaderBody>
 				</PageHeaderContent>
 			</PageHeader>

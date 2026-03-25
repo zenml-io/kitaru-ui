@@ -3,7 +3,7 @@ import { MetricValue, type MetricValueProps } from "./MetricValue";
 
 export type StatProps = {
 	label: string;
-	value: string | number;
+	value: React.ReactNode;
 	labelColor?: MetricLabelProps["color"];
 	labelSize?: MetricLabelProps["size"];
 	valueColor?: MetricValueProps["color"];

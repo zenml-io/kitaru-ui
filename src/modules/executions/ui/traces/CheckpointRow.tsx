@@ -4,7 +4,7 @@ import { ChevronRight } from "@untitledui/icons";
 import { cn } from "@/shared/utils/styles";
 import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
-import { formatDurationShort } from "@/shared/utils/time";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 
 type CheckpointRowProps = {
 	checkpointEntry: CheckpointEntry;
@@ -52,11 +52,12 @@ export function CheckpointRow({
 					{checkpointEntry.name}
 				</span>
 				<span className="flex-1" />
-				{checkpointEntry.durationMs && (
-					<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-						{formatDurationShort(checkpointEntry.durationMs)}
-					</span>
-				)}
+				<LiveDurationMs
+					status={checkpointEntry.status}
+					startTime={checkpointEntry.startTime}
+					durationMs={checkpointEntry.durationMs}
+					className="text-2xs text-muted-foreground font-mono tabular-nums"
+				/>
 				<StatusDot status={checkpointEntry.status} />
 			</button>
 
