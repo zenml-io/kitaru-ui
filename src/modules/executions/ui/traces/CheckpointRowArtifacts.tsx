@@ -120,7 +120,11 @@ export function CheckpointRowArtifacts({
 	checkpointId: string;
 }) {
 	return (
-		<Suspense fallback={<VisualizationSkeleton />}>
+		<Suspense
+			fallback={
+				<p className="text-2xs text-muted-foreground px-4 py-3">Loading…</p>
+			}
+		>
 			<CheckpointRowArtifactsContent checkpointId={checkpointId} />
 		</Suspense>
 	);
