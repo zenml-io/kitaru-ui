@@ -12,7 +12,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
 	flexRender,
@@ -24,17 +24,6 @@ import { useMemo, useState } from "react";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
 
-function navigateToExecution(
-	navigate: ReturnType<typeof useNavigate>,
-	flowId: string,
-	executionId: string
-) {
-	void navigate({
-		to: "/flows/$flowId/executions/$executionId",
-		params: { flowId, executionId },
-	});
-}
-
 export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
@@ -42,12 +31,11 @@ export function ExecutionsTableContainer({
 	executionRows: Execution[];
 	flowId: string;
 }) {
-	const navigate = useNavigate();
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
-	const columns = useMemo(() => buildExecutionColumns(), []);
+	const columns = useMemo(() => buildExecutionColumns(flowId), [flowId]);
 
 	const table = useReactTable({
 		data: executionRows,
@@ -86,14 +74,12 @@ export function ExecutionsTableContainer({
 			<TableBody>
 				{rows.length > 0 ? (
 					rows.map((row) => (
-						<TableRow
-							key={row.id}
-							onClick={() =>
-								navigateToExecution(navigate, flowId, row.original.id)
-							}
-						>
+						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
+								<TableCell
+									key={cell.id}
+									className={cell.column.id === "execution" ? "p-0" : undefined}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
@@ -114,14 +100,22 @@ export function ExecutionsTableContainer({
 	);
 }
 
-function buildExecutionColumns(): ColumnDef<Execution>[] {
+function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
-			cell: ({ row }) => <ExecutionName index={row.original.index} />,
+			cell: ({ row }) => (
+				<Link
+					to="/flows/$flowId/executions/$executionId"
+					params={{ flowId, executionId: row.original.id }}
+					className="block px-2 py-3.5 hover:underline"
+				>
+					<ExecutionName index={row.original.index} />
+				</Link>
+			),
 		},
 		{
 			accessorKey: "status",
