@@ -6,7 +6,7 @@ import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
-import { Skeleton } from "@/shared/ui/skeleton";
+import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -101,15 +101,7 @@ function CheckpointRowArtifactsContent({
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense
-								fallback={
-									<div className="flex flex-col gap-3 p-4">
-										<Skeleton className="h-4 w-3/4" />
-										<Skeleton className="h-4 w-1/2" />
-										<Skeleton className="h-32 w-full" />
-									</div>
-								}
-							>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}
 								/>
@@ -128,15 +120,7 @@ export function CheckpointRowArtifacts({
 	checkpointId: string;
 }) {
 	return (
-		<Suspense
-			fallback={
-				<div className="flex flex-col gap-3 p-4">
-					<Skeleton className="h-4 w-3/4" />
-					<Skeleton className="h-4 w-1/2" />
-					<Skeleton className="h-20 w-full" />
-				</div>
-			}
-		>
+		<Suspense fallback={<VisualizationSkeleton />}>
 			<CheckpointRowArtifactsContent checkpointId={checkpointId} />
 		</Suspense>
 	);

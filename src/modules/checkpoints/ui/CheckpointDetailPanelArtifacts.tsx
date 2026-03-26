@@ -1,13 +1,13 @@
 import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { Separator } from "@/shared/ui/separator";
-import { Skeleton } from "@/shared/ui/skeleton";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -85,16 +85,6 @@ type ArtifactsToolbarProps = {
 		direction: "input" | "output"
 	) => void;
 };
-
-function VisualizationSkeleton() {
-	return (
-		<div className="flex flex-col gap-3 p-4">
-			<Skeleton className="h-4 w-3/4" />
-			<Skeleton className="h-4 w-1/2" />
-			<Skeleton className="h-32 w-full" />
-		</div>
-	);
-}
 
 function ArtifactsToolbar({
 	inputs,
