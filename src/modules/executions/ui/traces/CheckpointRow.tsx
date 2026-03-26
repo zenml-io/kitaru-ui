@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StatusDot } from "@/shared/ui/StatusDot";
 import { CheckpointTypeBadge } from "./CheckpointTypeBadge";
 import { ChevronRight } from "@untitledui/icons";
@@ -8,17 +9,15 @@ import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 
 type CheckpointRowProps = {
 	checkpointEntry: CheckpointEntry;
-	isExpanded: boolean;
 	onSelect: (id: string) => void;
-	onToggle: (id: string) => void;
 };
 
 export function CheckpointRow({
 	checkpointEntry,
-	isExpanded,
 	onSelect,
-	onToggle,
 }: CheckpointRowProps) {
+	const [isExpanded, setIsExpanded] = useState(false);
+
 	return (
 		<div
 			className={cn(
@@ -36,7 +35,7 @@ export function CheckpointRow({
 				)}
 				onClick={() => {
 					onSelect(checkpointEntry.id);
-					onToggle(checkpointEntry.id);
+					setIsExpanded((prev) => !prev);
 				}}
 			>
 				<ChevronRight
