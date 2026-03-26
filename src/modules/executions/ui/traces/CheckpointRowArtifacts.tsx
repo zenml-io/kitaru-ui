@@ -6,6 +6,7 @@ import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -102,9 +103,11 @@ function CheckpointRowArtifactsContent({
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense
 								fallback={
-									<p className="text-2xs text-muted-foreground px-4 py-3">
-										Loading…
-									</p>
+									<div className="flex flex-col gap-3 p-4">
+										<Skeleton className="h-4 w-3/4" />
+										<Skeleton className="h-4 w-1/2" />
+										<Skeleton className="h-32 w-full" />
+									</div>
 								}
 							>
 								<ArtifactVisualizationContainer
@@ -127,7 +130,11 @@ export function CheckpointRowArtifacts({
 	return (
 		<Suspense
 			fallback={
-				<p className="text-2xs text-muted-foreground px-4 py-3">Loading…</p>
+				<div className="flex flex-col gap-3 p-4">
+					<Skeleton className="h-4 w-3/4" />
+					<Skeleton className="h-4 w-1/2" />
+					<Skeleton className="h-20 w-full" />
+				</div>
 			}
 		>
 			<CheckpointRowArtifactsContent checkpointId={checkpointId} />
