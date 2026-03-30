@@ -10,6 +10,7 @@ import {
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useFlows } from "../business-logic/use-flows";
+import { categorizeFlowStatus } from "../business-logic/categorize-flow-status";
 import { FlowsToolbar } from "../ui/FlowsToolbar";
 import type { StatProps } from "../ui/Stat";
 import { Stats } from "../ui/Stats";
@@ -27,9 +28,10 @@ export function FlowsContainer() {
 
 	const statsCounts = flowsData.reduce(
 		(acc, flow) => {
-			if (flow.latestExecStatus === "running") acc.running++;
-			else if (flow.latestExecStatus === "failed") acc.failed++;
-			else if (flow.latestExecStatus === "completed") acc.completed++;
+			const category = categorizeFlowStatus(flow.latestExecStatus);
+			if (category === "running") acc.running++;
+			else if (category === "failed") acc.failed++;
+			else if (category === "completed") acc.completed++;
 			return acc;
 		},
 		{ running: 0, failed: 0, completed: 0 }
@@ -47,7 +49,9 @@ export function FlowsContainer() {
 
 		return flowsData.filter((flow) => {
 			const matchesStatus =
-				status === "all" ? true : flow.latestExecStatus === status;
+				status === "all"
+					? true
+					: categorizeFlowStatus(flow.latestExecStatus) === status;
 			const matchesSearch =
 				normalizedSearch.length === 0
 					? true
