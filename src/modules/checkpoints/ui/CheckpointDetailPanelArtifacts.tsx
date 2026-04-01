@@ -7,6 +7,7 @@ import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -56,7 +57,7 @@ export function CheckpointDetailPanelArtifacts({
 					<Separator />
 					<div className="bg-background flex-1">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
 								/>

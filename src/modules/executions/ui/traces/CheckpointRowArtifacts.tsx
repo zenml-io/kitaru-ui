@@ -6,6 +6,7 @@ import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -100,13 +101,7 @@ function CheckpointRowArtifactsContent({
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense
-								fallback={
-									<p className="text-2xs text-muted-foreground px-4 py-3">
-										Loading…
-									</p>
-								}
-							>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}
 								/>
