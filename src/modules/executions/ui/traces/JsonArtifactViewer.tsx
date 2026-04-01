@@ -1,9 +1,7 @@
 import { CodeBlock } from "@/shared/ui/CodeBlock";
-import { cn } from "@/shared/utils/styles";
 
 interface JsonArtifactViewerProps {
 	data: unknown;
-	maxH?: string;
 }
 
 function isEmbeddedCode(val: string): boolean {
@@ -110,7 +108,7 @@ function JsonArray({ items, depth }: { items: unknown[]; depth: number }) {
 	);
 }
 
-export function JsonArtifactViewer({ data, maxH }: JsonArtifactViewerProps) {
+export function JsonArtifactViewer({ data }: JsonArtifactViewerProps) {
 	if (typeof data === "object" && data !== null && !Array.isArray(data)) {
 		const keys = Object.keys(data);
 		if (keys.length === 1) {
@@ -118,7 +116,7 @@ export function JsonArtifactViewer({ data, maxH }: JsonArtifactViewerProps) {
 			if (typeof val === "string" && isEmbeddedCode(val)) {
 				const lang = guessLanguage(val);
 				return (
-					<div className={maxH}>
+					<div>
 						<CodeBlock code={val} language={lang} />
 					</div>
 				);
@@ -127,12 +125,7 @@ export function JsonArtifactViewer({ data, maxH }: JsonArtifactViewerProps) {
 	}
 
 	return (
-		<pre
-			className={cn(
-				"text-2xs p-4 font-mono leading-relaxed break-words whitespace-pre-wrap",
-				maxH
-			)}
-		>
+		<pre className="text-2xs p-4 font-mono leading-relaxed break-words whitespace-pre-wrap">
 			<JsonValue value={data} depth={0} />
 		</pre>
 	);

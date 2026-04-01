@@ -2,7 +2,7 @@ import { CheckpointTypeBadge } from "@/modules/executions/ui/traces/CheckpointTy
 import type { Checkpoint } from "../domain/checkpoint";
 import { Badge } from "@/shared/ui/badge";
 import { formatCost } from "@/shared/utils/currency";
-import { formatDurationShort } from "@/shared/utils/time";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 
 type CheckpointDetailPanelHeaderProps = {
 	checkpoint: Checkpoint;
@@ -21,11 +21,12 @@ export function CheckpointDetailPanelHeader({
 				{checkpoint.name}
 			</span>
 			<span className="flex-1" />
-			{checkpoint.durationMs !== undefined && (
-				<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-					{formatDurationShort(checkpoint.durationMs)}
-				</span>
-			)}
+			<LiveDurationMs
+				status={checkpoint.status}
+				startTime={checkpoint.startTime}
+				durationMs={checkpoint.durationMs}
+				className="text-2xs text-muted-foreground font-mono tabular-nums"
+			/>
 		</div>
 	);
 }

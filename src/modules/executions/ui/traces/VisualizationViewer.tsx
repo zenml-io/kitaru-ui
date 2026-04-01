@@ -34,32 +34,17 @@ function InlineMarkdown({ text }: { text: string }) {
 
 interface VisualizationViewerProps {
 	artifact: ArtifactVisualization;
-	compact?: boolean;
 }
 
-export function VisualizationViewer({
-	artifact,
-	compact,
-}: VisualizationViewerProps) {
-	const maxH = compact ? "max-h-48 overflow-y-auto" : "";
-	return <ArtifactContent artifact={artifact} maxH={maxH} />;
-}
-
-function ArtifactContent({
-	artifact,
-	maxH,
-}: {
-	artifact: ArtifactVisualization;
-	maxH: string;
-}) {
+export function VisualizationViewer({ artifact }: VisualizationViewerProps) {
 	switch (artifact.type) {
 		case "json": {
 			const parsed = tryParseJson(artifact.value);
 			if (parsed !== null) {
-				return <JsonArtifactViewer data={parsed} maxH={maxH} />;
+				return <JsonArtifactViewer data={parsed} />;
 			}
 			return (
-				<div className={maxH}>
+				<div>
 					<CodeBlock code={artifact.value} language="json" wrap />
 				</div>
 			);
@@ -68,7 +53,7 @@ function ArtifactContent({
 		case "markdown": {
 			const blocks = parseContentBlocks(artifact.value);
 			return (
-				<div className={`space-y-3 p-4 ${maxH}`}>
+				<div className="space-y-3 p-4">
 					{blocks.map((block, i) => {
 						switch (block.type) {
 							case "heading":
@@ -169,10 +154,9 @@ function ArtifactContent({
 
 		case "html":
 			return (
-				<div className={maxH || "h-full"}>
+				<div className="h-full">
 					<iframe
 						srcDoc={artifact.value}
-						sandbox="allow-scripts"
 						className="h-full min-h-64 w-full border-0 bg-white"
 						title="visualization"
 					/>
@@ -181,7 +165,7 @@ function ArtifactContent({
 
 		case "image":
 			return (
-				<div className={`p-4 ${maxH}`}>
+				<div className="p-4">
 					<img
 						src={artifact.value}
 						alt="visualization"
@@ -191,11 +175,11 @@ function ArtifactContent({
 			);
 
 		case "csv":
-			return <CsvViewer content={artifact.value} maxH={maxH} />;
+			return <CsvViewer content={artifact.value} />;
 	}
 }
 
-function CsvViewer({ content, maxH }: { content: string; maxH: string }) {
+function CsvViewer({ content }: { content: string }) {
 	const rows = content
 		.trim()
 		.split("\n")
@@ -203,7 +187,7 @@ function CsvViewer({ content, maxH }: { content: string; maxH: string }) {
 	const [header, ...body] = rows;
 
 	return (
-		<div className={cn("overflow-auto", maxH)}>
+		<div className="overflow-auto">
 			<table className="w-full border-collapse text-xs">
 				<thead>
 					<tr>

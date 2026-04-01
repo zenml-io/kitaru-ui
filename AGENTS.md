@@ -48,6 +48,17 @@ By default, API requests are relative (`/api/v1/...`). In development, the Vite 
   - **util/** — small module-scoped utilities
   - **ui/** — stateless presentational components
 - Keep modules split by layer from the start rather than growing a flat module and reorganizing later.
+
+**Layer import rules** — each layer may only import from layers marked ✅:
+
+| Importer →         | feature | business-logic |     domain      | ui  | util |
+| ------------------ | :-----: | :------------: | :-------------: | :-: | :--: |
+| **feature**        |   ✅    |       ✅       |       ✅        | ✅  |  ✅  |
+| **business-logic** |   ❌    |       ✅       |       ✅        | ❌  |  ✅  |
+| **domain**         |   ❌    |       ❌       |       ✅        | ❌  |  ✅  |
+| **ui**             |   ❌    |       ❌       | ✅ (types only) | ✅  |  ✅  |
+| **util**           |   ❌    |       ❌       |       ❌        | ❌  |  ✅  |
+
 - `src/routes/*` — file-based TanStack Router route definitions; these contain `beforeLoad` logic for data preloading and redirects, plus page metadata
 - `src/shared/api/domain/*` — transport layer: `apiClient`, endpoint path constants, `FetchError` class
 - `src/shared/api/utils/*` — URL builders, querystring helpers, error response handling
@@ -73,6 +84,7 @@ Two files are auto-generated and excluded from ESLint. Do not hand-edit them:
 - Keep components focused; lift state only as needed
 - Use component variants (via `cva`) for styling variations rather than inline conditionals
 - Prefer writing Tailwind classes in the `ui` layer, but feature/layout shells may use them when intentional
+- Keep `feature/` components as thin orchestrators: they wire data and compose UI, but delegate markup and styling to `ui/` components. If a feature component is growing Tailwind-heavy JSX, extract presentational pieces to `ui/`
 - Avoid duplicating code or inventing hyper-generic abstractions: inspect existing flows before writing new components or helpers
 - Prefer focused components over catch-all versions; duplicating two purposeful components is often clearer than a single complex abstraction
 - Reference existing implementations for similar features
@@ -172,7 +184,9 @@ See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 - Stick to strict typing: no `any`, prefer `type` aliases, and colocate types near usage
 - No type casting
 - Use PascalCase for React component and context files (e.g. `Dashboard.tsx`, `DashboardContainer.tsx`, `AuthContext.tsx`)
-- Use kebab-case for hooks, utilities, API calls, and domain-layer files (e.g. `use-pipeline.tsx`, `api-client.ts`, `fetch-device.ts`)
+- Suffix feature-layer smart components (stateful containers) with `Container` (e.g. `ExecutionContainer.tsx`, `LoginFormContainer.tsx`)
+- Use camelCase for hook files; names must start with `use` (e.g. `usePipeline.tsx`, `useDownloadArtifact.ts`)
+- Use kebab-case for utilities, API calls, and all domain-layer files (e.g. `api-client.ts`, `fetch-device.ts`, `device-queries.ts`)
 - Exception: route files should follow TanStack Router naming requirements when those differ (e.g. pathless/layout route conventions)
 - define optional props/params like this: `selectedId?: string` instead of `selectedId: string | null` or `selectedId: string | undefined`
 
@@ -207,6 +221,14 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Use plain, descriptive titles without conventional commit prefixes (no `feat:`, `fix:`, `ci:`, etc.)
 - Good: "Add workflow to require release label on PRs"
 - Bad: "ci: add workflow to require release label on PRs"
+
+## Testing
+
+- Test files must be named `*.spec.ts` or `*.spec.tsx` and colocated next to the file they test
+- Run tests with `pnpm test:unit`
+- Write unit tests for non-trivial logic in `util/` and `business-logic/` layers — if a function has edge cases, branching, or data transformation that could silently break, it needs a test
+- Hooks with complex state transitions or derived logic are good candidates for testing with `renderHook` from Testing Library
+- Don't test presentational UI components unless they contain logic; prefer testing the logic in isolation
 
 ## CI
 

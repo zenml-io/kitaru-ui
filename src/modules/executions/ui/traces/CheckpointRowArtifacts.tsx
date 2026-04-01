@@ -1,18 +1,26 @@
-import { useCheckpointDetails } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
+import {
+	getCheckpointDetailsPollingInterval,
+	useCheckpointDetails,
+} from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
+import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
+import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ArtifactChip } from "./ArtifactChip";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
+import { ArtifactChip } from "./ArtifactChip";
 
 function CheckpointRowArtifactsContent({
 	checkpointId,
 }: {
 	checkpointId: string;
 }) {
-	const { detailsData } = useCheckpointDetails(checkpointId);
+	const { detailsData } = useCheckpointDetails(checkpointId, {
+		refetchInterval: getCheckpointDetailsPollingInterval,
+	});
 
 	const { inputs, outputs } = detailsData;
 
@@ -77,20 +85,23 @@ function CheckpointRowArtifactsContent({
 
 			{selected && (
 				<div className="border-border overflow-hidden rounded-lg border">
-					<div className="bg-muted/50 border-border border-b px-4 py-2">
+					<div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">
 							{selected.entry.name}
 						</span>
+						<div className="flex items-center gap-1">
+							<DownloadArtifactButtonContainer
+								artifactVersionId={selected.entry.id}
+							/>
+							<FullscreenArtifactButtonContainer
+								artifactVersionId={selected.entry.id}
+								name={selected.entry.name}
+							/>
+						</div>
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense
-								fallback={
-									<p className="text-2xs text-muted-foreground px-4 py-3">
-										Loading…
-									</p>
-								}
-							>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}
 								/>
