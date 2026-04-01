@@ -67,7 +67,11 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 							{row.getVisibleCells().map((cell) => (
 								<TableCell
 									key={cell.id}
-									className={cell.column.id === "name" ? "p-0" : undefined}
+									className={
+										cell.column.columnDef.meta?.isWholeCellClickable
+											? "p-0"
+											: undefined
+									}
 								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
@@ -92,6 +96,7 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
+		meta: { isWholeCellClickable: true },
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => (
 			<Link

@@ -78,7 +78,11 @@ export function ExecutionsTableContainer({
 							{row.getVisibleCells().map((cell) => (
 								<TableCell
 									key={cell.id}
-									className={cell.column.id === "execution" ? "p-0" : undefined}
+									className={
+										cell.column.columnDef.meta?.isWholeCellClickable
+											? "p-0"
+											: undefined
+									}
 								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
@@ -104,6 +108,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
+			meta: { isWholeCellClickable: true },
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
