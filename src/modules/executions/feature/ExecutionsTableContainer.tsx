@@ -79,7 +79,7 @@ export function ExecutionsTableContainer({
 								<TableCell
 									key={cell.id}
 									className={
-										cell.column.columnDef.meta?.isWholeCellClickable
+										cell.column.columnDef.meta?.isPrimaryColumn
 											? "p-0"
 											: undefined
 									}
@@ -108,7 +108,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
-			meta: { isWholeCellClickable: true },
+			meta: { isPrimaryColumn: true },
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),

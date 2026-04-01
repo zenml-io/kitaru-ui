@@ -68,7 +68,7 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 								<TableCell
 									key={cell.id}
 									className={
-										cell.column.columnDef.meta?.isWholeCellClickable
+										cell.column.columnDef.meta?.isPrimaryColumn
 											? "p-0"
 											: undefined
 									}
@@ -96,7 +96,7 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
-		meta: { isWholeCellClickable: true },
+		meta: { isPrimaryColumn: true },
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => (
 			<Link
