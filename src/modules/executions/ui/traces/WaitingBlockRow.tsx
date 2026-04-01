@@ -1,6 +1,19 @@
+import { withTheme } from "@rjsf/core";
+import { Theme as shadcnTheme } from "@rjsf/shadcn";
+import validator from "@rjsf/validator-ajv8";
 import { CheckpointTypeBadge } from "./CheckpointTypeBadge";
+import { ContentCard } from "./ContentCard";
+import { ExpandableRow } from "./ExpandableRow";
 import { formatDurationShort } from "@/shared/utils/time";
 import type { WaitingBlock } from "../../domain/waiting-block";
+
+const Form = withTheme(shadcnTheme);
+
+const UI_SCHEMA = {
+	"ui:submitButtonOptions": { norender: true },
+	"ui:title": "",
+	"ui:description": "",
+};
 
 type WaitingBlockRowProps = {
 	waitingBlock: WaitingBlock;
@@ -8,11 +21,11 @@ type WaitingBlockRowProps = {
 
 export function WaitingBlockRow({ waitingBlock }: WaitingBlockRowProps) {
 	return (
-		<div className="border-warning/30 border-l-warning bg-card relative overflow-hidden rounded-lg border border-l-[3px]">
-			<div className="flex flex-col gap-1.5 px-4 py-2.5">
-				<div className="flex items-center gap-2">
+		<ExpandableRow
+			header={
+				<>
 					<CheckpointTypeBadge type="wait" />
-					<span className="text-foreground font-mono text-xs font-semibold">
+					<span className="text-foreground truncate font-mono text-xs font-semibold">
 						User Input
 					</span>
 					<span className="flex-1" />
@@ -21,17 +34,43 @@ export function WaitingBlockRow({ waitingBlock }: WaitingBlockRowProps) {
 							{formatDurationShort(waitingBlock.waitDurationMs)}
 						</span>
 					)}
-				</div>
+				</>
+			}
+		>
+			<div className="flex flex-col gap-3 px-4 py-4">
 				{waitingBlock.question && (
-					<p className="text-muted-foreground text-xs">
-						<span className="font-semibold">Q:</span> {waitingBlock.question}
-					</p>
+					<ContentCard title="Question">
+						<div className="px-5 py-4">
+							<p className="text-foreground text-sm leading-snug">
+								{waitingBlock.question}
+							</p>
+						</div>
+					</ContentCard>
 				)}
-				<p className="text-foreground truncate text-xs">
-					<span className="text-muted-foreground font-semibold">A:</span>{" "}
-					{waitingBlock.answer}
-				</p>
+				{waitingBlock.dataSchema ? (
+					<ContentCard title="Response">
+						<div className="px-5 py-4 text-xs [&_button]:text-xs [&_input]:text-xs [&_label]:text-xs">
+							<Form
+								schema={waitingBlock.dataSchema as object}
+								formData={waitingBlock.result}
+								validator={validator}
+								uiSchema={UI_SCHEMA}
+								readonly
+							/>
+						</div>
+					</ContentCard>
+				) : (
+					waitingBlock.answer && (
+						<ContentCard title="Response">
+							<div className="px-5 py-4">
+								<p className="text-foreground text-sm leading-snug">
+									{waitingBlock.answer}
+								</p>
+							</div>
+						</ContentCard>
+					)
+				)}
 			</div>
-		</div>
+		</ExpandableRow>
 	);
 }

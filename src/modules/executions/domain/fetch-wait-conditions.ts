@@ -45,6 +45,8 @@ export async function fetchWaitConditions(
 				id: item.id,
 				question: item.metadata?.question ?? "",
 				answer,
+				dataSchema: item.metadata?.data_schema ?? undefined,
+				result: item.metadata?.result ?? undefined,
 				waitDurationMs:
 					waitDurationMs && waitDurationMs > 0 ? waitDurationMs : undefined,
 				createdAt: created,

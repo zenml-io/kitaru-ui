@@ -4,6 +4,8 @@ export type WaitingBlock = {
 	id: string;
 	question: string;
 	answer: string;
+	dataSchema?: Record<string, unknown>;
+	result?: unknown;
 	waitDurationMs?: number;
 	createdAt?: Date;
 };
