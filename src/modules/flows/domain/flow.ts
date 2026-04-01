@@ -22,18 +22,6 @@ export type Flow = {
 	createdAt?: Date;
 };
 
-export type FlowStatusFilterOption = {
-	label: string;
-	value: FlowStatusFilter;
-};
-
-export const flowStatusFilterOptions: FlowStatusFilterOption[] = [
-	{ label: "All", value: "all" },
-	{ label: "Running", value: "running" },
-	{ label: "Failed", value: "failed" },
-	{ label: "Completed", value: "completed" },
-];
-
 export function flowFromApiToDomain(
 	flow: components["schemas"]["PipelineResponse"]
 ): Flow {
