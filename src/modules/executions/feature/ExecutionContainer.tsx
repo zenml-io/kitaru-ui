@@ -3,6 +3,7 @@ import {
 	getCheckpointsPollingInterval,
 	useCheckpoints,
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
+import { useTimelineEntries } from "../business-logic/use-timeline-entries";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
@@ -30,15 +31,24 @@ export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL});
+	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
+		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
+	});
 	const { executionData, refetch: refetchExecution } =
 		useExecution(executionId);
-	const { checkpointsData, refetch: refetchCheckpoints } =
-		useCheckpoints(executionId, {
+	const { checkpointsData, refetch: refetchCheckpoints } = useCheckpoints(
+		executionId,
+		{
 			refetchInterval: getCheckpointsPollingInterval,
-		});
+		}
+	);
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
+	);
+
+	const { timelineEntries } = useTimelineEntries(
+		executionId,
+		checkpointsData.checkpoints
 	);
 
 	useSyncExecutionStatus(
@@ -53,6 +63,9 @@ export function ExecutionContainer() {
 		});
 		queryClient.invalidateQueries({
 			queryKey: executionsQueryKeys.detail(executionId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.waitConditions(executionId),
 		});
 		queryClient.invalidateQueries({
 			queryKey: checkpointsQueryKeys.all(executionId),
@@ -134,7 +147,7 @@ export function ExecutionContainer() {
 				<ExecutionDetails
 					key={executionId}
 					execution={executionData}
-					checkpointsEntries={checkpointsData.checkpoints}
+					timelineEntries={timelineEntries}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);
 						layoutRef.current?.expandRight();
