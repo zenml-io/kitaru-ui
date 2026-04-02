@@ -76,7 +76,14 @@ export function ExecutionsTableContainer({
 					rows.map((row) => (
 						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
+								<TableCell
+									key={cell.id}
+									className={
+										cell.column.columnDef.meta?.isPrimaryColumn
+											? "p-0"
+											: undefined
+									}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
@@ -101,6 +108,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
+			meta: { isPrimaryColumn: true },
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
@@ -108,7 +116,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 				<Link
 					to="/flows/$flowId/executions/$executionId"
 					params={{ flowId, executionId: row.original.id }}
-					className="hover:underline"
+					className="block px-2 py-3.5 hover:underline"
 				>
 					<ExecutionName index={row.original.index} />
 				</Link>

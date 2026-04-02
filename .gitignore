@@ -42,5 +42,8 @@ devenv.local.nix
 
 .playwright-mcp
 
+# Superpowers docs (local only)
+docs/superpowers
+
 *storybook.log
 storybook-static
