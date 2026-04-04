@@ -18,6 +18,13 @@ export const memoryScopeTypeValues = [
 ] as const;
 export type MemoryScopeType = (typeof memoryScopeTypeValues)[number];
 
+export const SCOPE_TYPE_SORT_ORDER: Record<MemoryScopeType, number> = {
+	flow: 0,
+	namespace: 1,
+	execution: 2,
+	unknown: 3,
+};
+
 export type MemoryEntry = {
 	key: string;
 	valueType: string;

@@ -1,18 +1,12 @@
 import {
 	MEMORY_TAG_MARKER,
+	SCOPE_TYPE_SORT_ORDER,
 	type MemoryScopeInfo,
 	type MemoryScopeType,
 	mapArtifactVersionToMemoryEntry,
 	dedupeMemoryEntries,
 } from "./memory";
 import { fetchMemoryArtifactVersions } from "./fetch-memory-artifact-versions";
-
-const SCOPE_TYPE_ORDER: Record<MemoryScopeType, number> = {
-	flow: 0,
-	namespace: 1,
-	execution: 2,
-	unknown: 3,
-};
 
 export async function fetchMemoryScopes(): Promise<MemoryScopeInfo[]> {
 	const artifactVersions = await fetchMemoryArtifactVersions({
@@ -54,7 +48,7 @@ export async function fetchMemoryScopes(): Promise<MemoryScopeInfo[]> {
 		}))
 		.sort((a, b) => {
 			const typeOrder =
-				SCOPE_TYPE_ORDER[a.scopeType] - SCOPE_TYPE_ORDER[b.scopeType];
+				SCOPE_TYPE_SORT_ORDER[a.scopeType] - SCOPE_TYPE_SORT_ORDER[b.scopeType];
 			if (typeOrder !== 0) return typeOrder;
 			return a.scope.localeCompare(b.scope);
 		});
