@@ -1,8 +1,15 @@
 import * as React from "react";
 
-import type { Column } from "@tanstack/react-table";
+import type { Column, RowData } from "@tanstack/react-table";
 import { cn } from "@/shared/utils/styles";
 import { Button } from "../button";
+
+declare module "@tanstack/react-table" {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData extends RowData, TValue> {
+		isPrimaryColumn?: boolean;
+	}
+}
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
 	return (

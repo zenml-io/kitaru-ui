@@ -1,14 +1,8 @@
-import * as React from "react";
-
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
-	flexRender,
-	getCoreRowModel,
-	getSortedRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-
-import type { Execution } from "../domain/execution";
+	StatusRenderer,
+	TextRenderer,
+	UserRenderer,
+} from "@/shared/ui/Table/CellRenderer";
 import {
 	SortableHeader,
 	Table,
@@ -18,13 +12,17 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import {
-	StatusRenderer,
-	TextRenderer,
-	UserRenderer,
-} from "@/shared/ui/Table/CellRenderer";
-import { ExecutionName } from "../ui/ExecutionName";
 import { Link } from "@tanstack/react-router";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import {
+	flexRender,
+	getCoreRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import type { Execution } from "../domain/execution";
+import { ExecutionName } from "../ui/ExecutionName";
 
 export function ExecutionsTableContainer({
 	executionRows,
@@ -33,11 +31,11 @@ export function ExecutionsTableContainer({
 	executionRows: Execution[];
 	flowId: string;
 }) {
-	const [sorting, setSorting] = React.useState<SortingState>([
+	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
-	const columns = buildExecutionColumns(flowId);
+	const columns = useMemo(() => buildExecutionColumns(flowId), [flowId]);
 
 	const table = useReactTable({
 		data: executionRows,
@@ -78,7 +76,14 @@ export function ExecutionsTableContainer({
 					rows.map((row) => (
 						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
+								<TableCell
+									key={cell.id}
+									className={
+										cell.column.columnDef.meta?.isPrimaryColumn
+											? "p-0"
+											: undefined
+									}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
@@ -103,6 +108,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
+			meta: { isPrimaryColumn: true },
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
@@ -110,7 +116,7 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 				<Link
 					to="/flows/$flowId/executions/$executionId"
 					params={{ flowId, executionId: row.original.id }}
-					className="hover:underline"
+					className="block px-2 py-3.5 hover:underline"
 				>
 					<ExecutionName index={row.original.index} />
 				</Link>

@@ -36,3 +36,14 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+
+# Git worktrees
+.worktrees
+
+.playwright-mcp
+
+# Superpowers docs (local only)
+docs/superpowers
+
+*storybook.log
+storybook-static

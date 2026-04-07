@@ -1,14 +1,4 @@
-import * as React from "react";
-
-import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import {
-	flexRender,
-	getCoreRowModel,
-	getSortedRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-
-import type { Flow } from "../domain/flow";
+import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 import {
 	SortableHeader,
 	Table,
@@ -18,17 +8,27 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/shared/ui/Table/Table";
-import { StatusRenderer, TextRenderer } from "@/shared/ui/Table/CellRenderer";
 import { Link } from "@tanstack/react-router";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
+import {
+	flexRender,
+	getCoreRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import type { Flow } from "../domain/flow";
 
 export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
-	const [sorting, setSorting] = React.useState<SortingState>([
+	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
+	const columns = useMemo(() => flowColumns, []);
+
 	const table = useReactTable({
 		data: flowRows,
-		columns: flowColumns,
+		columns: columns,
 		state: {
 			sorting,
 		},
@@ -65,7 +65,14 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 					rows.map((row) => (
 						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
+								<TableCell
+									key={cell.id}
+									className={
+										cell.column.columnDef.meta?.isPrimaryColumn
+											? "p-0"
+											: undefined
+									}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
@@ -89,12 +96,13 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
+		meta: { isPrimaryColumn: true },
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => (
 			<Link
 				to="/flows/$flowId/$tab"
 				params={{ flowId: row.original.id, tab: "overview" }}
-				className="hover:underline"
+				className="block px-2 py-3.5 hover:underline"
 			>
 				<TextRenderer>{row.original.name}</TextRenderer>
 			</Link>

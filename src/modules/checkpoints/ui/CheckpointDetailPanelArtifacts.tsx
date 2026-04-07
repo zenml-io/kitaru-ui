@@ -1,9 +1,13 @@
 import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
+import { Separator } from "@/shared/ui/separator";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { ArtifactEntry } from "../domain/checkpoint";
+import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
+import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -35,10 +39,25 @@ export function CheckpointDetailPanelArtifacts({
 				onSelectArtifact={onSelectArtifact}
 			/>
 			{selectedArtifact ? (
-				<div className="min-h-0 flex-1 overflow-y-auto">
-					<div className="bg-background min-h-full">
+				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
+						<span className="text-foreground truncate text-xs font-semibold">
+							{selectedArtifact.artifact.name}
+						</span>
+						<div className="flex items-center gap-1">
+							<DownloadArtifactButtonContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+							/>
+							<FullscreenArtifactButtonContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+								name={selectedArtifact.artifact.name}
+							/>
+						</div>
+					</div>
+					<Separator />
+					<div className="bg-background flex-1">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
 								/>

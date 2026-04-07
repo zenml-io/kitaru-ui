@@ -1,3 +1,4 @@
+import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -8,7 +9,9 @@ import { MembersListToolbarContainer } from "./MembersListToolbarContainer";
 export function MembersListPageContainer() {
 	const [searchValue, setSearchValue] = useState("");
 	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
-	const { data, isRefetching, refetch } = useSuspenseQuery(userQueries.list());
+	const { data, refetch } = useSuspenseQuery(userQueries.list());
+	const { refresh: refreshMembers, isPending: isManualRefreshPending } =
+		useManualRefresh(refetch);
 
 	const filteredMembers = data.items.filter((member) =>
 		member.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -21,8 +24,8 @@ export function MembersListPageContainer() {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<MembersListToolbarContainer
-					isRefetching={isRefetching}
-					refetch={refetch}
+					isRefreshing={isManualRefreshPending}
+					onRefresh={refreshMembers}
 					isUserAdmin={currentUser.isAdmin ?? false}
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}

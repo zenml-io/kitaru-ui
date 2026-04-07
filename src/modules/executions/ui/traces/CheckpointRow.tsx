@@ -1,24 +1,23 @@
+import { useState } from "react";
 import { StatusDot } from "@/shared/ui/StatusDot";
 import { CheckpointTypeBadge } from "./CheckpointTypeBadge";
 import { ChevronRight } from "@untitledui/icons";
 import { cn } from "@/shared/utils/styles";
 import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
-import { formatDurationShort } from "@/shared/utils/time";
+import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 
 type CheckpointRowProps = {
-	checkpoint: CheckpointEntry;
-	isExpanded: boolean;
+	checkpointEntry: CheckpointEntry;
 	onSelect: (id: string) => void;
-	onToggle: (id: string) => void;
 };
 
 export function CheckpointRow({
-	checkpoint,
-	isExpanded,
+	checkpointEntry,
 	onSelect,
-	onToggle,
 }: CheckpointRowProps) {
+	const [isExpanded, setIsExpanded] = useState(false);
+
 	return (
 		<div
 			className={cn(
@@ -35,8 +34,8 @@ export function CheckpointRow({
 					isExpanded && "border-border border-b"
 				)}
 				onClick={() => {
-					onSelect(checkpoint.id);
-					onToggle(checkpoint.id);
+					onSelect(checkpointEntry.id);
+					setIsExpanded((prev) => !prev);
 				}}
 			>
 				<ChevronRight
@@ -45,20 +44,25 @@ export function CheckpointRow({
 						isExpanded && "rotate-90"
 					)}
 				/>
-				{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
+				{checkpointEntry.type && (
+					<CheckpointTypeBadge type={checkpointEntry.type} />
+				)}
 				<span className="text-foreground truncate font-mono text-xs font-semibold">
-					{checkpoint.name}
+					{checkpointEntry.name}
 				</span>
 				<span className="flex-1" />
-				{checkpoint.durationMs && (
-					<span className="text-2xs text-muted-foreground font-mono tabular-nums">
-						{formatDurationShort(checkpoint.durationMs)}
-					</span>
-				)}
-				<StatusDot status={checkpoint.status} />
+				<LiveDurationMs
+					status={checkpointEntry.status}
+					startTime={checkpointEntry.startTime}
+					durationMs={checkpointEntry.durationMs}
+					className="text-2xs text-muted-foreground font-mono tabular-nums"
+				/>
+				<StatusDot status={checkpointEntry.status} />
 			</button>
 
-			{isExpanded && <CheckpointRowArtifacts checkpointId={checkpoint.id} />}
+			{isExpanded && (
+				<CheckpointRowArtifacts checkpointId={checkpointEntry.id} />
+			)}
 		</div>
 	);
 }
