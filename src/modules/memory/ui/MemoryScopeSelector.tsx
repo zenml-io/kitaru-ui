@@ -26,8 +26,8 @@ const SCOPE_TYPE_ORDER: MemoryScopeType[] = [
 ];
 
 const SCOPE_TYPE_LABELS: Record<MemoryScopeType, string> = {
-	flow: "Flows",
 	namespace: "Namespaces",
+	flow: "Flows",
 	execution: "Executions",
 	unknown: "Other",
 };

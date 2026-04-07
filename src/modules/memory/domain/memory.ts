@@ -16,6 +16,7 @@ export const memoryScopeTypeValues = [
 	"execution",
 	"unknown",
 ] as const;
+
 export type MemoryScopeType = (typeof memoryScopeTypeValues)[number];
 
 export const SCOPE_TYPE_SORT_ORDER: Record<MemoryScopeType, number> = {
