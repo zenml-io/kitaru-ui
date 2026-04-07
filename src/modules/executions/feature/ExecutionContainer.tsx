@@ -30,13 +30,17 @@ export function ExecutionContainer() {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL});
+	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
+		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
+	});
 	const { executionData, refetch: refetchExecution } =
 		useExecution(executionId);
-	const { checkpointsData, refetch: refetchCheckpoints } =
-		useCheckpoints(executionId, {
+	const { checkpointsData, refetch: refetchCheckpoints } = useCheckpoints(
+		executionId,
+		{
 			refetchInterval: getCheckpointsPollingInterval,
-		});
+		}
+	);
 	const { waitConditionData } = useWaitCondition(
 		executionData?.activeWaitConditionEntry?.id
 	);
