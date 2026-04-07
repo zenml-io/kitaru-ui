@@ -19,8 +19,8 @@ type MemoryScopeSelectorProps = {
 };
 
 const SCOPE_TYPE_ORDER: MemoryScopeType[] = [
-	"flow",
 	"namespace",
+	"flow",
 	"execution",
 	"unknown",
 ];
