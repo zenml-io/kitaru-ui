@@ -9,7 +9,7 @@ import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
-import { deriveScopesFromEntries } from "../domain/memory";
+import { deriveScopesFromEntries } from "../business-logic/memory-operations";
 import type { MemoryEntry } from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
 import { MemoryDetailPanel } from "../ui/MemoryDetailPanel";

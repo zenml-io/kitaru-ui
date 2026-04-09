@@ -4,8 +4,6 @@ import {
 	parseMemoryArtifactName,
 	isCompactionKey,
 	mapArtifactVersionToMemoryEntry,
-	dedupeMemoryEntries,
-	type MemoryEntry,
 } from "./memory";
 
 describe("parseMemoryArtifactName", () => {
@@ -166,74 +164,5 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		av.body!.data_type = { module: "builtins.str", type: "builtin" };
 		const entry = mapArtifactVersionToMemoryEntry(av);
 		expect(entry?.valueType).toBe("str");
-	});
-});
-
-function makeEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
-	return {
-		key: "counter",
-		scope: "my-flow",
-		version: "1",
-		valueType: "dict",
-		scopeType: "flow",
-		createdAt: new Date("2024-06-01T10:00:00Z"),
-		isDeleted: false,
-		artifactId: "av-1",
-		...overrides,
-	};
-}
-
-describe("dedupeMemoryEntries", () => {
-	it("keeps the newest version per key (first in newest-first input)", () => {
-		const entries = [
-			makeEntry({ version: "3", artifactId: "av-3" }),
-			makeEntry({ version: "2", artifactId: "av-2" }),
-			makeEntry({ version: "1", artifactId: "av-1" }),
-		];
-		const result = dedupeMemoryEntries(entries);
-		expect(result).toHaveLength(1);
-		expect(result[0].version).toBe("3");
-	});
-
-	it("suppresses keys whose newest version is a tombstone", () => {
-		const entries = [
-			makeEntry({ version: "2", isDeleted: true }),
-			makeEntry({ version: "1", isDeleted: false }),
-		];
-		expect(dedupeMemoryEntries(entries)).toHaveLength(0);
-	});
-
-	it("excludes compaction keys", () => {
-		const entries = [
-			makeEntry({ key: "_compaction/2024-01-01" }),
-			makeEntry({ key: "counter" }),
-		];
-		const result = dedupeMemoryEntries(entries);
-		expect(result).toHaveLength(1);
-		expect(result[0].key).toBe("counter");
-	});
-
-	it("treats scope+key as composite identity", () => {
-		const entries = [
-			makeEntry({ scope: "flow-a", key: "counter", version: "1" }),
-			makeEntry({ scope: "flow-b", key: "counter", version: "1" }),
-		];
-		const result = dedupeMemoryEntries(entries);
-		expect(result).toHaveLength(2);
-	});
-
-	it("returns empty for empty input", () => {
-		expect(dedupeMemoryEntries([])).toEqual([]);
-	});
-
-	it("handles mix of deleted and active entries across keys", () => {
-		const entries = [
-			makeEntry({ key: "alpha", version: "2", isDeleted: true }),
-			makeEntry({ key: "alpha", version: "1", isDeleted: false }),
-			makeEntry({ key: "beta", version: "1", isDeleted: false }),
-		];
-		const result = dedupeMemoryEntries(entries);
-		expect(result).toHaveLength(1);
-		expect(result[0].key).toBe("beta");
 	});
 });

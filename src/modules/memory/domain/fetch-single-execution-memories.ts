@@ -3,7 +3,6 @@ import {
 	MEMORY_TAG_SCOPE_PREFIX,
 	type MemoryEntry,
 	mapArtifactVersionToMemoryEntry,
-	dedupeMemoryEntries,
 } from "./memory";
 import { fetchMemoryArtifactVersions } from "./fetch-memory-artifact-versions";
 
@@ -16,9 +15,7 @@ export async function fetchSingleExecutionMemories(
 		sort_by: "desc:version_number",
 	});
 
-	const entries = versions
+	return versions
 		.map(mapArtifactVersionToMemoryEntry)
 		.filter((e) => e !== null);
-
-	return dedupeMemoryEntries(entries);
 }

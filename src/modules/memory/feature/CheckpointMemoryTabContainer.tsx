@@ -2,9 +2,10 @@ import { Suspense, useMemo, useState } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
-import { useExecutionMemories } from "../business-logic/use-execution-memories";
+import { useCheckpointMemories } from "../business-logic/use-checkpoint-memories";
 import { MemoryMetadata } from "../ui/MemoryMetadata";
 import { CheckpointMemoryTab } from "../ui/CheckpointMemoryTab";
+import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 
 type CheckpointMemoryTabContainerProps = {
 	checkpointStartTime?: Date;
@@ -18,14 +19,11 @@ export function CheckpointMemoryTabContainer({
 	});
 	const { flowData } = useFlow(flowId);
 
-	const { namespaceEntries, flowEntries, executionEntries } =
-		useExecutionMemories(flowData.name, executionId);
-
-	const memoryEntries = useMemo(() => {
-		const all = [...namespaceEntries, ...flowEntries, ...executionEntries];
-		if (!checkpointStartTime) return all;
-		return all.filter((e) => e.createdAt <= checkpointStartTime);
-	}, [namespaceEntries, flowEntries, executionEntries, checkpointStartTime]);
+	const { entries: memoryEntries } = useCheckpointMemories(
+		flowData.name,
+		executionId,
+		checkpointStartTime
+	);
 
 	const [userSelectedId, setUserSelectedId] = useState<string | undefined>();
 
@@ -34,14 +32,8 @@ export function CheckpointMemoryTabContainer({
 			const found = memoryEntries.find((e) => e.artifactId === userSelectedId);
 			if (found) return found;
 		}
-		return executionEntries[0] ?? flowEntries[0] ?? namespaceEntries[0];
-	}, [
-		userSelectedId,
-		memoryEntries,
-		executionEntries,
-		flowEntries,
-		namespaceEntries,
-	]);
+		return memoryEntries[0];
+	}, [userSelectedId, memoryEntries]);
 
 	return (
 		<CheckpointMemoryTab
@@ -54,7 +46,7 @@ export function CheckpointMemoryTabContainer({
 					<div className="border-border border-b px-4 py-3">
 						<MemoryMetadata entry={selectedEntry} />
 					</div>
-					<Suspense>
+					<Suspense fallback={<VisualizationSkeleton />}>
 						<ArtifactVisualizationContainer
 							artifactVersionId={selectedEntry.artifactId}
 						/>
