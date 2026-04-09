@@ -36,6 +36,7 @@ export function MemoryChip({
 			)}
 			aria-pressed={isSelected}
 			onClick={onClick}
+			title={label}
 		>
 			<span
 				className={cn(
@@ -43,7 +44,7 @@ export function MemoryChip({
 					isSelected ? "bg-primary-foreground/70" : SCOPE_COLOR[scopeType]
 				)}
 			/>
-			<span className="max-w-30 truncate">{label}</span>
+			<span className="max-w-40 truncate">{label}</span>
 		</Badge>
 	);
 }

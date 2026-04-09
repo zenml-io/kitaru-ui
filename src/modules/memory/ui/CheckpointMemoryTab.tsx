@@ -51,7 +51,7 @@ export function CheckpointMemoryTab({
 		children: grouped[scopeType].map((entry) => (
 			<MemoryChip
 				key={entry.artifactId}
-				label={entry.key.split("/").pop() ?? entry.key}
+				label={entry.key}
 				scopeType={entry.scopeType}
 				isDeleted={entry.isDeleted}
 				isSelected={selectedKey === entry.key}
