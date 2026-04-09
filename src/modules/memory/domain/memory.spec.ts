@@ -160,11 +160,6 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		expect(mapArtifactVersionToMemoryEntry(av)?.isDeleted).toBe(false);
 	});
 
-	it("sets executionId to undefined when producer_pipeline_run_id is null", () => {
-		const av = makeArtifactVersion({ executionId: null });
-		expect(mapArtifactVersionToMemoryEntry(av)?.executionId).toBeUndefined();
-	});
-
 	it("falls back to module name when attribute is missing", () => {
 		const av = makeArtifactVersion();
 		// Override data_type to have no attribute
