@@ -31,15 +31,28 @@ export function CheckpointDetailPanelArtifacts({
 	selectedArtifact,
 	onSelectArtifact,
 }: CheckpointDetailPanelArtifactsProps) {
+	const hasVisibleArtifacts = inputs.length > 0 || outputs.length > 0;
+
 	return (
 		<div className="flex h-full flex-col">
-			<ArtifactsToolbar
-				inputs={inputs}
-				outputs={outputs}
-				selectedArtifact={selectedArtifact}
-				onSelectArtifact={onSelectArtifact}
-			/>
-			{selectedArtifact ? (
+			{hasVisibleArtifacts && (
+				<ArtifactsToolbar
+					inputs={inputs}
+					outputs={outputs}
+					selectedArtifact={selectedArtifact}
+					onSelectArtifact={onSelectArtifact}
+				/>
+			)}
+			{!hasVisibleArtifacts ? (
+				<div className="flex flex-1 flex-col items-center justify-center gap-1 p-4 text-center">
+					<p className="text-foreground text-xs font-medium">
+						No checkpoint artifacts to show here.
+					</p>
+					<p className="text-muted-foreground text-xs">
+						Memory artifacts are available in the Memory tab.
+					</p>
+				</div>
+			) : selectedArtifact ? (
 				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">

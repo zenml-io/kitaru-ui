@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useReducer, useState } from "react";
 import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
@@ -18,6 +18,26 @@ import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
 };
+
+type SelectedArtifact = {
+	artifact: ArtifactEntry;
+	direction: "input" | "output";
+};
+
+const emptyArtifactEntries: ArtifactEntry[] = [];
+
+type SelectedArtifactAction =
+	| {
+			type: "select";
+			artifact: ArtifactEntry;
+			direction: "input" | "output";
+	  }
+	| {
+			type: "sync";
+			activeTab: PanelTab;
+			inputs: ArtifactEntry[];
+			outputs: ArtifactEntry[];
+	  };
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
@@ -42,26 +62,26 @@ function CheckpointDetailPanelContentContainer({
 		refetchInterval: getCheckpointDetailsPollingInterval,
 	});
 
-	const inputs = detailsData?.inputs ?? [];
-	const outputs = detailsData?.outputs ?? [];
+	const inputs = detailsData?.inputs ?? emptyArtifactEntries;
+	const outputs = detailsData?.outputs ?? emptyArtifactEntries;
 
 	const [activeTab, setActiveTab] = useState<PanelTab>("checkpoint");
-	const [selectedArtifact, setSelectedArtifact] = useState<{
-		artifact: ArtifactEntry;
-		direction: "input" | "output";
-	} | null>(null);
+	const [selectedArtifact, dispatchSelectedArtifact] = useReducer(
+		selectedArtifactReducer,
+		null
+	);
+
+	useEffect(() => {
+		dispatchSelectedArtifact({
+			type: "sync",
+			activeTab,
+			inputs,
+			outputs,
+		});
+	}, [activeTab, inputs, outputs]);
 
 	function handleTabChange(tab: PanelTab) {
 		setActiveTab(tab);
-		if (tab === "artifacts" && !selectedArtifact) {
-			const first = outputs[0] ?? inputs[0];
-			if (first) {
-				setSelectedArtifact({
-					artifact: first,
-					direction: outputs[0] ? "output" : "input",
-				});
-			}
-		}
 	}
 
 	return (
@@ -81,7 +101,11 @@ function CheckpointDetailPanelContentContainer({
 						outputs={outputs}
 						selectedArtifact={selectedArtifact}
 						onSelectArtifact={(artifact, direction) =>
-							setSelectedArtifact({ artifact, direction })
+							dispatchSelectedArtifact({
+								type: "select",
+								artifact,
+								direction,
+							})
 						}
 					/>
 				)}
@@ -92,5 +116,64 @@ function CheckpointDetailPanelContentContainer({
 				)}
 			</div>
 		</div>
+	);
+}
+
+function getDefaultSelectedArtifact(
+	inputs: ArtifactEntry[],
+	outputs: ArtifactEntry[]
+): SelectedArtifact | null {
+	const firstOutput = outputs[0];
+	if (firstOutput) {
+		return {
+			artifact: firstOutput,
+			direction: "output",
+		};
+	}
+
+	const firstInput = inputs[0];
+	if (firstInput) {
+		return {
+			artifact: firstInput,
+			direction: "input",
+		};
+	}
+
+	return null;
+}
+
+function selectedArtifactReducer(
+	selectedArtifact: SelectedArtifact | null,
+	action: SelectedArtifactAction
+): SelectedArtifact | null {
+	if (action.type === "select") {
+		return {
+			artifact: action.artifact,
+			direction: action.direction,
+		};
+	}
+
+	if (
+		selectedArtifact &&
+		isArtifactVisible(selectedArtifact, action.inputs, action.outputs)
+	) {
+		return selectedArtifact;
+	}
+
+	if (action.activeTab === "artifacts") {
+		return getDefaultSelectedArtifact(action.inputs, action.outputs);
+	}
+
+	return null;
+}
+
+function isArtifactVisible(
+	selectedArtifact: SelectedArtifact,
+	inputs: ArtifactEntry[],
+	outputs: ArtifactEntry[]
+): boolean {
+	const candidates = selectedArtifact.direction === "output" ? outputs : inputs;
+	return candidates.some(
+		(artifact) => artifact.id === selectedArtifact.artifact.id
 	);
 }
