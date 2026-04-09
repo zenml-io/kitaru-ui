@@ -35,6 +35,5 @@ export const executionsQueries = {
 		queryOptions({
 			queryKey: executionsQueryKeys.waitConditions(executionId),
 			queryFn: () => fetchWaitConditions(executionId),
-			staleTime: Infinity,
 		}),
 };
