@@ -6,7 +6,13 @@ import { useExecutionMemories } from "../business-logic/use-execution-memories";
 import { MemoryMetadata } from "../ui/MemoryMetadata";
 import { CheckpointMemoryTab } from "../ui/CheckpointMemoryTab";
 
-export function CheckpointMemoryTabContainer() {
+type CheckpointMemoryTabContainerProps = {
+	checkpointStartTime?: Date;
+};
+
+export function CheckpointMemoryTabContainer({
+	checkpointStartTime,
+}: CheckpointMemoryTabContainerProps) {
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
@@ -15,10 +21,11 @@ export function CheckpointMemoryTabContainer() {
 	const { namespaceEntries, flowEntries, executionEntries } =
 		useExecutionMemories(flowData.name, executionId);
 
-	const memoryEntries = useMemo(
-		() => [...namespaceEntries, ...flowEntries, ...executionEntries],
-		[namespaceEntries, flowEntries, executionEntries]
-	);
+	const memoryEntries = useMemo(() => {
+		const all = [...namespaceEntries, ...flowEntries, ...executionEntries];
+		if (!checkpointStartTime) return all;
+		return all.filter((e) => e.createdAt <= checkpointStartTime);
+	}, [namespaceEntries, flowEntries, executionEntries, checkpointStartTime]);
 
 	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
 

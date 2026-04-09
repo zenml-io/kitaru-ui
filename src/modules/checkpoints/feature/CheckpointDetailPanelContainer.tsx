@@ -85,7 +85,11 @@ function CheckpointDetailPanelContentContainer({
 						}
 					/>
 				)}
-				{activeTab === "memory" && <CheckpointMemoryTabContainer />}
+				{activeTab === "memory" && (
+					<CheckpointMemoryTabContainer
+						checkpointStartTime={detailsData?.startTime}
+					/>
+				)}
 			</div>
 		</div>
 	);
