@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { parseMemoryArtifactName } from "@/modules/memory/domain/memory";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export type ArtifactEntry = {
@@ -47,6 +48,16 @@ export function checkpointFromApiToDomain(
 	};
 }
 
+function isExternalArtifact(
+	v: components["schemas"]["ArtifactVersionResponse"]
+): boolean {
+	const name = v.body?.artifact?.name;
+	if (!name) return false;
+	return (
+		parseMemoryArtifactName(name) !== undefined || name.startsWith("external_")
+	);
+}
+
 function extractArtifactEntries(
 	record: Record<string, unknown> | undefined
 ): ArtifactEntry[] {
@@ -56,7 +67,7 @@ function extractArtifactEntries(
 			value as components["schemas"]["ArtifactVersionResponse"][];
 		if (!Array.isArray(versions)) return [];
 		return versions.flatMap((v, index) => {
-			if (!v.id) return [];
+			if (!v.id || isExternalArtifact(v)) return [];
 			const entryName = versions.length > 1 ? `${name}[${index}]` : name;
 			return [{ name: entryName, id: v.id }];
 		});

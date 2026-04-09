@@ -26,27 +26,27 @@ describe("parseMemoryArtifactName", () => {
 	});
 
 	it("returns null for wrong prefix", () => {
-		expect(parseMemoryArtifactName("other_mem:scope:key")).toBeNull();
+		expect(parseMemoryArtifactName("other_mem:scope:key")).toBeUndefined();
 	});
 
 	it("returns null for missing scope", () => {
-		expect(parseMemoryArtifactName("kitaru_mem::key")).toBeNull();
+		expect(parseMemoryArtifactName("kitaru_mem::key")).toBeUndefined();
 	});
 
 	it("returns null for missing key", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:scope:")).toBeNull();
+		expect(parseMemoryArtifactName("kitaru_mem:scope:")).toBeUndefined();
 	});
 
 	it("returns null for missing scope and key", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:")).toBeNull();
+		expect(parseMemoryArtifactName("kitaru_mem:")).toBeUndefined();
 	});
 
 	it("returns null for empty string", () => {
-		expect(parseMemoryArtifactName("")).toBeNull();
+		expect(parseMemoryArtifactName("")).toBeUndefined();
 	});
 
 	it("returns null for prefix only with no colon after scope", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:scopeonly")).toBeNull();
+		expect(parseMemoryArtifactName("kitaru_mem:scopeonly")).toBeUndefined();
 	});
 });
 
@@ -124,7 +124,6 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 			createdAt: new Date("2024-06-01T10:00:00Z"),
 			isDeleted: false,
 			artifactId: "artifact-version-id-1",
-			executionId: "run-123",
 		});
 	});
 

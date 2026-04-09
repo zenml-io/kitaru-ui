@@ -4,6 +4,8 @@ import { parseBackendTimestamp } from "@/shared/utils/time";
 export const MEMORY_TAG_MARKER = "kitaru:memory";
 export const MEMORY_TAG_SCOPE_PREFIX = "kitaru:memory:scope:";
 export const MEMORY_TAG_KEY_PREFIX = "kitaru:memory:key:";
+export const MEMORY_TAG_SCOPE_TYPE_PREFIX = "kitaru:memory:scope_type:";
+export const MEMORY_TAG_FLOW_ID_PREFIX = "kitaru:memory:flow_id:";
 export const COMPACTION_LOG_PREFIX = "_compaction/";
 export const MEMORY_SCOPE_TYPE_METADATA_KEY = "kitaru_memory_scope_type";
 export const MEMORY_DELETED_METADATA_KEY = "kitaru_memory_deleted";
@@ -35,7 +37,6 @@ export type MemoryEntry = {
 	createdAt: Date;
 	isDeleted: boolean;
 	artifactId: string;
-	executionId?: string;
 };
 
 export type MemoryScopeInfo = {
@@ -50,16 +51,16 @@ export function buildMemoryArtifactName(scope: string, key: string): string {
 
 export function parseMemoryArtifactName(
 	name: string
-): { scope: string; key: string } | null {
-	if (!name.startsWith(ARTIFACT_NAME_PREFIX)) return null;
+): { scope: string; key: string } | undefined {
+	if (!name.startsWith(ARTIFACT_NAME_PREFIX)) return undefined;
 
 	const rest = name.slice(ARTIFACT_NAME_PREFIX.length);
 	const colonIndex = rest.indexOf(":");
-	if (colonIndex <= 0) return null;
+	if (colonIndex <= 0) return undefined;
 
 	const scope = rest.slice(0, colonIndex);
 	const key = rest.slice(colonIndex + 1);
-	if (!key) return null;
+	if (!key) return undefined;
 
 	return { scope, key };
 }
@@ -93,12 +94,12 @@ function inferValueType(dataType: components["schemas"]["Source"]): string {
 export function mapArtifactVersionToMemoryEntry(
 	artifact: components["schemas"]["ArtifactVersionResponse"]
 ): MemoryEntry | null {
+	console.log("artifact", artifact);
 	const body = artifact.body;
 	if (!body) return null;
 
 	const parsed = parseMemoryArtifactName(body.artifact.name);
 	if (!parsed) return null;
-
 	const runMetadata = artifact.metadata?.run_metadata ?? {};
 
 	return {
@@ -110,7 +111,6 @@ export function mapArtifactVersionToMemoryEntry(
 		createdAt: parseBackendTimestamp(body.created),
 		isDeleted: parseIsDeleted(runMetadata[MEMORY_DELETED_METADATA_KEY]),
 		artifactId: artifact.id,
-		executionId: artifact.resources?.producer_pipeline_run_id ?? undefined,
 	};
 }
 
@@ -120,6 +120,53 @@ export function mapArtifactVersionToMemoryEntry(
  *
  * Input MUST be sorted newest-first (by version_number descending).
  */
+export function deriveScopesFromEntries(
+	namespaceEntries: MemoryEntry[],
+	flowEntries: MemoryEntry[],
+	executionEntries: MemoryEntry[],
+	flowName: string
+): MemoryScopeInfo[] {
+	const scopeMap = new Map<
+		string,
+		{ scopeType: MemoryScopeType; entryCount: number }
+	>();
+
+	for (const entry of [
+		...namespaceEntries,
+		...flowEntries,
+		...executionEntries,
+	]) {
+		const existing = scopeMap.get(entry.scope);
+		if (existing) {
+			existing.entryCount++;
+		} else {
+			scopeMap.set(entry.scope, {
+				scopeType: entry.scopeType,
+				entryCount: 1,
+			});
+		}
+	}
+
+	const scopes: MemoryScopeInfo[] = Array.from(scopeMap.entries()).map(
+		([scope, info]) => ({
+			scope,
+			scopeType: info.scopeType,
+			entryCount: info.entryCount,
+		})
+	);
+
+	if (!scopes.some((s) => s.scope === flowName)) {
+		scopes.push({ scope: flowName, scopeType: "flow", entryCount: 0 });
+	}
+
+	return scopes.sort((a, b) => {
+		const typeOrder =
+			SCOPE_TYPE_SORT_ORDER[a.scopeType] - SCOPE_TYPE_SORT_ORDER[b.scopeType];
+		if (typeOrder !== 0) return typeOrder;
+		return a.scope.localeCompare(b.scope);
+	});
+}
+
 export function dedupeMemoryEntries(entries: MemoryEntry[]): MemoryEntry[] {
 	const seen = new Set<string>();
 	const result: MemoryEntry[] = [];

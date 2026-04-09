@@ -1,36 +1,47 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchMemoryScopes } from "../domain/fetch-memory-scopes";
-import { fetchMemories } from "../domain/fetch-memories";
+import { fetchNamespaceMemories } from "../domain/fetch-namespace-memories";
+import { fetchFlowMemories } from "../domain/fetch-flow-memories";
+import { fetchExecutionMemories } from "../domain/fetch-execution-memories";
+import { fetchSingleExecutionMemories } from "../domain/fetch-single-execution-memories";
 import { fetchMemoryHistory } from "../domain/fetch-memory-history";
 
 export const memoryQueryKeys = {
 	base: ["memory"] as const,
-	scopes: () => [...memoryQueryKeys.base, "scopes"] as const,
-	entries: (scope: string) =>
-		[...memoryQueryKeys.base, "entries", scope] as const,
+	namespaces: () => [...memoryQueryKeys.base, "namespaces"] as const,
+	flow: (flowName: string) =>
+		[...memoryQueryKeys.base, "flow", flowName] as const,
+	executions: (flowId: string) =>
+		[...memoryQueryKeys.base, "executions", flowId] as const,
+	execution: (executionId: string) =>
+		[...memoryQueryKeys.base, "execution", executionId] as const,
 	history: (scope: string, key: string) =>
 		[...memoryQueryKeys.base, "history", scope, key] as const,
 };
 
-const MEMORY_STALE_TIME = 30_000;
-
 export const memoryQueries = {
-	scopes: () =>
+	namespaces: () =>
 		queryOptions({
-			queryKey: memoryQueryKeys.scopes(),
-			queryFn: fetchMemoryScopes,
-			staleTime: MEMORY_STALE_TIME,
+			queryKey: memoryQueryKeys.namespaces(),
+			queryFn: fetchNamespaceMemories,
 		}),
-	entries: (scope: string) =>
+	flow: (flowName: string) =>
 		queryOptions({
-			queryKey: memoryQueryKeys.entries(scope),
-			queryFn: () => fetchMemories(scope),
-			staleTime: MEMORY_STALE_TIME,
+			queryKey: memoryQueryKeys.flow(flowName),
+			queryFn: () => fetchFlowMemories(flowName),
+		}),
+	executions: (flowId: string) =>
+		queryOptions({
+			queryKey: memoryQueryKeys.executions(flowId),
+			queryFn: () => fetchExecutionMemories(flowId),
+		}),
+	execution: (executionId: string) =>
+		queryOptions({
+			queryKey: memoryQueryKeys.execution(executionId),
+			queryFn: () => fetchSingleExecutionMemories(executionId),
 		}),
 	history: (scope: string, key: string) =>
 		queryOptions({
 			queryKey: memoryQueryKeys.history(scope, key),
 			queryFn: () => fetchMemoryHistory(scope, key),
-			staleTime: MEMORY_STALE_TIME,
 		}),
 };
