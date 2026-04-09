@@ -6,15 +6,16 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 } from "@/shared/ui/empty";
+import { ChipBar } from "@/shared/ui/ChipBar";
 import type { MemoryEntry, MemoryScopeType } from "../domain/memory";
 import { MemoryChip } from "./MemoryChip";
 
 const SCOPE_ORDER: MemoryScopeType[] = ["namespace", "flow", "execution"];
 
-const SCOPE_ABBREVIATIONS: Record<string, string> = {
-	namespace: "NS",
+const SCOPE_LABELS: Record<string, string> = {
+	namespace: "Namespace",
 	flow: "Flow",
-	execution: "Exec",
+	execution: "Execution",
 };
 
 type CheckpointMemoryTabProps = {
@@ -43,6 +44,22 @@ export function CheckpointMemoryTab({
 		return result;
 	}, [entries]);
 
+	const chipGroups = SCOPE_ORDER.filter(
+		(scopeType) => grouped[scopeType].length > 0
+	).map((scopeType) => ({
+		label: SCOPE_LABELS[scopeType] ?? scopeType,
+		children: grouped[scopeType].map((entry) => (
+			<MemoryChip
+				key={entry.artifactId}
+				label={entry.key.split("/").pop() ?? entry.key}
+				scopeType={entry.scopeType}
+				isDeleted={entry.isDeleted}
+				isSelected={selectedKey === entry.key}
+				onClick={() => onSelectKey(entry.key)}
+			/>
+		)),
+	}));
+
 	if (entries.length === 0) {
 		return (
 			<Empty className="h-full border-none">
@@ -60,35 +77,8 @@ export function CheckpointMemoryTab({
 
 	return (
 		<div className="flex h-full flex-col">
-			{/* Chip bar grouped by scope */}
-			<div className="border-border shrink-0 space-y-1.5 border-b px-4 py-2">
-				{SCOPE_ORDER.map((scopeType) => {
-					const scopeEntries = grouped[scopeType];
-					if (scopeEntries.length === 0) return null;
-					return (
-						<div
-							key={scopeType}
-							className="flex flex-wrap items-center gap-1.5"
-						>
-							<span className="text-muted-foreground text-2xs w-14 shrink-0 font-semibold tracking-wider uppercase">
-								{SCOPE_ABBREVIATIONS[scopeType] ?? scopeType}
-							</span>
-							{scopeEntries.map((entry) => (
-								<MemoryChip
-									key={entry.artifactId}
-									label={entry.key.split("/").pop() ?? entry.key}
-									scopeType={entry.scopeType}
-									isDeleted={entry.isDeleted}
-									isSelected={selectedKey === entry.key}
-									onClick={() => onSelectKey(entry.key)}
-								/>
-							))}
-						</div>
-					);
-				})}
-			</div>
+			<ChipBar groups={chipGroups} labelClassName="w-16" />
 
-			{/* Selected key content */}
 			{children ? (
 				<div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
 			) : (
