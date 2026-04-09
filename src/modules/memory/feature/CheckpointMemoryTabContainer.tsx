@@ -27,37 +27,32 @@ export function CheckpointMemoryTabContainer({
 		return all.filter((e) => e.createdAt <= checkpointStartTime);
 	}, [namespaceEntries, flowEntries, executionEntries, checkpointStartTime]);
 
-	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
+	const [userSelectedId, setUserSelectedId] = useState<string | undefined>();
 
-	const selectedKey = useMemo(() => {
-		if (
-			userSelectedKey &&
-			memoryEntries.some((e) => e.key === userSelectedKey)
-		) {
-			return userSelectedKey;
+	const selectedEntry = useMemo(() => {
+		if (userSelectedId) {
+			const found = memoryEntries.find((e) => e.artifactId === userSelectedId);
+			if (found) return found;
 		}
-		const first = executionEntries[0] ?? flowEntries[0] ?? namespaceEntries[0];
-		return first?.key;
+		return executionEntries[0] ?? flowEntries[0] ?? namespaceEntries[0];
 	}, [
-		userSelectedKey,
+		userSelectedId,
 		memoryEntries,
 		executionEntries,
 		flowEntries,
 		namespaceEntries,
 	]);
 
-	const selectedEntry = memoryEntries.find((e) => e.key === selectedKey);
-
 	return (
 		<CheckpointMemoryTab
 			entries={memoryEntries}
-			selectedKey={selectedKey}
-			onSelectKey={setUserSelectedKey}
+			selectedArtifactId={selectedEntry?.artifactId}
+			onSelectEntry={(entry) => setUserSelectedId(entry.artifactId)}
 		>
 			{selectedEntry && (
 				<>
 					<div className="border-border border-b px-4 py-3">
-						<MemoryMetadata entry={selectedEntry} flowId={flowId} />
+						<MemoryMetadata entry={selectedEntry} />
 					</div>
 					<Suspense>
 						<ArtifactVisualizationContainer

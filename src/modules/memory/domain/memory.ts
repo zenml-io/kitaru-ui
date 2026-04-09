@@ -94,7 +94,6 @@ function inferValueType(dataType: components["schemas"]["Source"]): string {
 export function mapArtifactVersionToMemoryEntry(
 	artifact: components["schemas"]["ArtifactVersionResponse"]
 ): MemoryEntry | null {
-	console.log("artifact", artifact);
 	const body = artifact.body;
 	if (!body) return null;
 

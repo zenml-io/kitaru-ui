@@ -5,7 +5,6 @@ import { VersionListItem } from "./VersionListItem";
 type MemoryHistoryPanelProps = {
 	history: MemoryEntry[];
 	selectedVersion?: string;
-	flowId: string;
 	onSelectVersion: (version: string) => void;
 };
 

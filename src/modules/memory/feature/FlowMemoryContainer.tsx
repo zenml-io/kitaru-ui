@@ -207,7 +207,6 @@ export function FlowMemoryContainer() {
 			<MemoryHistoryPanel
 				history={memoryHistoryData}
 				selectedVersion={selectedVersion}
-				flowId={flowId}
 				onSelectVersion={handleSelectVersion}
 			/>
 		);

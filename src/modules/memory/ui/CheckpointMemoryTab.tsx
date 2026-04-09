@@ -20,15 +20,15 @@ const SCOPE_LABELS: Record<string, string> = {
 
 type CheckpointMemoryTabProps = {
 	entries: MemoryEntry[];
-	selectedKey?: string;
-	onSelectKey: (key: string) => void;
+	selectedArtifactId?: string;
+	onSelectEntry: (entry: MemoryEntry) => void;
 	children?: React.ReactNode;
 };
 
 export function CheckpointMemoryTab({
 	entries,
-	selectedKey,
-	onSelectKey,
+	selectedArtifactId,
+	onSelectEntry,
 	children,
 }: CheckpointMemoryTabProps) {
 	const grouped = useMemo(() => {
@@ -54,8 +54,8 @@ export function CheckpointMemoryTab({
 				label={entry.key}
 				scopeType={entry.scopeType}
 				isDeleted={entry.isDeleted}
-				isSelected={selectedKey === entry.key}
-				onClick={() => onSelectKey(entry.key)}
+				isSelected={selectedArtifactId === entry.artifactId}
+				onClick={() => onSelectEntry(entry)}
 			/>
 		)),
 	}));
