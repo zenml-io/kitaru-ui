@@ -8,6 +8,7 @@ import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
+import { NoArtifactsMessage } from "./NoArtifactsMessage";
 import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
@@ -31,15 +32,27 @@ export function CheckpointDetailPanelArtifacts({
 	selectedArtifact,
 	onSelectArtifact,
 }: CheckpointDetailPanelArtifactsProps) {
+	const hasVisibleArtifacts = inputs.length > 0 || outputs.length > 0;
+
 	return (
 		<div className="flex h-full flex-col">
-			<ArtifactsToolbar
-				inputs={inputs}
-				outputs={outputs}
-				selectedArtifact={selectedArtifact}
-				onSelectArtifact={onSelectArtifact}
-			/>
-			{selectedArtifact ? (
+			{hasVisibleArtifacts && (
+				<ArtifactsToolbar
+					inputs={inputs}
+					outputs={outputs}
+					selectedArtifact={selectedArtifact}
+					onSelectArtifact={onSelectArtifact}
+				/>
+			)}
+			{!hasVisibleArtifacts && <NoArtifactsMessage />}
+			{hasVisibleArtifacts && !selectedArtifact && (
+				<div className="flex flex-1 items-center justify-center p-4">
+					<p className="text-muted-foreground text-xs">
+						Select an artifact to view
+					</p>
+				</div>
+			)}
+			{hasVisibleArtifacts && selectedArtifact && (
 				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">
@@ -65,12 +78,6 @@ export function CheckpointDetailPanelArtifacts({
 							</Suspense>
 						</ErrorBoundary>
 					</div>
-				</div>
-			) : (
-				<div className="flex flex-1 items-center justify-center p-4">
-					<p className="text-muted-foreground text-xs">
-						Select an artifact to view
-					</p>
 				</div>
 			)}
 		</div>

@@ -172,7 +172,6 @@ export function FlowMemoryContainer() {
 		return (
 			<MemoryDetailPanel
 				entry={detailEntry}
-				flowId={flowId}
 				preview={previewNode}
 				previewActions={previewActions}
 			/>

@@ -1,12 +1,13 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
-import { parseMemoryArtifactName } from "@/modules/memory/domain/memory";
 import { parseBackendTimestamp } from "@/shared/utils/time";
+import {
+	extractInputArtifactEntries,
+	extractOutputArtifactEntries,
+} from "./artifact";
+import type { ArtifactEntry } from "./artifact";
 
-export type ArtifactEntry = {
-	name: string;
-	id: string;
-};
+export type { ArtifactEntry };
 
 export type Checkpoint = {
 	id: string;
@@ -28,8 +29,8 @@ export function checkpointFromApiToDomain(
 		id: checkpoint.id,
 		name: checkpoint.name,
 		status: checkpoint.body?.status || undefined,
-		inputs: extractArtifactEntries(checkpoint.resources?.inputs),
-		outputs: extractArtifactEntries(checkpoint.resources?.outputs),
+		inputs: extractInputArtifactEntries(checkpoint.resources?.inputs),
+		outputs: extractOutputArtifactEntries(checkpoint.resources?.outputs),
 		startTime: checkpoint.body?.start_time
 			? parseBackendTimestamp(checkpoint.body.start_time)
 			: undefined,
@@ -46,32 +47,6 @@ export function checkpointFromApiToDomain(
 			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 	};
-}
-
-function isExternalArtifact(
-	v: components["schemas"]["ArtifactVersionResponse"]
-): boolean {
-	const name = v.body?.artifact?.name;
-	if (!name) return false;
-	return (
-		parseMemoryArtifactName(name) !== undefined || name.startsWith("external_")
-	);
-}
-
-function extractArtifactEntries(
-	record: Record<string, unknown> | undefined
-): ArtifactEntry[] {
-	if (!record) return [];
-	return Object.entries(record).flatMap(([name, value]) => {
-		const versions =
-			value as components["schemas"]["ArtifactVersionResponse"][];
-		if (!Array.isArray(versions)) return [];
-		return versions.flatMap((v, index) => {
-			if (!v.id || isExternalArtifact(v)) return [];
-			const entryName = versions.length > 1 ? `${name}[${index}]` : name;
-			return [{ name: entryName, id: v.id }];
-		});
-	});
 }
 
 export type CheckpointEntry = {

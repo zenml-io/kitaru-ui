@@ -11,6 +11,7 @@ import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
+import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
 import { ArtifactChip } from "./ArtifactChip";
 
 function CheckpointRowArtifactsContent({
@@ -31,7 +32,9 @@ function CheckpointRowArtifactsContent({
 		outputs[0] ? { entry: outputs[0], direction: "output" } : null
 	);
 
-	if (inputs.length === 0 && outputs.length === 0) return null;
+	if (inputs.length === 0 && outputs.length === 0) {
+		return <NoArtifactsMessage />;
+	}
 
 	return (
 		<div className="space-y-4 px-4 pt-4 pb-4">
