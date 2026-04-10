@@ -68,12 +68,12 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 });
 
 function FlowTabPage() {
-	const { tab } = Route.useParams();
+	const { flowId, tab } = Route.useParams();
 	const Component = TAB_COMPONENTS[tab];
 	return (
 		<>
 			<FlowContextBarContainer />
-			<Component />
+			<Component key={flowId} />
 		</>
 	);
 }
