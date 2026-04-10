@@ -10,7 +10,7 @@ import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/Ar
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { deriveScopesFromEntries } from "../business-logic/memory-operations";
-import type { MemoryEntry } from "../domain/memory";
+import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
 import { MemoryDetailPanel } from "../ui/MemoryDetailPanel";
 import { MemoryHistoryPanel } from "../ui/MemoryHistoryPanel";
@@ -25,7 +25,11 @@ export function FlowMemoryContainer() {
 	const { flowData } = useFlow(flowId);
 	const flowName = flowData.name;
 
-	const [activeScope, setActiveScope] = useState(flowName);
+	const [activeScope, setActiveScope] = useState<MemoryScopeInfo>({
+		scope: flowName,
+		scopeType: "flow",
+		entryCount: 0,
+	});
 	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
 	const [selectedVersion, setSelectedVersion] = useState<string | undefined>();
 
@@ -51,7 +55,8 @@ export function FlowMemoryContainer() {
 	const memoryEntriesData = useMemo(
 		() =>
 			[...namespaceEntries, ...flowEntries, ...executionEntries].filter(
-				(e) => e.scope === activeScope
+				(e) =>
+					e.scope === activeScope.scope && e.scopeType === activeScope.scopeType
 			),
 		[namespaceEntries, flowEntries, executionEntries, activeScope]
 	);
@@ -72,11 +77,11 @@ export function FlowMemoryContainer() {
 		memoryHistoryData,
 		isPending: isHistoryPending,
 		refetch: refetchHistory,
-	} = useMemoryHistory(activeScope, selectedKey);
+	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
 
 	// memoryScopesData already includes flow scope via deriveScopesFromEntries
 
-	const handleScopeChange = useCallback((scope: string) => {
+	const handleScopeChange = useCallback((scope: MemoryScopeInfo) => {
 		setActiveScope(scope);
 		setUserSelectedKey(undefined);
 		setSelectedVersion(undefined);
@@ -113,6 +118,9 @@ export function FlowMemoryContainer() {
 
 	// --- Panel content ---
 
+	const isFlowScope =
+		activeScope.scope === flowName && activeScope.scopeType === "flow";
+
 	const leftPanel = (
 		<MemorySidebar
 			scopes={memoryScopesData}
@@ -138,8 +146,8 @@ export function FlowMemoryContainer() {
 		if (memoryEntriesData.length === 0) {
 			return (
 				<MemoryEmptyState
-					variant={activeScope === flowName ? "no-memory" : "no-scope-memory"}
-					scopeName={activeScope}
+					variant={isFlowScope ? "no-memory" : "no-scope-memory"}
+					scopeName={activeScope.scope}
 				/>
 			);
 		}

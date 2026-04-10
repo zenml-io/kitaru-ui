@@ -3,6 +3,7 @@ import { fetchNamespaceMemories } from "../domain/fetch-namespace-memories";
 import { fetchFlowMemories } from "../domain/fetch-flow-memories";
 import { fetchExecutionMemories } from "../domain/fetch-execution-memories";
 import { fetchSingleExecutionMemories } from "../domain/fetch-single-execution-memories";
+import type { MemoryScopeType } from "../domain/memory";
 import { fetchMemoryHistory } from "../domain/fetch-memory-history";
 
 export const memoryQueryKeys = {
@@ -14,8 +15,8 @@ export const memoryQueryKeys = {
 		[...memoryQueryKeys.base, "executions", flowId] as const,
 	execution: (executionId: string) =>
 		[...memoryQueryKeys.base, "execution", executionId] as const,
-	history: (scope: string, key: string) =>
-		[...memoryQueryKeys.base, "history", scope, key] as const,
+	history: (scope: string, scopeType: MemoryScopeType, key: string) =>
+		[...memoryQueryKeys.base, "history", scope, scopeType, key] as const,
 };
 
 export const memoryQueries = {
@@ -39,9 +40,9 @@ export const memoryQueries = {
 			queryKey: memoryQueryKeys.execution(executionId),
 			queryFn: () => fetchSingleExecutionMemories(executionId),
 		}),
-	history: (scope: string, key: string) =>
+	history: (scope: string, scopeType: MemoryScopeType, key: string) =>
 		queryOptions({
-			queryKey: memoryQueryKeys.history(scope, key),
-			queryFn: () => fetchMemoryHistory(scope, key),
+			queryKey: memoryQueryKeys.history(scope, scopeType, key),
+			queryFn: () => fetchMemoryHistory(scope, scopeType, key),
 		}),
 };

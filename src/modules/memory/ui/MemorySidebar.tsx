@@ -6,9 +6,9 @@ import { MemoryScopeSelector } from "./MemoryScopeSelector";
 
 type MemorySidebarProps = {
 	scopes: MemoryScopeInfo[];
-	activeScope: string;
+	activeScope: MemoryScopeInfo;
 	flowName: string;
-	onScopeChange: (scope: string) => void;
+	onScopeChange: (scope: MemoryScopeInfo) => void;
 	entries: MemoryEntry[];
 	selectedKey?: string;
 	onSelectKey: (key: string) => void;

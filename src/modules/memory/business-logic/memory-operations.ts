@@ -14,7 +14,7 @@ export function deriveScopesFromEntries(
 ): MemoryScopeInfo[] {
 	const scopeMap = new Map<
 		string,
-		{ scopeType: MemoryScopeType; entryCount: number }
+		{ scope: string; scopeType: MemoryScopeType; entryCount: number }
 	>();
 
 	for (const entry of [
@@ -22,26 +22,22 @@ export function deriveScopesFromEntries(
 		...flowEntries,
 		...executionEntries,
 	]) {
-		const existing = scopeMap.get(entry.scope);
+		const compositeKey = entry.scope + "\0" + entry.scopeType;
+		const existing = scopeMap.get(compositeKey);
 		if (existing) {
 			existing.entryCount++;
 		} else {
-			scopeMap.set(entry.scope, {
+			scopeMap.set(compositeKey, {
+				scope: entry.scope,
 				scopeType: entry.scopeType,
 				entryCount: 1,
 			});
 		}
 	}
 
-	const scopes: MemoryScopeInfo[] = Array.from(scopeMap.entries()).map(
-		([scope, info]) => ({
-			scope,
-			scopeType: info.scopeType,
-			entryCount: info.entryCount,
-		})
-	);
+	const scopes: MemoryScopeInfo[] = Array.from(scopeMap.values());
 
-	if (!scopes.some((s) => s.scope === flowName)) {
+	if (!scopes.some((s) => s.scope === flowName && s.scopeType === "flow")) {
 		scopes.push({ scope: flowName, scopeType: "flow", entryCount: 0 });
 	}
 

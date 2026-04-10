@@ -13,9 +13,9 @@ import { ChevronDown, Check } from "@untitledui/icons";
 
 type MemoryScopeSelectorProps = {
 	scopes: MemoryScopeInfo[];
-	activeScope: string;
+	activeScope: MemoryScopeInfo;
 	flowName: string;
-	onScopeChange: (scope: string) => void;
+	onScopeChange: (scope: MemoryScopeInfo) => void;
 };
 
 const SCOPE_TYPE_ORDER: MemoryScopeType[] = [
@@ -54,7 +54,7 @@ export function MemoryScopeSelector({
 						variant="outline"
 						className="w-full justify-between font-mono font-medium"
 					>
-						<span className="truncate">{activeScope}</span>
+						<span className="truncate">{activeScope.scope}</span>
 						<ChevronDown className="ml-1 size-4 shrink-0 opacity-50" />
 					</Button>
 				}
@@ -67,12 +67,15 @@ export function MemoryScopeSelector({
 						</DropdownMenuLabel>
 						{grouped.get(scopeType)!.map((s) => (
 							<DropdownMenuItem
-								key={s.scope}
-								onClick={() => onScopeChange(s.scope)}
+								key={s.scope + s.scopeType}
+								onClick={() => onScopeChange(s)}
 								className="flex items-center gap-2"
 							>
 								<span className="w-4 shrink-0">
-									{s.scope === activeScope && <Check className="size-4" />}
+									{s.scope === activeScope.scope &&
+										s.scopeType === activeScope.scopeType && (
+											<Check className="size-4" />
+										)}
 								</span>
 								<span className="min-w-0 flex-1 truncate font-mono font-medium">
 									{s.scope}
