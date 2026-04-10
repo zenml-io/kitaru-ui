@@ -10,7 +10,11 @@ import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/Ar
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { deriveScopesFromEntries } from "../business-logic/memory-operations";
-import type { MemoryEntry } from "../domain/memory";
+import {
+	isSameMemoryScopeIdentity,
+	type MemoryEntry,
+	type MemoryScopeIdentity,
+} from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
 import { MemoryDetailPanel } from "../ui/MemoryDetailPanel";
 import { MemoryHistoryPanel } from "../ui/MemoryHistoryPanel";
@@ -24,8 +28,15 @@ export function FlowMemoryContainer() {
 
 	const { flowData } = useFlow(flowId);
 	const flowName = flowData.name;
+	const flowScope = useMemo<MemoryScopeIdentity>(
+		() => ({ scope: flowName, scopeType: "flow" }),
+		[flowName]
+	);
 
-	const [activeScope, setActiveScope] = useState(flowName);
+	const [activeScope, setActiveScope] = useState<MemoryScopeIdentity>(() => ({
+		scope: flowName,
+		scopeType: "flow",
+	}));
 	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
 	const [selectedVersion, setSelectedVersion] = useState<string | undefined>();
 
@@ -37,23 +48,22 @@ export function FlowMemoryContainer() {
 		refetch: refetchEntries,
 	} = useFlowMemories(flowId, flowName);
 
+	const allEntries = useMemo(
+		() => [...namespaceEntries, ...flowEntries, ...executionEntries],
+		[namespaceEntries, flowEntries, executionEntries]
+	);
+
 	const memoryScopesData = useMemo(
-		() =>
-			deriveScopesFromEntries(
-				namespaceEntries,
-				flowEntries,
-				executionEntries,
-				flowName
-			),
-		[namespaceEntries, flowEntries, executionEntries, flowName]
+		() => deriveScopesFromEntries(allEntries, flowName),
+		[allEntries, flowName]
 	);
 
 	const memoryEntriesData = useMemo(
 		() =>
-			[...namespaceEntries, ...flowEntries, ...executionEntries].filter(
-				(e) => e.scope === activeScope
+			allEntries.filter((entry) =>
+				isSameMemoryScopeIdentity(entry, activeScope)
 			),
-		[namespaceEntries, flowEntries, executionEntries, activeScope]
+		[allEntries, activeScope]
 	);
 
 	// Derive effective selected key: use user's choice if valid, else first entry
@@ -74,9 +84,7 @@ export function FlowMemoryContainer() {
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope, selectedKey);
 
-	// memoryScopesData already includes flow scope via deriveScopesFromEntries
-
-	const handleScopeChange = useCallback((scope: string) => {
+	const handleScopeChange = useCallback((scope: MemoryScopeIdentity) => {
 		setActiveScope(scope);
 		setUserSelectedKey(undefined);
 		setSelectedVersion(undefined);
@@ -117,7 +125,7 @@ export function FlowMemoryContainer() {
 		<MemorySidebar
 			scopes={memoryScopesData}
 			activeScope={activeScope}
-			flowName={flowName}
+			flowScope={flowScope}
 			onScopeChange={handleScopeChange}
 			entries={memoryEntriesData}
 			selectedKey={selectedKey}
@@ -138,8 +146,12 @@ export function FlowMemoryContainer() {
 		if (memoryEntriesData.length === 0) {
 			return (
 				<MemoryEmptyState
-					variant={activeScope === flowName ? "no-memory" : "no-scope-memory"}
-					scopeName={activeScope}
+					variant={
+						isSameMemoryScopeIdentity(activeScope, flowScope)
+							? "no-memory"
+							: "no-scope-memory"
+					}
+					scope={activeScope}
 				/>
 			);
 		}

@@ -1,4 +1,8 @@
-import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
+import type {
+	MemoryEntry,
+	MemoryScopeIdentity,
+	MemoryScopeInfo,
+} from "../domain/memory";
 import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/utils/styles";
 import { formatRelativeTime } from "@/shared/utils/time";
@@ -6,9 +10,9 @@ import { MemoryScopeSelector } from "./MemoryScopeSelector";
 
 type MemorySidebarProps = {
 	scopes: MemoryScopeInfo[];
-	activeScope: string;
-	flowName: string;
-	onScopeChange: (scope: string) => void;
+	activeScope: MemoryScopeIdentity;
+	flowScope: MemoryScopeIdentity;
+	onScopeChange: (scope: MemoryScopeIdentity) => void;
 	entries: MemoryEntry[];
 	selectedKey?: string;
 	onSelectKey: (key: string) => void;
@@ -18,7 +22,7 @@ type MemorySidebarProps = {
 export function MemorySidebar({
 	scopes,
 	activeScope,
-	flowName,
+	flowScope,
 	onScopeChange,
 	entries,
 	selectedKey,
@@ -32,7 +36,7 @@ export function MemorySidebar({
 				<MemoryScopeSelector
 					scopes={scopes}
 					activeScope={activeScope}
-					flowName={flowName}
+					flowScope={flowScope}
 					onScopeChange={onScopeChange}
 				/>
 			</div>

@@ -7,10 +7,11 @@ import {
 	EmptyTitle,
 } from "@/shared/ui/empty";
 import { cn } from "@/shared/utils/styles";
+import type { MemoryScopeIdentity } from "../domain/memory";
 
 type MemoryEmptyStateProps = {
 	variant: "no-memory" | "no-scope-memory" | "no-preview";
-	scopeName?: string;
+	scope?: MemoryScopeIdentity;
 	className?: string;
 };
 
@@ -36,15 +37,15 @@ const CONFIG = {
 
 export function MemoryEmptyState({
 	variant,
-	scopeName,
+	scope,
 	className,
 }: MemoryEmptyStateProps) {
 	const config = CONFIG[variant];
 	const Icon = config.icon;
 
 	const description =
-		variant === "no-scope-memory" && scopeName
-			? `No memory entries found for scope "${scopeName}".`
+		variant === "no-scope-memory" && scope
+			? `No memory entries found for ${scope.scopeType} scope "${scope.scope}".`
 			: config.description;
 
 	return (

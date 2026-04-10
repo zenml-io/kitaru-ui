@@ -1,4 +1,5 @@
 import {
+	buildMemoryArtifactPrefix,
 	MEMORY_TAG_MARKER,
 	MEMORY_TAG_SCOPE_TYPE_PREFIX,
 	type MemoryEntry,
@@ -11,7 +12,10 @@ export async function fetchFlowMemories(
 ): Promise<MemoryEntry[]> {
 	const versions = await fetchMemoryArtifactVersions({
 		tags: [MEMORY_TAG_MARKER, `${MEMORY_TAG_SCOPE_TYPE_PREFIX}flow`],
-		artifact: `startswith:kitaru_mem:${flowName}:`,
+		artifact: `startswith:${buildMemoryArtifactPrefix({
+			scope: flowName,
+			scopeType: "flow",
+		})}`,
 		logical_operator: "and",
 		sort_by: "desc:version_number",
 	});

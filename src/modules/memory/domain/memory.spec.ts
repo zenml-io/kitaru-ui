@@ -1,25 +1,36 @@
 import { describe, expect, it } from "vitest";
 import type { components } from "@/shared/api/openapi";
 import {
+	buildMemoryArtifactName,
 	parseMemoryArtifactName,
 	isCompactionKey,
 	mapArtifactVersionToMemoryEntry,
 } from "./memory";
 
 describe("parseMemoryArtifactName", () => {
-	it("parses a valid artifact name", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:my-flow:counter")).toEqual({
+	it("parses a valid typed artifact name", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:flow:my-flow:counter")).toEqual({
 			scope: "my-flow",
+			scopeType: "flow",
 			key: "counter",
 		});
 	});
 
 	it("handles keys containing colons", () => {
 		expect(
-			parseMemoryArtifactName("kitaru_mem:my-flow:nested:key:value")
+			parseMemoryArtifactName("kitaru_mem:flow:my-flow:nested:key:value")
 		).toEqual({
 			scope: "my-flow",
+			scopeType: "flow",
 			key: "nested:key:value",
+		});
+	});
+
+	it("falls back to legacy untyped artifact names", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:my-flow:counter")).toEqual({
+			scope: "my-flow",
+			scopeType: "unknown",
+			key: "counter",
 		});
 	});
 
@@ -28,11 +39,11 @@ describe("parseMemoryArtifactName", () => {
 	});
 
 	it("returns null for missing scope", () => {
-		expect(parseMemoryArtifactName("kitaru_mem::key")).toBeUndefined();
+		expect(parseMemoryArtifactName("kitaru_mem:flow::key")).toBeUndefined();
 	});
 
 	it("returns null for missing key", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:scope:")).toBeUndefined();
+		expect(parseMemoryArtifactName("kitaru_mem:flow:scope:")).toBeUndefined();
 	});
 
 	it("returns null for missing scope and key", () => {
@@ -45,6 +56,17 @@ describe("parseMemoryArtifactName", () => {
 
 	it("returns null for prefix only with no colon after scope", () => {
 		expect(parseMemoryArtifactName("kitaru_mem:scopeonly")).toBeUndefined();
+	});
+});
+
+describe("buildMemoryArtifactName", () => {
+	it("builds a typed artifact name", () => {
+		expect(
+			buildMemoryArtifactName(
+				{ scope: "my-flow", scopeType: "flow" },
+				"counter"
+			)
+		).toBe("kitaru_mem:flow:my-flow:counter");
 	});
 });
 
@@ -88,7 +110,7 @@ function makeArtifactVersion(
 			save_type: "step_output",
 			artifact: {
 				id: "artifact-id-1",
-				name: overrides.name ?? "kitaru_mem:my-flow:counter",
+				name: overrides.name ?? "kitaru_mem:flow:my-flow:counter",
 			},
 		},
 		metadata: {
@@ -138,9 +160,18 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 	});
 
 	it("defaults scopeType to unknown when metadata is missing", () => {
-		const av = makeArtifactVersion({ scopeType: "bogus" });
+		const av = makeArtifactVersion({
+			name: "kitaru_mem:legacy-flow:counter",
+			scopeType: "bogus",
+		});
 		const entry = mapArtifactVersionToMemoryEntry(av);
 		expect(entry?.scopeType).toBe("unknown");
+	});
+
+	it("prefers the scope type encoded in the typed artifact name", () => {
+		const av = makeArtifactVersion({ scopeType: "namespace" });
+		const entry = mapArtifactVersionToMemoryEntry(av);
+		expect(entry?.scopeType).toBe("flow");
 	});
 
 	it("parses isDeleted from boolean true", () => {

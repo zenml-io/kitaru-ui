@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { MemoryEntry } from "../domain/memory";
 import {
+	deriveScopesFromEntries,
 	dedupeMemoryEntries,
 	snapshotMemoryEntriesAtTime,
 } from "./memory-operations";
@@ -18,6 +19,35 @@ function makeEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
 		...overrides,
 	};
 }
+
+describe("deriveScopesFromEntries", () => {
+	it("keeps flow and namespace scopes separate when they share the same name", () => {
+		const scopes = deriveScopesFromEntries(
+			[
+				makeEntry({ scope: "coding_agent", scopeType: "namespace" }),
+				makeEntry({ scope: "coding_agent", scopeType: "flow" }),
+			],
+			"coding_agent"
+		);
+
+		expect(scopes).toEqual([
+			{ scope: "coding_agent", scopeType: "flow", entryCount: 1 },
+			{ scope: "coding_agent", scopeType: "namespace", entryCount: 1 },
+		]);
+	});
+
+	it("still adds the flow scope when only a same-named namespace scope exists", () => {
+		const scopes = deriveScopesFromEntries(
+			[makeEntry({ scope: "coding_agent", scopeType: "namespace" })],
+			"coding_agent"
+		);
+
+		expect(scopes).toEqual([
+			{ scope: "coding_agent", scopeType: "flow", entryCount: 0 },
+			{ scope: "coding_agent", scopeType: "namespace", entryCount: 1 },
+		]);
+	});
+});
 
 describe("dedupeMemoryEntries", () => {
 	it("keeps the newest version per key (first in newest-first input)", () => {

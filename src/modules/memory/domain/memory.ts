@@ -39,30 +39,73 @@ export type MemoryEntry = {
 	artifactId: string;
 };
 
-export type MemoryScopeInfo = {
+export type MemoryScopeIdentity = {
 	scope: string;
 	scopeType: MemoryScopeType;
+};
+
+export type MemoryScopeInfo = MemoryScopeIdentity & {
 	entryCount: number;
 };
 
-export function buildMemoryArtifactName(scope: string, key: string): string {
-	return `${ARTIFACT_NAME_PREFIX}${scope}:${key}`;
+export function memoryScopeIdentityKey({
+	scope,
+	scopeType,
+}: MemoryScopeIdentity): string {
+	return `${scopeType}:${scope}`;
+}
+
+export function isSameMemoryScopeIdentity(
+	left: MemoryScopeIdentity,
+	right: MemoryScopeIdentity
+): boolean {
+	return left.scope === right.scope && left.scopeType === right.scopeType;
+}
+
+export function buildMemoryArtifactName(
+	scope: MemoryScopeIdentity,
+	key: string
+): string {
+	return `${ARTIFACT_NAME_PREFIX}${scope.scopeType}:${scope.scope}:${key}`;
+}
+
+export function buildMemoryArtifactPrefix(scope: MemoryScopeIdentity): string {
+	return `${ARTIFACT_NAME_PREFIX}${scope.scopeType}:${scope.scope}:`;
 }
 
 export function parseMemoryArtifactName(
 	name: string
-): { scope: string; key: string } | undefined {
+): (MemoryScopeIdentity & { key: string }) | undefined {
 	if (!name.startsWith(ARTIFACT_NAME_PREFIX)) return undefined;
 
 	const rest = name.slice(ARTIFACT_NAME_PREFIX.length);
-	const colonIndex = rest.indexOf(":");
-	if (colonIndex <= 0) return undefined;
+	const firstColonIndex = rest.indexOf(":");
+	if (firstColonIndex <= 0) return undefined;
 
-	const scope = rest.slice(0, colonIndex);
-	const key = rest.slice(colonIndex + 1);
-	if (!key) return undefined;
+	const maybeScopeType = rest.slice(0, firstColonIndex);
+	const remainder = rest.slice(firstColonIndex + 1);
 
-	return { scope, key };
+	if (memoryScopeTypeValues.includes(maybeScopeType as MemoryScopeType)) {
+		const secondColonIndex = remainder.indexOf(":");
+		if (secondColonIndex <= 0) return undefined;
+
+		const scope = remainder.slice(0, secondColonIndex);
+		const key = remainder.slice(secondColonIndex + 1);
+		if (!scope || !key) return undefined;
+		return {
+			scope,
+			scopeType: maybeScopeType as MemoryScopeType,
+			key,
+		};
+	}
+
+	if (!remainder) return undefined;
+
+	return {
+		scope: maybeScopeType,
+		scopeType: "unknown",
+		key: remainder,
+	};
 }
 
 export function isCompactionKey(key: string): boolean {
@@ -106,7 +149,10 @@ export function mapArtifactVersionToMemoryEntry(
 		scope: parsed.scope,
 		version: body.version,
 		valueType: inferValueType(body.data_type),
-		scopeType: parseScopeType(runMetadata[MEMORY_SCOPE_TYPE_METADATA_KEY]),
+		scopeType:
+			parsed.scopeType === "unknown"
+				? parseScopeType(runMetadata[MEMORY_SCOPE_TYPE_METADATA_KEY])
+				: parsed.scopeType,
 		createdAt: parseBackendTimestamp(body.created),
 		isDeleted: parseIsDeleted(runMetadata[MEMORY_DELETED_METADATA_KEY]),
 		artifactId: artifact.id,

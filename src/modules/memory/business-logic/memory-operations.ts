@@ -1,47 +1,38 @@
 import {
 	isCompactionKey,
+	memoryScopeIdentityKey,
 	SCOPE_TYPE_SORT_ORDER,
 	type MemoryEntry,
-	type MemoryScopeType,
 	type MemoryScopeInfo,
 } from "../domain/memory";
 
 export function deriveScopesFromEntries(
-	namespaceEntries: MemoryEntry[],
-	flowEntries: MemoryEntry[],
-	executionEntries: MemoryEntry[],
+	entries: MemoryEntry[],
 	flowName: string
 ): MemoryScopeInfo[] {
-	const scopeMap = new Map<
-		string,
-		{ scopeType: MemoryScopeType; entryCount: number }
-	>();
+	const scopeMap = new Map<string, MemoryScopeInfo>();
 
-	for (const entry of [
-		...namespaceEntries,
-		...flowEntries,
-		...executionEntries,
-	]) {
-		const existing = scopeMap.get(entry.scope);
+	for (const entry of entries) {
+		const scopeKey = memoryScopeIdentityKey(entry);
+		const existing = scopeMap.get(scopeKey);
 		if (existing) {
 			existing.entryCount++;
 		} else {
-			scopeMap.set(entry.scope, {
+			scopeMap.set(scopeKey, {
+				scope: entry.scope,
 				scopeType: entry.scopeType,
 				entryCount: 1,
 			});
 		}
 	}
 
-	const scopes: MemoryScopeInfo[] = Array.from(scopeMap.entries()).map(
-		([scope, info]) => ({
-			scope,
-			scopeType: info.scopeType,
-			entryCount: info.entryCount,
-		})
-	);
+	const scopes = Array.from(scopeMap.values());
 
-	if (!scopes.some((s) => s.scope === flowName)) {
+	if (
+		!scopeMap.has(
+			memoryScopeIdentityKey({ scope: flowName, scopeType: "flow" })
+		)
+	) {
 		scopes.push({ scope: flowName, scopeType: "flow", entryCount: 0 });
 	}
 
