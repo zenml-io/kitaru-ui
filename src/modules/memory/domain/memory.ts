@@ -70,13 +70,8 @@ export function isCompactionKey(key: string): boolean {
 }
 
 function parseScopeType(value: unknown): MemoryScopeType {
-	if (
-		typeof value === "string" &&
-		memoryScopeTypeValues.includes(value as MemoryScopeType)
-	) {
-		return value as MemoryScopeType;
-	}
-	return "unknown";
+	const found = memoryScopeTypeValues.find((v) => v === value);
+	return found ?? "unknown";
 }
 
 function parseIsDeleted(value: unknown): boolean {
