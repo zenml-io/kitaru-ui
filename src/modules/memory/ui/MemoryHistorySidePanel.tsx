@@ -2,17 +2,45 @@ import type { MemoryEntry } from "../domain/memory";
 import { cn } from "@/shared/utils/styles";
 import { VersionListItem } from "./VersionListItem";
 
-type MemoryHistoryPanelProps = {
-	history: MemoryEntry[];
-	selectedVersion?: string;
+type MemoryHistorySidePanelProps = {
+	selectedKey: string | undefined;
+	isPending: boolean;
+	history: MemoryEntry[] | undefined;
+	selectedVersion: string | undefined;
 	onSelectVersion: (version: string) => void;
 };
 
-export function MemoryHistoryPanel({
+export function MemoryHistorySidePanel({
+	selectedKey,
+	isPending,
 	history,
 	selectedVersion,
 	onSelectVersion,
-}: MemoryHistoryPanelProps) {
+}: MemoryHistorySidePanelProps) {
+	if (!selectedKey) {
+		return (
+			<div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center text-xs">
+				Select a memory entry to view its history
+			</div>
+		);
+	}
+
+	if (isPending) {
+		return (
+			<div className="text-muted-foreground flex h-full items-center justify-center text-sm">
+				Loading history...
+			</div>
+		);
+	}
+
+	if (!history || history.length === 0) {
+		return (
+			<div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center text-xs">
+				No history available
+			</div>
+		);
+	}
+
 	const activeVersion = selectedVersion ?? history[0]?.version;
 
 	return (

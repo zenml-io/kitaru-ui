@@ -12,10 +12,9 @@ import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSke
 import { deriveScopesFromEntries } from "../business-logic/memory-operations";
 import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
-import { MemoryDetailPanel } from "../ui/MemoryDetailPanel";
-import { MemoryHistoryPanel } from "../ui/MemoryHistoryPanel";
+import { MemoryCenterPanel } from "../ui/MemoryCenterPanel";
+import { MemoryHistorySidePanel } from "../ui/MemoryHistorySidePanel";
 import { MemoryEmptyState } from "../ui/MemoryEmptyState";
-import { MemoryErrorState } from "../ui/MemoryErrorState";
 import { MemoryToolbar } from "../ui/MemoryToolbar";
 
 export function FlowMemoryContainer() {
@@ -82,8 +81,6 @@ export function FlowMemoryContainer() {
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
 
-	// memoryScopesData already includes flow scope via deriveScopesFromEntries
-
 	const handleScopeChange = useCallback((scope: MemoryScopeInfo) => {
 		setActiveScope(scope);
 		setUserSelectedKey(undefined);
@@ -119,132 +116,77 @@ export function FlowMemoryContainer() {
 	const detailEntry: MemoryEntry | undefined =
 		selectedHistoryEntry ?? selectedListEntry;
 
-	// --- Panel content ---
-
 	const isFlowScope =
 		activeScope.scope === flowName && activeScope.scopeType === "flow";
 
-	const leftPanel = (
-		<MemorySidebar
-			scopes={memoryScopesData}
-			activeScope={activeScope}
-			flowName={flowName}
-			onScopeChange={handleScopeChange}
-			entries={memoryEntriesData}
-			selectedKey={selectedKey}
-			onSelectKey={handleSelectKey}
-			isEntriesPending={isEntriesPending}
-		/>
-	);
-
-	const centerPanel = (() => {
-		if (isEntriesPending) {
-			return (
-				<div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
-					Loading memory entries...
-				</div>
-			);
-		}
-
-		if (isEntriesError) {
-			return <MemoryErrorState error={entriesError} />;
-		}
-
-		if (memoryEntriesData.length === 0) {
-			return (
-				<MemoryEmptyState
-					variant={isFlowScope ? "no-memory" : "no-scope-memory"}
-					scopeName={activeScope.scope}
+	const preview = detailEntry?.isDeleted ? (
+		<MemoryEmptyState variant="no-preview" />
+	) : detailEntry ? (
+		<ErrorBoundary
+			key={detailEntry.artifactId}
+			fallback={<MemoryEmptyState variant="no-preview" />}
+		>
+			<Suspense fallback={<VisualizationSkeleton />}>
+				<ArtifactVisualizationContainer
+					artifactVersionId={detailEntry.artifactId}
 				/>
-			);
-		}
+			</Suspense>
+		</ErrorBoundary>
+	) : null;
 
-		if (!detailEntry) {
-			return null;
-		}
-
-		const previewNode = detailEntry.isDeleted ? (
-			<MemoryEmptyState variant="no-preview" />
-		) : (
-			<ErrorBoundary
-				key={detailEntry.artifactId}
-				fallback={<MemoryEmptyState variant="no-preview" />}
-			>
-				<Suspense fallback={<VisualizationSkeleton />}>
-					<ArtifactVisualizationContainer
-						artifactVersionId={detailEntry.artifactId}
-					/>
-				</Suspense>
-			</ErrorBoundary>
-		);
-
-		const previewActions = (
-			<DownloadArtifactButtonContainer
-				artifactVersionId={detailEntry.artifactId}
-			/>
-		);
-
-		return (
-			<MemoryDetailPanel
-				entry={detailEntry}
-				preview={previewNode}
-				previewActions={previewActions}
-			/>
-		);
-	})();
-
-	const rightPanel = (() => {
-		if (!selectedKey) {
-			return (
-				<div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center text-xs">
-					Select a memory entry to view its history
-				</div>
-			);
-		}
-
-		if (isHistoryPending) {
-			return (
-				<div className="text-muted-foreground flex h-full items-center justify-center text-sm">
-					Loading history...
-				</div>
-			);
-		}
-
-		if (!memoryHistoryData || memoryHistoryData.length === 0) {
-			return (
-				<div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center text-xs">
-					No history available
-				</div>
-			);
-		}
-
-		return (
-			<MemoryHistoryPanel
-				history={memoryHistoryData}
-				selectedVersion={selectedVersion}
-				onSelectVersion={handleSelectVersion}
-			/>
-		);
-	})();
-
-	const centerHeader = (
-		<MemoryToolbar
-			selectedKey={selectedKey}
-			selectedEntry={detailEntry}
-			selectedVersion={selectedVersion}
-			history={memoryHistoryData}
-			onSelectVersion={handleSelectVersion}
-			isRefreshing={isRefreshing}
-			onRefresh={refresh}
+	const previewActions = detailEntry ? (
+		<DownloadArtifactButtonContainer
+			artifactVersionId={detailEntry.artifactId}
 		/>
-	);
+	) : null;
 
 	return (
 		<ThreePanelLayout
-			left={leftPanel}
-			center={centerPanel}
-			right={rightPanel}
-			centerHeader={centerHeader}
+			left={
+				<MemorySidebar
+					scopes={memoryScopesData}
+					activeScope={activeScope}
+					flowName={flowName}
+					onScopeChange={handleScopeChange}
+					entries={memoryEntriesData}
+					selectedKey={selectedKey}
+					onSelectKey={handleSelectKey}
+					isEntriesPending={isEntriesPending}
+				/>
+			}
+			center={
+				<MemoryCenterPanel
+					isPending={isEntriesPending}
+					isError={isEntriesError}
+					error={entriesError}
+					isEmpty={memoryEntriesData.length === 0}
+					isFlowScope={isFlowScope}
+					scopeName={activeScope.scope}
+					detailEntry={detailEntry}
+					preview={preview}
+					previewActions={previewActions}
+				/>
+			}
+			right={
+				<MemoryHistorySidePanel
+					selectedKey={selectedKey}
+					isPending={isHistoryPending}
+					history={memoryHistoryData}
+					selectedVersion={selectedVersion}
+					onSelectVersion={handleSelectVersion}
+				/>
+			}
+			centerHeader={
+				<MemoryToolbar
+					selectedKey={selectedKey}
+					selectedEntry={detailEntry}
+					selectedVersion={selectedVersion}
+					history={memoryHistoryData}
+					onSelectVersion={handleSelectVersion}
+					isRefreshing={isRefreshing}
+					onRefresh={refresh}
+				/>
+			}
 		/>
 	);
 }
