@@ -1,7 +1,6 @@
 import { Suspense, useMemo, useState } from "react";
 import { useParams } from "@tanstack/react-router";
 import { ErrorBoundary } from "react-error-boundary";
-import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { useCheckpointMemories } from "../business-logic/use-checkpoint-memories";
 import { MemoryMetadata } from "../ui/MemoryMetadata";
@@ -20,13 +19,12 @@ export function CheckpointMemoryTabContainer({
 	const { flowId, executionId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
-	const { flowData } = useFlow(flowId);
 
 	const {
 		entries: memoryEntries,
 		isError,
 		error,
-	} = useCheckpointMemories(flowData.name, executionId, checkpointStartTime);
+	} = useCheckpointMemories(flowId, executionId, checkpointStartTime);
 
 	const [userSelectedId, setUserSelectedId] = useState<string | undefined>();
 

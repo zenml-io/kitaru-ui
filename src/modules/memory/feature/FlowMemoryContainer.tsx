@@ -26,7 +26,8 @@ export function FlowMemoryContainer() {
 	const flowName = flowData.name;
 
 	const [activeScope, setActiveScope] = useState<MemoryScopeInfo>({
-		scope: flowName,
+		scope: flowId,
+		label: flowName,
 		scopeType: "flow",
 		entryCount: 0,
 	});
@@ -41,12 +42,13 @@ export function FlowMemoryContainer() {
 		isError: isEntriesError,
 		error: entriesError,
 		refetch: refetchEntries,
-	} = useFlowMemories(flowId, flowName);
+	} = useFlowMemories(flowId);
 
 	const memoryScopesData = deriveScopesFromEntries(
 		namespaceEntries,
 		flowEntries,
 		executionEntries,
+		flowId,
 		flowName
 	);
 
@@ -104,7 +106,7 @@ export function FlowMemoryContainer() {
 		selectedHistoryEntry ?? selectedListEntry;
 
 	const isFlowScope =
-		activeScope.scope === flowName && activeScope.scopeType === "flow";
+		activeScope.scope === flowId && activeScope.scopeType === "flow";
 
 	const preview = detailEntry?.isDeleted ? (
 		<MemoryEmptyState variant="no-preview" />
@@ -133,7 +135,7 @@ export function FlowMemoryContainer() {
 				<MemorySidebar
 					scopes={memoryScopesData}
 					activeScope={activeScope}
-					flowName={flowName}
+					flowId={flowId}
 					onScopeChange={handleScopeChange}
 					entries={memoryEntriesData}
 					selectedKey={selectedKey}
@@ -148,7 +150,7 @@ export function FlowMemoryContainer() {
 					error={entriesError}
 					isEmpty={memoryEntriesData.length === 0}
 					isFlowScope={isFlowScope}
-					scopeName={activeScope.scope}
+					scopeName={activeScope.label ?? activeScope.scope}
 					detailEntry={detailEntry}
 					preview={preview}
 					previewActions={previewActions}

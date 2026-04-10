@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { MemoryEntry } from "../domain/memory";
 import {
 	dedupeMemoryEntries,
+	deriveScopesFromEntries,
 	snapshotMemoryEntriesAtTime,
 } from "./memory-operations";
 
@@ -18,6 +19,76 @@ function makeEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
 		...overrides,
 	};
 }
+
+describe("deriveScopesFromEntries", () => {
+	it("keys flow scope by flow id and uses flow name as label", () => {
+		const scopes = deriveScopesFromEntries(
+			[],
+			[
+				makeEntry({
+					scope: "flow-123",
+					scopeLabel: "My Flow",
+					artifactId: "av-flow-1",
+				}),
+			],
+			[],
+			"flow-123",
+			"My Flow"
+		);
+
+		expect(scopes).toContainEqual({
+			scope: "flow-123",
+			label: "My Flow",
+			scopeType: "flow",
+			entryCount: 1,
+		});
+	});
+
+	it("adds an empty synthetic flow scope keyed by flow id", () => {
+		const scopes = deriveScopesFromEntries(
+			[],
+			[],
+			[],
+			"flow-456",
+			"Empty Flow"
+		);
+
+		expect(scopes).toContainEqual({
+			scope: "flow-456",
+			label: "Empty Flow",
+			scopeType: "flow",
+			entryCount: 0,
+		});
+	});
+
+	it("backfills label from later entry if first had none", () => {
+		const scopes = deriveScopesFromEntries(
+			[],
+			[
+				makeEntry({
+					scope: "flow-1",
+					scopeLabel: undefined,
+					artifactId: "av-1",
+				}),
+				makeEntry({
+					scope: "flow-1",
+					scopeLabel: "Labeled",
+					key: "other",
+					artifactId: "av-2",
+				}),
+			],
+			[],
+			"flow-1",
+			"Fallback"
+		);
+
+		const flowScope = scopes.find(
+			(s) => s.scope === "flow-1" && s.scopeType === "flow"
+		);
+		expect(flowScope?.label).toBe("Labeled");
+		expect(flowScope?.entryCount).toBe(2);
+	});
+});
 
 describe("dedupeMemoryEntries", () => {
 	it("keeps the newest version per key (first in newest-first input)", () => {

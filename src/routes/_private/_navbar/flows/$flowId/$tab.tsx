@@ -32,7 +32,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 
 		if (params.tab === "memory") {
 			context.queryClient.ensureQueryData(memoryQueries.namespaces());
-			context.queryClient.ensureQueryData(memoryQueries.flow(flow.name));
+			context.queryClient.ensureQueryData(memoryQueries.flow(params.flowId));
 			context.queryClient.ensureQueryData(
 				memoryQueries.executions(params.flowId)
 			);

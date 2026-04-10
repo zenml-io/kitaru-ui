@@ -105,6 +105,7 @@ function makeArtifactVersion(
 		created?: string;
 		deleted?: unknown;
 		executionId?: string | null;
+		flowName?: unknown;
 	} = {}
 ): components["schemas"]["ArtifactVersionResponse"] {
 	// Minimal fixture — only fields the mapper actually reads.
@@ -131,6 +132,9 @@ function makeArtifactVersion(
 				...(overrides.deleted !== undefined
 					? { kitaru_memory_deleted: overrides.deleted }
 					: {}),
+				...(overrides.flowName !== undefined
+					? { kitaru_memory_flow_name: overrides.flowName }
+					: {}),
 			},
 		},
 		resources: {
@@ -148,6 +152,7 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		expect(entry).toEqual({
 			key: "counter",
 			scope: "my-flow",
+			scopeLabel: undefined,
 			scopeType: "flow",
 			version: "1",
 			valueType: "dict",
@@ -155,6 +160,24 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 			isDeleted: false,
 			artifactId: "artifact-version-id-1",
 		});
+	});
+
+	it("reads flow_name metadata into scopeLabel for flow-scoped entries", () => {
+		const av = makeArtifactVersion({ flowName: "My Flow" });
+		expect(mapArtifactVersionToMemoryEntry(av)?.scopeLabel).toBe("My Flow");
+	});
+
+	it("ignores non-string flow_name values", () => {
+		const av = makeArtifactVersion({ flowName: 123 });
+		expect(mapArtifactVersionToMemoryEntry(av)?.scopeLabel).toBeUndefined();
+	});
+
+	it("does not set scopeLabel for non-flow scopes", () => {
+		const av = makeArtifactVersion({
+			name: "kitaru_mem:namespace:repo_docs:sessions/topic",
+			flowName: "Stray",
+		});
+		expect(mapArtifactVersionToMemoryEntry(av)?.scopeLabel).toBeUndefined();
 	});
 
 	it("derives scopeType from the artifact name (namespace)", () => {

@@ -7,12 +7,12 @@ import {
 } from "./memory-operations";
 
 export function useCheckpointMemories(
-	flowName: string,
+	flowId: string,
 	executionId: string,
 	checkpointStartTime?: Date
 ) {
 	const namespaces = useQuery(memoryQueries.namespaces());
-	const flow = useQuery(memoryQueries.flow(flowName));
+	const flow = useQuery(memoryQueries.flow(flowId));
 	const execution = useQuery(memoryQueries.execution(executionId));
 
 	const resolveEntries = (entries: MemoryEntry[]) =>
