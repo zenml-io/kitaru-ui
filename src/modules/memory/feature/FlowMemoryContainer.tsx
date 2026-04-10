@@ -84,20 +84,15 @@ export function FlowMemoryContainer() {
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
 
-	const displayMemoryHistoryData = useMemo(
-		() =>
-			memoryHistoryData?.map((entry) => ({
-				...entry,
-				scopeLabel:
-					entry.scope === activeScope.scope &&
-					entry.scopeType === activeScope.scopeType
-						? (activeScope.label ?? entry.scopeLabel)
-						: entry.scopeLabel,
-			})),
-		[memoryHistoryData, activeScope]
-	);
-
-	// memoryScopesData already includes flow scope via deriveScopesFromEntries
+	const displayMemoryHistoryData = useMemo(() => {
+		if (!memoryHistoryData) return undefined;
+		const overrideLabel = activeScope.label;
+		if (!overrideLabel) return memoryHistoryData;
+		return memoryHistoryData.map((entry) => ({
+			...entry,
+			scopeLabel: entry.scopeLabel ?? overrideLabel,
+		}));
+	}, [memoryHistoryData, activeScope.label]);
 
 	const handleScopeChange = useCallback((scope: MemoryScopeInfo) => {
 		setActiveScope(scope);

@@ -1,18 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { MemoryEntry } from "../domain/memory";
 import { memoryQueries } from "./memory-queries";
-import { dedupeMemoryEntries } from "./memory-operations";
-
-function decorateFlowEntries(
-	entries: MemoryEntry[],
-	flowName: string
-): MemoryEntry[] {
-	return entries.map((entry) => ({
-		...entry,
-		scopeLabel: flowName,
-	}));
-}
+import { decorateFlowEntries, dedupeMemoryEntries } from "./memory-operations";
 
 export function useFlowMemories(flowId: string, flowName: string) {
 	const namespaces = useQuery(memoryQueries.namespaces());

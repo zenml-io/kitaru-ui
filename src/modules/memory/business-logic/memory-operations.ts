@@ -55,6 +55,16 @@ export function deriveScopesFromEntries(
 	});
 }
 
+export function decorateFlowEntries(
+	entries: MemoryEntry[],
+	flowName: string
+): MemoryEntry[] {
+	return entries.map((entry) => ({
+		...entry,
+		scopeLabel: entry.scopeLabel ?? flowName,
+	}));
+}
+
 export function dedupeMemoryEntries(entries: MemoryEntry[]): MemoryEntry[] {
 	const best = new Map<string, MemoryEntry>();
 

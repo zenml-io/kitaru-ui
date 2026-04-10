@@ -3,19 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { memoryQueries } from "./memory-queries";
 import type { MemoryEntry } from "../domain/memory";
 import {
+	decorateFlowEntries,
 	dedupeMemoryEntries,
 	snapshotMemoryEntriesAtTime,
 } from "./memory-operations";
-
-function decorateFlowEntries(
-	entries: MemoryEntry[],
-	flowName: string
-): MemoryEntry[] {
-	return entries.map((entry) => ({
-		...entry,
-		scopeLabel: flowName,
-	}));
-}
 
 export function useCheckpointMemories(
 	flowId: string,
@@ -27,6 +18,7 @@ export function useCheckpointMemories(
 	const flow = useQuery(memoryQueries.flow(flowId));
 	const execution = useQuery(memoryQueries.execution(executionId));
 
+	const checkpointTimestamp = checkpointStartTime?.getTime();
 	const resolveEntries = useMemo<
 		(entries: MemoryEntry[]) => MemoryEntry[]
 	>(() => {
@@ -34,7 +26,8 @@ export function useCheckpointMemories(
 			? (entries: MemoryEntry[]) =>
 					snapshotMemoryEntriesAtTime(entries, checkpointStartTime)
 			: dedupeMemoryEntries;
-	}, [checkpointStartTime]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [checkpointTimestamp]);
 
 	const namespaceEntries = useMemo(
 		() => resolveEntries(namespaces.data ?? []),
