@@ -182,7 +182,7 @@ describe("checkpointFromApiToDomain", () => {
 					makeInputArtifact({
 						id: "memory-input-id",
 						inputType: "manual",
-						artifactName: "kitaru_mem:repo_memory_demo:summaries/latest",
+						artifactName: "kitaru_mem:flow:repo_memory_demo:summaries/latest",
 					}),
 				],
 			},
@@ -191,7 +191,7 @@ describe("checkpointFromApiToDomain", () => {
 					makeOutputArtifact({
 						id: "memory-output-id",
 						saveType: "manual",
-						artifactName: "kitaru_mem:repo_docs:sessions/topic_count",
+						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
 					}),
 				],
 			},
@@ -255,7 +255,7 @@ describe("checkpointFromApiToDomain", () => {
 					makeOutputArtifact({
 						id: "hidden-memory-id",
 						saveType: "manual",
-						artifactName: "kitaru_mem:repo_docs:sessions/topic_count",
+						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
 					}),
 					makeOutputArtifact({
 						id: "visible-output-id",
