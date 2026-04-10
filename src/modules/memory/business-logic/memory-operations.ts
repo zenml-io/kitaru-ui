@@ -49,36 +49,21 @@ export function deriveScopesFromEntries(
 	});
 }
 
-/**
- * Deduplicate memory entries: keep the newest non-deleted version per key,
- * suppress keys whose newest version is a tombstone, and exclude compaction keys.
- *
- * Input MUST be sorted newest-first (by version_number descending).
- */
 export function dedupeMemoryEntries(entries: MemoryEntry[]): MemoryEntry[] {
-	const seen = new Set<string>();
-	const result: MemoryEntry[] = [];
+	const best = new Map<string, MemoryEntry>();
 
 	for (const entry of entries) {
 		if (isCompactionKey(entry.key)) continue;
 
-		if (seen.has(entry.key)) continue;
-		seen.add(entry.key);
-
-		if (entry.isDeleted) continue;
-		result.push(entry);
+		const existing = best.get(entry.key);
+		if (!existing || entry.createdAt > existing.createdAt) {
+			best.set(entry.key, entry);
+		}
 	}
 
-	return result;
+	return Array.from(best.values()).filter((e) => !e.isDeleted);
 }
 
-/**
- * Build a point-in-time snapshot of memory entries at the given cutoff.
- *
- * For each key, selects the newest version created at or before `cutoff`.
- * Tombstones and compaction keys are handled identically to
- * `dedupeMemoryEntries`.
- */
 export function snapshotMemoryEntriesAtTime(
 	sameScopeEntries: MemoryEntry[],
 	cutoff: Date
