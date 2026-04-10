@@ -14,7 +14,7 @@ import { ChevronDown, Check } from "@untitledui/icons";
 type MemoryScopeSelectorProps = {
 	scopes: MemoryScopeInfo[];
 	activeScope: MemoryScopeInfo;
-	flowName: string;
+	flowId: string;
 	onScopeChange: (scope: MemoryScopeInfo) => void;
 };
 
@@ -32,10 +32,14 @@ const SCOPE_TYPE_LABELS: Record<MemoryScopeType, string> = {
 	unknown: "Other",
 };
 
+function getScopeDisplayLabel(scope: MemoryScopeInfo): string {
+	return scope.label ?? scope.scope;
+}
+
 export function MemoryScopeSelector({
 	scopes,
 	activeScope,
-	flowName,
+	flowId,
 	onScopeChange,
 }: MemoryScopeSelectorProps) {
 	const grouped = new Map<MemoryScopeType, MemoryScopeInfo[]>();
@@ -54,7 +58,9 @@ export function MemoryScopeSelector({
 						variant="outline"
 						className="w-full justify-between font-mono font-medium"
 					>
-						<span className="truncate">{activeScope.scope}</span>
+						<span className="truncate">
+							{getScopeDisplayLabel(activeScope)}
+						</span>
 						<ChevronDown className="ml-1 size-4 shrink-0 opacity-50" />
 					</Button>
 				}
@@ -78,9 +84,9 @@ export function MemoryScopeSelector({
 										)}
 								</span>
 								<span className="min-w-0 flex-1 truncate font-mono font-medium">
-									{s.scope}
+									{getScopeDisplayLabel(s)}
 								</span>
-								{s.scope === flowName && (
+								{s.scope === flowId && s.scopeType === "flow" && (
 									<Badge variant="secondary" className="text-2xs shrink-0">
 										this flow
 									</Badge>

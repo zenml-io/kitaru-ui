@@ -7,7 +7,7 @@ import { MemoryScopeSelector } from "./MemoryScopeSelector";
 type MemorySidebarProps = {
 	scopes: MemoryScopeInfo[];
 	activeScope: MemoryScopeInfo;
-	flowName: string;
+	flowId: string;
 	onScopeChange: (scope: MemoryScopeInfo) => void;
 	entries: MemoryEntry[];
 	selectedKey?: string;
@@ -18,7 +18,7 @@ type MemorySidebarProps = {
 export function MemorySidebar({
 	scopes,
 	activeScope,
-	flowName,
+	flowId,
 	onScopeChange,
 	entries,
 	selectedKey,
@@ -32,7 +32,7 @@ export function MemorySidebar({
 				<MemoryScopeSelector
 					scopes={scopes}
 					activeScope={activeScope}
-					flowName={flowName}
+					flowId={flowId}
 					onScopeChange={onScopeChange}
 				/>
 			</div>

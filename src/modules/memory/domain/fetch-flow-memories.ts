@@ -8,13 +8,13 @@ import {
 import { fetchMemoryArtifactVersions } from "./fetch-memory-artifact-versions";
 
 export async function fetchFlowMemories(
-	flowName: string
+	flowId: string
 ): Promise<MemoryEntry[]> {
 	const versions = await fetchMemoryArtifactVersions({
 		tags: [
 			MEMORY_TAG_MARKER,
 			`${MEMORY_TAG_SCOPE_TYPE_PREFIX}flow`,
-			`${MEMORY_TAG_SCOPE_PREFIX}${flowName}`,
+			`${MEMORY_TAG_SCOPE_PREFIX}${flowId}`,
 		],
 		logical_operator: "and",
 		sort_by: "desc:version_number",

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { MemoryEntry } from "../domain/memory";
 import {
 	dedupeMemoryEntries,
+	deriveScopesFromEntries,
 	snapshotMemoryEntriesAtTime,
 } from "./memory-operations";
 
@@ -18,6 +19,48 @@ function makeEntry(overrides: Partial<MemoryEntry> = {}): MemoryEntry {
 		...overrides,
 	};
 }
+
+describe("deriveScopesFromEntries", () => {
+	it("keeps flow scope identity as the raw flow id while using flow name as label", () => {
+		const scopes = deriveScopesFromEntries(
+			[],
+			[
+				makeEntry({
+					scope: "flow-123",
+					scopeLabel: "My Flow",
+					artifactId: "av-flow-1",
+				}),
+			],
+			[],
+			"flow-123",
+			"My Flow"
+		);
+
+		expect(scopes).toContainEqual({
+			scope: "flow-123",
+			label: "My Flow",
+			scopeType: "flow",
+			entryCount: 1,
+		});
+	});
+
+	it("adds an empty synthetic flow scope keyed by flow id", () => {
+		const scopes = deriveScopesFromEntries(
+			[],
+			[],
+			[],
+			"flow-456",
+			"Empty Flow"
+		);
+
+		expect(scopes).toContainEqual({
+			scope: "flow-456",
+			label: "Empty Flow",
+			scopeType: "flow",
+			entryCount: 0,
+		});
+	});
+});
 
 describe("dedupeMemoryEntries", () => {
 	it("keeps the newest version per key (first in newest-first input)", () => {

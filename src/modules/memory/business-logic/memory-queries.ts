@@ -9,8 +9,7 @@ import { fetchMemoryHistory } from "../domain/fetch-memory-history";
 export const memoryQueryKeys = {
 	base: ["memory"] as const,
 	namespaces: () => [...memoryQueryKeys.base, "namespaces"] as const,
-	flow: (flowName: string) =>
-		[...memoryQueryKeys.base, "flow", flowName] as const,
+	flow: (flowId: string) => [...memoryQueryKeys.base, "flow", flowId] as const,
 	executions: (flowId: string) =>
 		[...memoryQueryKeys.base, "executions", flowId] as const,
 	execution: (executionId: string) =>
@@ -25,10 +24,10 @@ export const memoryQueries = {
 			queryKey: memoryQueryKeys.namespaces(),
 			queryFn: fetchNamespaceMemories,
 		}),
-	flow: (flowName: string) =>
+	flow: (flowId: string) =>
 		queryOptions({
-			queryKey: memoryQueryKeys.flow(flowName),
-			queryFn: () => fetchFlowMemories(flowName),
+			queryKey: memoryQueryKeys.flow(flowId),
+			queryFn: () => fetchFlowMemories(flowId),
 		}),
 	executions: (flowId: string) =>
 		queryOptions({

@@ -5,11 +5,15 @@ type MemoryMetadataProps = {
 	entry: MemoryEntry;
 };
 
+function getScopeDisplayLabel(entry: MemoryEntry): string {
+	return entry.scopeLabel ?? entry.scope;
+}
+
 export function MemoryMetadata({ entry }: MemoryMetadataProps) {
 	return (
 		<dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
 			<MetadataRow label="Scope">
-				<span>{entry.scope}</span>
+				<span>{getScopeDisplayLabel(entry)}</span>
 				<Badge variant="secondary" className="text-2xs ml-1.5">
 					{entry.scopeType}
 				</Badge>

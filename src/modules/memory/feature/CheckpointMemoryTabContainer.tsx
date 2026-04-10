@@ -26,7 +26,12 @@ export function CheckpointMemoryTabContainer({
 		entries: memoryEntries,
 		isError,
 		error,
-	} = useCheckpointMemories(flowData.name, executionId, checkpointStartTime);
+	} = useCheckpointMemories(
+		flowId,
+		flowData.name,
+		executionId,
+		checkpointStartTime
+	);
 
 	const [userSelectedId, setUserSelectedId] = useState<string | undefined>();
 

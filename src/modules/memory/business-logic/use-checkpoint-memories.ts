@@ -7,27 +7,42 @@ import {
 	snapshotMemoryEntriesAtTime,
 } from "./memory-operations";
 
+function decorateFlowEntries(
+	entries: MemoryEntry[],
+	flowName: string
+): MemoryEntry[] {
+	return entries.map((entry) => ({
+		...entry,
+		scopeLabel: flowName,
+	}));
+}
+
 export function useCheckpointMemories(
+	flowId: string,
 	flowName: string,
 	executionId: string,
 	checkpointStartTime?: Date
 ) {
 	const namespaces = useQuery(memoryQueries.namespaces());
-	const flow = useQuery(memoryQueries.flow(flowName));
+	const flow = useQuery(memoryQueries.flow(flowId));
 	const execution = useQuery(memoryQueries.execution(executionId));
 
-	const resolveEntries = checkpointStartTime
-		? (entries: MemoryEntry[]) =>
-				snapshotMemoryEntriesAtTime(entries, checkpointStartTime)
-		: dedupeMemoryEntries;
+	const resolveEntries = useMemo<
+		(entries: MemoryEntry[]) => MemoryEntry[]
+	>(() => {
+		return checkpointStartTime
+			? (entries: MemoryEntry[]) =>
+					snapshotMemoryEntriesAtTime(entries, checkpointStartTime)
+			: dedupeMemoryEntries;
+	}, [checkpointStartTime]);
 
 	const namespaceEntries = useMemo(
 		() => resolveEntries(namespaces.data ?? []),
 		[namespaces.data, resolveEntries]
 	);
 	const flowEntries = useMemo(
-		() => resolveEntries(flow.data ?? []),
-		[flow.data, resolveEntries]
+		() => decorateFlowEntries(resolveEntries(flow.data ?? []), flowName),
+		[flow.data, flowName, resolveEntries]
 	);
 	const executionEntries = useMemo(
 		() => resolveEntries(execution.data ?? []),

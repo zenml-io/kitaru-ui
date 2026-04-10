@@ -16,7 +16,7 @@ export const Route = createFileRoute(
 	pendingComponent: PageSpinner,
 
 	loader: async ({ context, params }) => {
-		const [flow, execution] = await Promise.all([
+		const [, execution] = await Promise.all([
 			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId)),
 			ensureQueryDataOr404(
 				context.queryClient.ensureQueryData(
@@ -30,7 +30,7 @@ export const Route = createFileRoute(
 		]);
 
 		context.queryClient.ensureQueryData(memoryQueries.namespaces());
-		context.queryClient.ensureQueryData(memoryQueries.flow(flow.name));
+		context.queryClient.ensureQueryData(memoryQueries.flow(params.flowId));
 		context.queryClient.ensureQueryData(
 			memoryQueries.execution(params.executionId)
 		);

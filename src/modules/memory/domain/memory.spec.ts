@@ -105,6 +105,7 @@ function makeArtifactVersion(
 		created?: string;
 		deleted?: unknown;
 		executionId?: string | null;
+		flowName?: unknown;
 	} = {}
 ): components["schemas"]["ArtifactVersionResponse"] {
 	// Minimal fixture — only fields the mapper actually reads.
@@ -131,6 +132,9 @@ function makeArtifactVersion(
 				...(overrides.deleted !== undefined
 					? { kitaru_memory_deleted: overrides.deleted }
 					: {}),
+				...(overrides.flowName !== undefined
+					? { flow_name: overrides.flowName }
+					: {}),
 			},
 		},
 		resources: {
@@ -148,6 +152,7 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		expect(entry).toEqual({
 			key: "counter",
 			scope: "my-flow",
+			scopeLabel: undefined,
 			scopeType: "flow",
 			version: "1",
 			valueType: "dict",
@@ -182,6 +187,16 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 	it("returns null for unknown scope type in the name", () => {
 		const av = makeArtifactVersion({ name: "kitaru_mem:bogus:scope:key" });
 		expect(mapArtifactVersionToMemoryEntry(av)).toBeNull();
+	});
+
+	it("reads flow_name into scopeLabel for flow-scoped entries", () => {
+		const av = makeArtifactVersion({ flowName: "My Flow" });
+		expect(mapArtifactVersionToMemoryEntry(av)?.scopeLabel).toBe("My Flow");
+	});
+
+	it("ignores non-string flow_name values", () => {
+		const av = makeArtifactVersion({ flowName: 123 });
+		expect(mapArtifactVersionToMemoryEntry(av)?.scopeLabel).toBeUndefined();
 	});
 
 	it("parses isDeleted from boolean true", () => {

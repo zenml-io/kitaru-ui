@@ -32,6 +32,7 @@ export type MemoryEntry = {
 	valueType: string;
 	version: string;
 	scope: string;
+	scopeLabel?: string;
 	scopeType: MemoryScopeType;
 	createdAt: Date;
 	isDeleted: boolean;
@@ -40,6 +41,7 @@ export type MemoryEntry = {
 
 export type MemoryScopeInfo = {
 	scope: string;
+	label?: string;
 	scopeType: MemoryScopeType;
 	entryCount: number;
 };
@@ -85,6 +87,15 @@ function parseIsDeleted(value: unknown): boolean {
 	return value === true || value === "true";
 }
 
+function parseFlowScopeLabel(
+	runMetadata: Record<string, unknown>
+): string | undefined {
+	const flowName = runMetadata.flow_name;
+	return typeof flowName === "string" && flowName.length > 0
+		? flowName
+		: undefined;
+}
+
 function inferValueType(dataType: components["schemas"]["Source"]): string {
 	const attr = dataType.attribute;
 	if (attr) return attr;
@@ -106,6 +117,10 @@ export function mapArtifactVersionToMemoryEntry(
 	return {
 		key: parsed.key,
 		scope: parsed.scope,
+		scopeLabel:
+			parsed.scopeType === "flow"
+				? parseFlowScopeLabel(runMetadata)
+				: undefined,
 		scopeType: parsed.scopeType,
 		version: body.version,
 		valueType: inferValueType(body.data_type),

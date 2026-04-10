@@ -27,7 +27,8 @@ export function FlowMemoryContainer() {
 	const flowName = flowData.name;
 
 	const [activeScope, setActiveScope] = useState<MemoryScopeInfo>({
-		scope: flowName,
+		scope: flowId,
+		label: flowName,
 		scopeType: "flow",
 		entryCount: 0,
 	});
@@ -50,9 +51,10 @@ export function FlowMemoryContainer() {
 				namespaceEntries,
 				flowEntries,
 				executionEntries,
+				flowId,
 				flowName
 			),
-		[namespaceEntries, flowEntries, executionEntries, flowName]
+		[namespaceEntries, flowEntries, executionEntries, flowId, flowName]
 	);
 
 	const memoryEntriesData = useMemo(
@@ -81,6 +83,19 @@ export function FlowMemoryContainer() {
 		isPending: isHistoryPending,
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
+
+	const displayMemoryHistoryData = useMemo(
+		() =>
+			memoryHistoryData?.map((entry) => ({
+				...entry,
+				scopeLabel:
+					entry.scope === activeScope.scope &&
+					entry.scopeType === activeScope.scopeType
+						? (activeScope.label ?? entry.scopeLabel)
+						: entry.scopeLabel,
+			})),
+		[memoryHistoryData, activeScope]
+	);
 
 	// memoryScopesData already includes flow scope via deriveScopesFromEntries
 
@@ -114,21 +129,21 @@ export function FlowMemoryContainer() {
 		(e) => e.key === selectedKey
 	);
 	const selectedHistoryEntry = selectedVersion
-		? memoryHistoryData?.find((e) => e.version === selectedVersion)
-		: memoryHistoryData?.[0];
+		? displayMemoryHistoryData?.find((e) => e.version === selectedVersion)
+		: displayMemoryHistoryData?.[0];
 	const detailEntry: MemoryEntry | undefined =
 		selectedHistoryEntry ?? selectedListEntry;
 
 	// --- Panel content ---
 
 	const isFlowScope =
-		activeScope.scope === flowName && activeScope.scopeType === "flow";
+		activeScope.scope === flowId && activeScope.scopeType === "flow";
 
 	const leftPanel = (
 		<MemorySidebar
 			scopes={memoryScopesData}
 			activeScope={activeScope}
-			flowName={flowName}
+			flowId={flowId}
 			onScopeChange={handleScopeChange}
 			entries={memoryEntriesData}
 			selectedKey={selectedKey}
@@ -154,7 +169,7 @@ export function FlowMemoryContainer() {
 			return (
 				<MemoryEmptyState
 					variant={isFlowScope ? "no-memory" : "no-scope-memory"}
-					scopeName={activeScope.scope}
+					scopeName={activeScope.label ?? activeScope.scope}
 				/>
 			);
 		}
@@ -210,7 +225,7 @@ export function FlowMemoryContainer() {
 			);
 		}
 
-		if (!memoryHistoryData || memoryHistoryData.length === 0) {
+		if (!displayMemoryHistoryData || displayMemoryHistoryData.length === 0) {
 			return (
 				<div className="text-muted-foreground flex h-full items-center justify-center px-4 text-center text-xs">
 					No history available
@@ -220,7 +235,7 @@ export function FlowMemoryContainer() {
 
 		return (
 			<MemoryHistoryPanel
-				history={memoryHistoryData}
+				history={displayMemoryHistoryData}
 				selectedVersion={selectedVersion}
 				onSelectVersion={handleSelectVersion}
 			/>
@@ -232,7 +247,7 @@ export function FlowMemoryContainer() {
 			selectedKey={selectedKey}
 			selectedEntry={detailEntry}
 			selectedVersion={selectedVersion}
-			history={memoryHistoryData}
+			history={displayMemoryHistoryData}
 			onSelectVersion={handleSelectVersion}
 			isRefreshing={isRefreshing}
 			onRefresh={refresh}
