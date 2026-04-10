@@ -1,10 +1,12 @@
 import { Suspense, useMemo, useState } from "react";
 import { useParams } from "@tanstack/react-router";
+import { ErrorBoundary } from "react-error-boundary";
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { useCheckpointMemories } from "../business-logic/use-checkpoint-memories";
 import { MemoryMetadata } from "../ui/MemoryMetadata";
 import { CheckpointMemoryTab } from "../ui/CheckpointMemoryTab";
+import { MemoryEmptyState } from "../ui/MemoryEmptyState";
 import { MemoryErrorState } from "../ui/MemoryErrorState";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 
@@ -51,11 +53,16 @@ export function CheckpointMemoryTabContainer({
 					<div className="border-border border-b px-4 py-3">
 						<MemoryMetadata entry={selectedEntry} />
 					</div>
-					<Suspense fallback={<VisualizationSkeleton />}>
-						<ArtifactVisualizationContainer
-							artifactVersionId={selectedEntry.artifactId}
-						/>
-					</Suspense>
+					<ErrorBoundary
+						key={selectedEntry.artifactId}
+						fallback={<MemoryEmptyState variant="no-preview" />}
+					>
+						<Suspense fallback={<VisualizationSkeleton />}>
+							<ArtifactVisualizationContainer
+								artifactVersionId={selectedEntry.artifactId}
+							/>
+						</Suspense>
+					</ErrorBoundary>
 				</>
 			)}
 		</CheckpointMemoryTab>
