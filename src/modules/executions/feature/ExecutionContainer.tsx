@@ -3,6 +3,7 @@ import {
 	getCheckpointsPollingInterval,
 	useCheckpoints,
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
+import { useTimelineEntries } from "../business-logic/use-timeline-entries";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
@@ -45,6 +46,11 @@ export function ExecutionContainer() {
 		executionData?.activeWaitConditionEntry?.id
 	);
 
+	const { timelineEntries } = useTimelineEntries(
+		executionId,
+		checkpointsData.checkpoints
+	);
+
 	useSyncExecutionStatus(
 		checkpointsData.executionStatus,
 		checkpointsData.hasPendingWaitConditionNode
@@ -57,6 +63,9 @@ export function ExecutionContainer() {
 		});
 		queryClient.invalidateQueries({
 			queryKey: executionsQueryKeys.detail(executionId),
+		});
+		queryClient.invalidateQueries({
+			queryKey: executionsQueryKeys.waitConditions(executionId),
 		});
 		queryClient.invalidateQueries({
 			queryKey: checkpointsQueryKeys.all(executionId),
@@ -138,7 +147,7 @@ export function ExecutionContainer() {
 				<ExecutionDetails
 					key={executionId}
 					execution={executionData}
-					checkpointsEntries={checkpointsData.checkpoints}
+					timelineEntries={timelineEntries}
 					onSelectCheckpoint={(id) => {
 						setSelectedCheckpointId(id);
 						layoutRef.current?.expandRight();
