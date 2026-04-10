@@ -44,14 +44,6 @@ export type MemoryScopeInfo = {
 	entryCount: number;
 };
 
-export function buildMemoryArtifactName(
-	scopeType: MemoryScopeType,
-	scope: string,
-	key: string
-): string {
-	return `${ARTIFACT_NAME_PREFIX}${scopeType}:${scope}:${key}`;
-}
-
 export function parseMemoryArtifactName(
 	name: string
 ): { scopeType: MemoryScopeType; scope: string; key: string } | undefined {

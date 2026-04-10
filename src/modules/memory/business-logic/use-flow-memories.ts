@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { memoryQueries } from "./memory-queries";
 import { dedupeMemoryEntries } from "./memory-operations";
@@ -8,18 +7,9 @@ export function useFlowMemories(flowId: string, flowName: string) {
 	const flow = useQuery(memoryQueries.flow(flowName));
 	const executions = useQuery(memoryQueries.executions(flowId));
 
-	const namespaceEntries = useMemo(
-		() => dedupeMemoryEntries(namespaces.data ?? []),
-		[namespaces.data]
-	);
-	const flowEntries = useMemo(
-		() => dedupeMemoryEntries(flow.data ?? []),
-		[flow.data]
-	);
-	const executionEntries = useMemo(
-		() => dedupeMemoryEntries(executions.data ?? []),
-		[executions.data]
-	);
+	const namespaceEntries = dedupeMemoryEntries(namespaces.data ?? []);
+	const flowEntries = dedupeMemoryEntries(flow.data ?? []);
+	const executionEntries = dedupeMemoryEntries(executions.data ?? []);
 
 	return {
 		namespaceEntries,

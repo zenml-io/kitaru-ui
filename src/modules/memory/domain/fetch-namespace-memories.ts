@@ -1,19 +1,8 @@
-import {
-	MEMORY_TAG_MARKER,
-	MEMORY_TAG_SCOPE_TYPE_PREFIX,
-	type MemoryEntry,
-	mapArtifactVersionToMemoryEntry,
-} from "./memory";
-import { fetchMemoryArtifactVersions } from "./fetch-memory-artifact-versions";
+import { MEMORY_TAG_SCOPE_TYPE_PREFIX, type MemoryEntry } from "./memory";
+import { fetchMemoryEntries } from "./fetch-memory-entries";
 
-export async function fetchNamespaceMemories(): Promise<MemoryEntry[]> {
-	const versions = await fetchMemoryArtifactVersions({
-		tags: [MEMORY_TAG_MARKER, `${MEMORY_TAG_SCOPE_TYPE_PREFIX}namespace`],
-		logical_operator: "and",
-		sort_by: "desc:version_number",
+export function fetchNamespaceMemories(): Promise<MemoryEntry[]> {
+	return fetchMemoryEntries({
+		extraTags: [`${MEMORY_TAG_SCOPE_TYPE_PREFIX}namespace`],
 	});
-
-	return versions
-		.map(mapArtifactVersionToMemoryEntry)
-		.filter((e) => e !== null);
 }

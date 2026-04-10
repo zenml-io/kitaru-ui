@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useState } from "react";
 import { useParams } from "@tanstack/react-router";
 import { ErrorBoundary } from "react-error-boundary";
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
@@ -43,37 +43,30 @@ export function FlowMemoryContainer() {
 		refetch: refetchEntries,
 	} = useFlowMemories(flowId, flowName);
 
-	const memoryScopesData = useMemo(
-		() =>
-			deriveScopesFromEntries(
-				namespaceEntries,
-				flowEntries,
-				executionEntries,
-				flowName
-			),
-		[namespaceEntries, flowEntries, executionEntries, flowName]
+	const memoryScopesData = deriveScopesFromEntries(
+		namespaceEntries,
+		flowEntries,
+		executionEntries,
+		flowName
 	);
 
-	const memoryEntriesData = useMemo(
-		() =>
-			[...namespaceEntries, ...flowEntries, ...executionEntries].filter(
-				(e) =>
-					e.scope === activeScope.scope && e.scopeType === activeScope.scopeType
-			),
-		[namespaceEntries, flowEntries, executionEntries, activeScope]
+	const memoryEntriesData = [
+		...namespaceEntries,
+		...flowEntries,
+		...executionEntries,
+	].filter(
+		(e) =>
+			e.scope === activeScope.scope && e.scopeType === activeScope.scopeType
 	);
 
 	// Derive effective selected key: use user's choice if valid, else first entry
-	const selectedKey = useMemo(() => {
-		if (memoryEntriesData.length === 0) return undefined;
-		if (
-			userSelectedKey !== undefined &&
-			memoryEntriesData.some((e) => e.key === userSelectedKey)
-		) {
-			return userSelectedKey;
-		}
-		return memoryEntriesData[0].key;
-	}, [memoryEntriesData, userSelectedKey]);
+	const selectedKey =
+		memoryEntriesData.length === 0
+			? undefined
+			: userSelectedKey !== undefined &&
+				  memoryEntriesData.some((e) => e.key === userSelectedKey)
+				? userSelectedKey
+				: memoryEntriesData[0].key;
 
 	const {
 		memoryHistoryData,
@@ -81,30 +74,24 @@ export function FlowMemoryContainer() {
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
 
-	const handleScopeChange = useCallback((scope: MemoryScopeInfo) => {
+	const handleScopeChange = (scope: MemoryScopeInfo) => {
 		setActiveScope(scope);
 		setUserSelectedKey(undefined);
 		setSelectedVersion(undefined);
-	}, []);
+	};
 
-	const handleSelectKey = useCallback((key: string) => {
+	const handleSelectKey = (key: string) => {
 		setUserSelectedKey(key);
 		setSelectedVersion(undefined);
-	}, []);
-
-	const handleSelectVersion = useCallback((version: string) => {
-		setSelectedVersion(version);
-	}, []);
+	};
 
 	// Manual refresh
-	const { refresh, isPending: isRefreshing } = useManualRefresh(
-		useCallback(async () => {
-			await Promise.all([
-				refetchEntries(),
-				...(selectedKey ? [refetchHistory()] : []),
-			]);
-		}, [refetchEntries, refetchHistory, selectedKey])
-	);
+	const { refresh, isPending: isRefreshing } = useManualRefresh(async () => {
+		await Promise.all([
+			refetchEntries(),
+			...(selectedKey ? [refetchHistory()] : []),
+		]);
+	});
 
 	// Derive the entry to show in the detail panel
 	const selectedListEntry = memoryEntriesData.find(
@@ -173,7 +160,7 @@ export function FlowMemoryContainer() {
 					isPending={isHistoryPending}
 					history={memoryHistoryData}
 					selectedVersion={selectedVersion}
-					onSelectVersion={handleSelectVersion}
+					onSelectVersion={setSelectedVersion}
 				/>
 			}
 			centerHeader={
@@ -182,7 +169,7 @@ export function FlowMemoryContainer() {
 					selectedEntry={detailEntry}
 					selectedVersion={selectedVersion}
 					history={memoryHistoryData}
-					onSelectVersion={handleSelectVersion}
+					onSelectVersion={setSelectedVersion}
 					isRefreshing={isRefreshing}
 					onRefresh={refresh}
 				/>

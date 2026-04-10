@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { memoryQueries } from "./memory-queries";
 import type { MemoryEntry } from "../domain/memory";
@@ -16,28 +15,16 @@ export function useCheckpointMemories(
 	const flow = useQuery(memoryQueries.flow(flowName));
 	const execution = useQuery(memoryQueries.execution(executionId));
 
-	const resolveEntries = checkpointStartTime
-		? (entries: MemoryEntry[]) =>
-				snapshotMemoryEntriesAtTime(entries, checkpointStartTime)
-		: dedupeMemoryEntries;
+	const resolveEntries = (entries: MemoryEntry[]) =>
+		checkpointStartTime
+			? snapshotMemoryEntriesAtTime(entries, checkpointStartTime)
+			: dedupeMemoryEntries(entries);
 
-	const namespaceEntries = useMemo(
-		() => resolveEntries(namespaces.data ?? []),
-		[namespaces.data, resolveEntries]
-	);
-	const flowEntries = useMemo(
-		() => resolveEntries(flow.data ?? []),
-		[flow.data, resolveEntries]
-	);
-	const executionEntries = useMemo(
-		() => resolveEntries(execution.data ?? []),
-		[execution.data, resolveEntries]
-	);
+	const namespaceEntries = resolveEntries(namespaces.data ?? []);
+	const flowEntries = resolveEntries(flow.data ?? []);
+	const executionEntries = resolveEntries(execution.data ?? []);
 
-	const entries = useMemo(
-		() => [...namespaceEntries, ...flowEntries, ...executionEntries],
-		[namespaceEntries, flowEntries, executionEntries]
-	);
+	const entries = [...namespaceEntries, ...flowEntries, ...executionEntries];
 
 	return {
 		entries,

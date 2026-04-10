@@ -17,7 +17,9 @@ export const Route = createFileRoute(
 
 	loader: async ({ context, params }) => {
 		const [flow, execution] = await Promise.all([
-			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId)),
+			ensureQueryDataOr404(
+				context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
+			),
 			ensureQueryDataOr404(
 				context.queryClient.ensureQueryData(
 					executionsQueries.detail(params.executionId)

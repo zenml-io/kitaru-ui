@@ -1,26 +1,22 @@
 import {
-	MEMORY_TAG_MARKER,
+	MEMORY_TAG_KEY_PREFIX,
+	MEMORY_TAG_SCOPE_PREFIX,
 	MEMORY_TAG_SCOPE_TYPE_PREFIX,
 	type MemoryEntry,
 	type MemoryScopeType,
-	buildMemoryArtifactName,
-	mapArtifactVersionToMemoryEntry,
 } from "./memory";
-import { fetchMemoryArtifactVersions } from "./fetch-memory-artifact-versions";
+import { fetchMemoryEntries } from "./fetch-memory-entries";
 
-export async function fetchMemoryHistory(
+export function fetchMemoryHistory(
 	scope: string,
 	scopeType: MemoryScopeType,
 	key: string
 ): Promise<MemoryEntry[]> {
-	const artifactVersions = await fetchMemoryArtifactVersions({
-		artifact: buildMemoryArtifactName(scopeType, scope, key),
-		tags: [MEMORY_TAG_MARKER, `${MEMORY_TAG_SCOPE_TYPE_PREFIX}${scopeType}`],
-		logical_operator: "and",
-		sort_by: "desc:version_number",
+	return fetchMemoryEntries({
+		extraTags: [
+			`${MEMORY_TAG_SCOPE_TYPE_PREFIX}${scopeType}`,
+			`${MEMORY_TAG_SCOPE_PREFIX}${scope}`,
+			`${MEMORY_TAG_KEY_PREFIX}${key}`,
+		],
 	});
-
-	return artifactVersions
-		.map(mapArtifactVersionToMemoryEntry)
-		.filter((e) => e !== null);
 }
