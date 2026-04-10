@@ -42,5 +42,7 @@ export function useCheckpointMemories(
 	return {
 		entries,
 		isPending: namespaces.isPending || flow.isPending || execution.isPending,
+		isError: namespaces.isError || flow.isError || execution.isError,
+		error: namespaces.error ?? flow.error ?? execution.error,
 	};
 }

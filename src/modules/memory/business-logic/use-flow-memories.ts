@@ -26,6 +26,8 @@ export function useFlowMemories(flowId: string, flowName: string) {
 		flowEntries,
 		executionEntries,
 		isPending: namespaces.isPending || flow.isPending || executions.isPending,
+		isError: namespaces.isError || flow.isError || executions.isError,
+		error: namespaces.error ?? flow.error ?? executions.error,
 		refetch: async () => {
 			await Promise.all([
 				namespaces.refetch(),

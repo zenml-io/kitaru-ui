@@ -15,6 +15,7 @@ import { MemorySidebar } from "../ui/MemorySidebar";
 import { MemoryDetailPanel } from "../ui/MemoryDetailPanel";
 import { MemoryHistoryPanel } from "../ui/MemoryHistoryPanel";
 import { MemoryEmptyState } from "../ui/MemoryEmptyState";
+import { MemoryErrorState } from "../ui/MemoryErrorState";
 import { MemoryToolbar } from "../ui/MemoryToolbar";
 
 export function FlowMemoryContainer() {
@@ -38,6 +39,8 @@ export function FlowMemoryContainer() {
 		flowEntries,
 		executionEntries,
 		isPending: isEntriesPending,
+		isError: isEntriesError,
+		error: entriesError,
 		refetch: refetchEntries,
 	} = useFlowMemories(flowId, flowName);
 
@@ -141,6 +144,10 @@ export function FlowMemoryContainer() {
 					Loading memory entries...
 				</div>
 			);
+		}
+
+		if (isEntriesError) {
+			return <MemoryErrorState error={entriesError} />;
 		}
 
 		if (memoryEntriesData.length === 0) {

@@ -5,6 +5,7 @@ import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/Ar
 import { useCheckpointMemories } from "../business-logic/use-checkpoint-memories";
 import { MemoryMetadata } from "../ui/MemoryMetadata";
 import { CheckpointMemoryTab } from "../ui/CheckpointMemoryTab";
+import { MemoryErrorState } from "../ui/MemoryErrorState";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 
 type CheckpointMemoryTabContainerProps = {
@@ -19,11 +20,11 @@ export function CheckpointMemoryTabContainer({
 	});
 	const { flowData } = useFlow(flowId);
 
-	const { entries: memoryEntries } = useCheckpointMemories(
-		flowData.name,
-		executionId,
-		checkpointStartTime
-	);
+	const {
+		entries: memoryEntries,
+		isError,
+		error,
+	} = useCheckpointMemories(flowData.name, executionId, checkpointStartTime);
 
 	const [userSelectedId, setUserSelectedId] = useState<string | undefined>();
 
@@ -34,6 +35,10 @@ export function CheckpointMemoryTabContainer({
 		}
 		return memoryEntries[0];
 	}, [userSelectedId, memoryEntries]);
+
+	if (isError) {
+		return <MemoryErrorState error={error} />;
+	}
 
 	return (
 		<CheckpointMemoryTab
