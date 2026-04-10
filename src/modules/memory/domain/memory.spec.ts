@@ -7,44 +7,80 @@ import {
 } from "./memory";
 
 describe("parseMemoryArtifactName", () => {
-	it("parses a valid artifact name", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:my-flow:counter")).toEqual({
+	it("parses a valid flow-scoped artifact name", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:flow:my-flow:counter")).toEqual({
+			scopeType: "flow",
 			scope: "my-flow",
 			key: "counter",
 		});
 	});
 
+	it("parses a namespace-scoped artifact name", () => {
+		expect(
+			parseMemoryArtifactName("kitaru_mem:namespace:repo_docs:sessions/topic")
+		).toEqual({
+			scopeType: "namespace",
+			scope: "repo_docs",
+			key: "sessions/topic",
+		});
+	});
+
+	it("parses an execution-scoped artifact name", () => {
+		expect(
+			parseMemoryArtifactName(
+				"kitaru_mem:execution:6f6bde42-115f-452f-9f3c-140df1450e68:progress/phase"
+			)
+		).toEqual({
+			scopeType: "execution",
+			scope: "6f6bde42-115f-452f-9f3c-140df1450e68",
+			key: "progress/phase",
+		});
+	});
+
 	it("handles keys containing colons", () => {
 		expect(
-			parseMemoryArtifactName("kitaru_mem:my-flow:nested:key:value")
+			parseMemoryArtifactName("kitaru_mem:flow:my-flow:nested:key:value")
 		).toEqual({
+			scopeType: "flow",
 			scope: "my-flow",
 			key: "nested:key:value",
 		});
 	});
 
-	it("returns null for wrong prefix", () => {
-		expect(parseMemoryArtifactName("other_mem:scope:key")).toBeUndefined();
+	it("returns undefined for wrong prefix", () => {
+		expect(parseMemoryArtifactName("other_mem:flow:scope:key")).toBeUndefined();
 	});
 
-	it("returns null for missing scope", () => {
-		expect(parseMemoryArtifactName("kitaru_mem::key")).toBeUndefined();
+	it("returns undefined for unknown scope type", () => {
+		expect(
+			parseMemoryArtifactName("kitaru_mem:bogus:scope:key")
+		).toBeUndefined();
 	});
 
-	it("returns null for missing key", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:scope:")).toBeUndefined();
+	it("returns undefined for missing scope type", () => {
+		expect(parseMemoryArtifactName("kitaru_mem::scope:key")).toBeUndefined();
 	});
 
-	it("returns null for missing scope and key", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:")).toBeUndefined();
+	it("returns undefined for missing scope", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:flow::key")).toBeUndefined();
 	});
 
-	it("returns null for empty string", () => {
+	it("returns undefined for missing key", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:flow:my-flow:")).toBeUndefined();
+	});
+
+	it("returns undefined for old 2-segment format", () => {
+		expect(
+			parseMemoryArtifactName("kitaru_mem:my-flow:counter")
+		).toBeUndefined();
+	});
+
+	it("returns undefined for empty string", () => {
 		expect(parseMemoryArtifactName("")).toBeUndefined();
 	});
 
-	it("returns null for prefix only with no colon after scope", () => {
-		expect(parseMemoryArtifactName("kitaru_mem:scopeonly")).toBeUndefined();
+	it("returns undefined for prefix only", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:")).toBeUndefined();
 	});
 });
 
@@ -67,7 +103,6 @@ function makeArtifactVersion(
 		name?: string;
 		version?: string;
 		created?: string;
-		scopeType?: string;
 		deleted?: unknown;
 		executionId?: string | null;
 	} = {}
@@ -88,14 +123,11 @@ function makeArtifactVersion(
 			save_type: "step_output",
 			artifact: {
 				id: "artifact-id-1",
-				name: overrides.name ?? "kitaru_mem:my-flow:counter",
+				name: overrides.name ?? "kitaru_mem:flow:my-flow:counter",
 			},
 		},
 		metadata: {
 			run_metadata: {
-				...(overrides.scopeType !== undefined
-					? { kitaru_memory_scope_type: overrides.scopeType }
-					: { kitaru_memory_scope_type: "flow" }),
 				...(overrides.deleted !== undefined
 					? { kitaru_memory_deleted: overrides.deleted }
 					: {}),
@@ -116,13 +148,23 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		expect(entry).toEqual({
 			key: "counter",
 			scope: "my-flow",
+			scopeType: "flow",
 			version: "1",
 			valueType: "dict",
-			scopeType: "flow",
 			createdAt: new Date("2024-06-01T10:00:00Z"),
 			isDeleted: false,
 			artifactId: "artifact-version-id-1",
 		});
+	});
+
+	it("derives scopeType from the artifact name (namespace)", () => {
+		const av = makeArtifactVersion({
+			name: "kitaru_mem:namespace:repo_docs:sessions/topic",
+		});
+		const entry = mapArtifactVersionToMemoryEntry(av);
+		expect(entry?.scopeType).toBe("namespace");
+		expect(entry?.scope).toBe("repo_docs");
+		expect(entry?.key).toBe("sessions/topic");
 	});
 
 	it("returns null when body is missing", () => {
@@ -137,10 +179,9 @@ describe("mapArtifactVersionToMemoryEntry", () => {
 		expect(mapArtifactVersionToMemoryEntry(av)).toBeNull();
 	});
 
-	it("defaults scopeType to unknown when metadata is missing", () => {
-		const av = makeArtifactVersion({ scopeType: "bogus" });
-		const entry = mapArtifactVersionToMemoryEntry(av);
-		expect(entry?.scopeType).toBe("unknown");
+	it("returns null for unknown scope type in the name", () => {
+		const av = makeArtifactVersion({ name: "kitaru_mem:bogus:scope:key" });
+		expect(mapArtifactVersionToMemoryEntry(av)).toBeNull();
 	});
 
 	it("parses isDeleted from boolean true", () => {

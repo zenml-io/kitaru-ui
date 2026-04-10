@@ -7,7 +7,6 @@ export const MEMORY_TAG_KEY_PREFIX = "kitaru:memory:key:";
 export const MEMORY_TAG_SCOPE_TYPE_PREFIX = "kitaru:memory:scope_type:";
 export const MEMORY_TAG_FLOW_ID_PREFIX = "kitaru:memory:flow_id:";
 export const COMPACTION_LOG_PREFIX = "_compaction/";
-export const MEMORY_SCOPE_TYPE_METADATA_KEY = "kitaru_memory_scope_type";
 export const MEMORY_DELETED_METADATA_KEY = "kitaru_memory_deleted";
 
 const ARTIFACT_NAME_PREFIX = "kitaru_mem:";
@@ -45,33 +44,41 @@ export type MemoryScopeInfo = {
 	entryCount: number;
 };
 
-export function buildMemoryArtifactName(scope: string, key: string): string {
-	return `${ARTIFACT_NAME_PREFIX}${scope}:${key}`;
+export function buildMemoryArtifactName(
+	scopeType: MemoryScopeType,
+	scope: string,
+	key: string
+): string {
+	return `${ARTIFACT_NAME_PREFIX}${scopeType}:${scope}:${key}`;
 }
 
 export function parseMemoryArtifactName(
 	name: string
-): { scope: string; key: string } | undefined {
+): { scopeType: MemoryScopeType; scope: string; key: string } | undefined {
 	if (!name.startsWith(ARTIFACT_NAME_PREFIX)) return undefined;
 
 	const rest = name.slice(ARTIFACT_NAME_PREFIX.length);
-	const colonIndex = rest.indexOf(":");
-	if (colonIndex <= 0) return undefined;
 
-	const scope = rest.slice(0, colonIndex);
-	const key = rest.slice(colonIndex + 1);
+	const firstColon = rest.indexOf(":");
+	if (firstColon <= 0) return undefined;
+
+	const scopeTypeStr = rest.slice(0, firstColon);
+	const scopeType = memoryScopeTypeValues.find((v) => v === scopeTypeStr);
+	if (!scopeType) return undefined;
+
+	const afterType = rest.slice(firstColon + 1);
+	const secondColon = afterType.indexOf(":");
+	if (secondColon <= 0) return undefined;
+
+	const scope = afterType.slice(0, secondColon);
+	const key = afterType.slice(secondColon + 1);
 	if (!key) return undefined;
 
-	return { scope, key };
+	return { scopeType, scope, key };
 }
 
 export function isCompactionKey(key: string): boolean {
 	return key.startsWith(COMPACTION_LOG_PREFIX);
-}
-
-function parseScopeType(value: unknown): MemoryScopeType {
-	const found = memoryScopeTypeValues.find((v) => v === value);
-	return found ?? "unknown";
 }
 
 function parseIsDeleted(value: unknown): boolean {
@@ -99,9 +106,9 @@ export function mapArtifactVersionToMemoryEntry(
 	return {
 		key: parsed.key,
 		scope: parsed.scope,
+		scopeType: parsed.scopeType,
 		version: body.version,
 		valueType: inferValueType(body.data_type),
-		scopeType: parseScopeType(runMetadata[MEMORY_SCOPE_TYPE_METADATA_KEY]),
 		createdAt: parseBackendTimestamp(body.created),
 		isDeleted: parseIsDeleted(runMetadata[MEMORY_DELETED_METADATA_KEY]),
 		artifactId: artifact.id,

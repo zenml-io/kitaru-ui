@@ -14,7 +14,7 @@ export async function fetchMemoryHistory(
 	key: string
 ): Promise<MemoryEntry[]> {
 	const artifactVersions = await fetchMemoryArtifactVersions({
-		artifact: buildMemoryArtifactName(scope, key),
+		artifact: buildMemoryArtifactName(scopeType, scope, key),
 		tags: [MEMORY_TAG_MARKER, `${MEMORY_TAG_SCOPE_TYPE_PREFIX}${scopeType}`],
 		logical_operator: "and",
 		sort_by: "desc:version_number",

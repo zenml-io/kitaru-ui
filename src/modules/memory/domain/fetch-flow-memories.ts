@@ -11,7 +11,7 @@ export async function fetchFlowMemories(
 ): Promise<MemoryEntry[]> {
 	const versions = await fetchMemoryArtifactVersions({
 		tags: [MEMORY_TAG_MARKER, `${MEMORY_TAG_SCOPE_TYPE_PREFIX}flow`],
-		artifact: `startswith:kitaru_mem:${flowName}:`,
+		artifact: `startswith:kitaru_mem:flow:${flowName}:`,
 		logical_operator: "and",
 		sort_by: "desc:version_number",
 	});
