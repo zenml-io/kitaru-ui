@@ -87,16 +87,19 @@ export function parseMemoryArtifactName(
 
 	if (memoryScopeTypeValues.includes(maybeScopeType as MemoryScopeType)) {
 		const secondColonIndex = remainder.indexOf(":");
-		if (secondColonIndex <= 0) return undefined;
-
-		const scope = remainder.slice(0, secondColonIndex);
-		const key = remainder.slice(secondColonIndex + 1);
-		if (!scope || !key) return undefined;
-		return {
-			scope,
-			scopeType: maybeScopeType as MemoryScopeType,
-			key,
-		};
+		if (secondColonIndex >= 0) {
+			// Has a colon — typed format. Validate strictly.
+			const scope = remainder.slice(0, secondColonIndex);
+			const key = remainder.slice(secondColonIndex + 1);
+			if (!scope || !key) return undefined;
+			return {
+				scope,
+				scopeType: maybeScopeType as MemoryScopeType,
+				key,
+			};
+		}
+		// No colon in remainder — ambiguous: could be legacy with a scope name
+		// matching a type value (e.g. kitaru_mem:flow:counter). Fall through.
 	}
 
 	if (!remainder) return undefined;

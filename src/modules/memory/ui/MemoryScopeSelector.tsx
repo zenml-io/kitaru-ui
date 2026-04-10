@@ -1,10 +1,8 @@
 import { useMemo } from "react";
-import {
-	isSameMemoryScopeIdentity,
-	memoryScopeIdentityKey,
-	type MemoryScopeIdentity,
-	type MemoryScopeInfo,
-	type MemoryScopeType,
+import type {
+	MemoryScopeIdentity,
+	MemoryScopeInfo,
+	MemoryScopeType,
 } from "../domain/memory";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -38,6 +36,10 @@ const SCOPE_TYPE_LABELS: Record<MemoryScopeType, string> = {
 	execution: "Executions",
 	unknown: "Other",
 };
+
+function isSameScope(a: MemoryScopeIdentity, b: MemoryScopeIdentity) {
+	return a.scope === b.scope && a.scopeType === b.scopeType;
+}
 
 export function MemoryScopeSelector({
 	scopes,
@@ -82,19 +84,17 @@ export function MemoryScopeSelector({
 						</DropdownMenuLabel>
 						{grouped.get(scopeType)!.map((s) => (
 							<DropdownMenuItem
-								key={memoryScopeIdentityKey(s)}
+								key={`${s.scopeType}:${s.scope}`}
 								onClick={() => onScopeChange(s)}
 								className="flex items-center gap-2"
 							>
 								<span className="w-4 shrink-0">
-									{isSameMemoryScopeIdentity(s, activeScope) && (
-										<Check className="size-4" />
-									)}
+									{isSameScope(s, activeScope) && <Check className="size-4" />}
 								</span>
 								<span className="min-w-0 flex-1 truncate font-mono font-medium">
 									{s.scope}
 								</span>
-								{isSameMemoryScopeIdentity(s, flowScope) && (
+								{isSameScope(s, flowScope) && (
 									<Badge variant="secondary" className="text-2xs shrink-0">
 										this flow
 									</Badge>

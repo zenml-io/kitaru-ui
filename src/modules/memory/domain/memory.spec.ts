@@ -34,6 +34,19 @@ describe("parseMemoryArtifactName", () => {
 		});
 	});
 
+	it("falls back to legacy when scope name matches a scope type value", () => {
+		expect(parseMemoryArtifactName("kitaru_mem:flow:counter")).toEqual({
+			scope: "flow",
+			scopeType: "unknown",
+			key: "counter",
+		});
+		expect(parseMemoryArtifactName("kitaru_mem:namespace:my_key")).toEqual({
+			scope: "namespace",
+			scopeType: "unknown",
+			key: "my_key",
+		});
+	});
+
 	it("returns null for wrong prefix", () => {
 		expect(parseMemoryArtifactName("other_mem:scope:key")).toBeUndefined();
 	});

@@ -45,7 +45,9 @@ export function MemoryEmptyState({
 
 	const description =
 		variant === "no-scope-memory" && scope
-			? `No memory entries found for ${scope.scopeType} scope "${scope.scope}".`
+			? scope.scopeType === "unknown"
+				? `No memory entries found for scope "${scope.scope}".`
+				: `No memory entries found for ${scope.scopeType} scope "${scope.scope}".`
 			: config.description;
 
 	return (
