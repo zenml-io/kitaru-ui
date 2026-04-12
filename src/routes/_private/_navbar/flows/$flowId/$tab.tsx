@@ -1,6 +1,13 @@
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
-import { flowTabs, type FlowTab } from "@/modules/flows/domain/flow";
+import {
+	flowTabLabels,
+	flowTabs,
+	type FlowTab,
+} from "@/modules/flows/domain/flow";
+import { FlowContextBarContainer } from "@/modules/flows/feature/FlowContextBarContainer";
 import { FlowOverviewContainer } from "@/modules/flows/feature/FlowOverviewContainer";
+import { memoryQueries } from "@/modules/memory/business-logic/memory-queries";
+import { FlowMemoryContainer } from "@/modules/memory/feature/FlowMemoryContainer";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
@@ -9,12 +16,9 @@ import { z } from "zod";
 
 const tabSchema = z.enum(flowTabs);
 
-const TAB_TITLES: Record<FlowTab, string> = {
-	overview: "Overview",
-};
-
 const TAB_COMPONENTS: Record<FlowTab, React.ComponentType> = {
 	overview: FlowOverviewContainer,
+	memory: FlowMemoryContainer,
 };
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
@@ -26,10 +30,18 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
 		);
 
+		if (params.tab === "memory") {
+			context.queryClient.ensureQueryData(memoryQueries.namespaces());
+			context.queryClient.ensureQueryData(memoryQueries.flow(params.flowId));
+			context.queryClient.ensureQueryData(
+				memoryQueries.executions(params.flowId)
+			);
+		}
+
 		return {
 			flowName: flow.name,
 			crumb: {
-				label: "Overview",
+				label: flowTabLabels[params.tab],
 				disabled: false,
 			},
 		};
@@ -40,7 +52,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 		meta: [
 			{
 				title: buildPageTitles(
-					`${loaderData?.flowName} - ${TAB_TITLES[match.params.tab]}`
+					`${loaderData?.flowName} - ${flowTabLabels[match.params.tab]}`
 				),
 			},
 		],
@@ -56,7 +68,12 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/$tab")({
 });
 
 function FlowTabPage() {
-	const { tab } = Route.useParams();
+	const { flowId, tab } = Route.useParams();
 	const Component = TAB_COMPONENTS[tab];
-	return <Component />;
+	return (
+		<>
+			<FlowContextBarContainer />
+			<Component key={flowId} />
+		</>
+	);
 }
