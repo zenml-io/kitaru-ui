@@ -11,5 +11,6 @@ export function useMemoryHistory(
 		...memoryQueries.history(scope, scopeType, key ?? ""),
 		enabled: !!key,
 	});
+
 	return { ...query, memoryHistoryData: query.data };
 }

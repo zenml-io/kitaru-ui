@@ -9,8 +9,8 @@ export function deriveScopesFromEntries(
 	namespaceEntries: MemoryEntry[],
 	flowEntries: MemoryEntry[],
 	executionEntries: MemoryEntry[],
-	flowId: string,
-	flowName: string
+	currentFlowId: string,
+	currentFlowName: string
 ): MemoryScopeInfo[] {
 	const scopeMap = new Map<string, MemoryScopeInfo>();
 
@@ -38,10 +38,12 @@ export function deriveScopesFromEntries(
 
 	const scopes: MemoryScopeInfo[] = Array.from(scopeMap.values());
 
-	if (!scopes.some((s) => s.scope === flowId && s.scopeType === "flow")) {
+	if (
+		!scopes.some((s) => s.scope === currentFlowId && s.scopeType === "flow")
+	) {
 		scopes.push({
-			scope: flowId,
-			label: flowName,
+			scope: currentFlowId,
+			label: currentFlowName,
 			scopeType: "flow",
 			entryCount: 0,
 		});

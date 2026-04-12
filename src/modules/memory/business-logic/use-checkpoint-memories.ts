@@ -7,12 +7,13 @@ import {
 } from "./memory-operations";
 
 export function useCheckpointMemories(
-	flowId: string,
+	currentFlowId: string,
+	currentFlowName: string,
 	executionId: string,
 	checkpointStartTime?: Date
 ) {
 	const namespaces = useQuery(memoryQueries.namespaces());
-	const flow = useQuery(memoryQueries.flow(flowId));
+	const flow = useQuery(memoryQueries.flow(currentFlowId));
 	const execution = useQuery(memoryQueries.execution(executionId));
 
 	const resolveEntries = (entries: MemoryEntry[]) =>
@@ -21,7 +22,11 @@ export function useCheckpointMemories(
 			: dedupeMemoryEntries(entries);
 
 	const namespaceEntries = resolveEntries(namespaces.data ?? []);
-	const flowEntries = resolveEntries(flow.data ?? []);
+	const flowEntries = resolveEntries(flow.data ?? []).map((entry) => ({
+		...entry,
+		scopeLabel:
+			entry.scope === currentFlowId ? currentFlowName : entry.scopeLabel,
+	}));
 	const executionEntries = resolveEntries(execution.data ?? []);
 
 	const entries = [...namespaceEntries, ...flowEntries, ...executionEntries];

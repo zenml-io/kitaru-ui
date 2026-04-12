@@ -6,6 +6,7 @@ type MemoryMetadataProps = {
 };
 
 export function MemoryMetadata({ entry }: MemoryMetadataProps) {
+	console.log({ entry });
 	return (
 		<dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
 			<MetadataRow label="Scope">

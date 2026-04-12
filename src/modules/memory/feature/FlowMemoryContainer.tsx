@@ -31,6 +31,8 @@ export function FlowMemoryContainer() {
 		scopeType: "flow",
 		entryCount: 0,
 	});
+
+	console.log(activeScope);
 	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
 	const [selectedVersion, setSelectedVersion] = useState<string | undefined>();
 
@@ -42,8 +44,9 @@ export function FlowMemoryContainer() {
 		isError: isEntriesError,
 		error: entriesError,
 		refetch: refetchEntries,
-	} = useFlowMemories(flowId);
+	} = useFlowMemories(flowId, flowName);
 
+	console.log(flowId, flowName);
 	const memoryScopesData = deriveScopesFromEntries(
 		namespaceEntries,
 		flowEntries,
@@ -61,6 +64,7 @@ export function FlowMemoryContainer() {
 			e.scope === activeScope.scope && e.scopeType === activeScope.scopeType
 	);
 
+	console.log({ memoryEntriesData });
 	// Derive effective selected key: use user's choice if valid, else first entry
 	const selectedKey =
 		memoryEntriesData.length === 0
@@ -75,6 +79,16 @@ export function FlowMemoryContainer() {
 		isPending: isHistoryPending,
 		refetch: refetchHistory,
 	} = useMemoryHistory(activeScope.scope, activeScope.scopeType, selectedKey);
+
+	const enrichedMemoryHistoryData = memoryHistoryData?.map((entry) => {
+		if (entry.scopeType === "flow") {
+			return {
+				...entry,
+				scopeLabel: entry.scopeLabel ?? activeScope.label,
+			};
+		}
+		return entry;
+	});
 
 	const handleScopeChange = (scope: MemoryScopeInfo) => {
 		setActiveScope(scope);
@@ -100,8 +114,8 @@ export function FlowMemoryContainer() {
 		(e) => e.key === selectedKey
 	);
 	const selectedHistoryEntry = selectedVersion
-		? memoryHistoryData?.find((e) => e.version === selectedVersion)
-		: memoryHistoryData?.[0];
+		? enrichedMemoryHistoryData?.find((e) => e.version === selectedVersion)
+		: enrichedMemoryHistoryData?.[0];
 	const detailEntry: MemoryEntry | undefined =
 		selectedHistoryEntry ?? selectedListEntry;
 
@@ -160,7 +174,7 @@ export function FlowMemoryContainer() {
 				<MemoryHistorySidePanel
 					selectedKey={selectedKey}
 					isPending={isHistoryPending}
-					history={memoryHistoryData}
+					history={enrichedMemoryHistoryData}
 					selectedVersion={selectedVersion}
 					onSelectVersion={setSelectedVersion}
 				/>
@@ -170,7 +184,7 @@ export function FlowMemoryContainer() {
 					selectedKey={selectedKey}
 					selectedEntry={detailEntry}
 					selectedVersion={selectedVersion}
-					history={memoryHistoryData}
+					history={enrichedMemoryHistoryData}
 					onSelectVersion={setSelectedVersion}
 					isRefreshing={isRefreshing}
 					onRefresh={refresh}

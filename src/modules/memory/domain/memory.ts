@@ -8,7 +8,6 @@ export const MEMORY_TAG_SCOPE_TYPE_PREFIX = "kitaru:memory:scope_type:";
 export const MEMORY_TAG_FLOW_ID_PREFIX = "kitaru:memory:flow_id:";
 export const COMPACTION_LOG_PREFIX = "_compaction/";
 export const MEMORY_DELETED_METADATA_KEY = "kitaru_memory_deleted";
-export const MEMORY_FLOW_NAME_METADATA_KEY = "kitaru_memory_flow_name";
 
 const ARTIFACT_NAME_PREFIX = "kitaru_mem:";
 
@@ -80,15 +79,6 @@ function parseIsDeleted(value: unknown): boolean {
 	return value === true || value === "true";
 }
 
-function parseFlowScopeLabel(
-	runMetadata: Record<string, unknown>
-): string | undefined {
-	const flowName = runMetadata[MEMORY_FLOW_NAME_METADATA_KEY];
-	return typeof flowName === "string" && flowName.length > 0
-		? flowName
-		: undefined;
-}
-
 function inferValueType(dataType: components["schemas"]["Source"]): string {
 	const attr = dataType.attribute;
 	if (attr) return attr;
@@ -110,12 +100,9 @@ export function mapArtifactVersionToMemoryEntry(
 	return {
 		key: parsed.key,
 		scope: parsed.scope,
-		scopeLabel:
-			parsed.scopeType === "flow"
-				? parseFlowScopeLabel(runMetadata)
-				: undefined,
 		scopeType: parsed.scopeType,
 		version: body.version,
+
 		valueType: inferValueType(body.data_type),
 		createdAt: parseBackendTimestamp(body.created),
 		isDeleted: parseIsDeleted(runMetadata[MEMORY_DELETED_METADATA_KEY]),

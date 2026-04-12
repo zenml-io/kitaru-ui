@@ -27,6 +27,7 @@ export function MemoryCenterPanel({
 	preview,
 	previewActions,
 }: MemoryCenterPanelProps) {
+	console.log(detailEntry);
 	if (isPending) {
 		return (
 			<div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">

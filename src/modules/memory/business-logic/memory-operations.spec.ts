@@ -61,31 +61,31 @@ describe("deriveScopesFromEntries", () => {
 		});
 	});
 
-	it("backfills label from later entry if first had none", () => {
+	it("uses scopeLabel from enriched entries", () => {
 		const scopes = deriveScopesFromEntries(
 			[],
 			[
 				makeEntry({
 					scope: "flow-1",
-					scopeLabel: undefined,
+					scopeLabel: "My Flow",
 					artifactId: "av-1",
 				}),
 				makeEntry({
 					scope: "flow-1",
-					scopeLabel: "Labeled",
+					scopeLabel: "My Flow",
 					key: "other",
 					artifactId: "av-2",
 				}),
 			],
 			[],
 			"flow-1",
-			"Fallback"
+			"My Flow"
 		);
 
 		const flowScope = scopes.find(
 			(s) => s.scope === "flow-1" && s.scopeType === "flow"
 		);
-		expect(flowScope?.label).toBe("Labeled");
+		expect(flowScope?.label).toBe("My Flow");
 		expect(flowScope?.entryCount).toBe(2);
 	});
 });
