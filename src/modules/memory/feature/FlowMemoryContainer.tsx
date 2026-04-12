@@ -32,7 +32,6 @@ export function FlowMemoryContainer() {
 		entryCount: 0,
 	});
 
-	console.log(activeScope);
 	const [userSelectedKey, setUserSelectedKey] = useState<string | undefined>();
 	const [selectedVersion, setSelectedVersion] = useState<string | undefined>();
 
@@ -46,7 +45,6 @@ export function FlowMemoryContainer() {
 		refetch: refetchEntries,
 	} = useFlowMemories(flowId, flowName);
 
-	console.log(flowId, flowName);
 	const memoryScopesData = deriveScopesFromEntries(
 		namespaceEntries,
 		flowEntries,
@@ -64,7 +62,6 @@ export function FlowMemoryContainer() {
 			e.scope === activeScope.scope && e.scopeType === activeScope.scopeType
 	);
 
-	console.log({ memoryEntriesData });
 	// Derive effective selected key: use user's choice if valid, else first entry
 	const selectedKey =
 		memoryEntriesData.length === 0
