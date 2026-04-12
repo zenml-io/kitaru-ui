@@ -9,13 +9,13 @@ import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import type { Execution } from "../domain/execution";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
-import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
+import type { TimelineEntry } from "../domain/waiting-block";
 import { CheckpointThread } from "./traces/CheckpointThread";
 import { WaitInputSection } from "./WaitInputSection";
 
 type ExecutionDetailsProps = {
 	execution: Execution;
-	checkpointsEntries: CheckpointEntry[];
+	timelineEntries: TimelineEntry[];
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
@@ -24,7 +24,7 @@ type ExecutionDetailsProps = {
 
 export function ExecutionDetails({
 	execution,
-	checkpointsEntries,
+	timelineEntries,
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
@@ -60,7 +60,7 @@ export function ExecutionDetails({
 			</PageHeader>
 			<div className="flex-1 overflow-y-auto">
 				<CheckpointThread
-					checkpointsEntries={checkpointsEntries}
+					timelineEntries={timelineEntries}
 					onSelect={onSelectCheckpoint}
 				/>
 			</div>

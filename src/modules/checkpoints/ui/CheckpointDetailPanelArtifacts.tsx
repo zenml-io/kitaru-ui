@@ -1,5 +1,6 @@
 import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
+import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -7,6 +8,8 @@ import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
+import { NoArtifactsMessage } from "./NoArtifactsMessage";
+import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -29,15 +32,27 @@ export function CheckpointDetailPanelArtifacts({
 	selectedArtifact,
 	onSelectArtifact,
 }: CheckpointDetailPanelArtifactsProps) {
+	const hasVisibleArtifacts = inputs.length > 0 || outputs.length > 0;
+
 	return (
 		<div className="flex h-full flex-col">
-			<ArtifactsToolbar
-				inputs={inputs}
-				outputs={outputs}
-				selectedArtifact={selectedArtifact}
-				onSelectArtifact={onSelectArtifact}
-			/>
-			{selectedArtifact ? (
+			{hasVisibleArtifacts && (
+				<ArtifactsToolbar
+					inputs={inputs}
+					outputs={outputs}
+					selectedArtifact={selectedArtifact}
+					onSelectArtifact={onSelectArtifact}
+				/>
+			)}
+			{!hasVisibleArtifacts && <NoArtifactsMessage />}
+			{hasVisibleArtifacts && !selectedArtifact && (
+				<div className="flex flex-1 items-center justify-center p-4">
+					<p className="text-muted-foreground text-xs">
+						Select an artifact to view
+					</p>
+				</div>
+			)}
+			{hasVisibleArtifacts && selectedArtifact && (
 				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
 						<span className="text-foreground truncate text-xs font-semibold">
@@ -56,19 +71,13 @@ export function CheckpointDetailPanelArtifacts({
 					<Separator />
 					<div className="bg-background flex-1">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
 								/>
 							</Suspense>
 						</ErrorBoundary>
 					</div>
-				</div>
-			) : (
-				<div className="flex flex-1 items-center justify-center p-4">
-					<p className="text-muted-foreground text-xs">
-						Select an artifact to view
-					</p>
 				</div>
 			)}
 		</div>
@@ -92,47 +101,45 @@ function ArtifactsToolbar({
 	onSelectArtifact,
 }: ArtifactsToolbarProps) {
 	return (
-		<div className="border-border flex shrink-0 flex-col gap-2 border-b px-4 py-3">
-			{inputs.length > 0 && (
-				<div className="flex items-center gap-1.5">
-					<span className="text-2xs text-muted-foreground w-14 shrink-0 font-semibold tracking-wider uppercase">
-						In ({inputs.length})
-					</span>
-					<div className="flex flex-wrap items-center gap-1">
-						{inputs.map((a) => (
-							<ArtifactChip
-								key={a.id}
-								name={a.name}
-								isSelected={
-									selectedArtifact?.artifact.id === a.id &&
-									selectedArtifact?.direction === "input"
-								}
-								onClick={() => onSelectArtifact(a, "input")}
-							/>
-						))}
-					</div>
-				</div>
-			)}
-			{outputs.length > 0 && (
-				<div className="flex items-center gap-1.5">
-					<span className="text-2xs text-muted-foreground w-14 shrink-0 font-semibold tracking-wider uppercase">
-						Out ({outputs.length})
-					</span>
-					<div className="flex flex-wrap items-center gap-1">
-						{outputs.map((a) => (
-							<ArtifactChip
-								key={a.id}
-								name={a.name}
-								isSelected={
-									selectedArtifact?.artifact.id === a.id &&
-									selectedArtifact?.direction === "output"
-								}
-								onClick={() => onSelectArtifact(a, "output")}
-							/>
-						))}
-					</div>
-				</div>
-			)}
-		</div>
+		<ChipBar
+			groups={[
+				...(inputs.length > 0
+					? [
+							{
+								label: `In (${inputs.length})`,
+								children: inputs.map((a) => (
+									<ArtifactChip
+										key={a.id}
+										name={a.name}
+										isSelected={
+											selectedArtifact?.artifact.id === a.id &&
+											selectedArtifact?.direction === "input"
+										}
+										onClick={() => onSelectArtifact(a, "input")}
+									/>
+								)),
+							},
+						]
+					: []),
+				...(outputs.length > 0
+					? [
+							{
+								label: `Out (${outputs.length})`,
+								children: outputs.map((a) => (
+									<ArtifactChip
+										key={a.id}
+										name={a.name}
+										isSelected={
+											selectedArtifact?.artifact.id === a.id &&
+											selectedArtifact?.direction === "output"
+										}
+										onClick={() => onSelectArtifact(a, "output")}
+									/>
+								)),
+							},
+						]
+					: []),
+			]}
+		/>
 	);
 }

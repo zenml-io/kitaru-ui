@@ -1,6 +1,6 @@
 import { cn } from "@/shared/utils/styles";
 
-export type PanelTab = "checkpoint" | "artifacts";
+export type PanelTab = "checkpoint" | "artifacts" | "memory";
 
 interface CheckpointDetailPanelTabsProps {
 	activeTab: PanelTab;
@@ -13,7 +13,7 @@ export function CheckpointDetailPanelTabs({
 }: CheckpointDetailPanelTabsProps) {
 	return (
 		<div className="border-border bg-background flex shrink-0 items-center border-b">
-			{(["checkpoint", "artifacts"] as const).map((tab) => (
+			{(["checkpoint", "artifacts", "memory"] as const).map((tab) => (
 				<button
 					key={tab}
 					type="button"

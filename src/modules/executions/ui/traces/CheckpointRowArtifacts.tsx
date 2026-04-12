@@ -6,10 +6,12 @@ import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
+import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
+import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
 import { ArtifactChip } from "./ArtifactChip";
 
 function CheckpointRowArtifactsContent({
@@ -30,7 +32,9 @@ function CheckpointRowArtifactsContent({
 		outputs[0] ? { entry: outputs[0], direction: "output" } : null
 	);
 
-	if (inputs.length === 0 && outputs.length === 0) return null;
+	if (inputs.length === 0 && outputs.length === 0) {
+		return <NoArtifactsMessage />;
+	}
 
 	return (
 		<div className="space-y-4 px-4 pt-4 pb-4">
@@ -100,13 +104,7 @@ function CheckpointRowArtifactsContent({
 					</div>
 					<div className="bg-background">
 						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense
-								fallback={
-									<p className="text-2xs text-muted-foreground px-4 py-3">
-										Loading…
-									</p>
-								}
-							>
+							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}
 								/>

@@ -18,6 +18,8 @@ export function BreadcrumbsContainer() {
 		isMatch(match, "loaderData.crumb")
 	);
 
+	if (matchesWithCrumbs.length <= 1) return null;
+
 	return (
 		<Breadcrumb>
 			<BreadcrumbList>

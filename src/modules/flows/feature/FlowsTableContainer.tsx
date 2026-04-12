@@ -65,7 +65,14 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 					rows.map((row) => (
 						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
+								<TableCell
+									key={cell.id}
+									className={
+										cell.column.columnDef.meta?.isPrimaryColumn
+											? "p-0"
+											: undefined
+									}
+								>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</TableCell>
 							))}
@@ -89,12 +96,13 @@ export function FlowsTableContainer({ flowRows }: { flowRows: Flow[] }) {
 const flowColumns: ColumnDef<Flow>[] = [
 	{
 		accessorKey: "name",
+		meta: { isPrimaryColumn: true },
 		header: ({ column }) => <SortableHeader column={column} label="Name" />,
 		cell: ({ row }) => (
 			<Link
 				to="/flows/$flowId/$tab"
 				params={{ flowId: row.original.id, tab: "overview" }}
-				className="hover:underline"
+				className="block px-2 py-3.5 hover:underline"
 			>
 				<TextRenderer>{row.original.name}</TextRenderer>
 			</Link>
