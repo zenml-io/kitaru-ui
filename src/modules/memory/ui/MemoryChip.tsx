@@ -29,8 +29,9 @@ export function MemoryChip({
 		<Badge
 			render={<button type="button" />}
 			variant={isSelected ? "default" : "outline"}
+			size="lg"
 			className={cn(
-				"text-2xs shrink-0 cursor-pointer gap-1 px-2 py-0.5 font-mono font-normal transition-colors",
+				"shrink-0 cursor-pointer gap-1 font-mono font-normal transition-colors",
 				isSelected && "bg-primary text-primary-foreground",
 				!isSelected && "hover:bg-accent",
 				isDeleted && "line-through opacity-60"
