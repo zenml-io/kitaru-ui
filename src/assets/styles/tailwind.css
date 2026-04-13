@@ -183,6 +183,10 @@
 	--color-info: var(--info);
 	--color-info-foreground: var(--info-foreground);
 
+	/* Span type colors (no shadcn equivalent) */
+	--color-span-tool: oklch(0.7 0.08 65);
+	--color-span-sleep: oklch(0.7 0.02 260);
+
 	--shadow-2xs: var(--shadow-2xs);
 	--shadow-xs: var(--shadow-xs);
 	--shadow-sm: var(--shadow-sm);
@@ -197,6 +201,7 @@
 	--animate-drift-2: drift-2 25s ease-in-out infinite;
 	--animate-drift-3: drift-3 30s ease-in-out infinite;
 	--animate-drift-4: drift-4 22s ease-in-out infinite;
+	--animate-highlight-blink: highlight-blink 1.5s ease-out both;
 
 	/* Text */
 	--text-2xs: 0.625rem;
@@ -211,5 +216,18 @@
 	}
 	html {
 		@apply font-sans;
+	}
+}
+
+@keyframes highlight-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	33% {
+		opacity: 0.4;
+	}
+	66% {
+		opacity: 1;
 	}
 }
