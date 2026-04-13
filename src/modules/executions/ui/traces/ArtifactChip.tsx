@@ -12,7 +12,7 @@ export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
 		<button
 			type="button"
 			className={cn(
-				"text-2xs inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 font-mono font-normal transition-colors",
+				"inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-3 py-1 font-mono text-xs font-normal transition-colors",
 				isSelected
 					? "bg-primary text-primary-foreground border-transparent"
 					: "border-border text-foreground hover:bg-accent"
