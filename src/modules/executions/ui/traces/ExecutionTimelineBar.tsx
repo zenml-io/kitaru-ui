@@ -4,6 +4,7 @@ import { ColorDot } from "@/shared/ui/ColorDot";
 import { getCheckpointFillClass } from "./checkpoint-styles";
 import { formatDurationShort } from "@/shared/utils/time";
 import { cn } from "@/shared/utils/styles";
+import { computeTimelineWidths } from "../../util/timeline-scale";
 import type { TimelineEntry } from "../../domain/waiting-block";
 
 type TimelineSegment = {
@@ -52,6 +53,7 @@ export function ExecutionTimelineBar({
 		.map(toSegment)
 		.filter((s): s is TimelineSegment => s !== null);
 	const total = segments.reduce((sum, s) => sum + s.durationMs, 0);
+	const widths = computeTimelineWidths(segments.map((s) => s.durationMs));
 
 	if (total === 0) return null;
 
@@ -68,7 +70,6 @@ export function ExecutionTimelineBar({
 				className="flex h-7 w-full gap-0.5"
 			>
 				{segments.map((segment, index, arr) => {
-					const pct = (segment.durationMs / total) * 100;
 					const isSelected = segment.id === selectedSegmentId;
 					const isFirst = index === 0;
 					const isLast = index === arr.length - 1;
@@ -92,7 +93,7 @@ export function ExecutionTimelineBar({
 												? "ring-foreground opacity-100 ring-2 ring-inset"
 												: "opacity-80 hover:opacity-100"
 										)}
-										style={{ width: `${Math.max(pct, 1.5)}%` }}
+										style={{ width: `${widths[index]}%`, minWidth: "6px" }}
 									/>
 								}
 							/>
