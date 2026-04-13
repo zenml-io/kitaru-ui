@@ -12,7 +12,7 @@ export function CheckpointDetailPanelHeader({
 	checkpoint,
 }: CheckpointDetailPanelHeaderProps) {
 	return (
-		<div className="border-border flex h-10 shrink-0 items-center gap-2 border-b px-4">
+		<div className="flex h-10 shrink-0 items-center gap-2 px-4">
 			{checkpoint.type && <CheckpointTypeBadge type={checkpoint.type} />}
 			{checkpoint.costUsd !== undefined && (
 				<Badge variant="secondary">{formatCost(checkpoint.costUsd)}</Badge>
