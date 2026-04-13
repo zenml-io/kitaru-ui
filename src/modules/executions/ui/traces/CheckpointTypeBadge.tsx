@@ -26,7 +26,7 @@ export function CheckpointTypeBadge({ type }: CheckpointTypeBadgeProps) {
 		<Badge
 			variant="secondary"
 			className={cn(
-				"text-2xs border-0 px-1.5 py-0 font-mono font-medium",
+				"text-2xs rounded-sm border-current/20 px-1.5 py-0 font-mono font-medium",
 				getCheckpointSurfaceClass(type),
 				getCheckpointTextClass(type)
 			)}
