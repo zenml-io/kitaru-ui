@@ -14,13 +14,12 @@ export function timelineEntryToSegment(
 			entry,
 		};
 	}
-	const durationMs = entry.data.waitDurationMs ?? 0;
-	if (durationMs <= 0) return null;
+	if (entry.data.waitDurationMs === undefined) return null;
 	return {
 		id: entry.data.id,
 		name: "User Input",
 		type: "wait",
-		durationMs,
+		durationMs: Math.max(entry.data.waitDurationMs, 0),
 		entry,
 	};
 }

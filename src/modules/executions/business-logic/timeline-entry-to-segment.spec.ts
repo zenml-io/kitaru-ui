@@ -113,10 +113,22 @@ describe("timelineEntryToSegment", () => {
 			});
 		});
 
-		it("drops waiting blocks with waitDurationMs === 0", () => {
+		it("keeps waiting blocks with waitDurationMs === 0 as a zero-duration segment", () => {
 			const entry = waitingEntry({ waitDurationMs: 0 });
 
-			expect(timelineEntryToSegment(entry)).toBeNull();
+			const segment = timelineEntryToSegment(entry);
+
+			expect(segment).not.toBeNull();
+			expect(segment?.durationMs).toBe(0);
+			expect(segment?.type).toBe("wait");
+		});
+
+		it("clamps negative wait durations to zero", () => {
+			const entry = waitingEntry({ waitDurationMs: -10 });
+
+			const segment = timelineEntryToSegment(entry);
+
+			expect(segment?.durationMs).toBe(0);
 		});
 
 		it("drops waiting blocks with no waitDurationMs", () => {
