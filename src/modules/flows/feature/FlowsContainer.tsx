@@ -1,3 +1,4 @@
+import { useDebouncedValue } from "@/shared/business-logic/use-debounced-value";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import {
 	PageHeader,
@@ -7,26 +8,55 @@ import {
 	PageHeaderDescription,
 	PageHeaderTitle,
 } from "@/shared/ui/PageHeader";
+import {
+	paramToSortingState,
+	sortingStateToParam,
+} from "@/shared/utils/sorting";
+import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { useRouter, useSearch } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { useFlows } from "../business-logic/use-flows";
+import { useFilteredFlows, useFlows } from "../business-logic/use-flows";
 import { categorizeFlowStatus } from "../business-logic/categorize-flow-status";
+import { DEFAULT_FLOWS_SORT } from "../domain/fetch-flows";
 import { FlowsToolbar } from "../ui/FlowsToolbar";
 import type { StatProps } from "../ui/Stat";
 import { Stats } from "../ui/Stats";
 import { FlowsTableContainer } from "./FlowsTableContainer";
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 export function FlowsContainer() {
 	const router = useRouter();
-	const { q, status } = useSearch({ from: "/_private/_navbar/flows/" });
+	const { q, status, sort } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData, refetch } = useFlows({
-		refetchInterval: 5000,
-	});
+	const { flowsData: allFlows } = useFlows({ refetchInterval: 5000 });
+
+	const debouncedQuery = useDebouncedValue(q, SEARCH_DEBOUNCE_MS);
+	const { flowsData: filteredRows, refetch } = useFilteredFlows(
+		{ name: debouncedQuery, status, sort },
+		{ refetchInterval: 5000 }
+	);
+
+	const sortingState = paramToSortingState(sort);
+
+	const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+		const nextState =
+			typeof updater === "function" ? updater(sortingState) : updater;
+		const nextSort = sortingStateToParam(nextState) ?? DEFAULT_FLOWS_SORT;
+		router.navigate({
+			to: "/flows",
+			search: (previousSearch) => ({
+				q: previousSearch.q ?? "",
+				status: previousSearch.status ?? "all",
+				sort: nextSort,
+			}),
+			replace: true,
+		});
+	};
+
 	const { refresh: refreshFlows, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
 
-	const statsCounts = flowsData.reduce(
+	const statsCounts = allFlows.reduce(
 		(acc, flow) => {
 			const category = categorizeFlowStatus(flow.latestExecStatus);
 			if (category === "running") acc.running++;
@@ -38,30 +68,11 @@ export function FlowsContainer() {
 	);
 
 	const stats: StatProps[] = [
-		{ label: "Total", value: flowsData.length },
+		{ label: "Total", value: allFlows.length },
 		{ label: "Running", value: statsCounts.running, valueColor: "warning" },
 		{ label: "Failed", value: statsCounts.failed, valueColor: "danger" },
 		{ label: "Completed", value: statsCounts.completed, valueColor: "success" },
 	];
-
-	const filteredRows = useMemo(() => {
-		const normalizedSearch = q.trim().toLowerCase();
-
-		return flowsData.filter((flow) => {
-			const matchesStatus =
-				status === "all"
-					? true
-					: categorizeFlowStatus(flow.latestExecStatus) === status;
-			const matchesSearch =
-				normalizedSearch.length === 0
-					? true
-					: [flow.id, flow.name].some((value) =>
-							value.toLowerCase().includes(normalizedSearch)
-						);
-
-			return matchesStatus && matchesSearch;
-		});
-	}, [flowsData, q, status]);
 
 	return (
 		<>
@@ -89,6 +100,7 @@ export function FlowsContainer() {
 						search: (previousSearch) => ({
 							q: value,
 							status: previousSearch.status ?? "all",
+							sort: previousSearch.sort ?? DEFAULT_FLOWS_SORT,
 						}),
 						replace: true,
 					});
@@ -99,13 +111,18 @@ export function FlowsContainer() {
 						search: (previousSearch) => ({
 							q: previousSearch.q ?? "",
 							status: value,
+							sort: previousSearch.sort ?? DEFAULT_FLOWS_SORT,
 						}),
 						replace: true,
 					});
 				}}
 			/>
 			<div className="container mx-auto flex w-full flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-				<FlowsTableContainer flowRows={filteredRows} />
+				<FlowsTableContainer
+					flowRows={filteredRows}
+					sorting={sortingState}
+					onSortingChange={handleSortingChange}
+				/>
 			</div>
 		</>
 	);

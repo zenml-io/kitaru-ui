@@ -1,7 +1,7 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import type { FlowStatusFilter } from "../domain/flow";
 
-const FLOW_ACTIVE_STATUSES: Set<ExecutionStatus> = new Set([
+export const FLOW_ACTIVE_STATUSES: readonly ExecutionStatus[] = [
 	"initializing",
 	"provisioning",
 	"running",
@@ -9,24 +9,30 @@ const FLOW_ACTIVE_STATUSES: Set<ExecutionStatus> = new Set([
 	"paused",
 	"resuming",
 	"stopping",
-]);
+];
 
-const FLOW_FAILED_STATUSES: Set<ExecutionStatus> = new Set(["failed"]);
+export const FLOW_FAILED_STATUSES: readonly ExecutionStatus[] = ["failed"];
 
-const FLOW_COMPLETED_STATUSES: Set<ExecutionStatus> = new Set([
+export const FLOW_COMPLETED_STATUSES: readonly ExecutionStatus[] = [
 	"completed",
 	"cached",
 	"skipped",
 	"stopped",
 	"retried",
-]);
+];
+
+const FLOW_ACTIVE_STATUS_SET = new Set<ExecutionStatus>(FLOW_ACTIVE_STATUSES);
+const FLOW_FAILED_STATUS_SET = new Set<ExecutionStatus>(FLOW_FAILED_STATUSES);
+const FLOW_COMPLETED_STATUS_SET = new Set<ExecutionStatus>(
+	FLOW_COMPLETED_STATUSES
+);
 
 export function categorizeFlowStatus(
 	status: ExecutionStatus | undefined
 ): FlowStatusFilter {
 	if (!status) return "all";
-	if (FLOW_ACTIVE_STATUSES.has(status)) return "running";
-	if (FLOW_FAILED_STATUSES.has(status)) return "failed";
-	if (FLOW_COMPLETED_STATUSES.has(status)) return "completed";
+	if (FLOW_ACTIVE_STATUS_SET.has(status)) return "running";
+	if (FLOW_FAILED_STATUS_SET.has(status)) return "failed";
+	if (FLOW_COMPLETED_STATUS_SET.has(status)) return "completed";
 	return "all";
 }
