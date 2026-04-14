@@ -23,10 +23,8 @@ export function ExecutionTimelineBar({
 	const segments = timelineEntries
 		.map(timelineEntryToSegment)
 		.filter((s): s is TimelineSegment => s !== null);
-	const total = segments.reduce((sum, s) => sum + s.durationMs, 0);
+	if (segments.length === 0) return null;
 	const widths = computeTimelineWidths(segments.map((s) => s.durationMs));
-
-	if (total === 0) return null;
 
 	const handleSelect = (entry: TimelineEntry) => {
 		setSelectedSegmentId(entry.data.id);

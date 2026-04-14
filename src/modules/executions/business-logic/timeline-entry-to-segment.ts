@@ -5,8 +5,7 @@ export function timelineEntryToSegment(
 	entry: TimelineEntry
 ): TimelineSegment | null {
 	if (entry.kind === "checkpoint") {
-		const durationMs = entry.data.durationMs ?? 0;
-		if (durationMs <= 0) return null;
+		const durationMs = Math.max(entry.data.durationMs ?? 0, 0);
 		return {
 			id: entry.data.id,
 			name: entry.data.name,
