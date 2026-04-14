@@ -56,7 +56,7 @@ export function ExecutionTimelineBar({
 										aria-label={`${segment.name}, duration ${formatDurationShort(segment.durationMs)}`}
 										aria-pressed={isSelected}
 										className={cn(
-											"relative h-full transition-opacity",
+											"relative h-full min-w-[6px] transition-opacity",
 											isFirst && "rounded-l-md",
 											isLast && "rounded-r-md",
 											fillClass,
@@ -64,7 +64,7 @@ export function ExecutionTimelineBar({
 												? "ring-foreground opacity-100 ring-2 ring-inset"
 												: "opacity-80 hover:opacity-100"
 										)}
-										style={{ width: `${widths[index]}%`, minWidth: "6px" }}
+										style={{ width: `${widths[index]}%` }}
 									/>
 								}
 							/>
