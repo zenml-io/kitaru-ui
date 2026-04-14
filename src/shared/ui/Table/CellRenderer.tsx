@@ -31,7 +31,7 @@ function MetricValueRenderer({ children }: { children: React.ReactNode }) {
 function StatusRenderer({ status = "unknown" }: { status?: StatusDotVariant }) {
 	return (
 		<div className="flex items-center gap-2">
-			<StatusDot status={status} />
+			<StatusDot status={status} showTooltip={false} />
 			<span className="text-foreground text-sm capitalize">{status}</span>
 		</div>
 	);
