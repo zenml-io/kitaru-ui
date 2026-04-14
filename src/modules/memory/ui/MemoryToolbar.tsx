@@ -1,4 +1,5 @@
 import { RefreshButton } from "@/shared/ui/RefreshButton";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import type { MemoryEntry } from "../domain/memory";
 import { VersionSelector } from "./VersionSelector";
 
@@ -31,12 +32,12 @@ export function MemoryToolbar({
 	return (
 		<div className="flex flex-1 items-center gap-2">
 			{selectedKey && (
-				<span className="truncate font-mono text-sm font-semibold">
+				<TruncatedText className="font-mono text-sm font-semibold">
 					{prefix && (
 						<span className="text-muted-foreground font-normal">{prefix}</span>
 					)}
 					{name}
-				</span>
+				</TruncatedText>
 			)}
 
 			{selectedEntry && history && history.length > 0 && (

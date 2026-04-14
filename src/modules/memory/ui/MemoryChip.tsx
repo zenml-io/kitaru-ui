@@ -1,5 +1,6 @@
 import { Database01 } from "@untitledui/icons";
 import { Badge } from "@/shared/ui/badge";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 import type { MemoryScopeType } from "../domain/memory";
 
@@ -38,7 +39,6 @@ export function MemoryChip({
 			)}
 			aria-pressed={isSelected}
 			onClick={onClick}
-			title={label}
 		>
 			<Database01
 				className={cn(
@@ -46,7 +46,7 @@ export function MemoryChip({
 					isSelected ? "text-primary-foreground/70" : SCOPE_COLOR[scopeType]
 				)}
 			/>
-			<span className="max-w-40 truncate">{label}</span>
+			<TruncatedText className="max-w-40">{label}</TruncatedText>
 		</Badge>
 	);
 }

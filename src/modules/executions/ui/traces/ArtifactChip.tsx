@@ -1,4 +1,5 @@
 import { File02 } from "@untitledui/icons";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 
 type ArtifactChipProps = {
@@ -21,7 +22,7 @@ export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
 			onClick={onClick}
 		>
 			<File02 className="size-3" />
-			<span className="max-w-[120px] truncate">{name}</span>
+			<TruncatedText className="max-w-[120px]">{name}</TruncatedText>
 		</button>
 	);
 }

@@ -1,3 +1,4 @@
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import type { MemoryEntry } from "../domain/memory";
 import { MemoryMetadata } from "./MemoryMetadata";
 
@@ -16,7 +17,11 @@ export function MemoryDetailPanel({
 		<div className="flex h-full flex-col overflow-hidden">
 			{/* Header + metadata */}
 			<div className="border-border shrink-0 border-b px-4 py-3">
-				<h2 className="mb-2 truncate text-sm font-semibold">{entry.key}</h2>
+				<h2 className="mb-2">
+					<TruncatedText className="text-sm font-semibold">
+						{entry.key}
+					</TruncatedText>
+				</h2>
 				<MemoryMetadata entry={entry} />
 			</div>
 

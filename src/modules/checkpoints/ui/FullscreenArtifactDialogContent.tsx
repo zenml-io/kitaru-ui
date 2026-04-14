@@ -7,6 +7,7 @@ import {
 	DialogTitle,
 } from "@/shared/ui/dialog";
 import { Separator } from "@/shared/ui/separator";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { XClose } from "@untitledui/icons";
 
 type Props = {
@@ -26,8 +27,8 @@ export function FullscreenArtifactDialogContent({
 			className="flex h-[90vh] w-[90vw] flex-col gap-0 p-0 sm:max-w-[90vw]"
 		>
 			<DialogHeader className="bg-muted/50 flex-row items-center justify-between px-4 py-2">
-				<DialogTitle className="text-foreground truncate text-xs font-semibold">
-					{name}
+				<DialogTitle className="text-foreground text-xs font-semibold">
+					<TruncatedText>{name}</TruncatedText>
 				</DialogTitle>
 				<div className="flex items-center gap-1">
 					{actions}

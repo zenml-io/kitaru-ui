@@ -12,6 +12,7 @@ import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
 import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { ArtifactChip } from "./ArtifactChip";
 
 function CheckpointRowArtifactsContent({
@@ -89,9 +90,9 @@ function CheckpointRowArtifactsContent({
 			{selected && (
 				<div className="border-border overflow-hidden rounded-lg border">
 					<div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-2">
-						<span className="text-foreground truncate text-xs font-semibold">
+						<TruncatedText className="text-foreground text-xs font-semibold">
 							{selected.entry.name}
-						</span>
+						</TruncatedText>
 						<div className="flex items-center gap-1">
 							<DownloadArtifactButtonContainer
 								artifactVersionId={selected.entry.id}
