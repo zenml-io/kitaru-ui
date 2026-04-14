@@ -9,11 +9,16 @@ function isOverflowing(el: HTMLElement): boolean {
 	return range.getBoundingClientRect().width > el.getBoundingClientRect().width;
 }
 
+type TruncatedTextProps = React.ComponentProps<"span"> & {
+	tooltipLabel?: string;
+};
+
 function TruncatedText({
 	children,
 	className,
+	tooltipLabel,
 	...props
-}: React.ComponentProps<"span">) {
+}: TruncatedTextProps) {
 	const ref = React.useRef<HTMLSpanElement>(null);
 	const [open, setOpen] = React.useState(false);
 
@@ -36,7 +41,7 @@ function TruncatedText({
 					</span>
 				}
 			/>
-			<TooltipContent>{children}</TooltipContent>
+			<TooltipContent>{tooltipLabel ?? children}</TooltipContent>
 		</Tooltip>
 	);
 }

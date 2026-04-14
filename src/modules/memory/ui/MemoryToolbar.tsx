@@ -24,15 +24,18 @@ export function MemoryToolbar({
 }: MemoryToolbarProps) {
 	const prefix = selectedKey?.includes("/")
 		? selectedKey.slice(0, selectedKey.lastIndexOf("/") + 1)
-		: null;
+		: undefined;
 	const name = selectedKey?.includes("/")
 		? selectedKey.slice(selectedKey.lastIndexOf("/") + 1)
 		: selectedKey;
 
 	return (
-		<div className="flex flex-1 items-center gap-2">
+		<div className="flex flex-1 items-center gap-2 overflow-hidden">
 			{selectedKey && (
-				<TruncatedText className="font-mono text-sm font-semibold">
+				<TruncatedText
+					className="font-mono text-sm font-semibold"
+					tooltipLabel={`${prefix}${name}`}
+				>
 					{prefix && (
 						<span className="text-muted-foreground font-normal">{prefix}</span>
 					)}
