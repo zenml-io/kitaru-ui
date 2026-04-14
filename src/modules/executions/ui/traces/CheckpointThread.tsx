@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/shared/utils/styles";
+import { HIGHLIGHT_MS } from "@/shared/business-logic/use-scroll-highlight";
 import { CheckpointRow } from "./CheckpointRow";
 import { WaitingBlockRow } from "./WaitingBlockRow";
 import type { TimelineEntry } from "../../domain/waiting-block";
@@ -16,7 +17,10 @@ export function CheckpointThread({
 	highlightedId,
 }: CheckpointThreadProps) {
 	return (
-		<div className="flex-1 space-y-3 overflow-y-auto p-6">
+		<div
+			className="flex-1 space-y-3 overflow-y-auto p-6"
+			style={{ "--highlight-duration": `${HIGHLIGHT_MS}ms` }}
+		>
 			{timelineEntries.map((entry) => (
 				<RowHighlightedWrapper
 					key={entry.data.id}

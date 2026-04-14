@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-// Keep in sync with the `highlight-blink` keyframe duration in tailwind.css.
-const HIGHLIGHT_MS = 1500;
+export const HIGHLIGHT_MS = 1500;
 
 export function useScrollHighlight() {
 	const [highlightedId, setHighlightedId] = useState<string | undefined>();
