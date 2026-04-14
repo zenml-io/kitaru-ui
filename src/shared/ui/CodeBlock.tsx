@@ -61,7 +61,7 @@ export function CodeBlock({
 		return (
 			<pre
 				className={cn(
-					"text-2xs text-foreground p-4 font-mono leading-relaxed",
+					"text-foreground p-4 font-mono text-xs leading-relaxed",
 					wrap
 						? "break-words whitespace-pre-wrap"
 						: "overflow-x-auto whitespace-pre",
@@ -76,7 +76,7 @@ export function CodeBlock({
 	return (
 		<div
 			className={cn(
-				"[&_pre]:text-2xs [&_pre]:m-0 [&_pre]:!bg-transparent [&_pre]:p-4 [&_pre]:font-mono [&_pre]:leading-relaxed",
+				"[&_pre]:m-0 [&_pre]:!bg-transparent [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-xs [&_pre]:leading-relaxed",
 				"[&_.shiki]:!bg-transparent",
 				wrap
 					? "[&_pre]:break-words [&_pre]:whitespace-pre-wrap"
