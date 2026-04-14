@@ -6,39 +6,10 @@ import { formatDurationShort } from "@/shared/utils/time";
 import { cn } from "@/shared/utils/styles";
 import { computeTimelineWidths } from "../../util/timeline-scale";
 import type { TimelineEntry } from "../../domain/waiting-block";
+import type { TimelineSegment } from "../../domain/timeline-segment";
+import { timelineEntryToSegment } from "../../business-logic/timeline-entry-to-segment";
 
-type TimelineSegment = {
-	id: string;
-	name: string;
-	type: string;
-	durationMs: number;
-	entry: TimelineEntry;
-};
-
-function toSegment(entry: TimelineEntry): TimelineSegment | null {
-	if (entry.kind === "checkpoint") {
-		const durationMs = entry.data.durationMs ?? 0;
-		if (durationMs <= 0) return null;
-		return {
-			id: entry.data.id,
-			name: entry.data.name,
-			type: entry.data.type ?? "",
-			durationMs,
-			entry,
-		};
-	}
-	const durationMs = entry.data.waitDurationMs ?? 0;
-	if (durationMs <= 0) return null;
-	return {
-		id: entry.data.id,
-		name: "User Input",
-		type: "wait",
-		durationMs,
-		entry,
-	};
-}
-
-type ExecutionTimelineProps = {
+type ExecutionTimelineBarProps = {
 	timelineEntries: TimelineEntry[];
 	onSelect: (entry: TimelineEntry) => void;
 };
@@ -46,11 +17,11 @@ type ExecutionTimelineProps = {
 export function ExecutionTimelineBar({
 	timelineEntries,
 	onSelect,
-}: ExecutionTimelineProps) {
+}: ExecutionTimelineBarProps) {
 	const [selectedSegmentId, setSelectedSegmentId] = useState<string>();
 
 	const segments = timelineEntries
-		.map(toSegment)
+		.map(timelineEntryToSegment)
 		.filter((s): s is TimelineSegment => s !== null);
 	const total = segments.reduce((sum, s) => sum + s.durationMs, 0);
 	const widths = computeTimelineWidths(segments.map((s) => s.durationMs));
