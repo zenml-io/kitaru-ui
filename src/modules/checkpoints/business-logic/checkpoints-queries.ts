@@ -8,10 +8,10 @@ export const checkpointsQueryKeys = {
 	all: (executionId: string) => ["checkpoints", executionId] as const,
 	details: (checkpointId: string) =>
 		["checkpoints", "details", checkpointId] as const,
-	visualization: (artifactVersionId: string) =>
-		["checkpoints", "visualization", artifactVersionId] as const,
-	version: (artifactVersionId: string) =>
-		["checkpoints", "version", artifactVersionId] as const,
+	artifactVisualization: (artifactVersionId: string) =>
+		["checkpoints", "artifactVisualization", artifactVersionId] as const,
+	artifactVersion: (artifactVersionId: string) =>
+		["checkpoints", "artifactVersion", artifactVersionId] as const,
 };
 
 export const checkpointsQueries = {
@@ -25,14 +25,14 @@ export const checkpointsQueries = {
 			queryKey: checkpointsQueryKeys.details(checkpointId),
 			queryFn: () => fetchCheckpointDetails(checkpointId),
 		}),
-	visualization: (artifactVersionId: string) =>
+	artifactVisualization: (artifactVersionId: string) =>
 		queryOptions({
-			queryKey: checkpointsQueryKeys.visualization(artifactVersionId),
+			queryKey: checkpointsQueryKeys.artifactVisualization(artifactVersionId),
 			queryFn: () => fetchArtifactVisualization(artifactVersionId),
 		}),
-	version: (artifactVersionId: string) =>
+	artifactVersion: (artifactVersionId: string) =>
 		queryOptions({
-			queryKey: checkpointsQueryKeys.version(artifactVersionId),
+			queryKey: checkpointsQueryKeys.artifactVersion(artifactVersionId),
 			queryFn: () => fetchArtifactVersion(artifactVersionId),
 		}),
 };

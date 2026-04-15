@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
 
 type Options = Omit<
-	ReturnType<typeof checkpointsQueries.visualization>,
+	ReturnType<typeof checkpointsQueries.artifactVisualization>,
 	"queryKey" | "queryFn"
 >;
 
@@ -11,7 +11,7 @@ export function useArtifactVisualization(
 	opts: Options = {}
 ) {
 	const query = useQuery({
-		...checkpointsQueries.visualization(artifactVersionId),
+		...checkpointsQueries.artifactVisualization(artifactVersionId),
 		...opts,
 	});
 	return { ...query, visualizationData: query.data };

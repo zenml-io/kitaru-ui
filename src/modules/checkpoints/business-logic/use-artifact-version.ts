@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
 
 type Options = Omit<
-	ReturnType<typeof checkpointsQueries.version>,
+	ReturnType<typeof checkpointsQueries.artifactVersion>,
 	"queryKey" | "queryFn"
 >;
 
@@ -11,7 +11,7 @@ export function useArtifactVersion(
 	opts: Options = {}
 ) {
 	const query = useQuery({
-		...checkpointsQueries.version(artifactVersionId),
+		...checkpointsQueries.artifactVersion(artifactVersionId),
 		...opts,
 	});
 	return { ...query, artifactVersion: query.data };
