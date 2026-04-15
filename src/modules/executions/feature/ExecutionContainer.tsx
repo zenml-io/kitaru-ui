@@ -25,7 +25,7 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
-import { ExecutionRowActions } from "../ui/ExecutionRowActions";
+import { ExecutionActions } from "../ui/ExecutionActions";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 
 export function ExecutionContainer() {
@@ -134,7 +134,7 @@ export function ExecutionContainer() {
 						onClick={refreshExecutionData}
 						isLoading={isManualRefreshPending}
 					/>
-					<ExecutionRowActions executionId={executionId} flowId={flowId} />
+					<ExecutionActions executionId={executionId} flowId={flowId} />
 				</div>
 			}
 			ref={layoutRef}

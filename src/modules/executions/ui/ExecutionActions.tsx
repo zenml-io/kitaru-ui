@@ -9,15 +9,15 @@ import { DotsHorizontal, Trash01 } from "@untitledui/icons";
 import { useState } from "react";
 import { DeleteExecutionAlertDialogContainer } from "../feature/DeleteExecutionAlertDialogContainer";
 
-type ExecutionRowActionsProps = {
+type ExecutionActionsProps = {
 	executionId: string;
 	flowId: string;
 };
 
-export function ExecutionRowActions({
+export function ExecutionActions({
 	executionId,
 	flowId,
-}: ExecutionRowActionsProps) {
+}: ExecutionActionsProps) {
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
 	return (
@@ -37,7 +37,7 @@ export function ExecutionRowActions({
 							aria-label="Open execution actions"
 						>
 							<DotsHorizontal />
-							<span className="sr-only">Open row actions</span>
+							<span className="sr-only">Open actions</span>
 						</Button>
 					}
 				/>
