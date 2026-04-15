@@ -1,4 +1,5 @@
-import { File02 } from "@untitledui/icons";
+import { File } from "lucide-react";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 
 type ArtifactChipProps = {
@@ -12,7 +13,7 @@ export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
 		<button
 			type="button"
 			className={cn(
-				"text-2xs inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 font-mono font-normal transition-colors",
+				"inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-full border px-3 py-1 font-mono text-xs font-normal transition-colors",
 				isSelected
 					? "bg-primary text-primary-foreground border-transparent"
 					: "border-border text-foreground hover:bg-accent"
@@ -20,8 +21,8 @@ export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
 			aria-pressed={isSelected}
 			onClick={onClick}
 		>
-			<File02 className="size-3" />
-			<span className="max-w-[120px] truncate">{name}</span>
+			<File className="size-3" />
+			<TruncatedText className="max-w-[120px]">{name}</TruncatedText>
 		</button>
 	);
 }

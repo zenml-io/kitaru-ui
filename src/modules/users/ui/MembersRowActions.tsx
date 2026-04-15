@@ -5,7 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { DotsHorizontal, Trash01 } from "@untitledui/icons";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import type { User } from "../domain/users";
 import { useState } from "react";
 import { RemoveMemberAlertDialog } from "../feature/RemoveMemberAlertDialog";
@@ -40,7 +40,7 @@ export function MembersRowActions({
 							size="icon-sm"
 							aria-label={`Open actions for ${member.name}`}
 						>
-							<DotsHorizontal />
+							<MoreHorizontal />
 							<span className="sr-only">Open row actions</span>
 						</Button>
 					}
@@ -50,7 +50,7 @@ export function MembersRowActions({
 						variant="destructive"
 						onClick={() => setShowDeleteDialog(true)}
 					>
-						<Trash01 className="size-4" /> Remove member
+						<Trash2 className="size-4" /> Remove member
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>

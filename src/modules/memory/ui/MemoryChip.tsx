@@ -1,12 +1,14 @@
+import { Database } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 import type { MemoryScopeType } from "../domain/memory";
 
 const SCOPE_COLOR: Record<MemoryScopeType, string> = {
-	namespace: "bg-info",
-	flow: "bg-primary",
-	execution: "bg-muted-foreground",
-	unknown: "bg-muted-foreground",
+	namespace: "text-info",
+	flow: "text-primary",
+	execution: "text-muted-foreground",
+	unknown: "text-muted-foreground",
 };
 
 type MemoryChipProps = {
@@ -28,23 +30,23 @@ export function MemoryChip({
 		<Badge
 			render={<button type="button" />}
 			variant={isSelected ? "default" : "outline"}
+			size="lg"
 			className={cn(
-				"text-2xs shrink-0 cursor-pointer gap-1 px-2 py-0.5 font-mono font-normal transition-colors",
+				"shrink-0 cursor-pointer gap-1 font-mono font-normal transition-colors",
 				isSelected && "bg-primary text-primary-foreground",
 				!isSelected && "hover:bg-accent",
 				isDeleted && "line-through opacity-60"
 			)}
 			aria-pressed={isSelected}
 			onClick={onClick}
-			title={label}
 		>
-			<span
+			<Database
 				className={cn(
-					"size-1.5 shrink-0 rounded-full",
-					isSelected ? "bg-primary-foreground/70" : SCOPE_COLOR[scopeType]
+					"size-3 shrink-0",
+					isSelected ? "text-primary-foreground/70" : SCOPE_COLOR[scopeType]
 				)}
 			/>
-			<span className="max-w-40 truncate">{label}</span>
+			<TruncatedText className="max-w-40">{label}</TruncatedText>
 		</Badge>
 	);
 }

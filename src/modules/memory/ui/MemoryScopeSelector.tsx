@@ -9,7 +9,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { ChevronDown, Check } from "@untitledui/icons";
+import { ChevronDown, Check } from "lucide-react";
 
 type MemoryScopeSelectorProps = {
 	scopes: MemoryScopeInfo[];

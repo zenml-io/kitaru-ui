@@ -8,7 +8,7 @@ import {
 	EmptyTitle,
 } from "@/shared/ui/empty";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft } from "@untitledui/icons";
+import { ChevronLeft } from "lucide-react";
 
 export function DefaultPageNotFound() {
 	return (

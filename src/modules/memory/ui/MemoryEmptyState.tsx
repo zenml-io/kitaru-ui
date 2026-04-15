@@ -1,4 +1,4 @@
-import { Database01, Download01, SearchRefraction } from "@untitledui/icons";
+import { Database, Download, Search } from "lucide-react";
 import {
 	Empty,
 	EmptyDescription,
@@ -16,18 +16,18 @@ type MemoryEmptyStateProps = {
 
 const CONFIG = {
 	"no-memory": {
-		icon: Database01,
+		icon: Database,
 		title: "No memory yet",
 		description:
 			"This flow has no stored memory. Use memory.set() in your flow to start persisting state.",
 	},
 	"no-scope-memory": {
-		icon: SearchRefraction,
+		icon: Search,
 		title: "No memory found",
 		description: null,
 	},
 	"no-preview": {
-		icon: Download01,
+		icon: Download,
 		title: "Preview unavailable",
 		description:
 			"This memory value cannot be previewed. Try downloading the artifact instead.",

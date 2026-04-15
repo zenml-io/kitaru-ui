@@ -5,7 +5,7 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/shared/ui/empty";
-import { AlertCircle } from "@untitledui/icons";
+import { AlertCircle } from "lucide-react";
 import type { FallbackProps } from "react-error-boundary";
 
 export function VisualizationErrorBoundary({ error }: FallbackProps) {
