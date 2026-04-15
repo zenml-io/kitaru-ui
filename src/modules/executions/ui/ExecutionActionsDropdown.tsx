@@ -5,7 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { DotsHorizontal, Trash01 } from "@untitledui/icons";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DeleteExecutionAlertDialogContainer } from "../feature/DeleteExecutionAlertDialogContainer";
 
@@ -36,7 +36,7 @@ export function ExecutionActionsDropdown({
 							size="icon-sm"
 							aria-label="Open execution actions"
 						>
-							<DotsHorizontal />
+							<MoreHorizontal />
 							<span className="sr-only">Open actions</span>
 						</Button>
 					}
@@ -46,7 +46,7 @@ export function ExecutionActionsDropdown({
 						variant="destructive"
 						onClick={() => setShowDeleteDialog(true)}
 					>
-						<Trash01 className="size-4" /> Delete execution
+						<Trash2 className="size-4" /> Delete execution
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
