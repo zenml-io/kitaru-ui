@@ -9,15 +9,15 @@ import { DotsHorizontal, Trash01 } from "@untitledui/icons";
 import { useState } from "react";
 import { DeleteExecutionAlertDialogContainer } from "../feature/DeleteExecutionAlertDialogContainer";
 
-type ExecutionActionsProps = {
+type ExecutionActionsDropdownProps = {
 	executionId: string;
 	flowId: string;
 };
 
-export function ExecutionActions({
+export function ExecutionActionsDropdown({
 	executionId,
 	flowId,
-}: ExecutionActionsProps) {
+}: ExecutionActionsDropdownProps) {
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
 	return (

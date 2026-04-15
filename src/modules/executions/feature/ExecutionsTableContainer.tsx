@@ -23,7 +23,7 @@ import {
 import { useMemo, useState } from "react";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
-import { ExecutionActions } from "../ui/ExecutionActions";
+import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 
 export function ExecutionsTableContainer({
 	executionRows,
@@ -158,7 +158,10 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 			id: "actions",
 			header: () => null,
 			cell: ({ row }) => (
-				<ExecutionActions executionId={row.original.id} flowId={flowId} />
+				<ExecutionActionsDropdown
+					executionId={row.original.id}
+					flowId={flowId}
+				/>
 			),
 			enableSorting: false,
 		},
