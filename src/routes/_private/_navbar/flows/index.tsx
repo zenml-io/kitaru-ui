@@ -3,7 +3,7 @@ import {
 	flowStatusFilterValues,
 	type FlowStatusFilter,
 } from "@/modules/flows/domain/flow";
-import { DEFAULT_FLOWS_SORT } from "@/modules/flows/domain/fetch-flows";
+import { DEFAULT_FLOWS_SORT } from "@/modules/flows/business-logic/flows-queries";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import {
 	type SearchSchemaInput,
@@ -41,6 +41,6 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 	}),
 	pendingComponent: PageSpinner,
 	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(flowsQueries.all());
+		await context.queryClient.ensureQueryData(flowsQueries.list());
 	},
 });

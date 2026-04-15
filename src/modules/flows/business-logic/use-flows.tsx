@@ -3,17 +3,17 @@ import {
 	useQuery,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { FetchFlowsParams } from "../domain/fetch-flows";
+import type { FetchFlowsParams } from "./flows-queries";
 import { flowsQueries } from "./flows-queries";
 
 type SuspenseOptions = Omit<
-	ReturnType<typeof flowsQueries.all>,
+	ReturnType<typeof flowsQueries.list>,
 	"queryKey" | "queryFn"
 >;
 
 export function useFlows(opts: SuspenseOptions = {}) {
 	const query = useSuspenseQuery({
-		...flowsQueries.all(),
+		...flowsQueries.list(),
 		...opts,
 	});
 
@@ -25,7 +25,7 @@ export function useFilteredFlows(
 	opts: SuspenseOptions = {}
 ) {
 	const query = useQuery({
-		...flowsQueries.all(params),
+		...flowsQueries.list(params),
 		placeholderData: keepPreviousData,
 		...opts,
 	});

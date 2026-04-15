@@ -12,7 +12,7 @@ import { useSorting } from "@/shared/business-logic/use-sorting";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { useFilteredFlows, useFlows } from "../business-logic/use-flows";
 import { categorizeFlowStatus } from "../business-logic/categorize-flow-status";
-import { DEFAULT_FLOWS_SORT } from "../domain/fetch-flows";
+import { DEFAULT_FLOWS_SORT } from "../business-logic/flows-queries";
 import { FlowsToolbar } from "../ui/FlowsToolbar";
 import type { StatProps } from "../ui/Stat";
 import { Stats } from "../ui/Stats";
