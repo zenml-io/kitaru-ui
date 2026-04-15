@@ -9,9 +9,6 @@ export function NoVisualizationFallback() {
 					<Archive className="size-4" />
 				</EmptyMedia>
 				<EmptyTitle className="text-sm">No visualization available</EmptyTitle>
-				<p className="text-muted-foreground text-xs">
-					This artifact was saved without a visualization
-				</p>
 			</EmptyHeader>
 		</Empty>
 	);
