@@ -25,6 +25,7 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
+import { ExecutionRowActions } from "../ui/ExecutionRowActions";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 
 export function ExecutionContainer() {
@@ -126,13 +127,14 @@ export function ExecutionContainer() {
 	return (
 		<ThreePanelLayout
 			centerHeader={
-				<div className="mr-2 flex flex-1 items-center justify-end">
+				<div className="mr-2 flex flex-1 items-center justify-end gap-2">
 					<RefreshButton
 						size="sm"
 						variant="outline"
 						onClick={refreshExecutionData}
 						isLoading={isManualRefreshPending}
 					/>
+					<ExecutionRowActions executionId={executionId} flowId={flowId} />
 				</div>
 			}
 			ref={layoutRef}
