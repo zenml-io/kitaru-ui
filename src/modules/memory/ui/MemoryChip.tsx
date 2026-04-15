@@ -1,4 +1,4 @@
-import { Database01 } from "@untitledui/icons";
+import { Database } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
@@ -40,7 +40,7 @@ export function MemoryChip({
 			aria-pressed={isSelected}
 			onClick={onClick}
 		>
-			<Database01
+			<Database
 				className={cn(
 					"size-3 shrink-0",
 					isSelected ? "text-primary-foreground/70" : SCOPE_COLOR[scopeType]

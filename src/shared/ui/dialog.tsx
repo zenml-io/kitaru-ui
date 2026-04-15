@@ -3,7 +3,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 
 import { cn } from "@/shared/utils/styles";
 import { Button } from "@/shared/ui/button";
-import { XClose } from "@untitledui/icons";
+import { X } from "lucide-react";
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
 	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -68,7 +68,7 @@ function DialogContent({
 							/>
 						}
 					>
-						<XClose />
+						<X />
 						<span className="sr-only">Close</span>
 					</DialogPrimitive.Close>
 				)}

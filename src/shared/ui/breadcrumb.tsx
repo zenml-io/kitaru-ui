@@ -3,7 +3,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 
 import { cn } from "@/shared/utils/styles";
-import { ChevronRight, DotsHorizontal } from "@untitledui/icons";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
 	return (
@@ -105,7 +105,7 @@ function BreadcrumbEllipsis({
 			)}
 			{...props}
 		>
-			<DotsHorizontal />
+			<MoreHorizontal />
 			<span className="sr-only">More</span>
 		</span>
 	);

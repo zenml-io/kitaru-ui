@@ -31,7 +31,7 @@ By default, API requests are relative (`/api/v1/...`). In development, the Vite 
 - **Forms:** React Hook Form + Zod validation
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - **UI primitives:** Base UI (`@base-ui/react`) + class-variance-authority, with shadcn-style config conventions (`components.json`)
-- **Icons:** @untitledui/icons
+- **Icons:** lucide-react
 - **Notifications:** Sonner + next-themes
 - **Type safety:** TypeScript (strict mode) with generated types from ZenML OpenAPI spec
 - **Compiler:** React Compiler (via Babel plugin)

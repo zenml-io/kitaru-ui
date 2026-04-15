@@ -7,7 +7,7 @@ import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/Ar
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
-import { ArrowRight } from "@untitledui/icons";
+import { ArrowRight } from "lucide-react";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";

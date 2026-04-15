@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Database01 } from "@untitledui/icons";
+import { Database } from "lucide-react";
 import {
 	Empty,
 	EmptyDescription,
@@ -65,7 +65,7 @@ export function CheckpointMemoryTab({
 			<Empty className="h-full border-none">
 				<EmptyHeader>
 					<EmptyMedia variant="icon">
-						<Database01 className="size-5" />
+						<Database className="size-5" />
 					</EmptyMedia>
 					<EmptyDescription>
 						No memory keys accessed by this checkpoint

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/shared/utils/styles";
-import { ChevronRight } from "@untitledui/icons";
+import { ChevronRight } from "lucide-react";
 
 type ExpandableRowProps = {
 	header: React.ReactNode;

@@ -1,5 +1,5 @@
 import { Button } from "@/shared/ui/button";
-import { Monitor02, Moon01, Sun } from "@untitledui/icons";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function ThemeSwitcherContainer() {
@@ -26,7 +26,7 @@ export function ThemeSwitcherContainer() {
 					aria-label="Dark theme"
 					onClick={() => setTheme("dark")}
 				>
-					<Moon01 className="h-4 w-4" />
+					<Moon className="h-4 w-4" />
 				</Button>
 				<Button
 					variant={theme === "system" ? "default" : "outline"}
@@ -35,7 +35,7 @@ export function ThemeSwitcherContainer() {
 					aria-label="System theme"
 					onClick={() => setTheme("system")}
 				>
-					<Monitor02 className="h-4 w-4" />
+					<Monitor className="h-4 w-4" />
 				</Button>
 			</div>
 		</div>
