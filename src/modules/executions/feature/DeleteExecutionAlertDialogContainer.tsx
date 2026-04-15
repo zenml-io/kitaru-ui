@@ -44,7 +44,6 @@ export function DeleteExecutionAlertDialogContainer({
 			onConfirm={() => deleteExecution(executionId)}
 			isPending={isPending}
 			actionLabel="Delete execution"
-			pendingLabel="Deleting..."
 		/>
 	);
 }

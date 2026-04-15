@@ -46,7 +46,7 @@ export function DeleteAlertDialog({
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		if (!isConfirmed) return;
-		onConfirm?.();
+		onConfirm();
 	}
 
 	return (
