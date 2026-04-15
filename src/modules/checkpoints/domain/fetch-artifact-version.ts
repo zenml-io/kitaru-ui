@@ -12,6 +12,7 @@ export async function fetchArtifactVersion(
 		{
 			params: {
 				path: { artifact_version_id: artifactVersionId },
+				query: { hydrate: true },
 			},
 		}
 	);

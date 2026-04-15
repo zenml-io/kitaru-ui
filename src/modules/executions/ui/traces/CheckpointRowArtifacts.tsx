@@ -6,11 +6,8 @@ import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
-import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { ArrowRight } from "@untitledui/icons";
 import { Suspense, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
 import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
 import { ArtifactChip } from "./ArtifactChip";
 
@@ -103,13 +100,9 @@ function CheckpointRowArtifactsContent({
 						</div>
 					</div>
 					<div className="bg-background">
-						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense fallback={<VisualizationSkeleton />}>
-								<ArtifactVisualizationContainer
-									artifactVersionId={selected.entry.id}
-								/>
-							</Suspense>
-						</ErrorBoundary>
+						<ArtifactVisualizationContainer
+							artifactVersionId={selected.entry.id}
+						/>
 					</div>
 				</div>
 			)}

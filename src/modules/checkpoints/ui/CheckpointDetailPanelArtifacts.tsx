@@ -1,15 +1,11 @@
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
 import { NoArtifactsMessage } from "./NoArtifactsMessage";
-import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -70,13 +66,9 @@ export function CheckpointDetailPanelArtifacts({
 					</div>
 					<Separator />
 					<div className="bg-background flex-1">
-						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense fallback={<VisualizationSkeleton />}>
-								<ArtifactVisualizationContainer
-									artifactVersionId={selectedArtifact.artifact.id}
-								/>
-							</Suspense>
-						</ErrorBoundary>
+						<ArtifactVisualizationContainer
+							artifactVersionId={selectedArtifact.artifact.id}
+						/>
 					</div>
 				</div>
 			)}

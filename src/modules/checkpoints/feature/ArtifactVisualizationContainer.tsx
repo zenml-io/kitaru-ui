@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { useArtifactVersion } from "../business-logic/use-artifact-version";
-import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
+import { useQuery } from "@tanstack/react-query";
+import { checkpointsQueries } from "../business-logic/checkpoints-queries";
 import { VisualizationSkeleton } from "../ui/VisualizationSkeleton";
 import { NoVisualizationFallback } from "../ui/NoVisualizationFallback";
 import { VisualizationViewer } from "@/modules/executions/ui/traces/VisualizationViewer";
@@ -11,34 +9,53 @@ interface ArtifactVisualizationContainerProps {
 	artifactVersionId: string;
 }
 
-function VisualizationFetchContainer({
-	artifactVersionId,
-}: {
-	artifactVersionId: string;
-}) {
-	const { visualizationData } = useArtifactVisualization(artifactVersionId);
-	return (
-		<VisualizationViewer key={artifactVersionId} artifact={visualizationData} />
-	);
-}
-
 export function ArtifactVisualizationContainer({
 	artifactVersionId,
 }: ArtifactVisualizationContainerProps) {
-	const { artifactVersion } = useArtifactVersion(artifactVersionId);
+	const versionQuery = useQuery(checkpointsQueries.version(artifactVersionId));
 
 	const hasVisualizations =
-		(artifactVersion.metadata?.visualizations?.length ?? 0) > 0;
+		(versionQuery.data?.metadata?.visualizations?.length ?? 0) > 0;
+
+	const visualizationQuery = useQuery({
+		...checkpointsQueries.visualization(artifactVersionId),
+		enabled: hasVisualizations,
+	});
+
+	if (versionQuery.isPending) {
+		return <VisualizationSkeleton />;
+	}
+
+	if (versionQuery.isError) {
+		return (
+			<VisualizationErrorBoundary
+				error={versionQuery.error}
+				resetErrorBoundary={() => versionQuery.refetch()}
+			/>
+		);
+	}
 
 	if (!hasVisualizations) {
 		return <NoVisualizationFallback />;
 	}
 
+	if (visualizationQuery.isPending) {
+		return <VisualizationSkeleton />;
+	}
+
+	if (visualizationQuery.isError) {
+		return (
+			<VisualizationErrorBoundary
+				error={visualizationQuery.error}
+				resetErrorBoundary={() => visualizationQuery.refetch()}
+			/>
+		);
+	}
+
 	return (
-		<Suspense fallback={<VisualizationSkeleton />}>
-			<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-				<VisualizationFetchContainer artifactVersionId={artifactVersionId} />
-			</ErrorBoundary>
-		</Suspense>
+		<VisualizationViewer
+			key={artifactVersionId}
+			artifact={visualizationQuery.data}
+		/>
 	);
 }
