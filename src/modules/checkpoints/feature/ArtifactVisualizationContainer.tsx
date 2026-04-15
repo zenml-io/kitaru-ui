@@ -31,7 +31,7 @@ export function ArtifactVisualizationContainer({
 		(artifactVersion.metadata?.visualizations?.length ?? 0) > 0;
 
 	if (!hasVisualizations) {
-		return <NoVisualizationFallback artifactVersion={artifactVersion} />;
+		return <NoVisualizationFallback />;
 	}
 
 	return (
