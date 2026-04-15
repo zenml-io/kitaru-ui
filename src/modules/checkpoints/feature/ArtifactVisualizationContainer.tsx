@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { checkpointsQueries } from "../business-logic/checkpoints-queries";
+import { useArtifactVersion } from "../business-logic/use-artifact-version";
+import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
 import { VisualizationSkeleton } from "../ui/VisualizationSkeleton";
 import { NoVisualizationFallback } from "../ui/NoVisualizationFallback";
 import { VisualizationViewer } from "@/modules/executions/ui/traces/VisualizationViewer";
@@ -12,13 +12,12 @@ interface ArtifactVisualizationContainerProps {
 export function ArtifactVisualizationContainer({
 	artifactVersionId,
 }: ArtifactVisualizationContainerProps) {
-	const versionQuery = useQuery(checkpointsQueries.version(artifactVersionId));
+	const versionQuery = useArtifactVersion(artifactVersionId);
 
 	const hasVisualizations =
-		(versionQuery.data?.metadata?.visualizations?.length ?? 0) > 0;
+		(versionQuery.artifactVersion?.metadata?.visualizations?.length ?? 0) > 0;
 
-	const visualizationQuery = useQuery({
-		...checkpointsQueries.visualization(artifactVersionId),
+	const visualizationQuery = useArtifactVisualization(artifactVersionId, {
 		enabled: hasVisualizations,
 	});
 
@@ -55,7 +54,7 @@ export function ArtifactVisualizationContainer({
 	return (
 		<VisualizationViewer
 			key={artifactVersionId}
-			artifact={visualizationQuery.data}
+			artifact={visualizationQuery.visualizationData}
 		/>
 	);
 }
