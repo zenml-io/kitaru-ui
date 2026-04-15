@@ -8,7 +8,7 @@ export function computeTimelineWidths(durations: number[]): number[] {
 		d > 0 ? Math.pow(d, POWER_SCALE_EXPONENT) : 0
 	);
 	const total = scaled.reduce((sum, v) => sum + v, 0);
-	if (total === 0) return durations.map(() => 0);
+	if (total === 0) return durations.map(() => 100 / durations.length);
 
 	return scaled.map((v) => (v / total) * 100);
 }

@@ -32,11 +32,11 @@ export function ExecutionTimelineBar({
 	};
 
 	return (
-		<div className="border-border flex shrink-0 items-center border-b px-4 py-2.5">
+		<div className="border-border shrink-0 overflow-x-auto border-b px-4 py-2.5">
 			<div
 				role="toolbar"
 				aria-label="Execution timeline"
-				className="flex h-7 w-full gap-0.5"
+				className="flex h-7 min-w-full gap-0.5"
 			>
 				{segments.map((segment, index, arr) => {
 					const isSelected = segment.id === selectedSegmentId;
