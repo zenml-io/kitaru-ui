@@ -1,17 +1,6 @@
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/shared/ui/alert-dialog";
-import { Input } from "@/shared/ui/input";
+import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { useState } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useDeleteExecution } from "../business-logic/use-delete-execution";
@@ -31,7 +20,6 @@ export function DeleteExecutionAlertDialogContainer({
 }: DeleteExecutionAlertDialogContainerProps) {
 	const queryClient = useQueryClient();
 	const router = useRouter();
-	const [confirmText, setConfirmText] = useState("");
 
 	const { deleteExecution, isPending } = useDeleteExecution({
 		onSuccess: () => {
@@ -47,58 +35,16 @@ export function DeleteExecutionAlertDialogContainer({
 		},
 	});
 
-	const isConfirmed = confirmText === "DELETE";
-
-	function handleConfirm() {
-		if (!isConfirmed) return;
-		deleteExecution(executionId);
-	}
-
-	function handleOpenChange(nextOpen: boolean) {
-		if (!nextOpen) {
-			setConfirmText("");
-		}
-		onOpenChange(nextOpen);
-	}
-
 	return (
-		<AlertDialog open={open} onOpenChange={handleOpenChange}>
-			<AlertDialogContent>
-				<AlertDialogHeader>
-					<AlertDialogTitle>Delete execution?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This action is irreversible. All associated steps, logs, and
-						artifacts will be permanently removed.
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				<div className="flex flex-col gap-1.5">
-					<label
-						htmlFor="delete-confirm"
-						className="text-muted-foreground text-sm"
-					>
-						Type <span className="text-foreground font-medium">DELETE</span> to
-						confirm
-					</label>
-					<Input
-						id="delete-confirm"
-						value={confirmText}
-						onChange={(e) => setConfirmText(e.target.value)}
-						onPaste={(e) => e.preventDefault()}
-						placeholder="DELETE"
-						autoComplete="off"
-					/>
-				</div>
-				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction
-						variant="destructive"
-						disabled={!isConfirmed || isPending}
-						onClick={handleConfirm}
-					>
-						{isPending ? "Deleting..." : "Delete execution"}
-					</AlertDialogAction>
-				</AlertDialogFooter>
-			</AlertDialogContent>
-		</AlertDialog>
+		<DeleteAlertDialog
+			title="Delete execution?"
+			description="This action is irreversible. All associated steps, logs, and artifacts will be permanently removed."
+			open={open}
+			onOpenChange={onOpenChange}
+			onConfirm={() => deleteExecution(executionId)}
+			isPending={isPending}
+			actionLabel="Delete execution"
+			pendingLabel="Deleting..."
+		/>
 	);
 }
