@@ -1,4 +1,4 @@
-import { Check, Copy01 } from "@untitledui/icons";
+import { Check, Copy } from "lucide-react";
 import { useCopy } from "../business-logic/use-copy";
 import { cn } from "../utils/styles";
 
@@ -28,7 +28,7 @@ export function CopyCommand({
 				{copied ? (
 					<Check className="text-success size-3.5" />
 				) : (
-					<Copy01 className="size-3.5" />
+					<Copy className="size-3.5" />
 				)}
 				<span className="sr-only">
 					{copied ? "Command copied to clipboard" : "Copy command to clipboard"}

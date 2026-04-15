@@ -1,4 +1,4 @@
-import { File02 } from "@untitledui/icons";
+import { File } from "lucide-react";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 
@@ -21,7 +21,7 @@ export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
 			aria-pressed={isSelected}
 			onClick={onClick}
 		>
-			<File02 className="size-3" />
+			<File className="size-3" />
 			<TruncatedText className="max-w-[120px]">{name}</TruncatedText>
 		</button>
 	);

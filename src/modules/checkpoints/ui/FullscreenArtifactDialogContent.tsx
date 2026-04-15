@@ -8,7 +8,7 @@ import {
 } from "@/shared/ui/dialog";
 import { Separator } from "@/shared/ui/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
-import { XClose } from "@untitledui/icons";
+import { X } from "lucide-react";
 
 type Props = {
 	name: string;
@@ -35,7 +35,7 @@ export function FullscreenArtifactDialogContent({
 					<DialogClose
 						render={
 							<Button variant="ghost" size="icon-sm">
-								<XClose className="text-foreground h-3.5 w-3.5" />
+								<X className="text-foreground h-3.5 w-3.5" />
 								<span className="sr-only">Close</span>
 							</Button>
 						}

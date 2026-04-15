@@ -1,4 +1,4 @@
-import { Download01 } from "@untitledui/icons";
+import { Download } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { useDownloadArtifact } from "../business-logic/use-download-artifact";
@@ -20,7 +20,7 @@ export function DownloadArtifactButtonContainer({ artifactVersionId }: Props) {
 						disabled={isDownloading}
 						onClick={() => download(artifactVersionId)}
 					>
-						<Download01 className="text-foreground h-3.5 w-3.5" />
+						<Download className="text-foreground h-3.5 w-3.5" />
 						<span className="sr-only">Download artifact</span>
 					</Button>
 				}

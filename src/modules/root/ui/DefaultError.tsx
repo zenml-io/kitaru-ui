@@ -8,7 +8,7 @@ import {
 	EmptyTitle,
 } from "@/shared/ui/empty";
 import type { ErrorComponentProps } from "@tanstack/react-router";
-import { AlertCircle, RefreshCcw01 } from "@untitledui/icons";
+import { AlertCircle, RefreshCcw } from "lucide-react";
 
 export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
 	return (
@@ -32,7 +32,7 @@ export function DefaultErrorPage({ error, reset }: ErrorComponentProps) {
 					{error.message}
 				</div>
 				<Button onClick={reset}>
-					<RefreshCcw01 className="size-4" />
+					<RefreshCcw className="size-4" />
 					Try again
 				</Button>
 			</EmptyContent>

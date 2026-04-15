@@ -1,9 +1,9 @@
 ## Icons
 
-- MUST use `@untitledui/icons` for ALL icons — never use lucide-react, heroicons, or any other icon package
-- MUST import icons as React components: `import { SearchLg, Check } from "@untitledui/icons"`
-- NEVER use inline `<svg>` for standard icons — always use the Untitled UI component
-- Size icons via className: `<SearchLg className="w-4 h-4" />`
+- MUST use `lucide-react` for ALL icons — never use heroicons, react-icons, or any other icon package
+- MUST import icons as React components: `import { Search, Check } from "lucide-react"`
+- NEVER use inline `<svg>` for standard icons — always use the lucide-react component
+- Size icons via className: `<Search className="w-4 h-4" />`
 - Only exception for inline SVG: custom illustrations, animated graphics, or the product logo
 
 ## Colors
