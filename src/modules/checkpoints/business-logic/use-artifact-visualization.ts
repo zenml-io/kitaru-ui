@@ -10,9 +10,8 @@ export function useArtifactVisualization(
 	artifactVersionId: string,
 	opts: Options = {}
 ) {
-	const query = useQuery({
+	return useQuery({
 		...checkpointsQueries.artifactVisualization(artifactVersionId),
 		...opts,
 	});
-	return { ...query, visualizationData: query.data };
 }

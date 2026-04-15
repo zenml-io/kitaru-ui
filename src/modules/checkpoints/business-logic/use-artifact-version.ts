@@ -10,9 +10,8 @@ export function useArtifactVersion(
 	artifactVersionId: string,
 	opts: Options = {}
 ) {
-	const query = useQuery({
+	return useQuery({
 		...checkpointsQueries.artifactVersion(artifactVersionId),
 		...opts,
 	});
-	return { ...query, artifactVersion: query.data };
 }

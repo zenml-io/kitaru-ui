@@ -1,9 +1,10 @@
+import { ErrorBoundary } from "react-error-boundary";
 import { useArtifactVersion } from "../business-logic/use-artifact-version";
 import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
 import { VisualizationSkeleton } from "../ui/VisualizationSkeleton";
 import { NoVisualizationFallback } from "../ui/NoVisualizationFallback";
 import { VisualizationViewer } from "@/modules/executions/ui/traces/VisualizationViewer";
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
+import { VisualizationErrorFallback } from "@/modules/executions/ui/VisualizationErrorFallback";
 
 interface ArtifactVisualizationContainerProps {
 	artifactVersionId: string;
@@ -15,7 +16,7 @@ export function ArtifactVisualizationContainer({
 	const versionQuery = useArtifactVersion(artifactVersionId);
 
 	const hasVisualizations =
-		(versionQuery.artifactVersion?.metadata?.visualizations?.length ?? 0) > 0;
+		(versionQuery.data?.metadata?.visualizations?.length ?? 0) > 0;
 
 	const visualizationQuery = useArtifactVisualization(artifactVersionId, {
 		enabled: hasVisualizations,
@@ -27,7 +28,7 @@ export function ArtifactVisualizationContainer({
 
 	if (versionQuery.isError) {
 		return (
-			<VisualizationErrorBoundary
+			<VisualizationErrorFallback
 				error={versionQuery.error}
 				resetErrorBoundary={() => versionQuery.refetch()}
 			/>
@@ -44,7 +45,7 @@ export function ArtifactVisualizationContainer({
 
 	if (visualizationQuery.isError) {
 		return (
-			<VisualizationErrorBoundary
+			<VisualizationErrorFallback
 				error={visualizationQuery.error}
 				resetErrorBoundary={() => visualizationQuery.refetch()}
 			/>
@@ -52,9 +53,14 @@ export function ArtifactVisualizationContainer({
 	}
 
 	return (
-		<VisualizationViewer
-			key={artifactVersionId}
-			artifact={visualizationQuery.visualizationData}
-		/>
+		<ErrorBoundary
+			resetKeys={[artifactVersionId]}
+			FallbackComponent={VisualizationErrorFallback}
+		>
+			<VisualizationViewer
+				key={artifactVersionId}
+				artifact={visualizationQuery.data}
+			/>
+		</ErrorBoundary>
 	);
 }
