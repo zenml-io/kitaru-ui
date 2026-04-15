@@ -3,7 +3,10 @@ import {
 	flowStatusFilterValues,
 	type FlowStatusFilter,
 } from "@/modules/flows/domain/flow";
-import { DEFAULT_FLOWS_SORT } from "@/modules/flows/business-logic/flows-queries";
+import {
+	ALLOWED_FLOWS_SORT_FIELDS,
+	DEFAULT_FLOWS_SORT,
+} from "@/modules/flows/business-logic/flows-queries";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import {
 	type SearchSchemaInput,
@@ -15,10 +18,23 @@ import { z } from "zod";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { PageSpinner } from "@/shared/ui/spinner";
 
+const sortSchema = z
+	.string()
+	.refine((value) => {
+		const [prefix, field] = value.split(":");
+		return (
+			(prefix === "asc" || prefix === "desc") &&
+			ALLOWED_FLOWS_SORT_FIELDS.includes(
+				field as (typeof ALLOWED_FLOWS_SORT_FIELDS)[number]
+			)
+		);
+	})
+	.catch(DEFAULT_FLOWS_SORT);
+
 const flowsSearchSchema = z.object({
 	q: z.string().catch(""),
 	status: z.enum(flowStatusFilterValues).catch("all"),
-	sort: z.string().catch(DEFAULT_FLOWS_SORT),
+	sort: sortSchema,
 });
 
 type FlowsSearchSchemaInput = SearchSchemaInput & {
@@ -40,7 +56,12 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 		meta: [{ title: buildPageTitles("Flows") }],
 	}),
 	pendingComponent: PageSpinner,
-	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(flowsQueries.list());
+	loader: async ({ context, deps }) => {
+		await context.queryClient.ensureQueryData(flowsQueries.list(deps));
 	},
+	loaderDeps: ({ search }) => ({
+		name: search.q,
+		status: search.status,
+		sort: search.sort,
+	}),
 });

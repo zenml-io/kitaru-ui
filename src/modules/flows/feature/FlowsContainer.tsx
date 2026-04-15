@@ -24,7 +24,9 @@ export function FlowsContainer() {
 	const router = useRouter();
 	const { q, status, sort } = useSearch({ from: "/_private/_navbar/flows/" });
 
-	const { flowsData: allFlows } = useFlows({ refetchInterval: 5000 });
+	const { flowsData: allFlows, refetch: refetchAll } = useFlows({
+		refetchInterval: 5000,
+	});
 
 	const debouncedQuery = useDebouncedValue(q, SEARCH_DEBOUNCE_MS);
 	const { flowsData: filteredRows, refetch } = useFilteredFlows(
@@ -45,7 +47,9 @@ export function FlowsContainer() {
 	);
 
 	const { refresh: refreshFlows, isPending: isManualRefreshPending } =
-		useManualRefresh(refetch);
+		useManualRefresh(async () => {
+			await Promise.all([refetchAll(), refetch()]);
+		});
 
 	const statsCounts = allFlows.reduce(
 		(acc, flow) => {

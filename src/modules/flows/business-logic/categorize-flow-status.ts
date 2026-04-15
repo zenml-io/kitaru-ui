@@ -1,7 +1,7 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import type { FlowStatusFilter } from "../domain/flow";
 
-export const FLOW_ACTIVE_STATUSES: readonly ExecutionStatus[] = [
+export const FLOW_ACTIVE_STATUSES = [
 	"initializing",
 	"provisioning",
 	"running",
@@ -9,17 +9,19 @@ export const FLOW_ACTIVE_STATUSES: readonly ExecutionStatus[] = [
 	"paused",
 	"resuming",
 	"stopping",
-];
+] as const satisfies readonly ExecutionStatus[];
 
-export const FLOW_FAILED_STATUSES: readonly ExecutionStatus[] = ["failed"];
+export const FLOW_FAILED_STATUSES = [
+	"failed",
+] as const satisfies readonly ExecutionStatus[];
 
-export const FLOW_COMPLETED_STATUSES: readonly ExecutionStatus[] = [
+export const FLOW_COMPLETED_STATUSES = [
 	"completed",
 	"cached",
 	"skipped",
 	"stopped",
 	"retried",
-];
+] as const satisfies readonly ExecutionStatus[];
 
 const FLOW_ACTIVE_STATUS_SET = new Set<ExecutionStatus>(FLOW_ACTIVE_STATUSES);
 const FLOW_FAILED_STATUS_SET = new Set<ExecutionStatus>(FLOW_FAILED_STATUSES);

@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchFlows } from "../domain/fetch-flows";
+import { type FlowsQuery, fetchFlows } from "../domain/fetch-flows";
 import { fetchFlow } from "../domain/fetch-flow";
 import type { FlowStatusFilter } from "../domain/flow";
 import {
@@ -9,6 +9,12 @@ import {
 } from "./categorize-flow-status";
 
 export const DEFAULT_FLOWS_SORT = "desc:latest_run";
+
+export const ALLOWED_FLOWS_SORT_FIELDS = [
+	"name",
+	"latest_run",
+	"created",
+] as const;
 
 export type FetchFlowsParams = {
 	name?: string;
@@ -25,8 +31,8 @@ const STATUS_CATEGORY_TO_BACKEND: Record<
 	completed: FLOW_COMPLETED_STATUSES,
 };
 
-function buildFlowsQuery(params: FetchFlowsParams): Record<string, unknown> {
-	const query: Record<string, unknown> = {
+function buildFlowsQuery(params: FetchFlowsParams): FlowsQuery {
+	const query: FlowsQuery = {
 		sort_by: params.sort ?? DEFAULT_FLOWS_SORT,
 	};
 
