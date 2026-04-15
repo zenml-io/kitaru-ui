@@ -8,11 +8,7 @@ import {
 	PageHeaderDescription,
 	PageHeaderTitle,
 } from "@/shared/ui/PageHeader";
-import {
-	paramToSortingState,
-	sortingStateToParam,
-} from "@/shared/utils/sorting";
-import type { OnChangeFn, SortingState } from "@tanstack/react-table";
+import { useSorting } from "@/shared/business-logic/use-sorting";
 import { useRouter, useSearch } from "@tanstack/react-router";
 import { useFilteredFlows, useFlows } from "../business-logic/use-flows";
 import { categorizeFlowStatus } from "../business-logic/categorize-flow-status";
@@ -36,22 +32,17 @@ export function FlowsContainer() {
 		{ refetchInterval: 5000 }
 	);
 
-	const sortingState = paramToSortingState(sort);
-
-	const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-		const nextState =
-			typeof updater === "function" ? updater(sortingState) : updater;
-		const nextSort = sortingStateToParam(nextState) ?? DEFAULT_FLOWS_SORT;
-		router.navigate({
-			to: "/flows",
-			search: (previousSearch) => ({
-				q: previousSearch.q ?? "",
-				status: previousSearch.status ?? "all",
-				sort: nextSort,
-			}),
-			replace: true,
-		});
-	};
+	const { sortingState, onSortingChange } = useSorting(
+		sort,
+		DEFAULT_FLOWS_SORT,
+		(nextSort) => {
+			router.navigate({
+				to: "/flows",
+				search: (prev) => ({ ...prev, sort: nextSort }),
+				replace: true,
+			});
+		}
+	);
 
 	const { refresh: refreshFlows, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
@@ -121,7 +112,7 @@ export function FlowsContainer() {
 				<FlowsTableContainer
 					flowRows={filteredRows}
 					sorting={sortingState}
-					onSortingChange={handleSortingChange}
+					onSortingChange={onSortingChange}
 				/>
 			</div>
 		</>
