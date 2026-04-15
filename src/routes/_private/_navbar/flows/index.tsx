@@ -8,6 +8,7 @@ import {
 	DEFAULT_FLOWS_SORT,
 } from "@/modules/flows/business-logic/flows-queries";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
+import { sortBySchema } from "@/shared/utils/sorting";
 import {
 	type SearchSchemaInput,
 	createFileRoute,
@@ -18,23 +19,10 @@ import { z } from "zod";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { PageSpinner } from "@/shared/ui/spinner";
 
-const sortSchema = z
-	.string()
-	.refine((value) => {
-		const [prefix, field] = value.split(":");
-		return (
-			(prefix === "asc" || prefix === "desc") &&
-			ALLOWED_FLOWS_SORT_FIELDS.includes(
-				field as (typeof ALLOWED_FLOWS_SORT_FIELDS)[number]
-			)
-		);
-	})
-	.catch(DEFAULT_FLOWS_SORT);
-
 const flowsSearchSchema = z.object({
 	q: z.string().catch(""),
 	status: z.enum(flowStatusFilterValues).catch("all"),
-	sort: sortSchema,
+	sort: sortBySchema([...ALLOWED_FLOWS_SORT_FIELDS]).catch(DEFAULT_FLOWS_SORT),
 });
 
 type FlowsSearchSchemaInput = SearchSchemaInput & {

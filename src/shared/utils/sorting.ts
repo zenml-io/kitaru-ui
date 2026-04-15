@@ -1,4 +1,5 @@
 import type { SortingState } from "@tanstack/react-table";
+import { z } from "zod";
 
 export function sortingStateToParam(sorting: SortingState): string | undefined {
 	if (!sorting || sorting.length === 0) return undefined;
@@ -14,3 +15,11 @@ export function paramToSortingState(param: string | undefined): SortingState {
 	if (direction !== "asc" && direction !== "desc") return [];
 	return [{ id: key, desc: direction === "desc" }];
 }
+
+export const sortBySchema = (allowedFields: string[]) =>
+	z.string().refine((value) => {
+		const [prefix, field] = value.split(":");
+		return (
+			(prefix === "asc" || prefix === "desc") && allowedFields.includes(field)
+		);
+	});
