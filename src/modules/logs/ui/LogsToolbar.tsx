@@ -10,7 +10,7 @@ import {
 } from "@/shared/ui/select";
 import type { LoggingLevel } from "../domain/log-entry";
 
-export type LevelFilter = LoggingLevel | "all";
+export type LevelFilter = Exclude<LoggingLevel, 0> | "all";
 
 type LogsToolbarProps = {
 	levelFilter: LevelFilter;
@@ -26,16 +26,17 @@ type LogsToolbarProps = {
 	onSourceChange?: (source: string) => void;
 	onCopyAll: () => void;
 	onDownload: () => void;
+	canExport: boolean;
 };
 
-const LEVEL_OPTIONS: { value: LevelFilter; label: string }[] = [
-	{ value: "all", label: "All levels" },
-	{ value: 10, label: "Debug" },
-	{ value: 20, label: "Info" },
-	{ value: 30, label: "Warning" },
-	{ value: 40, label: "Error" },
-	{ value: 50, label: "Critical" },
-];
+const LEVEL_OPTIONS = new Map<LevelFilter, string>([
+	["all", "All levels"],
+	[10, "Debug"],
+	[20, "Info"],
+	[30, "Warning"],
+	[40, "Error"],
+	[50, "Critical"],
+]);
 
 export function LogsToolbar({
 	levelFilter,
@@ -51,25 +52,28 @@ export function LogsToolbar({
 	onSourceChange,
 	onCopyAll,
 	onDownload,
+	canExport,
 }: LogsToolbarProps) {
 	const showSourceSwitcher = (sources?.length ?? 0) > 1;
 	const hasSearch = search.length > 0;
 
 	return (
 		<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
-			<Select
-				value={String(levelFilter)}
-				onValueChange={(v) =>
-					onLevelFilterChange(v === "all" ? "all" : (Number(v) as LoggingLevel))
-				}
+			<Select<LevelFilter>
+				value={levelFilter}
+				onValueChange={(v) => {
+					if (v !== null) onLevelFilterChange(v);
+				}}
 			>
 				<SelectTrigger className="h-8 w-[132px] text-xs">
-					<SelectValue />
+					<SelectValue>
+						{(value: LevelFilter) => LEVEL_OPTIONS.get(value)}
+					</SelectValue>
 				</SelectTrigger>
 				<SelectContent>
-					{LEVEL_OPTIONS.map((opt) => (
-						<SelectItem key={String(opt.value)} value={String(opt.value)}>
-							{opt.label}
+					{[...LEVEL_OPTIONS].map(([value, label]) => (
+						<SelectItem key={value} value={value}>
+							{label}
 						</SelectItem>
 					))}
 				</SelectContent>
@@ -111,7 +115,6 @@ export function LogsToolbar({
 					</Button>
 				</div>
 			)}
-			<div className="flex-1" />
 			{showSourceSwitcher && onSourceChange && sources && (
 				<Select
 					value={selectedSource}
@@ -137,6 +140,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Copy all logs"
 				className="size-8"
+				disabled={!canExport}
 				onClick={onCopyAll}
 			>
 				<Copy className="size-3" />
@@ -147,6 +151,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Download logs"
 				className="size-8"
+				disabled={!canExport}
 				onClick={onDownload}
 			>
 				<Download className="size-3" />

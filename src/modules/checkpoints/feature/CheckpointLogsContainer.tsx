@@ -26,6 +26,7 @@ export function CheckpointLogsContainer({
 }: CheckpointLogsContainerProps) {
 	const { detailsData } = useCheckpointDetails(checkpointId);
 	const sources = detailsData?.logSources ?? [];
+	console.log("sources", sources);
 	const checkpointStatus = detailsData?.status;
 
 	const [selectedSource, setSelectedSource] = useState<string>(DEFAULT_SOURCE);
@@ -87,21 +88,24 @@ export function CheckpointLogsContainer({
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
-			<LogsToolbar
-				levelFilter={selectedLevel}
-				onLevelFilterChange={handleLevelChange}
-				search={search}
-				onSearchChange={setSearch}
-				matchCount={matchCount}
-				activeMatchIndex={activeMatchIndex}
-				onNextMatch={nextMatch}
-				onPrevMatch={prevMatch}
-				sources={sources.length > 1 ? sources : undefined}
-				selectedSource={effectiveSource}
-				onSourceChange={setSelectedSource}
-				onCopyAll={copyAll}
-				onDownload={download}
-			/>
+			{(logs.length > 0 || sources.length > 1) && (
+				<LogsToolbar
+					levelFilter={selectedLevel}
+					onLevelFilterChange={handleLevelChange}
+					search={search}
+					onSearchChange={setSearch}
+					matchCount={matchCount}
+					activeMatchIndex={activeMatchIndex}
+					onNextMatch={nextMatch}
+					onPrevMatch={prevMatch}
+					sources={sources.length > 1 ? sources : undefined}
+					selectedSource={effectiveSource}
+					onSourceChange={setSelectedSource}
+					onCopyAll={copyAll}
+					onDownload={download}
+					canExport={filteredLogs.length > 0}
+				/>
+			)}
 			<div className="min-h-0 flex-1">
 				<LogsList
 					logs={filteredLogs}
