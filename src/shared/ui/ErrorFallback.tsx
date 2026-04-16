@@ -1,3 +1,6 @@
+import { AlertCircle } from "lucide-react";
+import type { FallbackProps } from "react-error-boundary";
+import { Button } from "@/shared/ui/button";
 import {
 	Empty,
 	EmptyContent,
@@ -5,11 +8,17 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/shared/ui/empty";
-import { AlertCircle } from "lucide-react";
-import type { FallbackProps } from "react-error-boundary";
 
-export function VisualizationErrorBoundary({ error }: FallbackProps) {
-	const errorMessage = error instanceof Error ? error.message : "Unknown error";
+type ErrorFallbackProps = FallbackProps & {
+	title?: string;
+};
+
+export function ErrorFallback({
+	error,
+	resetErrorBoundary,
+	title = "Something went wrong",
+}: ErrorFallbackProps) {
+	const message = error instanceof Error ? error.message : "Unknown error";
 	return (
 		<Empty>
 			<EmptyHeader className="max-w-md">
@@ -19,12 +28,15 @@ export function VisualizationErrorBoundary({ error }: FallbackProps) {
 				>
 					<AlertCircle className="size-7" />
 				</EmptyMedia>
-				<EmptyTitle>Something went wrong</EmptyTitle>
+				<EmptyTitle>{title}</EmptyTitle>
 			</EmptyHeader>
 			<EmptyContent>
 				<div className="border-border text-muted-foreground bg-muted/30 w-full max-w-lg rounded-lg border px-5 py-4 text-left font-mono text-xs text-pretty">
-					{errorMessage}
+					{message}
 				</div>
+				<Button variant="outline" size="sm" onClick={resetErrorBoundary}>
+					Retry
+				</Button>
 			</EmptyContent>
 		</Empty>
 	);

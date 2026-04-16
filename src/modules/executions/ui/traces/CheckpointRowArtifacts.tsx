@@ -10,7 +10,7 @@ import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSke
 import { ArrowRight } from "lucide-react";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { VisualizationErrorBoundary } from "../VisualizationErrorBoundary";
+import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { ArtifactChip } from "./ArtifactChip";
@@ -104,7 +104,7 @@ function CheckpointRowArtifactsContent({
 						</div>
 					</div>
 					<div className="bg-background">
-						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
+						<ErrorBoundary FallbackComponent={ErrorFallback}>
 							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selected.entry.id}

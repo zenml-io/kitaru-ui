@@ -16,7 +16,7 @@ import {
 import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
 import { CheckpointLogsContainer } from "./CheckpointLogsContainer";
-import { LogsErrorBoundary } from "@/modules/logs/ui/LogsErrorBoundary";
+import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { LogsListSkeleton } from "@/modules/logs/ui/LogsListSkeleton";
 
 type CheckpointDetailPanelContainerProps = {
@@ -99,7 +99,9 @@ function CheckpointDetailPanelContentContainer({
 				{activeTab === "logs" && (
 					<ErrorBoundary
 						key={checkpointId}
-						FallbackComponent={LogsErrorBoundary}
+						fallbackRender={(props) => (
+							<ErrorFallback {...props} title="Failed to load logs" />
+						)}
 					>
 						<Suspense fallback={<LogsListSkeleton />}>
 							<CheckpointLogsContainer checkpointId={checkpointId} />

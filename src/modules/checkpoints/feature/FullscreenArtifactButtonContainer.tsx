@@ -1,4 +1,4 @@
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
+import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { Dialog } from "@/shared/ui/dialog";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -28,7 +28,7 @@ export function FullscreenArtifactButtonContainer({
 					/>
 				}
 			>
-				<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
+				<ErrorBoundary FallbackComponent={ErrorFallback}>
 					<Suspense fallback={<VisualizationSkeleton />}>
 						<ArtifactVisualizationContainer
 							artifactVersionId={artifactVersionId}
