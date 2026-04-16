@@ -237,7 +237,7 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 
 - E2E test files live in `e2e/specs/` and are named `*.spec.ts`
 - Import `test` and `expect` from `e2e/fixtures/test.ts`, not directly from `@playwright/test`
-- Use the `authenticatedPage` fixture for tests that need an authenticated session — it mocks `/api/v1/info` and `/api/v1/current-user` automatically. It is `auto: false`, so tests must destructure it to activate it; use `void authenticatedPage` to suppress the `noUnusedLocals` TypeScript error (this is intentional — see the smoke test for the pattern)
+- Use the `authenticatedPage` fixture for tests that need an authenticated session — it mocks `/api/v1/info` and `/api/v1/current-user` automatically. It is `auto: false`; Playwright activates it when it appears in the destructured parameter list. Use `void authenticatedPage` to suppress the `noUnusedLocals` TypeScript error since the fixture's type is `void` and the variable is never referenced in the test body (see the smoke test for the pattern)
 - Add per-test mocks with `await mockApi({ "/api/v1/some-endpoint": fixture })` **before** calling `page.goto()` — mock-api registers the route handler lazily, and loaders run during navigation
 - Any `/api/v1/*` call with no matching mock returns HTTP 500 and fails the test — add the endpoint to the mock map when you see "Unmocked endpoint: X" in output
 - Factory functions for API fixture data live in `e2e/fixtures/api/` and are typed against `src/shared/api/openapi.d.ts` — TypeScript catches schema drift at compile time

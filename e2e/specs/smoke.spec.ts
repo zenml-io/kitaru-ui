@@ -8,7 +8,9 @@ test("authenticated user is redirected to /flows and the app shell renders", asy
 	authenticatedPage,
 }) => {
 	// authenticatedPage is a side-effect fixture (sets cookie + mocks /info and /current-user).
-	// Destructuring it activates it; void suppresses the noUnusedLocals TS error.
+	// Playwright activates it by virtue of it appearing in the destructured parameter list above.
+	// void suppresses the noUnusedLocals TS error since the fixture's type is void
+	// and the variable is never referenced in the test body.
 	void authenticatedPage;
 
 	await mockApi({

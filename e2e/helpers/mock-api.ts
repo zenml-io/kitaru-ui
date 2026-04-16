@@ -12,24 +12,32 @@ export async function mockApi(page: Page, additions: Mocks): Promise<void> {
 
 	if (!pageRegistered.has(page)) {
 		pageRegistered.add(page);
-		await page.route("**/api/v1/**", (route) => {
-			const { pathname } = new URL(route.request().url());
-			const mocks = pageMocks.get(page) ?? {};
-			const body = mocks[pathname];
+		await page.route("**/api/v1/**", async (route) => {
+			try {
+				const { pathname } = new URL(route.request().url());
+				const mocks = pageMocks.get(page) ?? {};
+				const body = mocks[pathname];
 
-			if (body === undefined) {
-				return route.fulfill({
-					status: 500,
+				if (body === undefined) {
+					await route.fulfill({
+						status: 500,
+						contentType: "application/json",
+						body: JSON.stringify({ detail: `Unmocked endpoint: ${pathname}` }),
+					});
+					return;
+				}
+
+				await route.fulfill({
+					status: 200,
 					contentType: "application/json",
-					body: JSON.stringify({ detail: `Unmocked endpoint: ${pathname}` }),
+					body: JSON.stringify(body),
 				});
+			} catch (err) {
+				console.error(
+					`[mock-api] route.fulfill() failed for ${route.request().url()}:`,
+					err
+				);
 			}
-
-			return route.fulfill({
-				status: 200,
-				contentType: "application/json",
-				body: JSON.stringify(body),
-			});
 		});
 	}
 }
