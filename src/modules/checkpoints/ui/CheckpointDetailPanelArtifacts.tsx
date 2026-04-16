@@ -1,4 +1,4 @@
-import { ErrorFallback } from "@/shared/ui/ErrorFallback";
+import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
@@ -71,7 +71,7 @@ export function CheckpointDetailPanelArtifacts({
 					</div>
 					<Separator />
 					<div className="bg-background flex-1">
-						<ErrorBoundary FallbackComponent={ErrorFallback}>
+						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
 							<Suspense fallback={<VisualizationSkeleton />}>
 								<ArtifactVisualizationContainer
 									artifactVersionId={selectedArtifact.artifact.id}
