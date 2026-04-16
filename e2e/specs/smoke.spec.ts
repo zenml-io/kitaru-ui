@@ -7,6 +7,8 @@ test("authenticated user is redirected to /flows and the app shell renders", asy
 	mockApi,
 	authenticatedPage,
 }) => {
+	// authenticatedPage is a side-effect fixture (sets cookie + mocks /info and /current-user).
+	// Destructuring it activates it; void suppresses the noUnusedLocals TS error.
 	void authenticatedPage;
 
 	await mockApi({
