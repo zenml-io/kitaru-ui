@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 import {
 	extractInputArtifactEntries,
@@ -49,15 +50,6 @@ export function checkpointFromApiToDomain(
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 		logSources: extractLogSources(checkpoint.resources?.log_collection),
 	};
-}
-
-function extractLogSources(
-	collection: components["schemas"]["LogsResponse"][] | null | undefined
-): string[] {
-	if (!collection) return [];
-	return collection
-		.map((l) => l.body?.source)
-		.filter((s): s is string => typeof s === "string" && s.length > 0);
 }
 
 export type CheckpointEntry = {

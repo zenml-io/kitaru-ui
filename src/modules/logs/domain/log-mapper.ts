@@ -1,3 +1,4 @@
+import type { components } from "@/shared/api/openapi";
 import {
 	LOG_LEVEL_NAMES,
 	type LogEntry,
@@ -12,6 +13,19 @@ import {
 export function logsFromApiToDomain(entries: LogEntryApiType[]): LogEntry[] {
 	const unchunked = unchunk(entries);
 	return unchunked.map(buildLogEntry);
+}
+
+/**
+ * Extracts the set of log source names from a checkpoint's `log_collection`.
+ * Entries with a missing/empty source are dropped.
+ */
+export function extractLogSources(
+	collection: components["schemas"]["LogsResponse"][] | null | undefined
+): string[] {
+	if (!collection) return [];
+	return collection
+		.map((l) => l.body?.source)
+		.filter((s): s is string => typeof s === "string" && s.length > 0);
 }
 
 type Placeholder = { index: number };
