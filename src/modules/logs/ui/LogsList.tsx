@@ -90,36 +90,43 @@ export function LogsList({
 						width: "100%",
 					}}
 				>
-					{virtualizer.getVirtualItems().map((virtualRow) => {
-						const entry = logs[virtualRow.index];
-						const ranges = matchesByLogIndex?.get(virtualRow.index);
-						const activeStart =
-							activeMatch?.logIndex === virtualRow.index
-								? activeMatch.range.start
-								: undefined;
-						return (
-							<div
-								key={entry.id ?? virtualRow.index}
-								data-index={virtualRow.index}
-								ref={virtualizer.measureElement}
-								style={{
-									position: "absolute",
-									top: 0,
-									left: 0,
-									width: "100%",
-									transform: `translateY(${virtualRow.start}px)`,
-								}}
-							>
-								<LogRow
-									entry={entry}
-									density={density}
-									highlightRanges={ranges}
-									activeHighlightStart={activeStart}
-									onCopy={onCopyRow}
-								/>
-							</div>
-						);
-					})}
+					{/* Canonical @tanstack/react-virtual dynamic-sizing pattern: a single
+					    translated wrapper positions the first visible row, and the rest
+					    stack naturally. This avoids re-translating every row when a
+					    measurement changes. */}
+					<div
+						style={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							width: "100%",
+							transform: `translateY(${virtualizer.getVirtualItems()[0]?.start ?? 0}px)`,
+						}}
+					>
+						{virtualizer.getVirtualItems().map((virtualRow) => {
+							const entry = logs[virtualRow.index];
+							const ranges = matchesByLogIndex?.get(virtualRow.index);
+							const activeStart =
+								activeMatch?.logIndex === virtualRow.index
+									? activeMatch.range.start
+									: undefined;
+							return (
+								<div
+									key={entry.id ?? virtualRow.index}
+									data-index={virtualRow.index}
+									ref={virtualizer.measureElement}
+								>
+									<LogRow
+										entry={entry}
+										density={density}
+										highlightRanges={ranges}
+										activeHighlightStart={activeStart}
+										onCopy={onCopyRow}
+									/>
+								</div>
+							);
+						})}
+					</div>
 				</div>
 			</div>
 		</div>
