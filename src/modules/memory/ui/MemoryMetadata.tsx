@@ -1,5 +1,8 @@
 import type { MemoryEntry } from "../domain/memory";
 import { Badge } from "@/shared/ui/badge";
+import { DetailItem } from "@/shared/ui/detail-list/DetailItem";
+import { DetailList } from "@/shared/ui/detail-list/DetailList";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 
 type MemoryMetadataProps = {
 	entry: MemoryEntry;
@@ -7,47 +10,32 @@ type MemoryMetadataProps = {
 
 export function MemoryMetadata({ entry }: MemoryMetadataProps) {
 	return (
-		<dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-xs">
-			<MetadataRow label="Scope">
+		<DetailList>
+			<DetailItem label="Scope">
 				<span>{entry.scopeLabel ?? entry.scope}</span>
 				<Badge variant="secondary" className="text-2xs ml-1.5">
 					{entry.scopeType}
 				</Badge>
-			</MetadataRow>
-			<MetadataRow label="Type">
+			</DetailItem>
+			<DetailItem label="Type">
 				<code className="font-mono">{entry.valueType}</code>
-			</MetadataRow>
-			<MetadataRow label="Version">
+			</DetailItem>
+			<DetailItem label="Version">
 				<span className="font-mono tabular-nums">v{entry.version}</span>
 				{entry.isDeleted && (
 					<Badge variant="destructive" className="text-2xs ml-1.5">
 						deleted
 					</Badge>
 				)}
-			</MetadataRow>
-			<MetadataRow label="Created">
+			</DetailItem>
+			<DetailItem label="Created">
 				{entry.createdAt.toLocaleString()}
-			</MetadataRow>
-			<MetadataRow label="Artifact ID">
-				<code className="text-muted-foreground truncate font-mono">
+			</DetailItem>
+			<DetailItem label="Artifact ID">
+				<TruncatedText className="text-muted-foreground font-mono">
 					{entry.artifactId}
-				</code>
-			</MetadataRow>
-		</dl>
-	);
-}
-
-function MetadataRow({
-	label,
-	children,
-}: {
-	label: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<>
-			<dt className="text-muted-foreground whitespace-nowrap">{label}</dt>
-			<dd className="flex min-w-0 items-center truncate">{children}</dd>
-		</>
+				</TruncatedText>
+			</DetailItem>
+		</DetailList>
 	);
 }

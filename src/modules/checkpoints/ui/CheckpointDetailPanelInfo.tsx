@@ -1,8 +1,6 @@
-import {
-	CheckpointDetailPanelRow as DetailRow,
-	CheckpointDetailPanelRows as DetailRows,
-} from "./CheckpointDetailPanelRow";
 import { getCanShowDuration } from "@/shared/business-logic/duration";
+import { DetailItem } from "@/shared/ui/detail-list/DetailItem";
+import { DetailList } from "@/shared/ui/detail-list/DetailList";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import type { Checkpoint } from "../domain/checkpoint";
 
@@ -20,33 +18,37 @@ export function CheckpointDetailPanelInfo({
 	});
 	return (
 		<div className="space-y-4 p-4">
-			<DetailRows>
-				<DetailRow label="ID" className="font-mono">
-					{checkpoint.id}
-				</DetailRow>
-				<DetailRow label="Type">{checkpoint.type ?? "—"}</DetailRow>
+			<DetailList>
+				<DetailItem label="ID">
+					<code className="font-mono">{checkpoint.id}</code>
+				</DetailItem>
+				<DetailItem label="Type">{checkpoint.type ?? "—"}</DetailItem>
 				{checkpoint.status !== undefined && (
-					<DetailRow label="Status" className="capitalize">
+					<DetailItem label="Status" className="capitalize">
 						{checkpoint.status}
-					</DetailRow>
+					</DetailItem>
 				)}
 				{canShowDuration && (
-					<DetailRow label="Duration" className="tabular-nums">
+					<DetailItem label="Duration" className="font-mono tabular-nums">
 						<LiveDurationMs
 							status={checkpoint.status}
 							startTime={checkpoint.startTime}
 							endTime={checkpoint.endTime}
 							durationMs={checkpoint.durationMs}
 						/>
-					</DetailRow>
+					</DetailItem>
 				)}
 				{(checkpoint.inputs.length > 0 || checkpoint.outputs.length > 0) && (
 					<>
-						<DetailRow label="Inputs">{checkpoint.inputs.length}</DetailRow>
-						<DetailRow label="Outputs">{checkpoint.outputs.length}</DetailRow>
+						<DetailItem label="Inputs" className="font-mono tabular-nums">
+							{checkpoint.inputs.length}
+						</DetailItem>
+						<DetailItem label="Outputs" className="font-mono tabular-nums">
+							{checkpoint.outputs.length}
+						</DetailItem>
 					</>
 				)}
-			</DetailRows>
+			</DetailList>
 		</div>
 	);
 }

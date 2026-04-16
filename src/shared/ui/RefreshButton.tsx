@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { LoadingButton } from "./LoadingButton";
-import { RefreshCcw01 } from "@untitledui/icons";
+import { RefreshCcw } from "lucide-react";
 
 type RefreshButtonProps = Omit<
 	ComponentProps<typeof LoadingButton>,
@@ -10,7 +10,7 @@ type RefreshButtonProps = Omit<
 export function RefreshButton({ isLoading, ...props }: RefreshButtonProps) {
 	return (
 		<LoadingButton isLoading={isLoading} {...props}>
-			{!isLoading ? <RefreshCcw01 /> : null}
+			{!isLoading ? <RefreshCcw /> : null}
 			Refresh
 		</LoadingButton>
 	);

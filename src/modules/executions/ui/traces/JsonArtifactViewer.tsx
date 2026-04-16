@@ -125,7 +125,7 @@ export function JsonArtifactViewer({ data }: JsonArtifactViewerProps) {
 	}
 
 	return (
-		<pre className="text-2xs p-4 font-mono leading-relaxed break-words whitespace-pre-wrap">
+		<pre className="p-4 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap">
 			<JsonValue value={data} depth={0} />
 		</pre>
 	);

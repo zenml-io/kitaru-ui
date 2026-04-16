@@ -20,7 +20,7 @@ function InlineMarkdown({ text }: { text: string }) {
 					return (
 						<code
 							key={i}
-							className="bg-muted text-2xs text-foreground rounded px-1 py-0.5 font-mono"
+							className="bg-muted text-foreground rounded px-1 py-0.5 font-mono text-xs"
 						>
 							{part.slice(1, -1)}
 						</code>
@@ -76,7 +76,7 @@ export function VisualizationViewer({ artifact }: VisualizationViewerProps) {
 									>
 										{block.lang && (
 											<div className="border-border bg-muted/50 border-b px-4 py-1.5">
-												<span className="text-2xs text-muted-foreground font-mono">
+												<span className="text-muted-foreground font-mono text-xs">
 													{block.lang}
 												</span>
 											</div>
@@ -103,7 +103,7 @@ export function VisualizationViewer({ artifact }: VisualizationViewerProps) {
 										key={i}
 										className="border-border overflow-x-auto rounded-md border"
 									>
-										<table className="text-2xs w-full">
+										<table className="w-full text-xs">
 											<thead>
 												<tr className="bg-muted/50 border-border border-b">
 													{block.headers.map((h, j) => (

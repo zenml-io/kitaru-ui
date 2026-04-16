@@ -1,6 +1,6 @@
 import { useImperativeHandle, type Ref } from "react";
 import { useGroupRef, usePanelRef } from "react-resizable-panels";
-import { LayoutLeft, LayoutRight } from "@untitledui/icons";
+import { PanelLeft, PanelRight } from "lucide-react";
 import { Button } from "./button";
 import {
 	ResizableHandle,
@@ -100,12 +100,12 @@ export function ThreePanelLayout({
 				<div className="flex h-full flex-col overflow-hidden">
 					<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
 						<Button variant="ghost" size="icon-sm" onClick={toggleLeft}>
-							<LayoutLeft />
+							<PanelLeft />
 							<span className="sr-only">Toggle left panel</span>
 						</Button>
 						{centerHeader}
 						<Button variant="ghost" size="icon-sm" onClick={toggleRight}>
-							<LayoutRight />
+							<PanelRight />
 							<span className="sr-only">Toggle right panel</span>
 						</Button>
 					</header>

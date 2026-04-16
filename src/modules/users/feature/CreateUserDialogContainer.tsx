@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/shared/ui/dialog";
-import { UserPlus01 } from "@untitledui/icons";
+import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import type { CreateUserDialogSuccess } from "../domain/users";
 import { CreateUserFormContainer } from "./CreateUserFormContainer";
@@ -28,7 +28,7 @@ export function CreateUserDialogContainer() {
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger render={<Button />}>
-				<UserPlus01 className="size-4" />
+				<UserPlus className="size-4" />
 				Create User
 			</DialogTrigger>
 			<CreateUserDialogContent

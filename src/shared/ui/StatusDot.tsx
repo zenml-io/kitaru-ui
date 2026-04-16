@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { ColorDot } from "./ColorDot";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const statusDotVariants = cva("", {
 	variants: {
@@ -29,8 +30,14 @@ export type StatusDotVariant = NonNullable<
 	VariantProps<typeof statusDotVariants>["status"]
 >;
 
-function StatusDot({ status }: { status: StatusDotVariant }) {
-	return (
+function StatusDot({
+	status,
+	showTooltip = true,
+}: {
+	status: StatusDotVariant;
+	showTooltip?: boolean;
+}) {
+	const dot = (
 		<ColorDot
 			shape="round"
 			size="sm"
@@ -38,6 +45,17 @@ function StatusDot({ status }: { status: StatusDotVariant }) {
 			data-status={status}
 			className={statusDotVariants({ status })}
 		/>
+	);
+
+	if (!showTooltip) return dot;
+
+	return (
+		<Tooltip>
+			<TooltipTrigger render={dot} />
+			<TooltipContent>
+				<span className="capitalize">{status}</span>
+			</TooltipContent>
+		</Tooltip>
 	);
 }
 

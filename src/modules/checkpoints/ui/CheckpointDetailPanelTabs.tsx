@@ -12,7 +12,7 @@ export function CheckpointDetailPanelTabs({
 	onTabChange,
 }: CheckpointDetailPanelTabsProps) {
 	return (
-		<div className="border-border bg-background flex shrink-0 items-center border-b">
+		<div className="flex shrink-0 items-center">
 			{(["checkpoint", "artifacts", "memory"] as const).map((tab) => (
 				<button
 					key={tab}

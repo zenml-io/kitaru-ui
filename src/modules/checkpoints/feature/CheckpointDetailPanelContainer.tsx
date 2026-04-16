@@ -66,11 +66,13 @@ function CheckpointDetailPanelContentContainer({
 
 	return (
 		<div className="flex h-full flex-col">
-			<CheckpointDetailPanelHeader checkpoint={detailsData} />
-			<CheckpointDetailPanelTabs
-				activeTab={activeTab}
-				onTabChange={handleTabChange}
-			/>
+			<div className="border-border bg-card shrink-0 border-b">
+				<CheckpointDetailPanelHeader checkpoint={detailsData} />
+				<CheckpointDetailPanelTabs
+					activeTab={activeTab}
+					onTabChange={handleTabChange}
+				/>
+			</div>
 			<div className="min-h-0 flex-1 overflow-y-auto">
 				{activeTab === "checkpoint" && (
 					<CheckpointDetailPanelInfo checkpoint={detailsData} />

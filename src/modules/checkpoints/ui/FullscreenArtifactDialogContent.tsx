@@ -7,7 +7,8 @@ import {
 	DialogTitle,
 } from "@/shared/ui/dialog";
 import { Separator } from "@/shared/ui/separator";
-import { XClose } from "@untitledui/icons";
+import { TruncatedText } from "@/shared/ui/truncated-text";
+import { X } from "lucide-react";
 
 type Props = {
 	name: string;
@@ -26,15 +27,15 @@ export function FullscreenArtifactDialogContent({
 			className="flex h-[90vh] w-[90vw] flex-col gap-0 p-0 sm:max-w-[90vw]"
 		>
 			<DialogHeader className="bg-muted/50 flex-row items-center justify-between px-4 py-2">
-				<DialogTitle className="text-foreground truncate text-xs font-semibold">
-					{name}
+				<DialogTitle className="text-foreground text-xs font-semibold">
+					<TruncatedText>{name}</TruncatedText>
 				</DialogTitle>
 				<div className="flex items-center gap-1">
 					{actions}
 					<DialogClose
 						render={
 							<Button variant="ghost" size="icon-sm">
-								<XClose className="text-foreground h-3.5 w-3.5" />
+								<X className="text-foreground h-3.5 w-3.5" />
 								<span className="sr-only">Close</span>
 							</Button>
 						}

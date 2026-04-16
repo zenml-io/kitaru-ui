@@ -20,7 +20,7 @@ The app currently supports:
 | Forms           | React Hook Form + Zod                                                            |
 | Styling         | Tailwind CSS v4 (via `@tailwindcss/vite`)                                        |
 | UI primitives   | [Base UI](https://base-ui.com/) + [class-variance-authority](https://cva.style/) |
-| Icons           | [@untitledui/icons](https://untitledui.com/icons)                                |
+| Icons           | [lucide-react](https://lucide.dev/)                                              |
 | Notifications   | [Sonner](https://sonner.emilkowal.dev/)                                          |
 | Theming         | next-themes                                                                      |
 | Type generation | openapi-typescript (from ZenML server OpenAPI spec)                              |
