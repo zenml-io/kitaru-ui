@@ -11,6 +11,7 @@ import type { LogEntry, LoggingLevel } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
 import { formatLogsForExport } from "@/modules/logs/util/format-logs";
+import { useCopy } from "@/shared/business-logic/use-copy";
 import { downloadTextFile } from "@/shared/utils/download-file";
 
 const DEFAULT_SOURCE = "step";
@@ -49,29 +50,11 @@ export function CheckpointLogsContainer({
 		prevMatch,
 	} = useLogSearch(filteredLogs);
 
+	const { copy } = useCopy();
 	const handleLevelChange = (level: LoggingLevel) => setSelectedLevel(level);
 
-	async function copyAll() {
-		try {
-			await navigator.clipboard.writeText(formatLogsForExport(filteredLogs));
-			toast.success("Logs copied to clipboard");
-		} catch (err) {
-			console.error("Failed to copy logs to clipboard", err);
-			const reason = !window.isSecureContext ? " (requires HTTPS)" : "";
-			toast.error(`Failed to copy logs${reason}`);
-		}
-	}
-
-	async function copyRow(entry: LogEntry) {
-		try {
-			await navigator.clipboard.writeText(entry.originalEntry);
-			toast.success("Log entry copied");
-		} catch (err) {
-			console.error("Failed to copy log entry to clipboard", err);
-			const reason = !window.isSecureContext ? " (requires HTTPS)" : "";
-			toast.error(`Failed to copy log entry${reason}`);
-		}
-	}
+	const copyAll = () => copy(formatLogsForExport(filteredLogs));
+	const copyRow = (entry: LogEntry) => copy(entry.originalEntry);
 
 	function download() {
 		try {
