@@ -1,5 +1,4 @@
 import { Suspense, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
@@ -15,9 +14,7 @@ import {
 } from "../ui/CheckpointDetailPanelTabs";
 import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
-import { CheckpointLogsContainer } from "./CheckpointLogsContainer";
-import { ErrorFallback } from "@/shared/ui/ErrorFallback";
-import { LogsListSkeleton } from "@/modules/logs/ui/LogsListSkeleton";
+import { CheckpointLogsTabContainer } from "./CheckpointLogsTabContainer";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
@@ -97,20 +94,11 @@ function CheckpointDetailPanelContentContainer({
 					/>
 				)}
 				{activeTab === "logs" && (
-					<ErrorBoundary
-						key={checkpointId}
-						fallbackRender={(props) => (
-							<ErrorFallback {...props} title="Failed to load logs" />
-						)}
-					>
-						<Suspense fallback={<LogsListSkeleton />}>
-							<CheckpointLogsContainer
-								checkpointId={checkpointId}
-								logSources={detailsData?.logSources ?? []}
-								checkpointStatus={detailsData?.status}
-							/>
-						</Suspense>
-					</ErrorBoundary>
+					<CheckpointLogsTabContainer
+						checkpointId={checkpointId}
+						logSources={detailsData?.logSources ?? []}
+						checkpointStatus={detailsData?.status}
+					/>
 				)}
 			</div>
 		</div>
