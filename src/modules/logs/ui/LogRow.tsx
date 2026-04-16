@@ -28,36 +28,22 @@ export function LogRow({
 	return (
 		<div
 			className={cn(
-				"group hover:bg-accent/40 flex items-start gap-2 border-b border-transparent px-2.5",
-				isCompact ? "py-0.5" : "py-1.5"
+				"group hover:bg-accent/40 flex w-full items-center gap-3 border-b border-transparent px-4 font-mono text-xs",
+				isCompact ? "py-1" : "py-1.5"
 			)}
 		>
 			<span
 				className={cn(
-					"inline-flex shrink-0 items-center justify-center rounded px-1.5 font-mono font-medium tabular-nums",
-					style?.bg,
-					style?.text,
-					isCompact ? "py-px text-[0.625rem]" : "text-2xs py-0.5"
+					"inline-flex w-14 shrink-0 items-center justify-center rounded px-1.5 py-0.5 text-[0.625rem] font-medium tracking-wide uppercase tabular-nums",
+					style?.pill ?? "bg-muted text-muted-foreground"
 				)}
-				style={{ width: isCompact ? 48 : 60 }}
 			>
 				{style?.label ?? ""}
 			</span>
-			<span
-				className={cn(
-					"text-muted-foreground shrink-0 font-mono tabular-nums",
-					isCompact ? "text-[0.625rem]" : "text-2xs"
-				)}
-				style={{ width: isCompact ? 88 : 100 }}
-			>
+			<span className="text-muted-foreground w-[88px] shrink-0 tabular-nums">
 				{time}
 			</span>
-			<span
-				className={cn(
-					"text-foreground min-w-0 flex-1 font-mono",
-					isCompact ? "text-[0.6875rem] break-all" : "text-xs"
-				)}
-			>
+			<span className="text-foreground min-w-0 flex-1 break-words whitespace-pre-wrap">
 				{renderMessage(entry.message, highlightRanges, activeHighlightStart)}
 			</span>
 			{onCopy && (
