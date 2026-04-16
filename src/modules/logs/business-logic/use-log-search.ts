@@ -54,23 +54,29 @@ export function useLogSearch(logs: LogEntry[]): UseLogSearchResult {
 	const nextMatch = useCallback(() => {
 		setActiveMatchIndex((prev) => {
 			if (matches.length === 0) return -1;
-			return (prev + 1) % matches.length;
+			const base =
+				prev < 0 || prev >= matches.length ? matches.length - 1 : prev;
+			return (base + 1) % matches.length;
 		});
 	}, [matches.length]);
 
 	const prevMatch = useCallback(() => {
 		setActiveMatchIndex((prev) => {
 			if (matches.length === 0) return -1;
-			return (prev - 1 + matches.length) % matches.length;
+			const base =
+				prev < 0 || prev >= matches.length ? matches.length - 1 : prev;
+			return (base - 1 + matches.length) % matches.length;
 		});
 	}, [matches.length]);
 
 	const clampedIndex =
 		matches.length === 0
 			? -1
-			: activeMatchIndex >= matches.length
+			: activeMatchIndex < 0
 				? 0
-				: activeMatchIndex;
+				: activeMatchIndex >= matches.length
+					? matches.length - 1
+					: activeMatchIndex;
 	const activeMatch = clampedIndex >= 0 ? matches[clampedIndex] : undefined;
 
 	return {

@@ -90,4 +90,42 @@ describe("useLogSearch", () => {
 			range: { start: 0, end: 1 },
 		});
 	});
+
+	it("clamps to end of matches when logs shrink below active index", () => {
+		const logs = [makeLog("foo"), makeLog("foo"), makeLog("foo")];
+		const { result, rerender } = renderHook(
+			({ logs }: { logs: LogEntry[] }) => useLogSearch(logs),
+			{ initialProps: { logs } }
+		);
+		act(() => result.current.setSearch("foo"));
+		act(() => result.current.nextMatch());
+		act(() => result.current.nextMatch());
+		expect(result.current.activeMatchIndex).toBe(2);
+
+		rerender({ logs: [makeLog("foo")] });
+		expect(result.current.matchCount).toBe(1);
+		expect(result.current.activeMatchIndex).toBe(0);
+
+		act(() => result.current.nextMatch());
+		expect(result.current.activeMatchIndex).toBe(0);
+	});
+
+	it("prevMatch from a clamped index goes to the new last match", () => {
+		const logs = [makeLog("foo"), makeLog("foo"), makeLog("foo")];
+		const { result, rerender } = renderHook(
+			({ logs }: { logs: LogEntry[] }) => useLogSearch(logs),
+			{ initialProps: { logs } }
+		);
+		act(() => result.current.setSearch("foo"));
+		act(() => result.current.nextMatch());
+		act(() => result.current.nextMatch());
+		expect(result.current.activeMatchIndex).toBe(2);
+
+		rerender({ logs: [makeLog("foo"), makeLog("foo")] });
+		expect(result.current.matchCount).toBe(2);
+		expect(result.current.activeMatchIndex).toBe(1);
+
+		act(() => result.current.prevMatch());
+		expect(result.current.activeMatchIndex).toBe(0);
+	});
 });
