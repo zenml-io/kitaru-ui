@@ -11,6 +11,7 @@ import type { LogEntry, LoggingLevel } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
 import { formatLogsForExport } from "@/modules/logs/util/format-logs";
+import { downloadTextFile } from "@/shared/utils/download-file";
 
 const DEFAULT_SOURCE = "step";
 
@@ -73,24 +74,15 @@ export function CheckpointLogsContainer({
 	}
 
 	function download() {
-		let url: string | undefined;
 		try {
-			const blob = new Blob([formatLogsForExport(filteredLogs)], {
-				type: "text/plain",
-			});
-			url = URL.createObjectURL(blob);
-			const a = document.createElement("a");
-			a.href = url;
-			a.download = `checkpoint-${checkpointId}.log`;
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
+			downloadTextFile(
+				`checkpoint-${checkpointId}.log`,
+				formatLogsForExport(filteredLogs)
+			);
 			toast.success("Logs downloaded");
 		} catch (err) {
 			console.error("Failed to download logs", err);
 			toast.error("Failed to download logs");
-		} finally {
-			if (url) URL.revokeObjectURL(url);
 		}
 	}
 
