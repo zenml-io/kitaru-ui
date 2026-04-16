@@ -1,20 +1,19 @@
-import { useMemo, useState } from "react";
-import type { LogEntry, LoggingLevel } from "../domain/log-entry";
+import { useState } from "react";
+import type { LogEntry, LogLevelFilter } from "../domain/log-entry";
 
-export type LevelFilterValue = Exclude<LoggingLevel, 0> | "all";
+const DEFAULT_LEVEL: LogLevelFilter = "all";
 
-const DEFAULT_LEVEL: LevelFilterValue = "all";
-
+// Standard logging semantics: selecting "Warning" shows Warning + Error + Critical.
 export function useLogLevelFilter(logs: LogEntry[]) {
 	const [selectedLevel, setSelectedLevel] =
-		useState<LevelFilterValue>(DEFAULT_LEVEL);
+		useState<LogLevelFilter>(DEFAULT_LEVEL);
 
-	const filteredLogs = useMemo(() => {
-		if (selectedLevel === "all") return logs;
-		return logs.filter(
-			(entry) => entry.level != null && entry.level >= selectedLevel
-		);
-	}, [logs, selectedLevel]);
+	const filteredLogs =
+		selectedLevel === "all"
+			? logs
+			: logs.filter(
+					(entry) => entry.level != null && entry.level >= selectedLevel
+				);
 
 	return { filteredLogs, selectedLevel, setSelectedLevel };
 }
