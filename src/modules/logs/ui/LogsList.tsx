@@ -41,11 +41,17 @@ export function LogsList({
 		overscan: 20,
 	});
 
+	const activeIndex = activeMatch?.logIndex;
+	const activeStart = activeMatch?.range.start;
+	const activeEnd = activeMatch?.range.end;
+
 	useEffect(() => {
-		if (activeMatch) {
-			virtualizer.scrollToIndex(activeMatch.logIndex, { align: "center" });
-		}
-	}, [activeMatch, virtualizer]);
+		if (activeIndex == null) return;
+		virtualizer.scrollToIndex(activeIndex, { align: "center" });
+		// activeStart/activeEnd are tracked so we re-scroll when the active match changes within the same row.
+		// virtualizer intentionally excluded: it's recreated each render but scrollToIndex is idempotent.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeIndex, activeStart, activeEnd]);
 
 	if (logs.length === 0) {
 		return (
