@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useCheckpointDetails } from "../business-logic/use-checkpoint-details";
+import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import {
 	getCheckpointLogsPollingInterval,
 	useCheckpointLogs,
@@ -16,19 +16,19 @@ const DEFAULT_SOURCE = "step";
 
 type CheckpointLogsContainerProps = {
 	checkpointId: string;
+	logSources: string[];
+	checkpointStatus?: ExecutionStatus;
 };
 
 export function CheckpointLogsContainer({
 	checkpointId,
+	logSources,
+	checkpointStatus,
 }: CheckpointLogsContainerProps) {
-	const { detailsData } = useCheckpointDetails(checkpointId);
-	const sources = detailsData?.logSources ?? [];
-	const checkpointStatus = detailsData?.status;
-
 	const [selectedSource, setSelectedSource] = useState<string>(DEFAULT_SOURCE);
-	const effectiveSource = sources.includes(selectedSource)
+	const effectiveSource = logSources.includes(selectedSource)
 		? selectedSource
-		: (sources[0] ?? DEFAULT_SOURCE);
+		: (logSources[0] ?? DEFAULT_SOURCE);
 
 	const { logs } = useCheckpointLogs(checkpointId, effectiveSource, {
 		refetchInterval: getCheckpointLogsPollingInterval(checkpointStatus),
@@ -96,7 +96,7 @@ export function CheckpointLogsContainer({
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
-			{(logs.length > 0 || sources.length > 1) && (
+			{(logs.length > 0 || logSources.length > 1) && (
 				<LogsToolbar
 					levelFilter={selectedLevel}
 					onLevelFilterChange={handleLevelChange}
@@ -106,7 +106,7 @@ export function CheckpointLogsContainer({
 					activeMatchIndex={activeMatchIndex}
 					onNextMatch={nextMatch}
 					onPrevMatch={prevMatch}
-					sources={sources.length > 1 ? sources : undefined}
+					sources={logSources.length > 1 ? logSources : undefined}
 					selectedSource={effectiveSource}
 					onSourceChange={setSelectedSource}
 					onCopyAll={copyAll}

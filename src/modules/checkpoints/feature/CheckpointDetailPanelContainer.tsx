@@ -104,7 +104,11 @@ function CheckpointDetailPanelContentContainer({
 						)}
 					>
 						<Suspense fallback={<LogsListSkeleton />}>
-							<CheckpointLogsContainer checkpointId={checkpointId} />
+							<CheckpointLogsContainer
+								checkpointId={checkpointId}
+								logSources={detailsData?.logSources ?? []}
+								checkpointStatus={detailsData?.status}
+							/>
 						</Suspense>
 					</ErrorBoundary>
 				)}
