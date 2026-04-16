@@ -10,12 +10,9 @@ import { useLogSearch } from "@/modules/logs/business-logic/use-log-search";
 import type { LogEntry, LoggingLevel } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
+import { formatLogsForExport } from "@/modules/logs/util/format-logs";
 
 const DEFAULT_SOURCE = "step";
-
-function formatForClipboard(entries: LogEntry[]): string {
-	return entries.map((e) => e.originalEntry).join("\n");
-}
 
 type CheckpointLogsContainerProps = {
 	checkpointId: string;
@@ -55,7 +52,7 @@ export function CheckpointLogsContainer({
 
 	async function copyAll() {
 		try {
-			await navigator.clipboard.writeText(formatForClipboard(filteredLogs));
+			await navigator.clipboard.writeText(formatLogsForExport(filteredLogs));
 			toast.success("Logs copied to clipboard");
 		} catch (err) {
 			console.error("Failed to copy logs to clipboard", err);
@@ -78,7 +75,7 @@ export function CheckpointLogsContainer({
 	function download() {
 		let url: string | undefined;
 		try {
-			const blob = new Blob([formatForClipboard(filteredLogs)], {
+			const blob = new Blob([formatLogsForExport(filteredLogs)], {
 				type: "text/plain",
 			});
 			url = URL.createObjectURL(blob);
