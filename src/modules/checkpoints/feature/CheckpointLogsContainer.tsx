@@ -7,9 +7,9 @@ import {
 } from "../business-logic/use-checkpoint-logs";
 import { useLogLevelFilter } from "@/modules/logs/business-logic/use-log-level-filter";
 import { useLogSearch } from "@/modules/logs/business-logic/use-log-search";
-import type { LogEntry } from "@/modules/logs/domain/log-entry";
+import type { LogEntry, LogLevelFilter } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
-import { LogsToolbar, type LevelFilter } from "@/modules/logs/ui/LogsToolbar";
+import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
 
 const DEFAULT_SOURCE = "step";
 
@@ -26,7 +26,6 @@ export function CheckpointLogsContainer({
 }: CheckpointLogsContainerProps) {
 	const { detailsData } = useCheckpointDetails(checkpointId);
 	const sources = detailsData?.logSources ?? [];
-	console.log("sources", sources);
 	const checkpointStatus = detailsData?.status;
 
 	const [selectedSource, setSelectedSource] = useState<string>(DEFAULT_SOURCE);
@@ -52,14 +51,16 @@ export function CheckpointLogsContainer({
 		prevMatch,
 	} = useLogSearch(filteredLogs);
 
-	const handleLevelChange = (level: LevelFilter) => setSelectedLevel(level);
+	const handleLevelChange = (level: LogLevelFilter) => setSelectedLevel(level);
 
 	async function copyAll() {
 		try {
 			await navigator.clipboard.writeText(formatForClipboard(filteredLogs));
 			toast.success("Logs copied to clipboard");
-		} catch {
-			toast.error("Failed to copy logs");
+		} catch (err) {
+			console.error("Failed to copy logs to clipboard", err);
+			const reason = !window.isSecureContext ? " (requires HTTPS)" : "";
+			toast.error(`Failed to copy logs${reason}`);
 		}
 	}
 
@@ -67,23 +68,33 @@ export function CheckpointLogsContainer({
 		try {
 			await navigator.clipboard.writeText(entry.originalEntry);
 			toast.success("Log entry copied");
-		} catch {
-			toast.error("Failed to copy log entry");
+		} catch (err) {
+			console.error("Failed to copy log entry to clipboard", err);
+			const reason = !window.isSecureContext ? " (requires HTTPS)" : "";
+			toast.error(`Failed to copy log entry${reason}`);
 		}
 	}
 
 	function download() {
-		const blob = new Blob([formatForClipboard(filteredLogs)], {
-			type: "text/plain",
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = `checkpoint-${checkpointId}.log`;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
+		let url: string | undefined;
+		try {
+			const blob = new Blob([formatForClipboard(filteredLogs)], {
+				type: "text/plain",
+			});
+			url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `checkpoint-${checkpointId}.log`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			toast.success("Logs downloaded");
+		} catch (err) {
+			console.error("Failed to download logs", err);
+			toast.error("Failed to download logs");
+		} finally {
+			if (url) URL.revokeObjectURL(url);
+		}
 	}
 
 	return (
