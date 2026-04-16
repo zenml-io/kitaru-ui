@@ -15,14 +15,14 @@ function makeLog(level: number, message = "m"): LogEntry {
 }
 
 describe("useLogLevelFilter", () => {
-	it("defaults to 'all' and returns every entry", () => {
+	it("defaults to NOTSET (0) and returns every entry", () => {
 		const logs = [
 			makeLog(10, "debug"),
 			makeLog(20, "info"),
 			makeLog(40, "err"),
 		];
 		const { result } = renderHook(() => useLogLevelFilter(logs));
-		expect(result.current.selectedLevel).toBe("all");
+		expect(result.current.selectedLevel).toBe(0);
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual([
 			"debug",
 			"info",
@@ -30,7 +30,7 @@ describe("useLogLevelFilter", () => {
 		]);
 	});
 
-	it("hides lower levels when threshold is set above 'all'", () => {
+	it("hides lower levels when threshold is raised", () => {
 		const logs = [
 			makeLog(10, "debug"),
 			makeLog(20, "info"),
@@ -51,7 +51,7 @@ describe("useLogLevelFilter", () => {
 		expect(result.current.filteredLogs.map((l) => l.level)).toEqual([30, 40]);
 	});
 
-	it("treats entries with null level as below any numeric threshold", () => {
+	it("treats entries with null level as NOTSET (0)", () => {
 		const bare: LogEntry = {
 			id: "x",
 			message: "bare",

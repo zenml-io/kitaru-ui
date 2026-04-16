@@ -28,13 +28,6 @@ export const LOG_LEVEL_SHORT_NAMES: Record<LoggingLevel, string> = {
 };
 
 /**
- * Level filter value used by the log level filter hook and toolbar.
- * NOTSET (0) is excluded — "show NOTSET and above" is effectively the same
- * as "all", so we don't offer it as a filter option.
- */
-export type LogLevelFilter = Exclude<LoggingLevel, 0> | "all";
-
-/**
  * A half-open offset range [start, end) into a log message, used for both
  * search matches and highlight rendering.
  */

@@ -7,7 +7,7 @@ import {
 } from "../business-logic/use-checkpoint-logs";
 import { useLogLevelFilter } from "@/modules/logs/business-logic/use-log-level-filter";
 import { useLogSearch } from "@/modules/logs/business-logic/use-log-search";
-import type { LogEntry, LogLevelFilter } from "@/modules/logs/domain/log-entry";
+import type { LogEntry, LoggingLevel } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
 
@@ -51,7 +51,7 @@ export function CheckpointLogsContainer({
 		prevMatch,
 	} = useLogSearch(filteredLogs);
 
-	const handleLevelChange = (level: LogLevelFilter) => setSelectedLevel(level);
+	const handleLevelChange = (level: LoggingLevel) => setSelectedLevel(level);
 
 	async function copyAll() {
 		try {
