@@ -1,15 +1,13 @@
 import { Copy } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
-import type { LogEntry } from "../domain/log-entry";
+import type { LogEntry, LogMessageRange } from "../domain/log-entry";
 import { LOG_LEVEL_STYLES } from "./log-styles";
-
-export type HighlightRange = { start: number; end: number };
 
 type LogRowProps = {
 	entry: LogEntry;
 	density?: "compact" | "comfortable";
-	highlightRanges?: HighlightRange[];
+	highlightRanges?: LogMessageRange[];
 	activeHighlightStart?: number;
 	onCopy?: (entry: LogEntry) => void;
 };
@@ -75,7 +73,7 @@ function formatTimestamp(ts: string | null | undefined): string {
 
 function renderMessage(
 	message: string,
-	ranges: HighlightRange[] | undefined,
+	ranges: LogMessageRange[] | undefined,
 	activeStart: number | undefined
 ) {
 	if (!ranges || ranges.length === 0) return message;
@@ -84,6 +82,8 @@ function renderMessage(
 	const sorted = [...ranges].sort((a, b) => a.start - b.start);
 	for (let i = 0; i < sorted.length; i++) {
 		const r = sorted[i];
+		// Skip ranges that overlap a prior range — avoids negative slices.
+		if (r.start < cursor) continue;
 		if (r.start > cursor) {
 			parts.push(message.slice(cursor, r.start));
 		}

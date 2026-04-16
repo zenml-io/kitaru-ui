@@ -8,13 +8,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/ui/select";
-import type { LoggingLevel } from "../domain/log-entry";
-
-export type LevelFilter = Exclude<LoggingLevel, 0> | "all";
+import type { LogLevelFilter } from "../domain/log-entry";
 
 type LogsToolbarProps = {
-	levelFilter: LevelFilter;
-	onLevelFilterChange: (level: LevelFilter) => void;
+	levelFilter: LogLevelFilter;
+	onLevelFilterChange: (level: LogLevelFilter) => void;
 	search: string;
 	onSearchChange: (value: string) => void;
 	matchCount: number;
@@ -29,7 +27,7 @@ type LogsToolbarProps = {
 	canExport: boolean;
 };
 
-const LEVEL_OPTIONS = new Map<LevelFilter, string>([
+const LEVEL_OPTIONS = new Map<LogLevelFilter, string>([
 	["all", "All levels"],
 	[10, "Debug"],
 	[20, "Info"],
@@ -59,7 +57,7 @@ export function LogsToolbar({
 
 	return (
 		<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
-			<Select<LevelFilter>
+			<Select<LogLevelFilter>
 				value={levelFilter}
 				onValueChange={(v) => {
 					if (v !== null) onLevelFilterChange(v);
@@ -67,7 +65,7 @@ export function LogsToolbar({
 			>
 				<SelectTrigger className="h-8 w-[132px] text-xs">
 					<SelectValue>
-						{(value: LevelFilter) => LEVEL_OPTIONS.get(value)}
+						{(value: LogLevelFilter) => LEVEL_OPTIONS.get(value)}
 					</SelectValue>
 				</SelectTrigger>
 				<SelectContent>

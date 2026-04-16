@@ -9,16 +9,16 @@ import {
 	EmptyTitle,
 } from "@/shared/ui/empty";
 import { cn } from "@/shared/utils/styles";
-import type { LogEntry } from "../domain/log-entry";
-import { LogRow, type HighlightRange } from "./LogRow";
+import type { LogEntry, LogMessageRange } from "../domain/log-entry";
+import { LogRow } from "./LogRow";
 
-type ActiveMatch = { logIndex: number; range: HighlightRange };
+type ActiveMatch = { logIndex: number; range: LogMessageRange };
 
 type LogsListProps = {
 	logs: LogEntry[];
 	density?: "compact" | "comfortable";
 	showHeaders?: boolean;
-	matchesByLogIndex?: Map<number, HighlightRange[]>;
+	matchesByLogIndex?: Map<number, LogMessageRange[]>;
 	activeMatch?: ActiveMatch;
 	onCopyRow?: (entry: LogEntry) => void;
 };
@@ -48,8 +48,10 @@ export function LogsList({
 	useEffect(() => {
 		if (activeIndex == null) return;
 		virtualizer.scrollToIndex(activeIndex, { align: "center" });
-		// activeStart/activeEnd are tracked so we re-scroll when the active match changes within the same row.
-		// virtualizer intentionally excluded: it's recreated each render but scrollToIndex is idempotent.
+		// Re-run when the active match index OR the active range changes (range
+		// deps catch moving between matches inside the same row). `virtualizer`
+		// is omitted: its identity is stable across renders and not part of the
+		// trigger condition.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeIndex, activeStart, activeEnd]);
 
