@@ -20,8 +20,13 @@ describe("computeTimelineWidths", () => {
 		expect(sum).toBeCloseTo(100, 9);
 	});
 
-	it("returns all zeros when every duration is zero", () => {
-		expect(computeTimelineWidths([0, 0, 0])).toEqual([0, 0, 0]);
+	it("distributes width equally when every duration is zero", () => {
+		const widths = computeTimelineWidths([0, 0, 0]);
+		for (const w of widths) {
+			expect(w).toBeCloseTo(100 / 3, 9);
+		}
+		const sum = widths.reduce((a, b) => a + b, 0);
+		expect(sum).toBeCloseTo(100, 9);
 	});
 
 	it("scales widths by sqrt of duration ratio", () => {
