@@ -20,6 +20,7 @@ export type Checkpoint = {
 	costUsd?: number;
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
+	logSources: string[];
 };
 
 export function checkpointFromApiToDomain(
@@ -46,7 +47,17 @@ export function checkpointFromApiToDomain(
 		costUsd:
 			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
+		logSources: extractLogSources(checkpoint.resources?.log_collection),
 	};
+}
+
+function extractLogSources(
+	collection: components["schemas"]["LogsResponse"][] | null | undefined
+): string[] {
+	if (!collection) return [];
+	return collection
+		.map((l) => l.body?.source)
+		.filter((s): s is string => typeof s === "string" && s.length > 0);
 }
 
 export type CheckpointEntry = {
