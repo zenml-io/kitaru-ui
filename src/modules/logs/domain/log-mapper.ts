@@ -14,49 +14,65 @@ export function logsFromApiToDomain(entries: LogEntryApiType[]): LogEntry[] {
 	return unchunked.map(buildLogEntry);
 }
 
+type Placeholder = { index: number };
+
 function unchunk(entries: LogEntryApiType[]): LogEntryApiType[] {
+	// Solo entries pass through directly (no grouping needed) — their position
+	// in the output is reserved via a placeholder so we can splice the merged
+	// chunk result back in order afterwards.
+	const result: (LogEntryApiType | Placeholder)[] = [];
 	const groups = new Map<string, LogEntryApiType[]>();
-	const order: string[] = [];
+	const groupOrder = new Map<string, number>();
 
 	for (const entry of entries) {
-		const key = groupKey(entry);
+		if ((entry.total_chunks ?? 1) <= 1) {
+			result.push(entry);
+			continue;
+		}
+		const key = chunkGroupKey(entry);
 		const existing = groups.get(key);
 		if (existing) {
 			existing.push(entry);
 		} else {
 			groups.set(key, [entry]);
-			order.push(key);
+			groupOrder.set(key, result.length);
+			result.push({ index: result.length });
 		}
 	}
 
-	const result: LogEntryApiType[] = [];
-	for (const key of order) {
-		const chunks = groups.get(key)!;
-		if (chunks.length === 1) {
-			result.push(chunks[0]);
-			continue;
-		}
+	for (const [key, chunks] of groups) {
+		const position = groupOrder.get(key)!;
 		const sorted = [...chunks].sort(
 			(a, b) => (a.chunk_index ?? 0) - (b.chunk_index ?? 0)
 		);
-		const merged: LogEntryApiType = {
+		const expected = sorted[0].total_chunks ?? sorted.length;
+		if (sorted.length !== expected) {
+			console.warn("Incomplete log chunk group — merging partial message", {
+				key,
+				expected,
+				got: sorted.length,
+			});
+		}
+		result[position] = {
 			...sorted[0],
 			message: sorted.map((c) => c.message).join(""),
 			chunk_index: 0,
 			total_chunks: 1,
 		};
-		result.push(merged);
 	}
 
-	return result;
+	return result as LogEntryApiType[];
 }
 
-function groupKey(entry: LogEntryApiType): string {
-	if ((entry.total_chunks ?? 1) <= 1) {
-		// Non-chunked entries should never collide — use a unique key.
-		return `solo:${entry.id ?? Math.random()}`;
-	}
+function chunkGroupKey(entry: LogEntryApiType): string {
 	if (entry.id) return `id:${entry.id}`;
+	// Fallback — backend omitted id on a multi-chunk entry. Composite key may
+	// accidentally merge two unrelated chunks that share every dimension, so
+	// warn when we hit this path.
+	console.warn(
+		"Chunked log entry missing id — falling back to composite group key",
+		entry
+	);
 	return [
 		"composite",
 		entry.timestamp ?? "",
