@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { LogEntry } from "@/modules/logs/domain/log-entry";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import { getIsActiveStatus } from "@/shared/business-logic/status";
 import { checkpointsQueries } from "./checkpoints-queries";
@@ -24,5 +23,5 @@ export function useCheckpointLogs(
 		...checkpointsQueries.logs(checkpointId, source),
 		...opts,
 	});
-	return { ...query, logs: query.data as LogEntry[] };
+	return { ...query, logs: query.data };
 }
