@@ -47,3 +47,7 @@ docs/superpowers
 
 *storybook.log
 storybook-static
+
+# Playwright
+playwright-report
+test-results
