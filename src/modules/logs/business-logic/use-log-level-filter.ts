@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import type { LogEntry, LoggingLevel } from "../domain/log-entry";
 
-export type LevelFilterValue = LoggingLevel | "all";
+export type LevelFilterValue = Exclude<LoggingLevel, 0> | "all";
 
-const DEFAULT_LEVEL: LoggingLevel = 20;
+const DEFAULT_LEVEL: LevelFilterValue = "all";
 
 export function useLogLevelFilter(logs: LogEntry[]) {
 	const [selectedLevel, setSelectedLevel] =

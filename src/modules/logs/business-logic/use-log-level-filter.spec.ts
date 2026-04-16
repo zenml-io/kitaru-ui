@@ -15,25 +15,33 @@ function makeLog(level: number, message = "m"): LogEntry {
 }
 
 describe("useLogLevelFilter", () => {
-	it("defaults to INFO (20) and hides lower levels", () => {
+	it("defaults to 'all' and returns every entry", () => {
 		const logs = [
 			makeLog(10, "debug"),
 			makeLog(20, "info"),
 			makeLog(40, "err"),
 		];
 		const { result } = renderHook(() => useLogLevelFilter(logs));
-		expect(result.current.selectedLevel).toBe(20);
+		expect(result.current.selectedLevel).toBe("all");
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual([
+			"debug",
 			"info",
 			"err",
 		]);
 	});
 
-	it("returns all logs when selectedLevel is 'all'", () => {
-		const logs = [makeLog(10), makeLog(20), makeLog(40)];
+	it("hides lower levels when threshold is set above 'all'", () => {
+		const logs = [
+			makeLog(10, "debug"),
+			makeLog(20, "info"),
+			makeLog(40, "err"),
+		];
 		const { result } = renderHook(() => useLogLevelFilter(logs));
-		act(() => result.current.setSelectedLevel("all"));
-		expect(result.current.filteredLogs).toHaveLength(3);
+		act(() => result.current.setSelectedLevel(20));
+		expect(result.current.filteredLogs.map((l) => l.message)).toEqual([
+			"info",
+			"err",
+		]);
 	});
 
 	it("filters to level >= selectedLevel", () => {
@@ -54,6 +62,7 @@ describe("useLogLevelFilter", () => {
 		};
 		const logs = [bare, makeLog(20, "info")];
 		const { result } = renderHook(() => useLogLevelFilter(logs));
+		act(() => result.current.setSelectedLevel(20));
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual(["info"]);
 	});
 });
