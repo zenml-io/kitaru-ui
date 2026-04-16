@@ -1,3 +1,4 @@
+import { format, isValid } from "date-fns";
 import { Copy } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
@@ -63,12 +64,8 @@ export function LogRow({
 function formatTimestamp(ts: string | null | undefined): string {
 	if (!ts) return "";
 	const d = new Date(ts);
-	if (Number.isNaN(d.getTime())) return ts;
-	const hh = String(d.getHours()).padStart(2, "0");
-	const mm = String(d.getMinutes()).padStart(2, "0");
-	const ss = String(d.getSeconds()).padStart(2, "0");
-	const ms = String(d.getMilliseconds()).padStart(3, "0");
-	return `${hh}:${mm}:${ss}.${ms}`;
+	if (!isValid(d)) return ts;
+	return format(d, "HH:mm:ss.SSS");
 }
 
 function renderMessage(
