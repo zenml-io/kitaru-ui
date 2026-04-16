@@ -1,7 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-
-const PORT = 4173;
-const BASE_URL = `http://localhost:${PORT}`;
+import { E2E_BASE_URL, E2E_PORT } from "./e2e/constants";
 
 export default defineConfig({
 	testDir: "./e2e/specs",
@@ -10,14 +8,14 @@ export default defineConfig({
 	retries: process.env.CI ? 2 : 0,
 	reporter: process.env.CI ? [["html"], ["github"]] : "list",
 	use: {
-		baseURL: BASE_URL,
+		baseURL: E2E_BASE_URL,
 		trace: "retain-on-failure",
 		screenshot: "only-on-failure",
 	},
 	projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 	webServer: {
-		command: `pnpm preview --port ${PORT} --strictPort`,
-		url: BASE_URL,
+		command: `pnpm preview --port ${E2E_PORT} --strictPort`,
+		url: E2E_BASE_URL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120_000,
 	},
