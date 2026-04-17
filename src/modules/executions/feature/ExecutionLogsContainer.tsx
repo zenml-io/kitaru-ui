@@ -14,7 +14,6 @@ type ExecutionLogsContainerProps = {
 	checkpoints: CheckpointEntry[];
 	selectedScope: ExecutionLogsScope;
 	onSelectScope: (scope: ExecutionLogsScope) => void;
-	sidebar: { open: boolean; onToggle: () => void };
 	onBack: () => void;
 };
 
@@ -23,7 +22,6 @@ export function ExecutionLogsContainer({
 	checkpoints,
 	selectedScope,
 	onSelectScope,
-	sidebar,
 	onBack,
 }: ExecutionLogsContainerProps) {
 	const scopeSidebar = (
@@ -36,11 +34,7 @@ export function ExecutionLogsContainer({
 	);
 
 	const toolbarLeading = (
-		<ExecutionLogsHeaderNav
-			sidebar={sidebar}
-			onBack={onBack}
-			withTrailingSeparator
-		/>
+		<ExecutionLogsHeaderNav onBack={onBack} withTrailingSeparator />
 	);
 
 	if (selectedScope.kind === "checkpoint") {
@@ -61,7 +55,7 @@ export function ExecutionLogsContainer({
 			<ExecutionLogsEmptyState
 				message="No logs are available for this execution yet."
 				scopeSidebar={scopeSidebar}
-				leading={<ExecutionLogsHeaderNav sidebar={sidebar} onBack={onBack} />}
+				leading={<ExecutionLogsHeaderNav onBack={onBack} />}
 			/>
 		);
 	}

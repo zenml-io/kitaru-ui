@@ -12,7 +12,6 @@ type LogsLoadingShellProps = {
 	checkpoints: CheckpointEntry[];
 	selectedScope: ExecutionLogsScope;
 	onSelectScope: (scope: ExecutionLogsScope) => void;
-	sidebar: { open: boolean; onToggle: () => void };
 	onBack: () => void;
 };
 
@@ -21,18 +20,13 @@ export function LogsLoadingShell({
 	checkpoints,
 	selectedScope,
 	onSelectScope,
-	sidebar,
 	onBack,
 }: LogsLoadingShellProps) {
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<LogsToolbarSkeleton
 				leading={
-					<ExecutionLogsHeaderNav
-						sidebar={sidebar}
-						onBack={onBack}
-						withTrailingSeparator
-					/>
+					<ExecutionLogsHeaderNav onBack={onBack} withTrailingSeparator />
 				}
 			/>
 			<div className="flex min-h-0 flex-1">
