@@ -1,7 +1,7 @@
-import { format, isValid } from "date-fns";
 import { Copy } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
+import { formatTimestamp } from "@/shared/utils/time";
 import type { LogEntry, LogMessageRange } from "../domain/log-entry";
 import { LOG_LEVEL_STYLES } from "./log-styles";
 
@@ -59,13 +59,6 @@ export function LogRow({
 			)}
 		</div>
 	);
-}
-
-function formatTimestamp(ts: string | null | undefined): string {
-	if (!ts) return "";
-	const d = new Date(ts);
-	if (!isValid(d)) return ts;
-	return format(d, "HH:mm:ss.SSS");
 }
 
 function renderMessage(
