@@ -80,10 +80,10 @@ export function LogsToolbar({
 				value={search}
 				onChange={(e) => onSearchChange(e.target.value)}
 				placeholder="Search logs..."
-				className="h-8 min-w-24 text-xs"
+				className="h-8 min-w-24 flex-1 text-xs"
 			/>
 			{hasSearch && (
-				<div className="text-2xs text-muted-foreground flex items-center gap-1 tabular-nums">
+				<div className="text-2xs text-muted-foreground flex shrink-0 items-center gap-1 whitespace-nowrap tabular-nums">
 					<span>
 						{matchCount === 0
 							? "0 of 0"
