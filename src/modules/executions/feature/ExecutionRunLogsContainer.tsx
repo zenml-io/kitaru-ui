@@ -57,16 +57,11 @@ export function ExecutionRunLogsContainer({
 	const copyRow = (entry: LogEntry) => copy(entry.originalEntry);
 
 	function download() {
-		try {
-			downloadTextFile(
-				`execution-${execution.id}.log`,
-				formatLogsForExport(filteredLogs)
-			);
-			toast.success("Logs downloaded");
-		} catch (err) {
-			console.error("Failed to download logs", err);
-			toast.error("Failed to download logs");
-		}
+		downloadTextFile(
+			`execution-${execution.id}.log`,
+			formatLogsForExport(filteredLogs)
+		);
+		toast.success("Logs downloaded");
 	}
 
 	return (

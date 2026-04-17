@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { type Query, useSuspenseQuery } from "@tanstack/react-query";
 import type { ExecutionStatus } from "../domain/execution";
 import { getIsActiveStatus } from "@/shared/business-logic/status";
 import { executionsQueries } from "./executions-queries";
@@ -21,6 +21,7 @@ export function useExecutionLogs(
 ) {
 	const query = useSuspenseQuery({
 		...executionsQueries.logs(runId, source),
+		throwOnError: (_err: unknown, q: Query) => q.state.data === undefined,
 		...opts,
 	});
 	return { ...query, logs: query.data };
