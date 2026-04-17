@@ -9,13 +9,21 @@ type SecretInfoTooltipProps = {
 	keyName?: string;
 };
 
+function escapePyStr(s: string) {
+	return s
+		.replace(/\\/g, "\\\\")
+		.replace(/"/g, '\\"')
+		.replace(/\n/g, "\\n")
+		.replace(/\r/g, "\\r");
+}
+
 function buildSnippet(secretName: string, keyName?: string) {
 	const access = keyName
-		? `value = secret.secret_values["${keyName}"]`
+		? `value = secret.secret_values["${escapePyStr(keyName)}"]`
 		: `# secret.secret_values contains all key-value pairs`;
 	return `from zenml.client import Client
 
-secret = Client().get_secret("${secretName}")
+secret = Client().get_secret("${escapePyStr(secretName)}")
 ${access}`;
 }
 
