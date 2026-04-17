@@ -26,6 +26,7 @@ export function ExecutionsList({
 					key={execution.id}
 					to="/flows/$flowId/executions/$executionId"
 					params={{ flowId, executionId: execution.id }}
+					search={(prev) => (prev.tab === "logs" ? { tab: "logs" } : {})}
 					className={cn(
 						"flex items-center justify-between gap-2 px-3 py-1.5 text-sm transition-colors",
 						execution.id === activeexecutionId

@@ -15,7 +15,7 @@ import {
 } from "@/shared/ui/ThreePanelLayout";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useExecution } from "../business-logic/use-execution";
@@ -40,12 +40,20 @@ export function ExecutionContainer() {
 	const navigate = useNavigate({ from: ROUTE_PATH });
 
 	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
+	const isLogsTab = activeTab === "logs";
 
 	const setActiveTab = (tab: ExecutionTab) => {
 		navigate({
 			search: () => (tab === "logs" ? { tab: "logs" } : {}),
 			replace: true,
 		});
+		if (tab === "logs") {
+			layoutRef.current?.collapseLeft();
+			setIsLeftCollapsed(true);
+		} else {
+			layoutRef.current?.expandLeft();
+			setIsLeftCollapsed(false);
+		}
 	};
 
 	const selectedScope: ExecutionLogsScope = search.scope
@@ -124,6 +132,27 @@ export function ExecutionContainer() {
 		string | undefined
 	>();
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
+	const [isLeftCollapsed, setIsLeftCollapsed] = useState(isLogsTab);
+
+	useEffect(() => {
+		if (isLogsTab) {
+			layoutRef.current?.collapseLeft();
+		} else {
+			layoutRef.current?.expandLeft();
+		}
+	}, [isLogsTab]);
+
+	function toggleExecutionsList() {
+		const ref = layoutRef.current;
+		if (!ref) return;
+		if (ref.isLeftCollapsed()) {
+			ref.expandLeft();
+			setIsLeftCollapsed(false);
+		} else {
+			ref.collapseLeft();
+			setIsLeftCollapsed(true);
+		}
+	}
 
 	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
 		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
@@ -154,64 +183,66 @@ export function ExecutionContainer() {
 		</div>
 	) : null;
 
-	const centerHeader = (
-		<div className="mr-2 flex flex-1 items-center justify-between gap-2">
-			<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
-			<div className="flex items-center gap-2">
-				<RefreshButton
-					size="sm"
-					variant="outline"
-					onClick={refreshExecutionData}
-					isLoading={isManualRefreshPending}
-				/>
-				<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
-			</div>
-		</div>
+	const centerBody = isLogsTab ? (
+		<ExecutionLogsTabContainer
+			execution={executionData}
+			checkpoints={checkpointsData.checkpoints}
+			selectedScope={selectedScope}
+			onSelectScope={setSelectedScope}
+			onBackToExecution={() => setActiveTab("execution")}
+			onToggleSidebar={toggleExecutionsList}
+			sidebarOpen={!isLeftCollapsed}
+		/>
+	) : (
+		<ExecutionDetails
+			key={executionId}
+			execution={executionData}
+			timelineEntries={timelineEntries}
+			onSelectCheckpoint={(id) => {
+				setSelectedCheckpointId(id);
+				layoutRef.current?.expandRight();
+			}}
+			waitCondition={waitConditionData}
+			onResolveWaitCondition={resolveWaitCondition}
+			resumeHint={resumeHint}
+		/>
 	);
 
-	const centerBody =
-		activeTab === "logs" ? (
-			<ExecutionLogsTabContainer
-				execution={executionData}
-				checkpoints={checkpointsData.checkpoints}
-				selectedScope={selectedScope}
-				onSelectScope={setSelectedScope}
-			/>
-		) : (
-			<ExecutionDetails
-				key={executionId}
-				execution={executionData}
-				timelineEntries={timelineEntries}
-				onSelectCheckpoint={(id) => {
-					setSelectedCheckpointId(id);
-					layoutRef.current?.expandRight();
-				}}
-				waitCondition={waitConditionData}
-				onResolveWaitCondition={resolveWaitCondition}
-				resumeHint={resumeHint}
-			/>
-		);
-
 	return (
-		<ThreePanelLayout
-			centerHeader={centerHeader}
-			ref={layoutRef}
-			left={
-				<ExecutionsList
-					executions={executionsSortedByCreatedAtDesc}
-					flowId={flowId}
-					activeexecutionId={executionId}
-				/>
-			}
-			center={centerBody}
-			right={
-				activeTab === "logs" ? null : (
-					<CheckpointDetailPanelContainer
-						key={selectedCheckpointId}
-						checkpointId={selectedCheckpointId}
+		<div className="flex flex-1 flex-col overflow-hidden">
+			<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
+				<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
+				<div className="flex items-center gap-3">
+					<RefreshButton
+						size="sm"
+						variant="outline"
+						onClick={refreshExecutionData}
+						isLoading={isManualRefreshPending}
 					/>
-				)
-			}
-		/>
+					<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
+				</div>
+			</div>
+			<ThreePanelLayout
+				ref={layoutRef}
+				left={
+					<ExecutionsList
+						executions={executionsSortedByCreatedAtDesc}
+						flowId={flowId}
+						activeexecutionId={executionId}
+					/>
+				}
+				center={centerBody}
+				right={
+					isLogsTab ? null : (
+						<CheckpointDetailPanelContainer
+							key={selectedCheckpointId}
+							checkpointId={selectedCheckpointId}
+						/>
+					)
+				}
+				hideRight={isLogsTab}
+				hideCenterHeader={isLogsTab}
+			/>
+		</div>
 	);
 }

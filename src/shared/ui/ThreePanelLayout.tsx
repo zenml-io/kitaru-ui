@@ -18,6 +18,9 @@ const DEFAULT_SIZES = {
 
 export interface ThreePanelLayoutHandle {
 	expandRight(): void;
+	collapseLeft(): void;
+	expandLeft(): void;
+	isLeftCollapsed(): boolean;
 }
 
 interface ThreePanelLayoutProps {
@@ -26,6 +29,8 @@ interface ThreePanelLayoutProps {
 	center: React.ReactNode;
 	right: React.ReactNode;
 	centerHeader?: React.ReactNode;
+	hideRight?: boolean;
+	hideCenterHeader?: boolean;
 }
 
 export function ThreePanelLayout({
@@ -34,6 +39,8 @@ export function ThreePanelLayout({
 	center,
 	right,
 	centerHeader,
+	hideRight = false,
+	hideCenterHeader = false,
 }: ThreePanelLayoutProps) {
 	const groupRef = useGroupRef();
 	const leftPanelRef = usePanelRef();
@@ -44,6 +51,19 @@ export function ThreePanelLayout({
 			if (rightPanelRef.current?.isCollapsed()) {
 				rightPanelRef.current.expand();
 			}
+		},
+		collapseLeft() {
+			if (!leftPanelRef.current?.isCollapsed()) {
+				leftPanelRef.current?.collapse();
+			}
+		},
+		expandLeft() {
+			if (leftPanelRef.current?.isCollapsed()) {
+				leftPanelRef.current.expand();
+			}
+		},
+		isLeftCollapsed() {
+			return leftPanelRef.current?.isCollapsed() ?? false;
 		},
 	}));
 
@@ -67,7 +87,7 @@ export function ThreePanelLayout({
 		if (leftPanelRef.current?.isCollapsed()) {
 			leftPanelRef.current.expand();
 		}
-		if (rightPanelRef.current?.isCollapsed()) {
+		if (!hideRight && rightPanelRef.current?.isCollapsed()) {
 			rightPanelRef.current.expand();
 		}
 	}
@@ -98,34 +118,41 @@ export function ThreePanelLayout({
 				minSize={`${DEFAULT_SIZES.center.min}`}
 			>
 				<div className="flex h-full flex-col overflow-hidden">
-					<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
-						<Button variant="ghost" size="icon-sm" onClick={toggleLeft}>
-							<PanelLeft />
-							<span className="sr-only">Toggle left panel</span>
-						</Button>
-						{centerHeader}
-						<Button variant="ghost" size="icon-sm" onClick={toggleRight}>
-							<PanelRight />
-							<span className="sr-only">Toggle right panel</span>
-						</Button>
-					</header>
+					{!hideCenterHeader && (
+						<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
+							<Button variant="ghost" size="icon-sm" onClick={toggleLeft}>
+								<PanelLeft />
+								<span className="sr-only">Toggle left panel</span>
+							</Button>
+							{centerHeader}
+							{!hideRight && (
+								<Button variant="ghost" size="icon-sm" onClick={toggleRight}>
+									<PanelRight />
+									<span className="sr-only">Toggle right panel</span>
+								</Button>
+							)}
+						</header>
+					)}
 					{center}
 				</div>
 			</ResizablePanel>
 
-			<ResizableHandle onDragEnd={restoreCollapsedOnDragEnd} />
-
-			<ResizablePanel
-				id={PANEL_IDS.right}
-				panelRef={rightPanelRef}
-				defaultSize={`${DEFAULT_SIZES.right.default}`}
-				minSize={`${DEFAULT_SIZES.right.min}`}
-				collapsible
-				collapsedSize={0}
-				className="bg-card overflow-y-auto"
-			>
-				{right}
-			</ResizablePanel>
+			{!hideRight && (
+				<>
+					<ResizableHandle onDragEnd={restoreCollapsedOnDragEnd} />
+					<ResizablePanel
+						id={PANEL_IDS.right}
+						panelRef={rightPanelRef}
+						defaultSize={`${DEFAULT_SIZES.right.default}`}
+						minSize={`${DEFAULT_SIZES.right.min}`}
+						collapsible
+						collapsedSize={0}
+						className="bg-card overflow-y-auto"
+					>
+						{right}
+					</ResizablePanel>
+				</>
+			)}
 		</ResizablePanelGroup>
 	);
 }
