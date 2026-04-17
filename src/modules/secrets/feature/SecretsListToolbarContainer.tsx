@@ -5,7 +5,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 
-import { SecretFormDialog } from "./SecretFormDialog";
+import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
 type Props = {
 	searchValue: string;
@@ -41,7 +41,7 @@ export function SecretsListToolbarContainer({
 					Add secret
 				</Button>
 				{createOpen && (
-					<SecretFormDialog
+					<SecretFormDialogContainer
 						mode="add"
 						open={createOpen}
 						onOpenChange={setCreateOpen}

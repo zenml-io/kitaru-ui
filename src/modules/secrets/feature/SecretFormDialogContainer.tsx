@@ -22,19 +22,19 @@ import { createKeyRows, useKeyRows } from "../util/use-key-rows";
 
 type Mode = "add" | "edit";
 
-type SecretFormDialogProps = {
+type SecretFormDialogContainerProps = {
 	mode: Mode;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	secret?: Secret;
 };
 
-export function SecretFormDialog({
+export function SecretFormDialogContainer({
 	mode,
 	open,
 	onOpenChange,
 	secret,
-}: SecretFormDialogProps) {
+}: SecretFormDialogContainerProps) {
 	const queryClient = useQueryClient();
 	const initialRows = useMemo(() => createKeyRows(secret?.keys), [secret]);
 	const [name, setName] = useState(secret?.name ?? "");

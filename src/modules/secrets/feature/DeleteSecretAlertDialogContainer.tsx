@@ -7,19 +7,19 @@ import { secretQueryKeys } from "../business-logic/secret-queries";
 import { useDeleteSecret } from "../business-logic/use-delete-secret";
 import type { Secret } from "../domain/secrets";
 
-type DeleteSecretAlertDialogProps = {
+type DeleteSecretAlertDialogContainerProps = {
 	secret: Secret;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onDeleted?: () => void;
 };
 
-export function DeleteSecretAlertDialog({
+export function DeleteSecretAlertDialogContainer({
 	secret,
 	open,
 	onOpenChange,
 	onDeleted,
-}: DeleteSecretAlertDialogProps) {
+}: DeleteSecretAlertDialogContainerProps) {
 	const queryClient = useQueryClient();
 
 	const { deleteSecret, isPending } = useDeleteSecret({

@@ -9,8 +9,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 
-import { DeleteSecretAlertDialog } from "../feature/DeleteSecretAlertDialog";
-import { SecretFormDialog } from "../feature/SecretFormDialog";
+import { DeleteSecretAlertDialogContainer } from "../feature/DeleteSecretAlertDialogContainer";
+import { SecretFormDialogContainer } from "../feature/SecretFormDialogContainer";
 import type { Secret } from "../domain/secrets";
 
 type SecretsRowActionsProps = {
@@ -24,7 +24,7 @@ export function SecretsRowActions({ secret }: SecretsRowActionsProps) {
 	return (
 		<>
 			{showEdit && (
-				<SecretFormDialog
+				<SecretFormDialogContainer
 					mode="edit"
 					open={showEdit}
 					onOpenChange={setShowEdit}
@@ -32,7 +32,7 @@ export function SecretsRowActions({ secret }: SecretsRowActionsProps) {
 				/>
 			)}
 			{showDelete && (
-				<DeleteSecretAlertDialog
+				<DeleteSecretAlertDialogContainer
 					secret={secret}
 					open={showDelete}
 					onOpenChange={setShowDelete}

@@ -15,8 +15,8 @@ import {
 } from "../business-logic/secret-queries";
 import { useUpdateSecret } from "../business-logic/use-update-secret";
 import { SecretDetailTable } from "../ui/SecretDetailTable";
-import { DeleteSecretAlertDialog } from "./DeleteSecretAlertDialog";
-import { SecretFormDialog } from "./SecretFormDialog";
+import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";
+import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
 export function SecretDetailPageContainer() {
 	const { secretId } = useParams({
@@ -47,7 +47,10 @@ export function SecretDetailPageContainer() {
 
 	function removeKey(keyName: string) {
 		const remaining = secret.keys.filter((k) => k.key !== keyName);
-		updateSecret({ secretId: secret.id, payload: { keys: remaining } });
+		updateSecret({
+			secretId: secret.id,
+			payload: { name: secret.name, keys: remaining },
+		});
 	}
 
 	return (
@@ -99,7 +102,7 @@ export function SecretDetailPageContainer() {
 				/>
 			</CardContent>
 			{editOpen && (
-				<SecretFormDialog
+				<SecretFormDialogContainer
 					mode="edit"
 					secret={secret}
 					open={editOpen}
@@ -107,7 +110,7 @@ export function SecretDetailPageContainer() {
 				/>
 			)}
 			{deleteSecretOpen && (
-				<DeleteSecretAlertDialog
+				<DeleteSecretAlertDialogContainer
 					secret={secret}
 					open={deleteSecretOpen}
 					onOpenChange={setDeleteSecretOpen}
