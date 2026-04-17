@@ -1,3 +1,4 @@
+// src/modules/executions/feature/ExecutionContainer.tsx
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import {
 	getCheckpointsPollingInterval,
@@ -9,13 +10,14 @@ import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { StatusDot } from "@/shared/ui/StatusDot";
+import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import {
-	ThreePanelLayout,
-	type ThreePanelLayoutHandle,
-} from "@/shared/ui/ThreePanelLayout";
+	ThreePanelLayoutProvider,
+	useThreePanelLayout,
+} from "@/shared/ui/ThreePanelLayoutContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useExecution } from "../business-logic/use-execution";
@@ -35,6 +37,18 @@ const ROUTE_ID = "/_private/_navbar/flows/$flowId/executions/$executionId";
 const ROUTE_PATH = "/flows/$flowId/executions/$executionId";
 
 export function ExecutionContainer() {
+	const search = useSearch({ from: ROUTE_ID });
+	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
+	const isLogsTab = activeTab === "logs";
+
+	return (
+		<ThreePanelLayoutProvider initialLeftOpen={!isLogsTab}>
+			<ExecutionContainerBody />
+		</ThreePanelLayoutProvider>
+	);
+}
+
+function ExecutionContainerBody() {
 	const { flowId, executionId } = useParams({ from: ROUTE_ID });
 	const search = useSearch({ from: ROUTE_ID });
 	const navigate = useNavigate({ from: ROUTE_PATH });
@@ -47,13 +61,6 @@ export function ExecutionContainer() {
 			search: () => (tab === "logs" ? { tab: "logs" } : {}),
 			replace: true,
 		});
-		if (tab === "logs") {
-			layoutRef.current?.collapseLeft();
-			setIsLeftCollapsed(true);
-		} else {
-			layoutRef.current?.expandLeft();
-			setIsLeftCollapsed(false);
-		}
 	};
 
 	const selectedScope: ExecutionLogsScope = search.scope
@@ -131,28 +138,7 @@ export function ExecutionContainer() {
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
 	>();
-	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
-	const [isLeftCollapsed, setIsLeftCollapsed] = useState(isLogsTab);
-
-	useEffect(() => {
-		if (isLogsTab) {
-			layoutRef.current?.collapseLeft();
-		} else {
-			layoutRef.current?.expandLeft();
-		}
-	}, [isLogsTab]);
-
-	function toggleExecutionsList() {
-		const ref = layoutRef.current;
-		if (!ref) return;
-		if (ref.isLeftCollapsed()) {
-			ref.expandLeft();
-			setIsLeftCollapsed(false);
-		} else {
-			ref.collapseLeft();
-			setIsLeftCollapsed(true);
-		}
-	}
+	const { expandRight } = useThreePanelLayout();
 
 	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
 		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
@@ -189,7 +175,6 @@ export function ExecutionContainer() {
 			checkpoints={checkpointsData.checkpoints}
 			selectedScope={selectedScope}
 			onSelectScope={setSelectedScope}
-			sidebar={{ open: !isLeftCollapsed, onToggle: toggleExecutionsList }}
 			onBack={() => setActiveTab("execution")}
 		/>
 	) : (
@@ -199,7 +184,7 @@ export function ExecutionContainer() {
 			timelineEntries={timelineEntries}
 			onSelectCheckpoint={(id) => {
 				setSelectedCheckpointId(id);
-				layoutRef.current?.expandRight();
+				expandRight();
 			}}
 			waitCondition={waitConditionData}
 			onResolveWaitCondition={resolveWaitCondition}
@@ -222,7 +207,6 @@ export function ExecutionContainer() {
 				</div>
 			</div>
 			<ThreePanelLayout
-				ref={layoutRef}
 				left={
 					<ExecutionsList
 						executions={executionsSortedByCreatedAtDesc}
