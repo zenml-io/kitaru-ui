@@ -14,6 +14,8 @@ import {
 import type { SecretKey } from "../domain/secrets";
 import { SecretInfoTooltip } from "./SecretInfoTooltip";
 
+const MAX_MASK_BULLETS = 24;
+
 type SecretDetailTableProps = {
 	secretName: string;
 	keys: SecretKey[];
@@ -57,7 +59,7 @@ export function SecretDetailTable({
 				) : (
 					keys.map((row) => {
 						const isVisible = visibleKeys.has(row.key);
-						const maskLength = Math.min(row.value.length, 24);
+						const maskLength = Math.min(row.value.length, MAX_MASK_BULLETS);
 						return (
 							<TableRow key={row.key}>
 								<TableCell>

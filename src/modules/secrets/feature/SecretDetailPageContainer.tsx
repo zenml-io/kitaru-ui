@@ -1,7 +1,7 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { ArrowLeft, KeyRound } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/shared/ui/button";
@@ -16,7 +16,7 @@ import {
 import { useUpdateSecret } from "../business-logic/use-update-secret";
 import { SecretDetailTable } from "../ui/SecretDetailTable";
 import { DeleteSecretAlertDialog } from "./DeleteSecretAlertDialog";
-import { EditSecretKeysDialog } from "./EditSecretKeysDialog";
+import { SecretFormDialog } from "./SecretFormDialog";
 
 export function SecretDetailPageContainer() {
 	const { secretId } = useParams({
@@ -31,10 +31,10 @@ export function SecretDetailPageContainer() {
 	const [keyToDelete, setKeyToDelete] = useState<string | undefined>();
 	const [search, setSearch] = useState("");
 
-	const filteredKeys = useMemo(() => {
-		const q = search.toLowerCase();
-		return secret.keys.filter((k) => k.key.toLowerCase().includes(q));
-	}, [secret.keys, search]);
+	const searchQuery = search.toLowerCase();
+	const filteredKeys = secret.keys.filter((k) =>
+		k.key.toLowerCase().includes(searchQuery)
+	);
 
 	const { updateSecret, isPending: isRemovingKey } = useUpdateSecret({
 		onSuccess: () => {
@@ -99,7 +99,8 @@ export function SecretDetailPageContainer() {
 				/>
 			</CardContent>
 			{editOpen && (
-				<EditSecretKeysDialog
+				<SecretFormDialog
+					mode="edit"
 					secret={secret}
 					open={editOpen}
 					onOpenChange={setEditOpen}
