@@ -59,8 +59,11 @@ export function SecretFormDialog({
 		onError: (error) => toast.error(error.message),
 	});
 
+	const isPending = isCreatePending || isUpdatePending;
+
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
+		if (isPending) return;
 		const keys = rows
 			.filter((row) => row.key.trim() !== "")
 			.map((row) => ({ key: row.key, value: row.value }));
@@ -73,7 +76,6 @@ export function SecretFormDialog({
 		updateSecret({ secretId: secret.id, payload: { name, keys } });
 	}
 
-	const isPending = isCreatePending || isUpdatePending;
 	const submitLabel = mode === "add" ? "Register Secret" : "Save Secret";
 
 	return (
