@@ -26,6 +26,7 @@ import { Route as PrivateNavbarSettingsProfileRouteImport } from './routes/_priv
 import { Route as PrivateNavbarSettingsMembersRouteImport } from './routes/_private/_navbar/settings/members'
 import { Route as PrivateNavbarFlowsFlowIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/route'
 import { Route as PrivateNavbarFlowsFlowIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/index'
+import { Route as PrivateNavbarSettingsSecretsSecretIdRouteImport } from './routes/_private/_navbar/settings/secrets/$secretId'
 import { Route as PrivateNavbarFlowsFlowIdTabRouteImport } from './routes/_private/_navbar/flows/$flowId/$tab'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/index'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/route'
@@ -120,6 +121,12 @@ const PrivateNavbarFlowsFlowIdIndexRoute =
     path: '/',
     getParentRoute: () => PrivateNavbarFlowsFlowIdRouteRoute,
   } as any)
+const PrivateNavbarSettingsSecretsSecretIdRoute =
+  PrivateNavbarSettingsSecretsSecretIdRouteImport.update({
+    id: '/$secretId',
+    path: '/$secretId',
+    getParentRoute: () => PrivateNavbarSettingsSecretsRoute,
+  } as any)
 const PrivateNavbarFlowsFlowIdTabRoute =
   PrivateNavbarFlowsFlowIdTabRouteImport.update({
     id: '/$tab',
@@ -150,10 +157,11 @@ export interface FileRoutesByFullPath {
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
   '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
-  '/settings/secrets': typeof PrivateNavbarSettingsSecretsRoute
+  '/settings/secrets': typeof PrivateNavbarSettingsSecretsRouteWithChildren
   '/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/settings/': typeof PrivateNavbarSettingsIndexRoute
   '/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
+  '/settings/secrets/$secretId': typeof PrivateNavbarSettingsSecretsSecretIdRoute
   '/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/flows/$flowId/executions/': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
@@ -166,10 +174,11 @@ export interface FileRoutesByTo {
   '/devices/verify': typeof PrivateDevicesVerifyRoute
   '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
-  '/settings/secrets': typeof PrivateNavbarSettingsSecretsRoute
+  '/settings/secrets': typeof PrivateNavbarSettingsSecretsRouteWithChildren
   '/flows': typeof PrivateNavbarFlowsIndexRoute
   '/settings': typeof PrivateNavbarSettingsIndexRoute
   '/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
+  '/settings/secrets/$secretId': typeof PrivateNavbarSettingsSecretsSecretIdRoute
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdIndexRoute
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/flows/$flowId/executions': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
@@ -189,10 +198,11 @@ export interface FileRoutesById {
   '/_private/_navbar/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
   '/_private/_navbar/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/_private/_navbar/settings/profile': typeof PrivateNavbarSettingsProfileRoute
-  '/_private/_navbar/settings/secrets': typeof PrivateNavbarSettingsSecretsRoute
+  '/_private/_navbar/settings/secrets': typeof PrivateNavbarSettingsSecretsRouteWithChildren
   '/_private/_navbar/flows/': typeof PrivateNavbarFlowsIndexRoute
   '/_private/_navbar/settings/': typeof PrivateNavbarSettingsIndexRoute
   '/_private/_navbar/flows/$flowId/$tab': typeof PrivateNavbarFlowsFlowIdTabRoute
+  '/_private/_navbar/settings/secrets/$secretId': typeof PrivateNavbarSettingsSecretsSecretIdRoute
   '/_private/_navbar/flows/$flowId/': typeof PrivateNavbarFlowsFlowIdIndexRoute
   '/_private/_navbar/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/_private/_navbar/flows/$flowId/executions/': typeof PrivateNavbarFlowsFlowIdExecutionsIndexRoute
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
     | '/flows/'
     | '/settings/'
     | '/flows/$flowId/$tab'
+    | '/settings/secrets/$secretId'
     | '/flows/$flowId/'
     | '/flows/$flowId/executions/$executionId'
     | '/flows/$flowId/executions/'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/flows'
     | '/settings'
     | '/flows/$flowId/$tab'
+    | '/settings/secrets/$secretId'
     | '/flows/$flowId'
     | '/flows/$flowId/executions/$executionId'
     | '/flows/$flowId/executions'
@@ -252,6 +264,7 @@ export interface FileRouteTypes {
     | '/_private/_navbar/flows/'
     | '/_private/_navbar/settings/'
     | '/_private/_navbar/flows/$flowId/$tab'
+    | '/_private/_navbar/settings/secrets/$secretId'
     | '/_private/_navbar/flows/$flowId/'
     | '/_private/_navbar/flows/$flowId/executions/$executionId'
     | '/_private/_navbar/flows/$flowId/executions/'
@@ -383,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdIndexRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdRouteRoute
     }
+    '/_private/_navbar/settings/secrets/$secretId': {
+      id: '/_private/_navbar/settings/secrets/$secretId'
+      path: '/$secretId'
+      fullPath: '/settings/secrets/$secretId'
+      preLoaderRoute: typeof PrivateNavbarSettingsSecretsSecretIdRouteImport
+      parentRoute: typeof PrivateNavbarSettingsSecretsRoute
+    }
     '/_private/_navbar/flows/$flowId/$tab': {
       id: '/_private/_navbar/flows/$flowId/$tab'
       path: '/$tab'
@@ -446,10 +466,25 @@ const PrivateNavbarFlowsRouteRouteWithChildren =
     PrivateNavbarFlowsRouteRouteChildren,
   )
 
+interface PrivateNavbarSettingsSecretsRouteChildren {
+  PrivateNavbarSettingsSecretsSecretIdRoute: typeof PrivateNavbarSettingsSecretsSecretIdRoute
+}
+
+const PrivateNavbarSettingsSecretsRouteChildren: PrivateNavbarSettingsSecretsRouteChildren =
+  {
+    PrivateNavbarSettingsSecretsSecretIdRoute:
+      PrivateNavbarSettingsSecretsSecretIdRoute,
+  }
+
+const PrivateNavbarSettingsSecretsRouteWithChildren =
+  PrivateNavbarSettingsSecretsRoute._addFileChildren(
+    PrivateNavbarSettingsSecretsRouteChildren,
+  )
+
 interface PrivateNavbarSettingsRouteRouteChildren {
   PrivateNavbarSettingsMembersRoute: typeof PrivateNavbarSettingsMembersRoute
   PrivateNavbarSettingsProfileRoute: typeof PrivateNavbarSettingsProfileRoute
-  PrivateNavbarSettingsSecretsRoute: typeof PrivateNavbarSettingsSecretsRoute
+  PrivateNavbarSettingsSecretsRoute: typeof PrivateNavbarSettingsSecretsRouteWithChildren
   PrivateNavbarSettingsIndexRoute: typeof PrivateNavbarSettingsIndexRoute
 }
 
@@ -457,7 +492,8 @@ const PrivateNavbarSettingsRouteRouteChildren: PrivateNavbarSettingsRouteRouteCh
   {
     PrivateNavbarSettingsMembersRoute: PrivateNavbarSettingsMembersRoute,
     PrivateNavbarSettingsProfileRoute: PrivateNavbarSettingsProfileRoute,
-    PrivateNavbarSettingsSecretsRoute: PrivateNavbarSettingsSecretsRoute,
+    PrivateNavbarSettingsSecretsRoute:
+      PrivateNavbarSettingsSecretsRouteWithChildren,
     PrivateNavbarSettingsIndexRoute: PrivateNavbarSettingsIndexRoute,
   }
 
