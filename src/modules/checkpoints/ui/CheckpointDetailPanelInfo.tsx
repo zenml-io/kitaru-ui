@@ -33,7 +33,6 @@ export function CheckpointDetailPanelInfo({
 						<LiveDurationMs
 							status={checkpoint.status}
 							startTime={checkpoint.startTime}
-							endTime={checkpoint.endTime}
 							durationMs={checkpoint.durationMs}
 						/>
 					</DetailItem>
