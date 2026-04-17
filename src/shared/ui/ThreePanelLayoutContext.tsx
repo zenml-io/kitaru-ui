@@ -5,8 +5,11 @@ import {
 	useMemo,
 	useRef,
 	useState,
+	type ComponentProps,
 	type ReactNode,
 } from "react";
+import { PanelLeft, PanelRight } from "lucide-react";
+import { Button } from "./button";
 
 type PanelApi = {
 	expand: () => void;
@@ -162,3 +165,72 @@ export function useThreePanelLayoutInternal(): InternalContextValue {
 // Test-only export. Do not import from application code.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useInternalThreePanelLayoutForTest = useThreePanelLayoutInternal;
+
+type ButtonProps = ComponentProps<typeof Button>;
+type ButtonVariant = ButtonProps["variant"];
+type ButtonSize = ButtonProps["size"];
+
+type AriaLabel = string | ((open: boolean) => string);
+
+function resolveAriaLabel(label: AriaLabel, open: boolean): string {
+	return typeof label === "function" ? label(open) : label;
+}
+
+type ToggleButtonProps = {
+	className?: string;
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	ariaLabel?: AriaLabel;
+};
+
+export function ToggleLeftPanelButton({
+	className,
+	variant = "ghost",
+	size = "icon-sm",
+	ariaLabel,
+}: ToggleButtonProps) {
+	const { leftOpen, leftAvailable, toggleLeft } = useThreePanelLayout();
+	if (!leftAvailable) return null;
+	const label = resolveAriaLabel(
+		ariaLabel ?? ((open) => (open ? "Close left panel" : "Open left panel")),
+		leftOpen
+	);
+	return (
+		<Button
+			type="button"
+			variant={variant}
+			size={size}
+			className={className}
+			aria-label={label}
+			onClick={toggleLeft}
+		>
+			<PanelLeft />
+		</Button>
+	);
+}
+
+export function ToggleRightPanelButton({
+	className,
+	variant = "ghost",
+	size = "icon-sm",
+	ariaLabel,
+}: ToggleButtonProps) {
+	const { rightOpen, rightAvailable, toggleRight } = useThreePanelLayout();
+	if (!rightAvailable) return null;
+	const label = resolveAriaLabel(
+		ariaLabel ?? ((open) => (open ? "Close right panel" : "Open right panel")),
+		rightOpen
+	);
+	return (
+		<Button
+			type="button"
+			variant={variant}
+			size={size}
+			className={className}
+			aria-label={label}
+			onClick={toggleRight}
+		>
+			<PanelRight />
+		</Button>
+	);
+}
