@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp, Copy, Download } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import {
@@ -25,6 +26,7 @@ type LogsToolbarProps = {
 	onCopyAll: () => void;
 	onDownload: () => void;
 	canExport: boolean;
+	leading?: ReactNode;
 };
 
 const LEVEL_OPTIONS = new Map<LoggingLevel, string>([
@@ -51,12 +53,14 @@ export function LogsToolbar({
 	onCopyAll,
 	onDownload,
 	canExport,
+	leading,
 }: LogsToolbarProps) {
 	const showSourceSwitcher = sources && sources.length > 1;
 	const hasSearch = search.length > 0;
 
 	return (
 		<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
+			{leading}
 			<Select<LoggingLevel>
 				value={levelFilter}
 				onValueChange={(v) => {

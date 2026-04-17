@@ -1,17 +1,20 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
-import { LogsListSkeleton } from "@/modules/logs/ui/LogsListSkeleton";
 import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import type { Execution } from "../domain/execution";
 import type { ExecutionLogsScope } from "../ui/ExecutionLogsScopeSidebar";
 import { ExecutionLogsContainer } from "./ExecutionLogsContainer";
+import { LogsLoadingShell } from "./LogsLoadingShell";
 
 type ExecutionLogsTabContainerProps = {
 	execution: Execution;
 	checkpoints: CheckpointEntry[];
 	selectedScope: ExecutionLogsScope;
 	onSelectScope: (scope: ExecutionLogsScope) => void;
+	onBackToExecution?: () => void;
+	onToggleSidebar?: () => void;
+	sidebarOpen?: boolean;
 };
 
 export function ExecutionLogsTabContainer({
@@ -19,6 +22,9 @@ export function ExecutionLogsTabContainer({
 	checkpoints,
 	selectedScope,
 	onSelectScope,
+	onBackToExecution,
+	onToggleSidebar,
+	sidebarOpen,
 }: ExecutionLogsTabContainerProps) {
 	const boundaryKey =
 		selectedScope.kind === "checkpoint"
@@ -32,12 +38,27 @@ export function ExecutionLogsTabContainer({
 				<ErrorFallback {...props} title="Failed to load execution logs" />
 			)}
 		>
-			<Suspense fallback={<LogsListSkeleton />}>
+			<Suspense
+				fallback={
+					<LogsLoadingShell
+						executionIndex={execution.index}
+						checkpoints={checkpoints}
+						selectedScope={selectedScope}
+						onSelectScope={onSelectScope}
+						onBackToExecution={onBackToExecution}
+						onToggleSidebar={onToggleSidebar}
+						sidebarOpen={sidebarOpen}
+					/>
+				}
+			>
 				<ExecutionLogsContainer
 					execution={execution}
 					checkpoints={checkpoints}
 					selectedScope={selectedScope}
 					onSelectScope={onSelectScope}
+					onBackToExecution={onBackToExecution}
+					onToggleSidebar={onToggleSidebar}
+					sidebarOpen={sidebarOpen}
 				/>
 			</Suspense>
 		</ErrorBoundary>
