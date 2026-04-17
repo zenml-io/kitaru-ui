@@ -1,4 +1,3 @@
-// src/shared/ui/ThreePanelLayout.tsx
 import { useEffect } from "react";
 import { useGroupRef, usePanelRef } from "react-resizable-panels";
 import type { PanelSize } from "react-resizable-panels";

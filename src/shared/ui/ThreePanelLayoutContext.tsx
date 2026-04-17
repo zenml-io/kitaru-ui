@@ -1,6 +1,5 @@
 import {
 	createContext,
-	useCallback,
 	useContext,
 	useMemo,
 	useRef,
@@ -47,71 +46,35 @@ const ThreePanelLayoutInternalContext =
 
 type ProviderProps = {
 	children: ReactNode;
-	initialLeftOpen?: boolean;
-	initialRightOpen?: boolean;
 };
 
-export function ThreePanelLayoutProvider({
-	children,
-	initialLeftOpen = true,
-	initialRightOpen = true,
-}: ProviderProps) {
-	const [leftOpen, setLeftOpen] = useState(initialLeftOpen);
-	const [rightOpen, setRightOpen] = useState(initialRightOpen);
+export function ThreePanelLayoutProvider({ children }: ProviderProps) {
+	const [leftOpen, setLeftOpen] = useState(true);
+	const [rightOpen, setRightOpen] = useState(true);
 	const [leftAvailable, setLeftAvailable] = useState(false);
 	const [rightAvailable, setRightAvailable] = useState(false);
 
 	const leftPanelApi = useRef<PanelApi | null>(null);
 	const rightPanelApi = useRef<PanelApi | null>(null);
 
-	const expandLeft = useCallback(() => {
-		leftPanelApi.current?.expand();
-	}, []);
-	const collapseLeft = useCallback(() => {
-		leftPanelApi.current?.collapse();
-	}, []);
-	const expandRight = useCallback(() => {
-		rightPanelApi.current?.expand();
-	}, []);
-	const collapseRight = useCallback(() => {
-		rightPanelApi.current?.collapse();
-	}, []);
-
-	const toggleLeft = useCallback(() => {
-		if (leftOpen) leftPanelApi.current?.collapse();
-		else leftPanelApi.current?.expand();
-	}, [leftOpen]);
-	const toggleRight = useCallback(() => {
-		if (rightOpen) rightPanelApi.current?.collapse();
-		else rightPanelApi.current?.expand();
-	}, [rightOpen]);
-
-	const value = useMemo<ThreePanelLayoutContextValue>(
-		() => ({
-			leftOpen,
-			rightOpen,
-			leftAvailable,
-			rightAvailable,
-			toggleLeft,
-			toggleRight,
-			expandLeft,
-			collapseLeft,
-			expandRight,
-			collapseRight,
-		}),
-		[
-			leftOpen,
-			rightOpen,
-			leftAvailable,
-			rightAvailable,
-			toggleLeft,
-			toggleRight,
-			expandLeft,
-			collapseLeft,
-			expandRight,
-			collapseRight,
-		]
-	);
+	const value: ThreePanelLayoutContextValue = {
+		leftOpen,
+		rightOpen,
+		leftAvailable,
+		rightAvailable,
+		toggleLeft: () => {
+			if (leftOpen) leftPanelApi.current?.collapse();
+			else leftPanelApi.current?.expand();
+		},
+		toggleRight: () => {
+			if (rightOpen) rightPanelApi.current?.collapse();
+			else rightPanelApi.current?.expand();
+		},
+		expandLeft: () => leftPanelApi.current?.expand(),
+		collapseLeft: () => leftPanelApi.current?.collapse(),
+		expandRight: () => rightPanelApi.current?.expand(),
+		collapseRight: () => rightPanelApi.current?.collapse(),
+	};
 
 	const internal = useMemo<InternalContextValue>(
 		() => ({

@@ -1,4 +1,3 @@
-// src/modules/executions/feature/ExecutionContainer.tsx
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import {
 	getCheckpointsPollingInterval,
@@ -37,12 +36,8 @@ const ROUTE_ID = "/_private/_navbar/flows/$flowId/executions/$executionId";
 const ROUTE_PATH = "/flows/$flowId/executions/$executionId";
 
 export function ExecutionContainer() {
-	const search = useSearch({ from: ROUTE_ID });
-	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
-	const isLogsTab = activeTab === "logs";
-
 	return (
-		<ThreePanelLayoutProvider initialLeftOpen={!isLogsTab}>
+		<ThreePanelLayoutProvider>
 			<ExecutionContainerBody />
 		</ThreePanelLayoutProvider>
 	);
