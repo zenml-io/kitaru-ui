@@ -14,7 +14,7 @@ import {
 	type ThreePanelLayoutHandle,
 } from "@/shared/ui/ThreePanelLayout";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
+import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
@@ -23,15 +23,45 @@ import { useExecutions } from "../business-logic/use-executions";
 import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
 import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
 import { useWaitCondition } from "../business-logic/use-wait-condition";
-import { ExecutionDetails } from "../ui/ExecutionDetails";
-import { ExecutionsList } from "../ui/ExecutionsList";
-import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
+import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
+import { ExecutionDetails } from "../ui/ExecutionDetails";
+import type { ExecutionLogsScope } from "../ui/ExecutionLogsScopeSidebar";
+import { ExecutionsList } from "../ui/ExecutionsList";
+import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
+import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
+
+const ROUTE_ID = "/_private/_navbar/flows/$flowId/executions/$executionId";
+const ROUTE_PATH = "/flows/$flowId/executions/$executionId";
 
 export function ExecutionContainer() {
-	const { flowId, executionId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
-	});
+	const { flowId, executionId } = useParams({ from: ROUTE_ID });
+	const search = useSearch({ from: ROUTE_ID });
+	const navigate = useNavigate({ from: ROUTE_PATH });
+
+	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
+
+	const setActiveTab = (tab: ExecutionTab) => {
+		navigate({
+			search: () => (tab === "logs" ? { tab: "logs" } : {}),
+			replace: true,
+		});
+	};
+
+	const selectedScope: ExecutionLogsScope = search.scope
+		? { kind: "checkpoint", checkpointId: search.scope }
+		: { kind: "root" };
+
+	const setSelectedScope = (scope: ExecutionLogsScope) => {
+		navigate({
+			search: () =>
+				scope.kind === "root"
+					? { tab: "logs" }
+					: { tab: "logs", scope: scope.checkpointId },
+			replace: true,
+		});
+	};
+
 	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
@@ -124,19 +154,47 @@ export function ExecutionContainer() {
 		</div>
 	) : null;
 
+	const centerHeader = (
+		<div className="mr-2 flex flex-1 items-center justify-between gap-2">
+			<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
+			<div className="flex items-center gap-2">
+				<RefreshButton
+					size="sm"
+					variant="outline"
+					onClick={refreshExecutionData}
+					isLoading={isManualRefreshPending}
+				/>
+				<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
+			</div>
+		</div>
+	);
+
+	const centerBody =
+		activeTab === "logs" ? (
+			<ExecutionLogsTabContainer
+				execution={executionData}
+				checkpoints={checkpointsData.checkpoints}
+				selectedScope={selectedScope}
+				onSelectScope={setSelectedScope}
+			/>
+		) : (
+			<ExecutionDetails
+				key={executionId}
+				execution={executionData}
+				timelineEntries={timelineEntries}
+				onSelectCheckpoint={(id) => {
+					setSelectedCheckpointId(id);
+					layoutRef.current?.expandRight();
+				}}
+				waitCondition={waitConditionData}
+				onResolveWaitCondition={resolveWaitCondition}
+				resumeHint={resumeHint}
+			/>
+		);
+
 	return (
 		<ThreePanelLayout
-			centerHeader={
-				<div className="mr-2 flex flex-1 items-center justify-end gap-2">
-					<RefreshButton
-						size="sm"
-						variant="outline"
-						onClick={refreshExecutionData}
-						isLoading={isManualRefreshPending}
-					/>
-					<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
-				</div>
-			}
+			centerHeader={centerHeader}
 			ref={layoutRef}
 			left={
 				<ExecutionsList
@@ -145,25 +203,14 @@ export function ExecutionContainer() {
 					activeexecutionId={executionId}
 				/>
 			}
-			center={
-				<ExecutionDetails
-					key={executionId}
-					execution={executionData}
-					timelineEntries={timelineEntries}
-					onSelectCheckpoint={(id) => {
-						setSelectedCheckpointId(id);
-						layoutRef.current?.expandRight();
-					}}
-					waitCondition={waitConditionData}
-					onResolveWaitCondition={resolveWaitCondition}
-					resumeHint={resumeHint}
-				/>
-			}
+			center={centerBody}
 			right={
-				<CheckpointDetailPanelContainer
-					key={selectedCheckpointId}
-					checkpointId={selectedCheckpointId}
-				/>
+				activeTab === "logs" ? null : (
+					<CheckpointDetailPanelContainer
+						key={selectedCheckpointId}
+						checkpointId={selectedCheckpointId}
+					/>
+				)
 			}
 		/>
 	);
