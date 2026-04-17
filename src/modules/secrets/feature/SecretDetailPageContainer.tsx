@@ -65,9 +65,11 @@ export function SecretDetailPageContainer() {
 				<div className="flex items-start justify-between gap-4">
 					<div className="flex flex-col gap-1">
 						<h1 className="text-lg font-semibold">{secret.name}</h1>
-						<span className="text-muted-foreground font-mono text-xs">
-							{secret.shortId}
-						</span>
+						<div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+							<span className="font-mono">{secret.shortId}</span>
+							<span>{secret.authorName ?? "-"}</span>
+							<span>{secret.createdAt?.toLocaleString() ?? "-"}</span>
+						</div>
 					</div>
 					<div className="flex items-center gap-2">
 						<Button variant="outline" onClick={() => setEditOpen(true)}>
