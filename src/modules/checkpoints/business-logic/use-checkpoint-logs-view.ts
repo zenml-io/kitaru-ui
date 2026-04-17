@@ -38,11 +38,19 @@ export function useCheckpointLogsView(
 	const copyRow = (entry: LogEntry) => copy(entry.originalEntry);
 
 	function download() {
-		downloadTextFile(
-			`checkpoint-${checkpointId}.log`,
-			formatLogsForExport(filteredLogs)
-		);
-		toast.success("Logs downloaded");
+		try {
+			downloadTextFile(
+				`checkpoint-${checkpointId}.log`,
+				formatLogsForExport(filteredLogs)
+			);
+			toast.success("Logs downloaded");
+		} catch (err) {
+			console.error("Failed to download checkpoint logs", {
+				checkpointId,
+				err,
+			});
+			toast.error("Failed to download logs");
+		}
 	}
 
 	return {
