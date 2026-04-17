@@ -2,7 +2,7 @@ import { cn } from "@/shared/utils/styles";
 
 export type PanelTab = "checkpoint" | "artifacts" | "memory" | "logs";
 
-const TABS = ["checkpoint", "artifacts", "memory", "logs"] as const;
+const TABS = ["logs", "checkpoint", "artifacts", "memory"] as const;
 
 interface CheckpointDetailPanelTabsProps {
 	activeTab: PanelTab;
