@@ -182,7 +182,7 @@ See `ServerActivationFormContainer.tsx` and `LoginFormContainer.tsx` for current
 - Icons and illustrations live in `src/assets` and can be imported as React components via SVGR
 - Keep Tailwind utility classes; Prettier (with the Tailwind plugin) auto-sorts them
 - Prefer focused components over overly generic abstractions
-- Keep `ui/` components placement-agnostic. If a primitive's props read like they're named for a specific caller (e.g. `onBackToExecution`), that's coupling — expose a generic composition slot (`leading?: ReactNode`, `children`, etc.) and let the feature layer compose domain-specific chrome into it
+- Keep cross-module `ui/` primitives placement-agnostic: if a shared component in `module-a/ui/` or `shared/ui/` takes props named for a specific caller in another module, that's coupling — expose a generic composition slot (`leading?: ReactNode`, `children`, etc.) and let the feature layer compose domain-specific chrome into it. Module-local `ui/` components (a component under `executions/ui/` used only by `executions/feature/`) can stay execution-specific in their props
 
 See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 

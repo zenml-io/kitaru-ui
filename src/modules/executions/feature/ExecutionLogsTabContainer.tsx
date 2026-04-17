@@ -12,9 +12,8 @@ type ExecutionLogsTabContainerProps = {
 	checkpoints: CheckpointEntry[];
 	selectedScope: ExecutionLogsScope;
 	onSelectScope: (scope: ExecutionLogsScope) => void;
-	onBackToExecution?: () => void;
-	onToggleSidebar?: () => void;
-	sidebarOpen?: boolean;
+	sidebar: { open: boolean; onToggle: () => void };
+	onBack: () => void;
 };
 
 export function ExecutionLogsTabContainer({
@@ -22,9 +21,8 @@ export function ExecutionLogsTabContainer({
 	checkpoints,
 	selectedScope,
 	onSelectScope,
-	onBackToExecution,
-	onToggleSidebar,
-	sidebarOpen,
+	sidebar,
+	onBack,
 }: ExecutionLogsTabContainerProps) {
 	const boundaryKey =
 		selectedScope.kind === "checkpoint"
@@ -45,9 +43,8 @@ export function ExecutionLogsTabContainer({
 						checkpoints={checkpoints}
 						selectedScope={selectedScope}
 						onSelectScope={onSelectScope}
-						onBackToExecution={onBackToExecution}
-						onToggleSidebar={onToggleSidebar}
-						sidebarOpen={sidebarOpen}
+						sidebar={sidebar}
+						onBack={onBack}
 					/>
 				}
 			>
@@ -56,9 +53,8 @@ export function ExecutionLogsTabContainer({
 					checkpoints={checkpoints}
 					selectedScope={selectedScope}
 					onSelectScope={onSelectScope}
-					onBackToExecution={onBackToExecution}
-					onToggleSidebar={onToggleSidebar}
-					sidebarOpen={sidebarOpen}
+					sidebar={sidebar}
+					onBack={onBack}
 				/>
 			</Suspense>
 		</ErrorBoundary>

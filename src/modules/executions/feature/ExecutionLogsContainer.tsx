@@ -14,9 +14,8 @@ type ExecutionLogsContainerProps = {
 	checkpoints: CheckpointEntry[];
 	selectedScope: ExecutionLogsScope;
 	onSelectScope: (scope: ExecutionLogsScope) => void;
-	onBackToExecution?: () => void;
-	onToggleSidebar?: () => void;
-	sidebarOpen?: boolean;
+	sidebar: { open: boolean; onToggle: () => void };
+	onBack: () => void;
 };
 
 export function ExecutionLogsContainer({
@@ -24,9 +23,8 @@ export function ExecutionLogsContainer({
 	checkpoints,
 	selectedScope,
 	onSelectScope,
-	onBackToExecution,
-	onToggleSidebar,
-	sidebarOpen,
+	sidebar,
+	onBack,
 }: ExecutionLogsContainerProps) {
 	const scopeSidebar = (
 		<ExecutionLogsScopeSidebar
@@ -37,11 +35,10 @@ export function ExecutionLogsContainer({
 		/>
 	);
 
-	const headerNav = (
+	const toolbarLeading = (
 		<ExecutionLogsHeaderNav
-			onBackToExecution={onBackToExecution}
-			onToggleSidebar={onToggleSidebar}
-			sidebarOpen={sidebarOpen}
+			sidebar={sidebar}
+			onBack={onBack}
 			withTrailingSeparator
 		/>
 	);
@@ -52,7 +49,7 @@ export function ExecutionLogsContainer({
 				key={selectedScope.checkpointId}
 				checkpointId={selectedScope.checkpointId}
 				scopeSidebar={scopeSidebar}
-				toolbarLeading={headerNav}
+				toolbarLeading={toolbarLeading}
 			/>
 		);
 	}
@@ -64,9 +61,7 @@ export function ExecutionLogsContainer({
 			<ExecutionLogsEmptyState
 				message="No logs are available for this execution yet."
 				scopeSidebar={scopeSidebar}
-				onBackToExecution={onBackToExecution}
-				onToggleSidebar={onToggleSidebar}
-				sidebarOpen={sidebarOpen}
+				leading={<ExecutionLogsHeaderNav sidebar={sidebar} onBack={onBack} />}
 			/>
 		);
 	}
@@ -76,7 +71,7 @@ export function ExecutionLogsContainer({
 			execution={execution}
 			initialSource={rootSource}
 			scopeSidebar={scopeSidebar}
-			toolbarLeading={headerNav}
+			toolbarLeading={toolbarLeading}
 		/>
 	);
 }

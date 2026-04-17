@@ -189,9 +189,8 @@ export function ExecutionContainer() {
 			checkpoints={checkpointsData.checkpoints}
 			selectedScope={selectedScope}
 			onSelectScope={setSelectedScope}
-			onBackToExecution={() => setActiveTab("execution")}
-			onToggleSidebar={toggleExecutionsList}
-			sidebarOpen={!isLeftCollapsed}
+			sidebar={{ open: !isLeftCollapsed, onToggle: toggleExecutionsList }}
+			onBack={() => setActiveTab("execution")}
 		/>
 	) : (
 		<ExecutionDetails
