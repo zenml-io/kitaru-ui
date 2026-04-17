@@ -1,11 +1,13 @@
-import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import type { Execution } from "../domain/execution";
-import type { ExecutionLogsScope } from "../ui/ExecutionLogsScopeSidebar";
+import { ExecutionLogsHeaderNav } from "../ui/ExecutionLogsHeaderNav";
+import {
+	ExecutionLogsScopeSidebar,
+	type ExecutionLogsScope,
+} from "../ui/ExecutionLogsScopeSidebar";
 import { ExecutionLogsContainer } from "./ExecutionLogsContainer";
-import { LogsLoadingShell } from "./LogsLoadingShell";
 
 type ExecutionLogsTabContainerProps = {
 	execution: Execution;
@@ -27,6 +29,19 @@ export function ExecutionLogsTabContainer({
 			? `checkpoint:${selectedScope.checkpointId}`
 			: `execution:${execution.id}`;
 
+	const scopeSidebar = (
+		<ExecutionLogsScopeSidebar
+			executionIndex={execution.index}
+			checkpoints={checkpoints.map((c) => ({ id: c.id, name: c.name }))}
+			selectedScope={selectedScope}
+			onSelectScope={onSelectScope}
+		/>
+	);
+
+	const toolbarLeading = (
+		<ExecutionLogsHeaderNav onBack={onBack} withTrailingSeparator />
+	);
+
 	return (
 		<ErrorBoundary
 			key={boundaryKey}
@@ -34,25 +49,13 @@ export function ExecutionLogsTabContainer({
 				<ErrorFallback {...props} title="Failed to load execution logs" />
 			)}
 		>
-			<Suspense
-				fallback={
-					<LogsLoadingShell
-						executionIndex={execution.index}
-						checkpoints={checkpoints}
-						selectedScope={selectedScope}
-						onSelectScope={onSelectScope}
-						onBack={onBack}
-					/>
-				}
-			>
-				<ExecutionLogsContainer
-					execution={execution}
-					checkpoints={checkpoints}
-					selectedScope={selectedScope}
-					onSelectScope={onSelectScope}
-					onBack={onBack}
-				/>
-			</Suspense>
+			<ExecutionLogsContainer
+				execution={execution}
+				selectedScope={selectedScope}
+				scopeSidebar={scopeSidebar}
+				toolbarLeading={toolbarLeading}
+				onBack={onBack}
+			/>
 		</ErrorBoundary>
 	);
 }

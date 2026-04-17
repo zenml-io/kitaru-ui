@@ -6,11 +6,7 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "./resizable";
-import {
-	ToggleLeftPanelButton,
-	ToggleRightPanelButton,
-	useThreePanelLayoutInternal,
-} from "./ThreePanelLayoutContext";
+import { useThreePanelLayoutInternal } from "./ThreePanelLayoutContext";
 
 const PANEL_IDS = { left: "left", center: "center", right: "right" } as const;
 
@@ -24,18 +20,12 @@ interface ThreePanelLayoutProps {
 	left: React.ReactNode;
 	center: React.ReactNode;
 	right: React.ReactNode;
-	centerHeader?: React.ReactNode;
-	hideRight?: boolean;
-	hideCenterHeader?: boolean;
 }
 
 export function ThreePanelLayout({
 	left,
 	center,
 	right,
-	centerHeader,
-	hideRight = false,
-	hideCenterHeader = false,
 }: ThreePanelLayoutProps) {
 	const groupRef = useGroupRef();
 	const leftPanelRef = usePanelRef();
@@ -65,7 +55,7 @@ export function ThreePanelLayout({
 	}, [leftPanelRef, setLeftPanelApi, setLeftAvailable]);
 
 	useEffect(() => {
-		if (hideRight) {
+		if (right === null) {
 			setRightPanelApi(null);
 			setRightAvailable(false);
 			return;
@@ -79,7 +69,7 @@ export function ThreePanelLayout({
 			setRightPanelApi(null);
 			setRightAvailable(false);
 		};
-	}, [hideRight, rightPanelRef, setRightPanelApi, setRightAvailable]);
+	}, [right, rightPanelRef, setRightPanelApi, setRightAvailable]);
 
 	function handleLeftResize(size: PanelSize) {
 		if (size.asPercentage === 0) {
@@ -101,7 +91,7 @@ export function ThreePanelLayout({
 		if (leftPanelRef.current?.isCollapsed()) {
 			leftPanelRef.current.expand();
 		}
-		if (!hideRight && rightPanelRef.current?.isCollapsed()) {
+		if (right !== null && rightPanelRef.current?.isCollapsed()) {
 			rightPanelRef.current.expand();
 		}
 	}
@@ -132,19 +122,10 @@ export function ThreePanelLayout({
 				defaultSize={`${DEFAULT_SIZES.center.default}`}
 				minSize={`${DEFAULT_SIZES.center.min}`}
 			>
-				<div className="flex h-full flex-col overflow-hidden">
-					{!hideCenterHeader && (
-						<header className="flex shrink-0 items-center justify-between border-b px-3 py-2">
-							<ToggleLeftPanelButton ariaLabel="Toggle left panel" />
-							{centerHeader}
-							<ToggleRightPanelButton ariaLabel="Toggle right panel" />
-						</header>
-					)}
-					{center}
-				</div>
+				<div className="flex h-full flex-col overflow-hidden">{center}</div>
 			</ResizablePanel>
 
-			{!hideRight && (
+			{right !== null && (
 				<>
 					<ResizableHandle onDragEnd={restoreCollapsedOnDragEnd} />
 					<ResizablePanel

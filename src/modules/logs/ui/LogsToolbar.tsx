@@ -27,6 +27,7 @@ type LogsToolbarProps = {
 	onDownload: () => void;
 	canExport: boolean;
 	leading?: ReactNode;
+	disabled?: boolean;
 };
 
 const LEVEL_OPTIONS = new Map<LoggingLevel, string>([
@@ -54,6 +55,7 @@ export function LogsToolbar({
 	onDownload,
 	canExport,
 	leading,
+	disabled = false,
 }: LogsToolbarProps) {
 	const showSourceSwitcher = sources && sources.length > 1;
 	const hasSearch = search.length > 0;
@@ -63,6 +65,7 @@ export function LogsToolbar({
 			{leading}
 			<Select<LoggingLevel>
 				value={levelFilter}
+				disabled={disabled}
 				onValueChange={(v) => {
 					if (v !== null) onLevelFilterChange(v);
 				}}
@@ -85,6 +88,7 @@ export function LogsToolbar({
 				onChange={(e) => onSearchChange(e.target.value)}
 				placeholder="Search logs..."
 				className="h-8 min-w-24 text-xs"
+				disabled={disabled}
 			/>
 			{hasSearch && (
 				<div className="text-2xs text-muted-foreground flex items-center gap-1 tabular-nums">
@@ -98,7 +102,7 @@ export function LogsToolbar({
 						variant="ghost"
 						size="icon"
 						aria-label="Previous match"
-						disabled={matchCount === 0}
+						disabled={disabled || matchCount === 0}
 						className="size-6"
 						onClick={onPrevMatch}
 					>
@@ -109,7 +113,7 @@ export function LogsToolbar({
 						variant="ghost"
 						size="icon"
 						aria-label="Next match"
-						disabled={matchCount === 0}
+						disabled={disabled || matchCount === 0}
 						className="size-6"
 						onClick={onNextMatch}
 					>
@@ -120,6 +124,7 @@ export function LogsToolbar({
 			{showSourceSwitcher && onSourceChange && (
 				<Select
 					value={selectedSource}
+					disabled={disabled}
 					onValueChange={(v) => {
 						if (v !== null) onSourceChange(v);
 					}}
@@ -142,7 +147,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Copy all logs"
 				className="size-8"
-				disabled={!canExport}
+				disabled={disabled || !canExport}
 				onClick={onCopyAll}
 			>
 				<Copy className="size-3" />
@@ -153,7 +158,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Download logs"
 				className="size-8"
-				disabled={!canExport}
+				disabled={disabled || !canExport}
 				onClick={onDownload}
 			>
 				<Download className="size-3" />

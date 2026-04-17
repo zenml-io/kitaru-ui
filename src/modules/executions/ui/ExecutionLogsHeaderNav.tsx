@@ -15,8 +15,6 @@ export function ExecutionLogsHeaderNav({
 	return (
 		<>
 			<ToggleLeftPanelButton
-				className="size-8"
-				size="icon"
 				ariaLabel={(open) =>
 					open ? "Close executions list" : "Open executions list"
 				}

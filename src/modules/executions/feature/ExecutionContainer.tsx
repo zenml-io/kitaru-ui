@@ -175,7 +175,6 @@ function ExecutionContainerBody() {
 	) : (
 		<ExecutionDetails
 			key={executionId}
-			execution={executionData}
 			timelineEntries={timelineEntries}
 			onSelectCheckpoint={(id) => {
 				setSelectedCheckpointId(id);
@@ -218,8 +217,6 @@ function ExecutionContainerBody() {
 						/>
 					)
 				}
-				hideRight={isLogsTab}
-				hideCenterHeader={isLogsTab}
 			/>
 		</div>
 	);

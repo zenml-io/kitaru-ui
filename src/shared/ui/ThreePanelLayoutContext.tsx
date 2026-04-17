@@ -125,10 +125,6 @@ export function useThreePanelLayoutInternal(): InternalContextValue {
 	return value;
 }
 
-// Test-only export. Do not import from application code.
-// eslint-disable-next-line react-refresh/only-export-components
-export const useInternalThreePanelLayoutForTest = useThreePanelLayoutInternal;
-
 type ButtonProps = ComponentProps<typeof Button>;
 type ButtonVariant = ButtonProps["variant"];
 type ButtonSize = ButtonProps["size"];
