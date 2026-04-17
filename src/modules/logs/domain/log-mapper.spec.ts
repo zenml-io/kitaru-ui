@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { logsFromApiToDomain } from "./log-mapper";
+import type { components } from "@/shared/api/openapi";
+import {
+	extractLogSources,
+	logSourceFromApiToDomain,
+	logSourceFromDomainToApi,
+	logsFromApiToDomain,
+} from "./log-mapper";
 import type { LogEntryApiType } from "./log-entry";
 
 describe("logsFromApiToDomain", () => {
@@ -120,5 +126,79 @@ describe("logsFromApiToDomain", () => {
 
 	it("returns an empty array for empty input", () => {
 		expect(logsFromApiToDomain([])).toEqual([]);
+	});
+});
+
+describe("logSourceFromApiToDomain", () => {
+	it("maps 'step' to 'checkpoint'", () => {
+		expect(logSourceFromApiToDomain("step")).toBe("checkpoint");
+	});
+
+	it("maps 'prepare_step' to 'prepare_checkpoint'", () => {
+		expect(logSourceFromApiToDomain("prepare_step")).toBe("prepare_checkpoint");
+	});
+
+	it("passes through unknown sources unchanged", () => {
+		expect(logSourceFromApiToDomain("custom_source")).toBe("custom_source");
+	});
+});
+
+describe("logSourceFromDomainToApi", () => {
+	it("maps 'checkpoint' to 'step'", () => {
+		expect(logSourceFromDomainToApi("checkpoint")).toBe("step");
+	});
+
+	it("maps 'prepare_checkpoint' to 'prepare_step'", () => {
+		expect(logSourceFromDomainToApi("prepare_checkpoint")).toBe("prepare_step");
+	});
+
+	it("passes through unknown sources unchanged", () => {
+		expect(logSourceFromDomainToApi("custom_source")).toBe("custom_source");
+	});
+});
+
+describe("extractLogSources", () => {
+	type LogsResponse = components["schemas"]["LogsResponse"];
+
+	function mkResponse(source: string | undefined): LogsResponse {
+		return {
+			id: "00000000-0000-0000-0000-000000000000",
+			body:
+				source === undefined
+					? undefined
+					: {
+							source,
+							created: "2026-04-17T00:00:00Z",
+							updated: "2026-04-17T00:00:00Z",
+							project_id: "00000000-0000-0000-0000-000000000000",
+						},
+		};
+	}
+
+	it("returns domain names for known ZenML sources", () => {
+		const result = extractLogSources([
+			mkResponse("step"),
+			mkResponse("prepare_step"),
+		]);
+		expect(result).toEqual(["checkpoint", "prepare_checkpoint"]);
+	});
+
+	it("passes unknown sources through unchanged", () => {
+		const result = extractLogSources([mkResponse("something_else")]);
+		expect(result).toEqual(["something_else"]);
+	});
+
+	it("drops entries with missing or empty source", () => {
+		const result = extractLogSources([
+			mkResponse("step"),
+			mkResponse(undefined),
+			mkResponse(""),
+		]);
+		expect(result).toEqual(["checkpoint"]);
+	});
+
+	it("returns empty array for null/undefined collection", () => {
+		expect(extractLogSources(null)).toEqual([]);
+		expect(extractLogSources(undefined)).toEqual([]);
 	});
 });

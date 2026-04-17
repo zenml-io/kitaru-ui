@@ -14,7 +14,7 @@ import { formatLogsForExport } from "@/modules/logs/util/format-logs";
 import { useCopy } from "@/shared/business-logic/use-copy";
 import { downloadTextFile } from "@/shared/utils/download-file";
 
-const DEFAULT_SOURCE = "step";
+const DEFAULT_SOURCE = "checkpoint";
 
 type CheckpointLogsContainerProps = {
 	checkpointId: string;

@@ -16,8 +16,29 @@ export function logsFromApiToDomain(entries: LogEntryApiType[]): LogEntry[] {
 }
 
 /**
+ * Maps ZenML source names to Kitaru domain vocabulary. Unknown sources pass
+ * through unchanged so the UI stays resilient to new backend values.
+ */
+const SOURCE_API_TO_DOMAIN: Record<string, string> = {
+	step: "checkpoint",
+	prepare_step: "prepare_checkpoint",
+};
+
+const SOURCE_DOMAIN_TO_API: Record<string, string> = Object.fromEntries(
+	Object.entries(SOURCE_API_TO_DOMAIN).map(([k, v]) => [v, k])
+);
+
+export function logSourceFromApiToDomain(source: string): string {
+	return SOURCE_API_TO_DOMAIN[source] ?? source;
+}
+
+export function logSourceFromDomainToApi(source: string): string {
+	return SOURCE_DOMAIN_TO_API[source] ?? source;
+}
+
+/**
  * Extracts the set of log source names from a checkpoint's `log_collection`.
- * Entries with a missing/empty source are dropped.
+ * Entries with a missing/empty source are dropped. Returns domain names.
  */
 export function extractLogSources(
 	collection: components["schemas"]["LogsResponse"][] | null | undefined
@@ -25,7 +46,8 @@ export function extractLogSources(
 	if (!collection) return [];
 	return collection
 		.map((l) => l.body?.source)
-		.filter((s): s is string => typeof s === "string" && s.length > 0);
+		.filter((s): s is string => typeof s === "string" && s.length > 0)
+		.map(logSourceFromApiToDomain);
 }
 
 type Placeholder = { index: number };
