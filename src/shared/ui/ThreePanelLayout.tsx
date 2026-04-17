@@ -1,5 +1,7 @@
-import { useImperativeHandle, type Ref } from "react";
+// src/shared/ui/ThreePanelLayout.tsx
+import { useEffect } from "react";
 import { useGroupRef, usePanelRef } from "react-resizable-panels";
+import type { PanelSize } from "react-resizable-panels";
 import { PanelLeft, PanelRight } from "lucide-react";
 import { Button } from "./button";
 import {
@@ -7,6 +9,10 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "./resizable";
+import {
+	useThreePanelLayout,
+	useThreePanelLayoutInternal,
+} from "./ThreePanelLayoutContext";
 
 const PANEL_IDS = { left: "left", center: "center", right: "right" } as const;
 
@@ -16,15 +22,7 @@ const DEFAULT_SIZES = {
 	right: { default: 30, min: 10 },
 } as const;
 
-export interface ThreePanelLayoutHandle {
-	expandRight(): void;
-	collapseLeft(): void;
-	expandLeft(): void;
-	isLeftCollapsed(): boolean;
-}
-
 interface ThreePanelLayoutProps {
-	ref?: Ref<ThreePanelLayoutHandle>;
 	left: React.ReactNode;
 	center: React.ReactNode;
 	right: React.ReactNode;
@@ -34,7 +32,6 @@ interface ThreePanelLayoutProps {
 }
 
 export function ThreePanelLayout({
-	ref,
 	left,
 	center,
 	right,
@@ -46,40 +43,60 @@ export function ThreePanelLayout({
 	const leftPanelRef = usePanelRef();
 	const rightPanelRef = usePanelRef();
 
-	useImperativeHandle(ref, () => ({
-		expandRight() {
-			if (rightPanelRef.current?.isCollapsed()) {
-				rightPanelRef.current.expand();
-			}
-		},
-		collapseLeft() {
-			if (!leftPanelRef.current?.isCollapsed()) {
-				leftPanelRef.current?.collapse();
-			}
-		},
-		expandLeft() {
-			if (leftPanelRef.current?.isCollapsed()) {
-				leftPanelRef.current.expand();
-			}
-		},
-		isLeftCollapsed() {
-			return leftPanelRef.current?.isCollapsed() ?? false;
-		},
-	}));
+	const { toggleLeft, toggleRight } = useThreePanelLayout();
+	const {
+		setLeftPanelApi,
+		setRightPanelApi,
+		setLeftAvailable,
+		setRightAvailable,
+		onLeftCollapse,
+		onLeftExpand,
+		onRightCollapse,
+		onRightExpand,
+	} = useThreePanelLayoutInternal();
 
-	function toggleLeft() {
-		if (leftPanelRef.current?.isCollapsed()) {
-			leftPanelRef.current.expand();
+	useEffect(() => {
+		setLeftPanelApi({
+			expand: () => leftPanelRef.current?.expand(),
+			collapse: () => leftPanelRef.current?.collapse(),
+		});
+		setLeftAvailable(true);
+		return () => {
+			setLeftPanelApi(null);
+			setLeftAvailable(false);
+		};
+	}, [leftPanelRef, setLeftPanelApi, setLeftAvailable]);
+
+	useEffect(() => {
+		if (hideRight) {
+			setRightPanelApi(null);
+			setRightAvailable(false);
+			return;
+		}
+		setRightPanelApi({
+			expand: () => rightPanelRef.current?.expand(),
+			collapse: () => rightPanelRef.current?.collapse(),
+		});
+		setRightAvailable(true);
+		return () => {
+			setRightPanelApi(null);
+			setRightAvailable(false);
+		};
+	}, [hideRight, rightPanelRef, setRightPanelApi, setRightAvailable]);
+
+	function handleLeftResize(size: PanelSize) {
+		if (size.asPercentage === 0) {
+			onLeftCollapse();
 		} else {
-			leftPanelRef.current?.collapse();
+			onLeftExpand();
 		}
 	}
 
-	function toggleRight() {
-		if (rightPanelRef.current?.isCollapsed()) {
-			rightPanelRef.current.expand();
+	function handleRightResize(size: PanelSize) {
+		if (size.asPercentage === 0) {
+			onRightCollapse();
 		} else {
-			rightPanelRef.current?.collapse();
+			onRightExpand();
 		}
 	}
 
@@ -105,6 +122,7 @@ export function ThreePanelLayout({
 				minSize={`${DEFAULT_SIZES.left.min}`}
 				collapsible
 				collapsedSize={0}
+				onResize={handleLeftResize}
 				className="bg-card overflow-y-auto"
 			>
 				{left}
@@ -147,6 +165,7 @@ export function ThreePanelLayout({
 						minSize={`${DEFAULT_SIZES.right.min}`}
 						collapsible
 						collapsedSize={0}
+						onResize={handleRightResize}
 						className="bg-card overflow-y-auto"
 					>
 						{right}
