@@ -27,7 +27,6 @@ type LogsToolbarProps = {
 	canExport: boolean;
 };
 
-// NOTSET (0) is shown as "All levels" because "level >= 0" matches every entry.
 const LEVEL_OPTIONS = new Map<LoggingLevel, string>([
 	[0, "All levels"],
 	[10, "Debug"],
@@ -53,7 +52,7 @@ export function LogsToolbar({
 	onDownload,
 	canExport,
 }: LogsToolbarProps) {
-	const showSourceSwitcher = (sources?.length ?? 0) > 1;
+	const showSourceSwitcher = sources && sources.length > 1;
 	const hasSearch = search.length > 0;
 
 	return (
@@ -64,7 +63,7 @@ export function LogsToolbar({
 					if (v !== null) onLevelFilterChange(v);
 				}}
 			>
-				<SelectTrigger className="h-8 w-[132px] text-xs">
+				<SelectTrigger className="h-8 w-24 text-xs">
 					<SelectValue>
 						{(value: LoggingLevel) => LEVEL_OPTIONS.get(value)}
 					</SelectValue>
@@ -81,7 +80,7 @@ export function LogsToolbar({
 				value={search}
 				onChange={(e) => onSearchChange(e.target.value)}
 				placeholder="Search logs..."
-				className="h-8 w-[160px] text-xs"
+				className="h-8 min-w-24 text-xs"
 			/>
 			{hasSearch && (
 				<div className="text-2xs text-muted-foreground flex items-center gap-1 tabular-nums">
@@ -114,14 +113,14 @@ export function LogsToolbar({
 					</Button>
 				</div>
 			)}
-			{showSourceSwitcher && onSourceChange && sources && (
+			{showSourceSwitcher && onSourceChange && (
 				<Select
 					value={selectedSource}
 					onValueChange={(v) => {
 						if (v !== null) onSourceChange(v);
 					}}
 				>
-					<SelectTrigger className="h-8 w-[140px] text-xs">
+					<SelectTrigger className="h-8 min-w-42 text-xs">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
