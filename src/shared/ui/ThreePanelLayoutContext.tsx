@@ -1,10 +1,17 @@
 import {
 	createContext,
+	useCallback,
 	useContext,
 	useMemo,
+	useRef,
 	useState,
 	type ReactNode,
 } from "react";
+
+type PanelApi = {
+	expand: () => void;
+	collapse: () => void;
+};
 
 export type ThreePanelLayoutContextValue = {
 	leftOpen: boolean;
@@ -19,8 +26,21 @@ export type ThreePanelLayoutContextValue = {
 	collapseRight: () => void;
 };
 
+type InternalContextValue = {
+	setLeftPanelApi: (api: PanelApi | null) => void;
+	setRightPanelApi: (api: PanelApi | null) => void;
+	setLeftAvailable: (available: boolean) => void;
+	setRightAvailable: (available: boolean) => void;
+	onLeftCollapse: () => void;
+	onLeftExpand: () => void;
+	onRightCollapse: () => void;
+	onRightExpand: () => void;
+};
+
 const ThreePanelLayoutContext =
 	createContext<ThreePanelLayoutContextValue | null>(null);
+const ThreePanelLayoutInternalContext =
+	createContext<InternalContextValue | null>(null);
 
 type ProviderProps = {
 	children: ReactNode;
@@ -35,26 +55,84 @@ export function ThreePanelLayoutProvider({
 }: ProviderProps) {
 	const [leftOpen, setLeftOpen] = useState(initialLeftOpen);
 	const [rightOpen, setRightOpen] = useState(initialRightOpen);
+	const [leftAvailable, setLeftAvailable] = useState(false);
+	const [rightAvailable, setRightAvailable] = useState(false);
+
+	const leftPanelApi = useRef<PanelApi | null>(null);
+	const rightPanelApi = useRef<PanelApi | null>(null);
+
+	const expandLeft = useCallback(() => {
+		leftPanelApi.current?.expand();
+	}, []);
+	const collapseLeft = useCallback(() => {
+		leftPanelApi.current?.collapse();
+	}, []);
+	const expandRight = useCallback(() => {
+		rightPanelApi.current?.expand();
+	}, []);
+	const collapseRight = useCallback(() => {
+		rightPanelApi.current?.collapse();
+	}, []);
+
+	const toggleLeft = useCallback(() => {
+		if (leftOpen) leftPanelApi.current?.collapse();
+		else leftPanelApi.current?.expand();
+	}, [leftOpen]);
+	const toggleRight = useCallback(() => {
+		if (rightOpen) rightPanelApi.current?.collapse();
+		else rightPanelApi.current?.expand();
+	}, [rightOpen]);
 
 	const value = useMemo<ThreePanelLayoutContextValue>(
 		() => ({
 			leftOpen,
 			rightOpen,
-			leftAvailable: false,
-			rightAvailable: false,
-			toggleLeft: () => setLeftOpen((open) => !open),
-			toggleRight: () => setRightOpen((open) => !open),
-			expandLeft: () => setLeftOpen(true),
-			collapseLeft: () => setLeftOpen(false),
-			expandRight: () => setRightOpen(true),
-			collapseRight: () => setRightOpen(false),
+			leftAvailable,
+			rightAvailable,
+			toggleLeft,
+			toggleRight,
+			expandLeft,
+			collapseLeft,
+			expandRight,
+			collapseRight,
 		}),
-		[leftOpen, rightOpen]
+		[
+			leftOpen,
+			rightOpen,
+			leftAvailable,
+			rightAvailable,
+			toggleLeft,
+			toggleRight,
+			expandLeft,
+			collapseLeft,
+			expandRight,
+			collapseRight,
+		]
+	);
+
+	const internal = useMemo<InternalContextValue>(
+		() => ({
+			setLeftPanelApi: (api) => {
+				leftPanelApi.current = api;
+			},
+			setRightPanelApi: (api) => {
+				rightPanelApi.current = api;
+			},
+			setLeftAvailable,
+			setRightAvailable,
+			onLeftCollapse: () => setLeftOpen(false),
+			onLeftExpand: () => setLeftOpen(true),
+			onRightCollapse: () => setRightOpen(false),
+			onRightExpand: () => setRightOpen(true),
+		}),
+		[]
 	);
 
 	return (
 		<ThreePanelLayoutContext.Provider value={value}>
-			{children}
+			<ThreePanelLayoutInternalContext.Provider value={internal}>
+				{children}
+			</ThreePanelLayoutInternalContext.Provider>
 		</ThreePanelLayoutContext.Provider>
 	);
 }
@@ -69,3 +147,18 @@ export function useThreePanelLayout(): ThreePanelLayoutContextValue {
 	}
 	return value;
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useThreePanelLayoutInternal(): InternalContextValue {
+	const value = useContext(ThreePanelLayoutInternalContext);
+	if (!value) {
+		throw new Error(
+			"useThreePanelLayoutInternal must be used inside a ThreePanelLayoutProvider"
+		);
+	}
+	return value;
+}
+
+// Test-only export. Do not import from application code.
+// eslint-disable-next-line react-refresh/only-export-components
+export const useInternalThreePanelLayoutForTest = useThreePanelLayoutInternal;
