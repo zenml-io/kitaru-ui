@@ -41,6 +41,7 @@ export function SecretKeyEditor({
 						<Input
 							placeholder="Key"
 							value={row.key}
+							autoComplete="off"
 							onChange={(e) => onUpdate(row.id, "key", e.target.value)}
 						/>
 						<div className="relative">
