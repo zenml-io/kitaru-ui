@@ -98,6 +98,13 @@ All API interactions follow a consistent pattern. Request definitions belong to 
 - Keep these functions focused on transport and response parsing.
 - Do not export custom React Query fetcher helpers for reads when `queryOptions(...)` can express the query API directly.
 
+**API ↔ domain mappers** — for any non-trivial transformation between API shape (OpenAPI types) and frontend domain shape, extract the transformation into a dedicated mapper function in `domain/*` using the naming convention:
+
+- `<entity>FromApiToDomain` — e.g. `checkpointFromApiToDomain`, `logsFromApiToDomain`
+- `<entity>FromDomainToApi` — used when sending a domain object back to the API (mirror of `FromApiToDomain`; add when a real write path needs it)
+
+Trivial pass-throughs don't need a mapper — e.g. returning the API array unchanged, or renaming a single field — those can stay inline in the fetch function. Only extract when there's real shape change, enrichment, or normalization.
+
 **Queries** — define TanStack Query keys and query collections in `src/modules/<module>/business-logic/*`.
 
 - Export grouped key factories such as `xQueryKeys`.

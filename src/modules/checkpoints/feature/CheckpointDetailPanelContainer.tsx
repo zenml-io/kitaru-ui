@@ -14,6 +14,7 @@ import {
 } from "../ui/CheckpointDetailPanelTabs";
 import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
+import { CheckpointLogsTabContainer } from "./CheckpointLogsTabContainer";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
@@ -90,6 +91,13 @@ function CheckpointDetailPanelContentContainer({
 				{activeTab === "memory" && (
 					<CheckpointMemoryTabContainer
 						checkpointStartTime={detailsData?.startTime}
+					/>
+				)}
+				{activeTab === "logs" && (
+					<CheckpointLogsTabContainer
+						checkpointId={checkpointId}
+						logSources={detailsData?.logSources ?? []}
+						checkpointStatus={detailsData?.status}
 					/>
 				)}
 			</div>
