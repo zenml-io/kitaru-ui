@@ -113,12 +113,114 @@ function parseTable(lines: string[]): ContentBlock | null {
 	return { type: "table", headers, rows };
 }
 
-export function tryParseJson(text: string): unknown | null {
+export type NormalizedJson =
+	| { kind: "value"; value: unknown; wasStringEnvelope: boolean }
+	| { kind: "unparseable"; raw: string };
+
+function looksLikeObjectOrArray(text: string): boolean {
 	const trimmed = text.trim();
-	if (
+	return (
 		(trimmed.startsWith("{") && trimmed.endsWith("}")) ||
 		(trimmed.startsWith("[") && trimmed.endsWith("]"))
-	) {
+	);
+}
+
+export function normalizeJsonVisualization(raw: string): NormalizedJson {
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(raw);
+	} catch {
+		return { kind: "unparseable", raw };
+	}
+
+	if (typeof parsed === "string" && looksLikeObjectOrArray(parsed)) {
+		try {
+			return {
+				kind: "value",
+				value: JSON.parse(parsed),
+				wasStringEnvelope: true,
+			};
+		} catch {
+			// Fall through to the first parsed string. The compatibility parse is
+			// intentionally bounded to one object/array-looking inner value.
+		}
+	}
+
+	return {
+		kind: "value",
+		value: parsed,
+		wasStringEnvelope: typeof parsed === "string",
+	};
+}
+
+const MARKDOWN_HINTS = [
+	/^#{1,6}\s+\S/m,
+	/^\s{0,3}[-*+]\s+\S/m,
+	/^\s{0,3}\d+\.\s+\S/m,
+	/```/,
+	/^\s{0,3}(?:-{3,}|\*{3,}|_{3,})\s*$/m,
+	/\*\*[^*\n]+\*\*/,
+	/^\s*\|.+\|\s*$/m,
+];
+
+export function looksMarkdownish(text: string): boolean {
+	return MARKDOWN_HINTS.some((pattern) => pattern.test(text));
+}
+
+export function parseCsv(text: string): string[][] {
+	const rows: string[][] = [];
+	let field = "";
+	let row: string[] = [];
+	let inQuotes = false;
+	let hasPendingField = false;
+
+	for (let i = 0; i < text.length; i++) {
+		const character = text[i];
+
+		if (inQuotes) {
+			if (character === '"') {
+				if (text[i + 1] === '"') {
+					field += '"';
+					i++;
+				} else {
+					inQuotes = false;
+				}
+			} else {
+				field += character;
+			}
+			continue;
+		}
+
+		if (character === '"') {
+			inQuotes = true;
+			hasPendingField = true;
+		} else if (character === ",") {
+			row.push(field);
+			field = "";
+			hasPendingField = true;
+		} else if (character === "\n") {
+			row.push(field);
+			rows.push(row);
+			row = [];
+			field = "";
+			hasPendingField = false;
+		} else if (character !== "\r") {
+			field += character;
+			hasPendingField = true;
+		}
+	}
+
+	if (field.length > 0 || row.length > 0 || hasPendingField) {
+		row.push(field);
+		rows.push(row);
+	}
+
+	return rows;
+}
+
+export function tryParseJson(text: string): unknown | null {
+	const trimmed = text.trim();
+	if (looksLikeObjectOrArray(trimmed)) {
 		try {
 			return JSON.parse(trimmed);
 		} catch {
