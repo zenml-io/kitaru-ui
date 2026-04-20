@@ -42,3 +42,21 @@ jobs:
 
       - name: Run Unit Tests and Coverage
         run: pnpm test:unit
+
+  actions-security-audit:
+    name: GitHub Actions Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
+        with:
+          inputs: .github
+          min-severity: low
+          version: 1.24.1
+          advanced-security: false
