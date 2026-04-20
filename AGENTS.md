@@ -249,3 +249,5 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 ### GitHub Actions hardening
 
 - Every workflow must declare explicit `permissions:` using least privilege. Build/test workflows should normally use `contents: read`; release workflows should only request the write scopes they actually need.
+- Pin all `uses:` actions to full commit SHAs, keeping a nearby version comment for human review and Dependabot maintenance.
+- Set `persist-credentials: false` on `actions/checkout` unless the workflow explicitly needs persisted git credentials.
