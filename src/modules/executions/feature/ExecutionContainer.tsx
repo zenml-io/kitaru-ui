@@ -5,6 +5,7 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { useTimelineEntries } from "../business-logic/use-timeline-entries";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
@@ -133,6 +134,8 @@ function ExecutionContainerBody() {
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
 	>();
+	const [activeCheckpointTab, setActiveCheckpointTab] =
+		useState<PanelTab>("logs");
 	const { expandRight } = useThreePanelLayout();
 
 	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
@@ -214,6 +217,8 @@ function ExecutionContainerBody() {
 						<CheckpointDetailPanelContainer
 							key={selectedCheckpointId}
 							checkpointId={selectedCheckpointId}
+							activeTab={activeCheckpointTab}
+							onTabChange={setActiveCheckpointTab}
 						/>
 					)
 				}
