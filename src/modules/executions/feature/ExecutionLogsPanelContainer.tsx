@@ -67,6 +67,7 @@ export function ExecutionLogsPanelContainer({
 						<LogsList
 							logs={view.filteredLogs}
 							density="compact"
+							showHeaders
 							matchesByLogIndex={view.matchesByLogIndex}
 							activeMatch={view.activeMatch}
 							onCopyRow={view.copyRow}

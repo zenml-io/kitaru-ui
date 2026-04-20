@@ -8,7 +8,6 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/shared/ui/empty";
-import { cn } from "@/shared/utils/styles";
 import type { LogEntry, LogMessageRange } from "../domain/log-entry";
 import { LogRow } from "./LogRow";
 
@@ -72,13 +71,9 @@ export function LogsList({
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			{showHeaders && (
-				<div
-					className={cn(
-						"border-border text-2xs text-muted-foreground flex shrink-0 items-center gap-2 border-b px-2.5 py-2 font-semibold tracking-wider uppercase"
-					)}
-				>
-					<span style={{ width: density === "compact" ? 48 : 60 }}>Level</span>
-					<span style={{ width: density === "compact" ? 88 : 100 }}>Time</span>
+				<div className="border-border bg-muted/30 text-2xs text-muted-foreground flex shrink-0 items-center gap-3 border-b px-4 py-2.5 font-semibold tracking-wider uppercase">
+					<span className="w-14 shrink-0">Level</span>
+					<span className="w-[88px] shrink-0">Time</span>
 					<span className="flex-1">Event</span>
 				</div>
 			)}
