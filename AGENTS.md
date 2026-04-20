@@ -251,3 +251,4 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 - Every workflow must declare explicit `permissions:` using least privilege. Build/test workflows should normally use `contents: read`; release workflows should only request the write scopes they actually need.
 - Pin all `uses:` actions to full commit SHAs, keeping a nearby version comment for human review and Dependabot maintenance.
 - Set `persist-credentials: false` on `actions/checkout` unless the workflow explicitly needs persisted git credentials.
+- Dependabot is configured only for the `github-actions` ecosystem and targets `develop`; do not add npm/pnpm Dependabot updates unless explicitly requested because they are intentionally avoided to reduce noise.
