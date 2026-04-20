@@ -14,7 +14,7 @@ test("authenticated user is redirected to /flows and the app shell renders", asy
 	void authenticatedPage;
 
 	await mockApi({
-		"/api/v1/pipelines": makePipelinePage(),
+		"/api/v1/pipelines": { get: makePipelinePage() },
 	});
 
 	await page.goto("/");

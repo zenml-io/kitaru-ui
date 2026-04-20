@@ -22,8 +22,8 @@ export const test = base.extend<TestFixtures>({
 					{ name: "session", value: "e2e-fake", url: E2E_BASE_URL },
 				]);
 			await mockApi({
-				"/api/v1/info": makeServerInfo(),
-				"/api/v1/current-user": makeUser(),
+				"/api/v1/info": { get: makeServerInfo() },
+				"/api/v1/current-user": { get: makeUser() },
 			});
 			await use();
 		},
