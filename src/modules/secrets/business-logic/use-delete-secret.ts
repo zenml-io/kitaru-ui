@@ -4,7 +4,7 @@ import { deleteSecretRequest } from "../domain/delete-secret";
 
 export function useDeleteSecret(
 	options?: Omit<
-		UseMutationOptions<unknown | undefined, FetchError, string, unknown>,
+		UseMutationOptions<void, FetchError, string, unknown>,
 		"mutationFn"
 	>
 ) {

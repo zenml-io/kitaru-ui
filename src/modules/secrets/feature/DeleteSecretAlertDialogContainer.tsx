@@ -6,6 +6,7 @@ import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
 import { secretQueryKeys } from "../business-logic/secret-queries";
 import { useDeleteSecret } from "../business-logic/use-delete-secret";
 import type { Secret } from "../domain/secrets";
+import { getErrorMessage } from "../business-logic/get-error-message";
 
 type DeleteSecretAlertDialogContainerProps = {
 	secret: Secret;
@@ -23,12 +24,13 @@ export function DeleteSecretAlertDialogContainer({
 	const queryClient = useQueryClient();
 
 	const { deleteSecret, isPending } = useDeleteSecret({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
 			onOpenChange(false);
 			onDeleted?.();
 		},
-		onError: (error) => toast.error(error.message),
+		onError: (error) =>
+			toast.error(getErrorMessage(error, "Could not delete secret.")),
 	});
 
 	return (

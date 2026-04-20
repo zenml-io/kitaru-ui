@@ -1,11 +1,9 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeft, KeyRound } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/shared/ui/button";
-import { Card, CardContent, CardHeader } from "@/shared/ui/card";
+import { Card, CardContent } from "@/shared/ui/card";
 import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
 import { Input } from "@/shared/ui/input";
 
@@ -14,7 +12,9 @@ import {
 	secretQueryKeys,
 } from "../business-logic/secret-queries";
 import { useUpdateSecret } from "../business-logic/use-update-secret";
+import { SecretDetailHeader } from "../ui/SecretDetailHeader";
 import { SecretDetailTable } from "../ui/SecretDetailTable";
+import { getErrorMessage } from "../business-logic/get-error-message";
 import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";
 import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
@@ -37,16 +37,26 @@ export function SecretDetailPageContainer() {
 	);
 
 	const { updateSecret, isPending: isRemovingKey } = useUpdateSecret({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
 			setKeyToDelete(undefined);
 			toast.success("Key removed");
 		},
-		onError: (error) => toast.error(error.message),
+		onError: (error) =>
+			toast.error(getErrorMessage(error, "Could not remove key.")),
 	});
 
 	function removeKey(keyName: string) {
+		const exists = secret.keys.some((k) => k.key === keyName);
+		if (!exists) {
+			setKeyToDelete(undefined);
+			return;
+		}
 		const remaining = secret.keys.filter((k) => k.key !== keyName);
+		if (remaining.length === 0) {
+			toast.error("A secret must contain at least one key.");
+			return;
+		}
 		updateSecret({
 			secretId: secret.id,
 			payload: { name: secret.name, keys: remaining },
@@ -55,39 +65,12 @@ export function SecretDetailPageContainer() {
 
 	return (
 		<Card>
-			<CardHeader className="flex flex-col gap-4">
-				<Button
-					type="button"
-					variant="ghost"
-					className="-ml-2 self-start"
-					onClick={() => navigate({ to: "/settings/secrets" })}
-				>
-					<ArrowLeft className="size-4" />
-					Secrets
-				</Button>
-				<div className="flex items-start justify-between gap-4">
-					<div className="flex flex-col gap-1">
-						<h1 className="text-lg font-semibold">{secret.name}</h1>
-						<div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-							<span className="font-mono">{secret.shortId}</span>
-							<span>{secret.authorName ?? "-"}</span>
-							<span>{secret.createdAt?.toLocaleString() ?? "-"}</span>
-						</div>
-					</div>
-					<div className="flex items-center gap-2">
-						<Button variant="outline" onClick={() => setEditOpen(true)}>
-							<KeyRound className="size-4" />
-							Edit Keys
-						</Button>
-						<Button
-							variant="destructive"
-							onClick={() => setDeleteSecretOpen(true)}
-						>
-							Delete secret
-						</Button>
-					</div>
-				</div>
-			</CardHeader>
+			<SecretDetailHeader
+				secret={secret}
+				onBack={() => navigate({ to: "/settings/secrets" })}
+				onEdit={() => setEditOpen(true)}
+				onDelete={() => setDeleteSecretOpen(true)}
+			/>
 			<CardContent className="space-y-6">
 				<Input
 					placeholder="Search keys..."

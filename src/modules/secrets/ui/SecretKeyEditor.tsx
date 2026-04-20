@@ -4,7 +4,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
-import type { KeyRow } from "../util/use-key-rows";
+import type { KeyRow } from "../domain/key-row";
 
 type SecretKeyEditorProps = {
 	rows: KeyRow[];
@@ -64,7 +64,7 @@ export function SecretKeyEditor({
 								{row.visible ? <EyeOff /> : <Eye />}
 							</Button>
 						</div>
-						<div className="flex items-center justify-end gap-1">
+						<div className="flex items-center gap-1">
 							{canRemove && (
 								<Button
 									type="button"

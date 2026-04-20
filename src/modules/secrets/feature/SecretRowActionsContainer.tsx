@@ -9,15 +9,17 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 
-import { DeleteSecretAlertDialogContainer } from "../feature/DeleteSecretAlertDialogContainer";
-import { SecretFormDialogContainer } from "../feature/SecretFormDialogContainer";
 import type { Secret } from "../domain/secrets";
+import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";
+import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
-type SecretsRowActionsProps = {
+type SecretRowActionsContainerProps = {
 	secret: Secret;
 };
 
-export function SecretsRowActions({ secret }: SecretsRowActionsProps) {
+export function SecretRowActionsContainer({
+	secret,
+}: SecretRowActionsContainerProps) {
 	const [showEdit, setShowEdit] = useState(false);
 	const [showDelete, setShowDelete] = useState(false);
 

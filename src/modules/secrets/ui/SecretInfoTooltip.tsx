@@ -22,10 +22,12 @@ function buildSnippet(secretName: string, keyName?: string) {
 	const access = keyName
 		? `value = secret.secret_values["${escapePyStr(keyName)}"]`
 		: `# secret.secret_values contains all key-value pairs`;
-	return `from zenml.client import Client
-
-secret = Client().get_secret("${escapePyStr(secretName)}")
-${access}`;
+	return [
+		"from zenml.client import Client",
+		"",
+		`secret = Client().get_secret("${escapePyStr(secretName)}")`,
+		access,
+	].join("\n");
 }
 
 export function SecretInfoTooltip({
@@ -48,6 +50,10 @@ export function SecretInfoTooltip({
 								? `Show usage snippet for ${keyName}`
 								: `Show usage snippet for ${secretName}`
 						}
+						onClick={(event) => {
+							event.preventDefault();
+							event.stopPropagation();
+						}}
 					>
 						<Info className="text-muted-foreground" />
 					</Button>
@@ -67,7 +73,11 @@ export function SecretInfoTooltip({
 						size="icon-xs"
 						aria-label={copied ? "Copied" : "Copy code"}
 						className="text-muted-foreground hover:text-foreground absolute top-2 right-2 z-10"
-						onClick={() => copy(code)}
+						onClick={(event) => {
+							event.preventDefault();
+							event.stopPropagation();
+							copy(code);
+						}}
 					>
 						{copied ? <Check /> : <Copy />}
 					</Button>

@@ -1,12 +1,7 @@
 import { useState } from "react";
-import type { SecretKey } from "../domain/secrets";
 
-export type KeyRow = {
-	id: string;
-	key: string;
-	value: string;
-	visible: boolean;
-};
+import type { KeyRow } from "../domain/key-row";
+import type { SecretKey } from "../domain/secrets";
 
 let rowCounter = 0;
 function nextRowId() {

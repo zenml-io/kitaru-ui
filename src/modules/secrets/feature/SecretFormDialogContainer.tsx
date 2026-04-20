@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -18,7 +18,8 @@ import { useUpdateSecret } from "../business-logic/use-update-secret";
 import { secretQueryKeys } from "../business-logic/secret-queries";
 import type { Secret } from "../domain/secrets";
 import { SecretKeyEditor } from "../ui/SecretKeyEditor";
-import { createKeyRows, useKeyRows } from "../util/use-key-rows";
+import { getErrorMessage } from "../business-logic/get-error-message";
+import { createKeyRows, useKeyRows } from "../business-logic/use-key-rows";
 
 type Mode = "add" | "edit";
 
@@ -36,27 +37,29 @@ export function SecretFormDialogContainer({
 	secret,
 }: SecretFormDialogContainerProps) {
 	const queryClient = useQueryClient();
-	const initialRows = useMemo(() => createKeyRows(secret?.keys), [secret]);
 	const [name, setName] = useState(secret?.name ?? "");
-	const { rows, addRow, removeRow, updateRow, toggleVisibility } =
-		useKeyRows(initialRows);
+	const { rows, addRow, removeRow, updateRow, toggleVisibility } = useKeyRows(
+		createKeyRows(secret?.keys)
+	);
 
 	const { createSecret, isPending: isCreatePending } = useCreateSecret({
-		onSuccess: () => {
+		onSuccess: async () => {
 			toast.success("Secret created");
-			queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
+			await queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
 			onOpenChange(false);
 		},
-		onError: (error) => toast.error(error.message),
+		onError: (error) =>
+			toast.error(getErrorMessage(error, "Could not create secret.")),
 	});
 
 	const { updateSecret, isPending: isUpdatePending } = useUpdateSecret({
-		onSuccess: () => {
+		onSuccess: async () => {
 			toast.success("Secret updated");
-			queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
+			await queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
 			onOpenChange(false);
 		},
-		onError: (error) => toast.error(error.message),
+		onError: (error) =>
+			toast.error(getErrorMessage(error, "Could not update secret.")),
 	});
 
 	const isPending = isCreatePending || isUpdatePending;
@@ -64,16 +67,37 @@ export function SecretFormDialogContainer({
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		if (isPending) return;
+
+		const trimmedName = name.trim();
+		if (!trimmedName) {
+			toast.error("Please enter a secret name.");
+			return;
+		}
+
 		const keys = rows
 			.filter((row) => row.key.trim() !== "")
-			.map((row) => ({ key: row.key, value: row.value }));
+			.map((row) => ({ key: row.key.trim(), value: row.value }));
+
+		if (keys.length === 0) {
+			toast.error("Add at least one key.");
+			return;
+		}
+
+		const seen = new Set<string>();
+		for (const k of keys) {
+			if (seen.has(k.key)) {
+				toast.error(`Duplicate key: "${k.key}".`);
+				return;
+			}
+			seen.add(k.key);
+		}
 
 		if (mode === "add") {
-			createSecret({ name, keys });
+			createSecret({ name: trimmedName, keys });
 			return;
 		}
 		if (!secret) return;
-		updateSecret({ secretId: secret.id, payload: { name, keys } });
+		updateSecret({ secretId: secret.id, payload: { name: trimmedName, keys } });
 	}
 
 	const submitLabel = mode === "add" ? "Register Secret" : "Save Secret";

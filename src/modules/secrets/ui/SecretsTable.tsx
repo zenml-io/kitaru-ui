@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
@@ -8,6 +8,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 
 import {
 	SortableHeader,
@@ -23,18 +24,18 @@ import { cn } from "@/shared/utils/styles";
 
 import type { Secret } from "../domain/secrets";
 import { SecretInfoTooltip } from "./SecretInfoTooltip";
-import { SecretsRowActions } from "./SecretsRowActions";
 
 type SecretsTableProps = {
 	secrets: Secret[];
+	renderActions?: (secret: Secret) => ReactNode;
 };
 
-export function SecretsTable({ secrets }: SecretsTableProps) {
+export function SecretsTable({ secrets, renderActions }: SecretsTableProps) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
-	const columns = useMemo(() => createColumns(), []);
+	const columns = createColumns(renderActions);
 
 	const table = useReactTable({
 		data: secrets,
@@ -67,7 +68,7 @@ export function SecretsTable({ secrets }: SecretsTableProps) {
 			<TableBody>
 				{table.getRowModel().rows.length ? (
 					table.getRowModel().rows.map((row) => (
-						<TableRow key={row.id} className="cursor-pointer">
+						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
 								<TableCell key={cell.id}>
 									{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -87,8 +88,10 @@ export function SecretsTable({ secrets }: SecretsTableProps) {
 	);
 }
 
-function createColumns(): ColumnDef<Secret>[] {
-	return [
+function createColumns(
+	renderActions?: (secret: Secret) => ReactNode
+): ColumnDef<Secret>[] {
+	const columns: ColumnDef<Secret>[] = [
 		{
 			accessorKey: "name",
 			header: ({ column }) => <SortableHeader column={column} label="Secret" />,
@@ -118,10 +121,10 @@ function createColumns(): ColumnDef<Secret>[] {
 			},
 		},
 		{
-			accessorKey: "authorName",
+			accessorKey: "user.resolvedName",
 			header: ({ column }) => <SortableHeader column={column} label="Author" />,
 			cell: ({ row }) => (
-				<TextRenderer>{row.original.authorName ?? "-"}</TextRenderer>
+				<TextRenderer>{row.original.user?.resolvedName ?? "-"}</TextRenderer>
 			),
 		},
 		{
@@ -135,15 +138,18 @@ function createColumns(): ColumnDef<Secret>[] {
 				</TextRenderer>
 			),
 		},
-		{
+	];
+
+	if (renderActions) {
+		columns.push({
 			id: "actions",
 			enableSorting: false,
 			header: () => <span className="sr-only">Actions</span>,
 			cell: ({ row }) => (
-				<div className="flex justify-end">
-					<SecretsRowActions secret={row.original} />
-				</div>
+				<div className="flex justify-end">{renderActions(row.original)}</div>
 			),
-		},
-	];
+		});
+	}
+
+	return columns;
 }

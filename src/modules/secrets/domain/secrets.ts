@@ -1,4 +1,5 @@
 import type { components } from "@/shared/api/openapi";
+import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export type SecretKey = {
@@ -10,8 +11,7 @@ export type Secret = {
 	id: string;
 	name: string;
 	shortId: string;
-	authorId?: string;
-	authorName?: string;
+	user?: User;
 	isPrivate?: boolean;
 	keys: SecretKey[];
 	createdAt?: Date;
@@ -30,13 +30,13 @@ function valuesToKeys(
 export function secretFromApiToDomain(
 	secret: components["schemas"]["SecretResponse"]
 ): Secret {
-	const user = secret.resources?.user ?? undefined;
 	return {
 		id: secret.id,
 		name: secret.name,
 		shortId: secret.id.slice(0, 8),
-		authorId: user?.id,
-		authorName: user?.body?.full_name ?? user?.name,
+		user: secret.resources?.user
+			? userFromApiToDomain(secret.resources.user)
+			: undefined,
 		isPrivate: secret.body?.private ?? undefined,
 		keys: valuesToKeys(secret.body?.values),
 		createdAt: secret.body?.created

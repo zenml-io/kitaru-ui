@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 
 import { secretQueries } from "../business-logic/secret-queries";
 import { SecretsTable } from "../ui/SecretsTable";
+import { SecretRowActionsContainer } from "./SecretRowActionsContainer";
 import { SecretsListToolbarContainer } from "./SecretsListToolbarContainer";
 
 export function SecretsListPageContainer() {
@@ -34,7 +35,12 @@ export function SecretsListPageContainer() {
 					searchValue={searchValue}
 					setSearchValue={setSearchValue}
 				/>
-				<SecretsTable secrets={filtered} />
+				<SecretsTable
+					secrets={filtered}
+					renderActions={(secret) => (
+						<SecretRowActionsContainer secret={secret} />
+					)}
+				/>
 			</CardContent>
 		</Card>
 	);
