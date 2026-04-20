@@ -6,8 +6,10 @@ import { Button } from "@/shared/ui/button";
 import { CodeBlock } from "@/shared/ui/CodeBlock";
 import { cn } from "@/shared/utils/styles";
 
+type ViewerFrameType = "json" | "markdown" | "csv" | "html" | "image" | "text";
+
 type ViewerFrameProps = {
-	type: string;
+	type: ViewerFrameType;
 	rendered: ReactNode;
 	rawText: string;
 	copyText?: string;

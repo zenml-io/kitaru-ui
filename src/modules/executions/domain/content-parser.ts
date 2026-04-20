@@ -141,8 +141,7 @@ export function normalizeJsonVisualization(raw: string): NormalizedJson {
 				wasStringEnvelope: true,
 			};
 		} catch {
-			// Fall through to the first parsed string. The compatibility parse is
-			// intentionally bounded to one object/array-looking inner value.
+			// Cap the envelope unwrap at one level; keep the first successful parse.
 		}
 	}
 
@@ -167,19 +166,48 @@ export function looksMarkdownish(text: string): boolean {
 	return MARKDOWN_HINTS.some((pattern) => pattern.test(text));
 }
 
+export type PromotedMarkdownField = {
+	fieldName: string;
+	markdown: string;
+	metadataEntries: [string, unknown][];
+};
+
+export function selectPromotedMarkdownField(
+	value: unknown
+): PromotedMarkdownField | null {
+	if (typeof value !== "object" || value === null || Array.isArray(value)) {
+		return null;
+	}
+	const entries = Object.entries(value);
+	const markdownEntries = entries.filter(
+		(entry): entry is [string, string] =>
+			typeof entry[1] === "string" && looksMarkdownish(entry[1])
+	);
+	if (markdownEntries.length !== 1) {
+		return null;
+	}
+	const [fieldName, markdown] = markdownEntries[0];
+	return {
+		fieldName,
+		markdown,
+		metadataEntries: entries.filter(([key]) => key !== fieldName),
+	};
+}
+
 export function parseCsv(text: string): string[][] {
+	const source = text.startsWith("\uFEFF") ? text.slice(1) : text;
 	const rows: string[][] = [];
 	let field = "";
 	let row: string[] = [];
 	let inQuotes = false;
 	let hasPendingField = false;
 
-	for (let i = 0; i < text.length; i++) {
-		const character = text[i];
+	for (let i = 0; i < source.length; i++) {
+		const character = source[i];
 
 		if (inQuotes) {
 			if (character === '"') {
-				if (text[i + 1] === '"') {
+				if (source[i + 1] === '"') {
 					field += '"';
 					i++;
 				} else {

@@ -3,6 +3,7 @@ import {
 	looksMarkdownish,
 	normalizeJsonVisualization,
 	parseCsv,
+	selectPromotedMarkdownField,
 } from "./content-parser";
 
 describe("normalizeJsonVisualization", () => {
@@ -198,5 +199,64 @@ describe("parseCsv", () => {
 
 	it("returns no rows for empty input", () => {
 		expect(parseCsv("")).toEqual([]);
+	});
+
+	it("strips a leading UTF-8 BOM", () => {
+		expect(parseCsv("\uFEFFname,score\nAlice,10")).toEqual([
+			["name", "score"],
+			["Alice", "10"],
+		]);
+	});
+});
+
+describe("selectPromotedMarkdownField", () => {
+	it("promotes an object's single Markdown-ish string field", () => {
+		const value = {
+			result: "# Report\n\n- Finding",
+			usage: { total_tokens: 10 },
+			run_id: "abc",
+		};
+		expect(selectPromotedMarkdownField(value)).toEqual({
+			fieldName: "result",
+			markdown: "# Report\n\n- Finding",
+			metadataEntries: [
+				["usage", { total_tokens: 10 }],
+				["run_id", "abc"],
+			],
+		});
+	});
+
+	it("returns null when multiple string fields look Markdown-ish", () => {
+		const value = {
+			summary: "# Summary\n\n- A",
+			analysis: "## Analysis\n\n- B",
+		};
+		expect(selectPromotedMarkdownField(value)).toBeNull();
+	});
+
+	it("returns null when no field looks Markdown-ish", () => {
+		expect(selectPromotedMarkdownField({ name: "Alice", age: 30 })).toBeNull();
+	});
+
+	it("returns null for non-object values", () => {
+		expect(selectPromotedMarkdownField(null)).toBeNull();
+		expect(selectPromotedMarkdownField("# hi")).toBeNull();
+		expect(selectPromotedMarkdownField([{ md: "# hi" }])).toBeNull();
+		expect(selectPromotedMarkdownField(42)).toBeNull();
+	});
+
+	it("preserves original key order in metadataEntries", () => {
+		const value = {
+			alpha: 1,
+			report: "# Report",
+			beta: 2,
+			gamma: 3,
+		};
+		const promoted = selectPromotedMarkdownField(value);
+		expect(promoted?.metadataEntries.map(([k]) => k)).toEqual([
+			"alpha",
+			"beta",
+			"gamma",
+		]);
 	});
 });

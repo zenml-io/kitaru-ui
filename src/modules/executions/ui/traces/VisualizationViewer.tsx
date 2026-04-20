@@ -25,7 +25,7 @@ export function VisualizationViewer({ artifact }: VisualizationViewerProps) {
 		default:
 			return (
 				<ViewerFrame
-					type={String(artifact.type)}
+					type="text"
 					rendered={
 						<pre className="text-foreground/80 p-4 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap">
 							{artifact.value}
