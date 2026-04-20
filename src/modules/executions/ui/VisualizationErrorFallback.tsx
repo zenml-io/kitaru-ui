@@ -8,7 +8,7 @@ import {
 import { AlertCircle } from "lucide-react";
 import type { FallbackProps } from "react-error-boundary";
 
-export function VisualizationErrorBoundary({ error }: FallbackProps) {
+export function VisualizationErrorFallback({ error }: FallbackProps) {
 	const errorMessage = error instanceof Error ? error.message : "Unknown error";
 	return (
 		<Empty>

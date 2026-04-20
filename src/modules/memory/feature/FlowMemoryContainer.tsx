@@ -1,6 +1,5 @@
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useParams } from "@tanstack/react-router";
-import { ErrorBoundary } from "react-error-boundary";
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import { useFlowMemories } from "@/modules/memory/business-logic/use-flow-memories";
 import { useMemoryHistory } from "@/modules/memory/business-logic/use-memory-history";
@@ -8,7 +7,6 @@ import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
-import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { deriveScopesFromEntries } from "../business-logic/memory-operations";
 import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
@@ -122,16 +120,9 @@ export function FlowMemoryContainer() {
 	const preview = detailEntry?.isDeleted ? (
 		<MemoryEmptyState variant="no-preview" />
 	) : detailEntry ? (
-		<ErrorBoundary
-			key={detailEntry.artifactId}
-			fallback={<MemoryEmptyState variant="no-preview" />}
-		>
-			<Suspense fallback={<VisualizationSkeleton />}>
-				<ArtifactVisualizationContainer
-					artifactVersionId={detailEntry.artifactId}
-				/>
-			</Suspense>
-		</ErrorBoundary>
+		<ArtifactVisualizationContainer
+			artifactVersionId={detailEntry.artifactId}
+		/>
 	) : null;
 
 	const previewActions = detailEntry ? (
