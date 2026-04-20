@@ -6,6 +6,7 @@ import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsListSkeleton } from "@/modules/logs/ui/LogsListSkeleton";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
 import { ExecutionLogsErrorState } from "../ui/ExecutionLogsErrorState";
+import { ExecutionLogsStaleBanner } from "../ui/ExecutionLogsStaleBanner";
 
 type ExecutionLogsPanelContainerProps = {
 	logs: LogEntry[];
@@ -40,7 +41,8 @@ export function ExecutionLogsPanelContainer({
 		downloadFilename,
 		errorContext,
 	});
-	const hasError = error !== null && error !== undefined && logs.length === 0;
+	const hasError = error != null && logs.length === 0;
+	const hasStalePollError = error != null && logs.length > 0;
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
@@ -62,6 +64,7 @@ export function ExecutionLogsPanelContainer({
 				canExport={filter.filteredLogs.length > 0}
 				leading={toolbarLeading}
 			/>
+			{hasStalePollError && <ExecutionLogsStaleBanner onRetry={onRetry} />}
 			<div className="flex min-h-0 flex-1">
 				{scopeSidebar}
 				<div className="min-w-0 flex-1">

@@ -1,9 +1,9 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { useLogSource } from "@/modules/logs/business-logic/use-log-source";
 import { useLogsExport } from "@/modules/logs/business-logic/use-logs-export";
 import { useLogsFilter } from "@/modules/logs/business-logic/use-logs-filter";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
-import { useCheckpointLogSource } from "../business-logic/use-checkpoint-log-source";
 import {
 	getCheckpointLogsPollingInterval,
 	useCheckpointLogs,
@@ -20,8 +20,10 @@ export function CheckpointLogsContainer({
 	logSources,
 	checkpointStatus,
 }: CheckpointLogsContainerProps) {
-	const { selectedSource, setSelectedSource } =
-		useCheckpointLogSource(logSources);
+	const { selectedSource, setSelectedSource } = useLogSource(
+		logSources,
+		"checkpoint"
+	);
 	const { logs } = useCheckpointLogs(checkpointId, selectedSource, {
 		refetchInterval: getCheckpointLogsPollingInterval(checkpointStatus),
 	});

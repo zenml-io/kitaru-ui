@@ -20,8 +20,9 @@ export function useLogsExport({
 	const copyRow = (entry: LogEntry) => copy(entry.originalEntry);
 
 	function download() {
+		const text = formatLogsForExport(logs);
 		try {
-			downloadTextFile(downloadFilename, formatLogsForExport(logs));
+			downloadTextFile(downloadFilename, text);
 			toast.success("Logs downloaded");
 		} catch (err) {
 			console.error("Failed to download logs", { ...errorContext, err });

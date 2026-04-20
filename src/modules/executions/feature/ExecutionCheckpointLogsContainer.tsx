@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { checkpointsQueries } from "@/modules/checkpoints/business-logic/checkpoints-queries";
 import { getCheckpointDetailsPollingInterval } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
 import { getCheckpointLogsPollingInterval } from "@/modules/checkpoints/business-logic/use-checkpoint-logs";
+import { useLogSource } from "@/modules/logs/business-logic/use-log-source";
+import { ExecutionLogsEmptyState } from "../ui/ExecutionLogsEmptyState";
 import { ExecutionLogsPanelContainer } from "./ExecutionLogsPanelContainer";
-
-const DEFAULT_SOURCE = "checkpoint";
 
 type ExecutionCheckpointLogsContainerProps = {
 	checkpointId: string;
@@ -25,21 +25,29 @@ export function ExecutionCheckpointLogsContainer({
 	const logSources = detailsQuery.data?.logSources ?? [];
 	const checkpointStatus = detailsQuery.data?.status;
 
-	const [selectedSource, setSelectedSource] = useState<string>(DEFAULT_SOURCE);
-	const effectiveSource = logSources.includes(selectedSource)
-		? selectedSource
-		: (logSources[0] ?? DEFAULT_SOURCE);
+	const { selectedSource, setSelectedSource } = useLogSource(
+		logSources,
+		"checkpoint"
+	);
 
 	const logsQuery = useQuery({
-		...checkpointsQueries.logs(checkpointId, effectiveSource),
+		...checkpointsQueries.logs(checkpointId, selectedSource),
 		enabled: logSources.length > 0,
 		refetchInterval: getCheckpointLogsPollingInterval(checkpointStatus),
 	});
 
+	if (detailsQuery.isSuccess && logSources.length === 0) {
+		return (
+			<ExecutionLogsEmptyState
+				message="No logs are available for this checkpoint yet."
+				scopeSidebar={scopeSidebar}
+				leading={toolbarLeading}
+			/>
+		);
+	}
+
 	const isLoading =
-		detailsQuery.isPending ||
-		logsQuery.isPending ||
-		(logSources.length === 0 && !detailsQuery.isError);
+		detailsQuery.isPending || (logSources.length > 0 && logsQuery.isPending);
 
 	return (
 		<ExecutionLogsPanelContainer
@@ -51,7 +59,7 @@ export function ExecutionCheckpointLogsContainer({
 				if (logsQuery.isError) logsQuery.refetch();
 			}}
 			sources={logSources.length > 1 ? logSources : undefined}
-			selectedSource={effectiveSource}
+			selectedSource={selectedSource}
 			onSourceChange={setSelectedSource}
 			scopeSidebar={scopeSidebar}
 			toolbarLeading={toolbarLeading}

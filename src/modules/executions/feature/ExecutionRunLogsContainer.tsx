@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useLogSource } from "@/modules/logs/business-logic/use-log-source";
 import { executionsQueries } from "../business-logic/executions-queries";
 import { getExecutionLogsPollingInterval } from "../business-logic/use-execution-logs";
 import type { Execution } from "../domain/execution";
@@ -18,13 +19,13 @@ export function ExecutionRunLogsContainer({
 	scopeSidebar,
 	toolbarLeading,
 }: ExecutionRunLogsContainerProps) {
-	const [selectedSource, setSelectedSource] = useState<string>(initialSource);
-	const effectiveSource = execution.logSources.includes(selectedSource)
-		? selectedSource
-		: initialSource;
+	const { selectedSource, setSelectedSource } = useLogSource(
+		execution.logSources,
+		initialSource
+	);
 
 	const logsQuery = useQuery({
-		...executionsQueries.logs(execution.id, effectiveSource),
+		...executionsQueries.logs(execution.id, selectedSource),
 		refetchInterval: getExecutionLogsPollingInterval(execution.status),
 	});
 
@@ -37,7 +38,7 @@ export function ExecutionRunLogsContainer({
 			sources={
 				execution.logSources.length > 1 ? execution.logSources : undefined
 			}
-			selectedSource={effectiveSource}
+			selectedSource={selectedSource}
 			onSourceChange={setSelectedSource}
 			scopeSidebar={scopeSidebar}
 			toolbarLeading={toolbarLeading}
