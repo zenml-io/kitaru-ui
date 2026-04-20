@@ -3,31 +3,25 @@ import { useCopy } from "@/shared/business-logic/use-copy";
 import { downloadTextFile } from "@/shared/utils/download-file";
 import type { LogEntry } from "../domain/log-entry";
 import { formatLogsForExport } from "../util/format-logs";
-import { useLogLevelFilter } from "./use-log-level-filter";
-import { useLogSearch } from "./use-log-search";
 
-type UseLogsViewParams = {
+type UseLogsExportParams = {
 	logs: LogEntry[];
 	downloadFilename: string;
 	errorContext?: Record<string, unknown>;
 };
 
-export function useLogsView({
+export function useLogsExport({
 	logs,
 	downloadFilename,
 	errorContext,
-}: UseLogsViewParams) {
-	const { filteredLogs, selectedLevel, setSelectedLevel } =
-		useLogLevelFilter(logs);
-	const searchState = useLogSearch(filteredLogs);
-
+}: UseLogsExportParams) {
 	const { copy } = useCopy();
-	const copyAll = () => copy(formatLogsForExport(filteredLogs));
+	const copyAll = () => copy(formatLogsForExport(logs));
 	const copyRow = (entry: LogEntry) => copy(entry.originalEntry);
 
 	function download() {
 		try {
-			downloadTextFile(downloadFilename, formatLogsForExport(filteredLogs));
+			downloadTextFile(downloadFilename, formatLogsForExport(logs));
 			toast.success("Logs downloaded");
 		} catch (err) {
 			console.error("Failed to download logs", { ...errorContext, err });
@@ -35,13 +29,5 @@ export function useLogsView({
 		}
 	}
 
-	return {
-		filteredLogs,
-		selectedLevel,
-		setSelectedLevel,
-		...searchState,
-		copyAll,
-		copyRow,
-		download,
-	};
+	return { copyAll, copyRow, download };
 }

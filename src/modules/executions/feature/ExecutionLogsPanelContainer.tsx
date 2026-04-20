@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { useLogsView } from "@/modules/logs/business-logic/use-logs-view";
+import { useLogsExport } from "@/modules/logs/business-logic/use-logs-export";
+import { useLogsFilter } from "@/modules/logs/business-logic/use-logs-filter";
 import type { LogEntry } from "@/modules/logs/domain/log-entry";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsListSkeleton } from "@/modules/logs/ui/LogsListSkeleton";
@@ -33,27 +34,32 @@ export function ExecutionLogsPanelContainer({
 	downloadFilename,
 	errorContext,
 }: ExecutionLogsPanelContainerProps) {
-	const view = useLogsView({ logs, downloadFilename, errorContext });
+	const filter = useLogsFilter(logs);
+	const exp = useLogsExport({
+		logs: filter.filteredLogs,
+		downloadFilename,
+		errorContext,
+	});
 	const hasError = error !== null && error !== undefined && logs.length === 0;
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			<LogsToolbar
 				disabled={isLoading || hasError}
-				levelFilter={view.selectedLevel}
-				onLevelFilterChange={view.setSelectedLevel}
-				search={view.search}
-				onSearchChange={view.setSearch}
-				matchCount={view.matchCount}
-				activeMatchIndex={view.activeMatchIndex}
-				onNextMatch={view.nextMatch}
-				onPrevMatch={view.prevMatch}
+				levelFilter={filter.selectedLevel}
+				onLevelFilterChange={filter.setSelectedLevel}
+				search={filter.search}
+				onSearchChange={filter.setSearch}
+				matchCount={filter.matchCount}
+				activeMatchIndex={filter.activeMatchIndex}
+				onNextMatch={filter.nextMatch}
+				onPrevMatch={filter.prevMatch}
 				sources={sources}
 				selectedSource={selectedSource}
 				onSourceChange={onSourceChange}
-				onCopyAll={view.copyAll}
-				onDownload={view.download}
-				canExport={view.filteredLogs.length > 0}
+				onCopyAll={exp.copyAll}
+				onDownload={exp.download}
+				canExport={filter.filteredLogs.length > 0}
 				leading={toolbarLeading}
 			/>
 			<div className="flex min-h-0 flex-1">
@@ -65,11 +71,11 @@ export function ExecutionLogsPanelContainer({
 						<LogsListSkeleton />
 					) : (
 						<LogsList
-							logs={view.filteredLogs}
+							logs={filter.filteredLogs}
 							density="compact"
-							matchesByLogIndex={view.matchesByLogIndex}
-							activeMatch={view.activeMatch}
-							onCopyRow={view.copyRow}
+							matchesByLogIndex={filter.matchesByLogIndex}
+							activeMatch={filter.activeMatch}
+							onCopyRow={exp.copyRow}
 						/>
 					)}
 				</div>

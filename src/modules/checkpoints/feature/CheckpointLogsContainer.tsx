@@ -1,7 +1,13 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { useLogsExport } from "@/modules/logs/business-logic/use-logs-export";
+import { useLogsFilter } from "@/modules/logs/business-logic/use-logs-filter";
 import { LogsList } from "@/modules/logs/ui/LogsList";
 import { LogsToolbar } from "@/modules/logs/ui/LogsToolbar";
-import { useCheckpointLogsView } from "../business-logic/use-checkpoint-logs-view";
+import { useCheckpointLogSource } from "../business-logic/use-checkpoint-log-source";
+import {
+	getCheckpointLogsPollingInterval,
+	useCheckpointLogs,
+} from "../business-logic/use-checkpoint-logs";
 
 type CheckpointLogsContainerProps = {
 	checkpointId: string;
@@ -14,40 +20,46 @@ export function CheckpointLogsContainer({
 	logSources,
 	checkpointStatus,
 }: CheckpointLogsContainerProps) {
-	const view = useCheckpointLogsView(
-		checkpointId,
-		logSources,
-		checkpointStatus
-	);
-	const shouldShowToolbar = view.logs.length > 0 || logSources.length > 1;
+	const { selectedSource, setSelectedSource } =
+		useCheckpointLogSource(logSources);
+	const { logs } = useCheckpointLogs(checkpointId, selectedSource, {
+		refetchInterval: getCheckpointLogsPollingInterval(checkpointStatus),
+	});
+	const filter = useLogsFilter(logs);
+	const exp = useLogsExport({
+		logs: filter.filteredLogs,
+		downloadFilename: `checkpoint-${checkpointId}.log`,
+		errorContext: { checkpointId },
+	});
+	const shouldShowToolbar = logs.length > 0 || logSources.length > 1;
 
 	return (
 		<div className="flex h-full min-h-0 flex-col">
 			{shouldShowToolbar && (
 				<LogsToolbar
-					levelFilter={view.selectedLevel}
-					onLevelFilterChange={view.setSelectedLevel}
-					search={view.search}
-					onSearchChange={view.setSearch}
-					matchCount={view.matchCount}
-					activeMatchIndex={view.activeMatchIndex}
-					onNextMatch={view.nextMatch}
-					onPrevMatch={view.prevMatch}
+					levelFilter={filter.selectedLevel}
+					onLevelFilterChange={filter.setSelectedLevel}
+					search={filter.search}
+					onSearchChange={filter.setSearch}
+					matchCount={filter.matchCount}
+					activeMatchIndex={filter.activeMatchIndex}
+					onNextMatch={filter.nextMatch}
+					onPrevMatch={filter.prevMatch}
 					sources={logSources.length > 1 ? logSources : undefined}
-					selectedSource={view.selectedSource}
-					onSourceChange={view.setSelectedSource}
-					onCopyAll={view.copyAll}
-					onDownload={view.download}
-					canExport={view.filteredLogs.length > 0}
+					selectedSource={selectedSource}
+					onSourceChange={setSelectedSource}
+					onCopyAll={exp.copyAll}
+					onDownload={exp.download}
+					canExport={filter.filteredLogs.length > 0}
 				/>
 			)}
 			<div className="min-h-0 flex-1">
 				<LogsList
-					logs={view.filteredLogs}
+					logs={filter.filteredLogs}
 					density="compact"
-					matchesByLogIndex={view.matchesByLogIndex}
-					activeMatch={view.activeMatch}
-					onCopyRow={view.copyRow}
+					matchesByLogIndex={filter.matchesByLogIndex}
+					activeMatch={filter.activeMatch}
+					onCopyRow={exp.copyRow}
 				/>
 			</div>
 		</div>
