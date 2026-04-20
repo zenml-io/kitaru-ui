@@ -1,32 +1,24 @@
+import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { cn } from "@/shared/utils/styles";
 import { formatExecutionIndex } from "../util/execution";
 
-export type ExecutionLogsScope =
-	| { kind: "root" }
-	| { kind: "checkpoint"; checkpointId: string };
-
-type CheckpointOption = {
-	id: string;
-	name: string;
-};
-
 type ExecutionLogsScopeSidebarProps = {
 	executionIndex: number;
-	checkpoints: CheckpointOption[];
-	selectedScope: ExecutionLogsScope;
-	onSelectScope: (scope: ExecutionLogsScope) => void;
+	checkpoints: CheckpointEntry[];
+	isRootActive: boolean;
+	activeCheckpointId: string | null;
+	onSelectRoot: () => void;
+	onSelectCheckpoint: (checkpointId: string) => void;
 };
 
 export function ExecutionLogsScopeSidebar({
 	executionIndex,
 	checkpoints,
-	selectedScope,
-	onSelectScope,
+	isRootActive,
+	activeCheckpointId,
+	onSelectRoot,
+	onSelectCheckpoint,
 }: ExecutionLogsScopeSidebarProps) {
-	const isRootActive = selectedScope.kind === "root";
-	const activeCheckpointId =
-		selectedScope.kind === "checkpoint" ? selectedScope.checkpointId : null;
-
 	return (
 		<nav
 			aria-label="Log scope"
@@ -35,7 +27,7 @@ export function ExecutionLogsScopeSidebar({
 			<ScopeRow
 				label={`Execution #${formatExecutionIndex(executionIndex)}`}
 				isActive={isRootActive}
-				onClick={() => onSelectScope({ kind: "root" })}
+				onClick={onSelectRoot}
 			/>
 			<div className="border-border border-t" />
 			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -44,9 +36,7 @@ export function ExecutionLogsScopeSidebar({
 						key={cp.id}
 						label={cp.name}
 						isActive={cp.id === activeCheckpointId}
-						onClick={() =>
-							onSelectScope({ kind: "checkpoint", checkpointId: cp.id })
-						}
+						onClick={() => onSelectCheckpoint(cp.id)}
 					/>
 				))}
 			</div>

@@ -3,11 +3,11 @@ import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import type { Execution } from "../domain/execution";
 import { ExecutionLogsHeaderNav } from "../ui/ExecutionLogsHeaderNav";
-import {
-	ExecutionLogsScopeSidebar,
-	type ExecutionLogsScope,
-} from "../ui/ExecutionLogsScopeSidebar";
 import { ExecutionLogsContainer } from "./ExecutionLogsContainer";
+import {
+	ExecutionLogsScopeSidebarContainer,
+	type ExecutionLogsScope,
+} from "./ExecutionLogsScopeSidebarContainer";
 
 type ExecutionLogsTabContainerProps = {
 	execution: Execution;
@@ -30,9 +30,9 @@ export function ExecutionLogsTabContainer({
 			: `execution:${execution.id}`;
 
 	const scopeSidebar = (
-		<ExecutionLogsScopeSidebar
+		<ExecutionLogsScopeSidebarContainer
 			executionIndex={execution.index}
-			checkpoints={checkpoints.map((c) => ({ id: c.id, name: c.name }))}
+			checkpoints={checkpoints}
 			selectedScope={selectedScope}
 			onSelectScope={onSelectScope}
 		/>

@@ -27,7 +27,7 @@ import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
-import type { ExecutionLogsScope } from "../ui/ExecutionLogsScopeSidebar";
+import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";

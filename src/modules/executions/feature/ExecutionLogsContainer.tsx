@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { Execution } from "../domain/execution";
 import { ExecutionLogsEmptyState } from "../ui/ExecutionLogsEmptyState";
 import { ExecutionLogsHeaderNav } from "../ui/ExecutionLogsHeaderNav";
-import type { ExecutionLogsScope } from "../ui/ExecutionLogsScopeSidebar";
+import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionCheckpointLogsContainer } from "./ExecutionCheckpointLogsContainer";
 import { ExecutionRunLogsContainer } from "./ExecutionRunLogsContainer";
 
