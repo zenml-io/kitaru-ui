@@ -13,6 +13,9 @@ pnpm build            # Build for production (tsc + vite build)
 pnpm lint             # Run ESLint
 pnpm format           # Format code with Prettier
 pnpm test:unit        # Run unit tests (Vitest)
+pnpm test:e2e          # Run e2e tests headless (requires pnpm build first)
+pnpm test:e2e:ui       # Interactive Playwright UI mode — use this when writing tests
+pnpm test:e2e:install  # One-time: download Chromium browser (~150MB)
 pnpm preview          # Preview the production build locally
 pnpm generate:types   # Generate OpenAPI types: pnpm generate:types -- <base-url>
 ```
@@ -237,6 +240,17 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Hooks with complex state transitions or derived logic are good candidates for testing with `renderHook` from Testing Library
 - Don't test presentational UI components unless they contain logic; prefer testing the logic in isolation
 
+### E2E Tests
+
+- E2E test files live in `e2e/specs/` and are named `*.spec.ts`
+- Import `test` and `expect` from `e2e/fixtures/test.ts`, not directly from `@playwright/test`
+- Use the `authenticatedPage` fixture for tests that need an authenticated session — it mocks `/api/v1/info` and `/api/v1/current-user` automatically. It is `auto: false`; Playwright activates it when it appears in the destructured parameter list. Use `void authenticatedPage` to suppress the `noUnusedLocals` TypeScript error since the fixture's type is `void` and the variable is never referenced in the test body (see the smoke test for the pattern)
+- Add per-test mocks with `await mockApi({ "/api/v1/some-endpoint": fixture })` **before** calling `page.goto()` — mock-api registers the route handler lazily, and loaders run during navigation
+- Any `/api/v1/*` call with no matching mock returns HTTP 500 and fails the test — add the endpoint to the mock map when you see "Unmocked endpoint: X" in output
+- Factory functions for API fixture data live in `e2e/fixtures/api/` and are typed against `src/shared/api/openapi.d.ts` — TypeScript catches schema drift at compile time
+- Locator priority: `getByRole` → `getByLabel` → `getByText` → `getByTestId` (last resort) — never CSS class selectors
+- `pnpm build` must be run before `pnpm test:e2e` — the test server runs `pnpm preview` against `dist/`
+
 ## CI
 
 GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `main` and `develop`, on all PRs, and by manual dispatch:
@@ -246,6 +260,16 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 3. `pnpm build`
 4. `pnpm test:unit`
 5. `zizmor` audit for GitHub Actions workflow hardening
+
+GitHub Actions also runs `.github/workflows/e2e.yml` on all PRs and pushes to `main`:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm build`
+3. Playwright Chromium install (cached in `~/.cache/ms-playwright`)
+4. `pnpm test:e2e`
+5. Upload `playwright-report/` artifact on failure (14-day retention)
+
+The E2E workflow runs in parallel with `build-validation.yml`. Both must pass for PRs to merge.
 
 ### GitHub Actions hardening
 
