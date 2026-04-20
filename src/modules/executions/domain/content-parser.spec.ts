@@ -3,7 +3,6 @@ import {
 	looksMarkdownish,
 	normalizeJsonVisualization,
 	parseCsv,
-	tryParseJson,
 } from "./content-parser";
 
 describe("normalizeJsonVisualization", () => {
@@ -199,15 +198,5 @@ describe("parseCsv", () => {
 
 	it("returns no rows for empty input", () => {
 		expect(parseCsv("")).toEqual([]);
-	});
-});
-
-describe("tryParseJson", () => {
-	it("preserves the old object-or-array-only contract", () => {
-		expect(tryParseJson('{"name":"Alice"}')).toEqual({ name: "Alice" });
-		expect(tryParseJson("[1,2,3]")).toEqual([1, 2, 3]);
-		expect(tryParseJson("null")).toBeNull();
-		expect(tryParseJson(JSON.stringify("hello"))).toBeNull();
-		expect(tryParseJson("not json")).toBeNull();
 	});
 });

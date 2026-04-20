@@ -217,15 +217,3 @@ export function parseCsv(text: string): string[][] {
 
 	return rows;
 }
-
-export function tryParseJson(text: string): unknown | null {
-	const trimmed = text.trim();
-	if (looksLikeObjectOrArray(trimmed)) {
-		try {
-			return JSON.parse(trimmed);
-		} catch {
-			return null;
-		}
-	}
-	return null;
-}
