@@ -245,3 +245,7 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 2. `pnpm lint`
 3. `pnpm build`
 4. `pnpm test:unit`
+
+### GitHub Actions hardening
+
+- Every workflow must declare explicit `permissions:` using least privilege. Build/test workflows should normally use `contents: read`; release workflows should only request the write scopes they actually need.
