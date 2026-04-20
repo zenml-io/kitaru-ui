@@ -13,6 +13,9 @@ pnpm build            # Build for production (tsc + vite build)
 pnpm lint             # Run ESLint
 pnpm format           # Format code with Prettier
 pnpm test:unit        # Run unit tests (Vitest)
+pnpm test:e2e          # Run e2e tests headless (requires pnpm build first)
+pnpm test:e2e:ui       # Interactive Playwright UI mode — use this when writing tests
+pnpm test:e2e:install  # One-time: download Chromium browser (~150MB)
 pnpm preview          # Preview the production build locally
 pnpm generate:types   # Generate OpenAPI types: pnpm generate:types -- <base-url>
 ```
@@ -31,7 +34,7 @@ By default, API requests are relative (`/api/v1/...`). In development, the Vite 
 - **Forms:** React Hook Form + Zod validation
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - **UI primitives:** Base UI (`@base-ui/react`) + class-variance-authority, with shadcn-style config conventions (`components.json`)
-- **Icons:** @untitledui/icons
+- **Icons:** lucide-react
 - **Notifications:** Sonner + next-themes
 - **Type safety:** TypeScript (strict mode) with generated types from ZenML OpenAPI spec
 - **Compiler:** React Compiler (via Babel plugin)
@@ -97,6 +100,13 @@ All API interactions follow a consistent pattern. Request definitions belong to 
 
 - Keep these functions focused on transport and response parsing.
 - Do not export custom React Query fetcher helpers for reads when `queryOptions(...)` can express the query API directly.
+
+**API ↔ domain mappers** — for any non-trivial transformation between API shape (OpenAPI types) and frontend domain shape, extract the transformation into a dedicated mapper function in `domain/*` using the naming convention:
+
+- `<entity>FromApiToDomain` — e.g. `checkpointFromApiToDomain`, `logsFromApiToDomain`
+- `<entity>FromDomainToApi` — used when sending a domain object back to the API (mirror of `FromApiToDomain`; add when a real write path needs it)
+
+Trivial pass-throughs don't need a mapper — e.g. returning the API array unchanged, or renaming a single field — those can stay inline in the fetch function. Only extract when there's real shape change, enrichment, or normalization.
 
 **Queries** — define TanStack Query keys and query collections in `src/modules/<module>/business-logic/*`.
 
@@ -230,11 +240,41 @@ Keep both files accurate — stale docs erode trust faster than missing docs.
 - Hooks with complex state transitions or derived logic are good candidates for testing with `renderHook` from Testing Library
 - Don't test presentational UI components unless they contain logic; prefer testing the logic in isolation
 
+### E2E Tests
+
+- E2E test files live in `e2e/specs/` and are named `*.spec.ts`
+- Import `test` and `expect` from `e2e/fixtures/test.ts`, not directly from `@playwright/test`
+- Use the `authenticatedPage` fixture for tests that need an authenticated session — it mocks `/api/v1/info` and `/api/v1/current-user` automatically. It is `auto: false`; Playwright activates it when it appears in the destructured parameter list. Use `void authenticatedPage` to suppress the `noUnusedLocals` TypeScript error since the fixture's type is `void` and the variable is never referenced in the test body (see the smoke test for the pattern)
+- Add per-test mocks with `await mockApi({ "/api/v1/some-endpoint": fixture })` **before** calling `page.goto()` — mock-api registers the route handler lazily, and loaders run during navigation
+- Any `/api/v1/*` call with no matching mock returns HTTP 500 and fails the test — add the endpoint to the mock map when you see "Unmocked endpoint: X" in output
+- Factory functions for API fixture data live in `e2e/fixtures/api/` and are typed against `src/shared/api/openapi.d.ts` — TypeScript catches schema drift at compile time
+- Locator priority: `getByRole` → `getByLabel` → `getByText` → `getByTestId` (last resort) — never CSS class selectors
+- `pnpm build` must be run before `pnpm test:e2e` — the test server runs `pnpm preview` against `dist/`
+
 ## CI
 
-GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
+GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `main` and `develop`, on all PRs, and by manual dispatch:
 
 1. `pnpm install --frozen-lockfile`
 2. `pnpm lint`
 3. `pnpm build`
 4. `pnpm test:unit`
+5. `zizmor` audit for GitHub Actions workflow hardening
+
+GitHub Actions also runs `.github/workflows/e2e.yml` on all PRs and pushes to `main`:
+
+1. `pnpm install --frozen-lockfile`
+2. `pnpm build`
+3. Playwright Chromium install (cached in `~/.cache/ms-playwright`)
+4. `pnpm test:e2e`
+5. Upload `playwright-report/` artifact on failure (14-day retention)
+
+The E2E workflow runs in parallel with `build-validation.yml`. Both must pass for PRs to merge.
+
+### GitHub Actions hardening
+
+- Every workflow must declare explicit `permissions:` using least privilege. Build/test workflows should normally use `contents: read`; release workflows should only request the write scopes they actually need.
+- Pin all `uses:` actions to full commit SHAs, keeping a nearby version comment for human review and Dependabot maintenance.
+- Set `persist-credentials: false` on `actions/checkout` unless the workflow explicitly needs persisted git credentials.
+- Dependabot is configured only for the `github-actions` ecosystem and targets `develop`; do not add npm/pnpm Dependabot updates unless explicitly requested because they are intentionally avoided to reduce noise.
+- CI runs `zizmor` 1.24.1 against `.github` and blocks non-informational findings (`min-severity: low`) so workflow and Dependabot changes should be checked locally with `uvx zizmor==1.24.1 --min-severity low .github` when possible.

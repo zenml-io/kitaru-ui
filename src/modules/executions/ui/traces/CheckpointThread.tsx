@@ -58,7 +58,7 @@ function RowHighlightedWrapper({
 		<div
 			ref={ref}
 			className={cn(
-				"rounded-lg",
+				"scroll-mt-6 rounded-lg",
 				highlighted &&
 					"animate-highlight-blink ring-primary/40 ring-offset-background ring-1 ring-offset-2"
 			)}

@@ -1,4 +1,4 @@
-import { AlertCircle } from "@untitledui/icons";
+import { AlertCircle } from "lucide-react";
 import {
 	Empty,
 	EmptyContent,

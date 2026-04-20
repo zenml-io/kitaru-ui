@@ -4,6 +4,7 @@ import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
 import { ExpandableRow } from "./ExpandableRow";
 import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 
 type CheckpointRowProps = {
 	checkpointEntry: CheckpointEntry;
@@ -22,9 +23,9 @@ export function CheckpointRow({
 					{checkpointEntry.type && (
 						<CheckpointTypeBadge type={checkpointEntry.type} />
 					)}
-					<span className="text-foreground truncate font-mono text-xs font-semibold">
+					<TruncatedText className="text-foreground font-mono text-xs font-semibold">
 						{checkpointEntry.name}
-					</span>
+					</TruncatedText>
 					<span className="flex-1" />
 					<LiveDurationMs
 						status={checkpointEntry.status}

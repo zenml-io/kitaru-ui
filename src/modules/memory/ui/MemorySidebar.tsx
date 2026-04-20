@@ -1,5 +1,6 @@
 import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
 import { Badge } from "@/shared/ui/badge";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 import { formatRelativeTime } from "@/shared/utils/time";
 import { MemoryScopeSelector } from "./MemoryScopeSelector";
@@ -69,14 +70,14 @@ export function MemorySidebar({
 							)}
 						>
 							<div className="flex w-full items-center gap-1.5">
-								<span
+								<TruncatedText
 									className={cn(
-										"min-w-0 flex-1 truncate font-mono text-xs font-medium",
+										"min-w-0 flex-1 font-mono text-xs font-medium",
 										entry.isDeleted && "line-through opacity-60"
 									)}
 								>
 									{entry.key}
-								</span>
+								</TruncatedText>
 								<Badge
 									variant="secondary"
 									className="text-2xs shrink-0 font-mono"

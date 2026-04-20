@@ -5,7 +5,7 @@ import { Theme as shadcnTheme } from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 import { Button } from "@/shared/ui/button";
 import { ColorDot } from "@/shared/ui/ColorDot";
-import { ChevronDown, ChevronUp, Send01 } from "@untitledui/icons";
+import { ChevronDown, ChevronUp, Send } from "lucide-react";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
 
@@ -129,7 +129,7 @@ export function WaitInputSection({
 							className="flex-1"
 							onClick={handleSubmit}
 						>
-							<Send01 className="size-3.5" />
+							<Send className="size-3.5" />
 							Submit
 						</Button>
 					</div>

@@ -5,6 +5,7 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { useTimelineEntries } from "../business-logic/use-timeline-entries";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
+import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
@@ -25,6 +26,7 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { useWaitCondition } from "../business-logic/use-wait-condition";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 import { ExecutionsList } from "../ui/ExecutionsList";
+import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 
 export function ExecutionContainer() {
@@ -92,6 +94,8 @@ export function ExecutionContainer() {
 	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
 		string | undefined
 	>();
+	const [activeCheckpointTab, setActiveCheckpointTab] =
+		useState<PanelTab>("logs");
 	const layoutRef = useRef<ThreePanelLayoutHandle>(null);
 
 	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
@@ -126,13 +130,14 @@ export function ExecutionContainer() {
 	return (
 		<ThreePanelLayout
 			centerHeader={
-				<div className="mr-2 flex flex-1 items-center justify-end">
+				<div className="mr-2 flex flex-1 items-center justify-end gap-2">
 					<RefreshButton
 						size="sm"
 						variant="outline"
 						onClick={refreshExecutionData}
 						isLoading={isManualRefreshPending}
 					/>
+					<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
 				</div>
 			}
 			ref={layoutRef}
@@ -161,6 +166,8 @@ export function ExecutionContainer() {
 				<CheckpointDetailPanelContainer
 					key={selectedCheckpointId}
 					checkpointId={selectedCheckpointId}
+					activeTab={activeCheckpointTab}
+					onTabChange={setActiveCheckpointTab}
 				/>
 			}
 		/>

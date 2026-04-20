@@ -20,7 +20,7 @@ The app currently supports:
 | Forms           | React Hook Form + Zod                                                            |
 | Styling         | Tailwind CSS v4 (via `@tailwindcss/vite`)                                        |
 | UI primitives   | [Base UI](https://base-ui.com/) + [class-variance-authority](https://cva.style/) |
-| Icons           | [@untitledui/icons](https://untitledui.com/icons)                                |
+| Icons           | [lucide-react](https://lucide.dev/)                                              |
 | Notifications   | [Sonner](https://sonner.emilkowal.dev/)                                          |
 | Theming         | next-themes                                                                      |
 | Type generation | openapi-typescript (from ZenML server OpenAPI spec)                              |
@@ -142,12 +142,13 @@ Both are excluded from ESLint.
 
 ## CI
 
-GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
+GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `main` and `develop`, on all PRs, and by manual dispatch:
 
 1. `pnpm install --frozen-lockfile`
 2. `pnpm lint`
 3. `pnpm build`
 4. `pnpm test:unit`
+5. `zizmor` audit for GitHub Actions workflow hardening
 
 ## Contributing
 

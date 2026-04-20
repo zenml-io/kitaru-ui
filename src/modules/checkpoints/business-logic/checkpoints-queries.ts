@@ -3,6 +3,7 @@ import { fetchCheckpointEntries } from "../domain/fetch-checkpoint-entries";
 import { fetchArtifactVisualization } from "../domain/fetch-artifact-visualization";
 import { fetchCheckpointDetails } from "../domain/fetch-checkpoint";
 import { fetchArtifactVersion } from "../domain/fetch-artifact-version";
+import { fetchCheckpointLogs } from "../domain/fetch-checkpoint-logs";
 
 export const checkpointsQueryKeys = {
 	all: (executionId: string) => ["checkpoints", executionId] as const,
@@ -12,6 +13,8 @@ export const checkpointsQueryKeys = {
 		["checkpoints", "artifactVisualization", artifactVersionId] as const,
 	artifactVersion: (artifactVersionId: string) =>
 		["checkpoints", "artifactVersion", artifactVersionId] as const,
+	logs: (checkpointId: string, source?: string) =>
+		["checkpoints", "logs", checkpointId, source ?? null] as const,
 };
 
 export const checkpointsQueries = {
@@ -34,5 +37,10 @@ export const checkpointsQueries = {
 		queryOptions({
 			queryKey: checkpointsQueryKeys.artifactVersion(artifactVersionId),
 			queryFn: () => fetchArtifactVersion(artifactVersionId),
+		}),
+	logs: (checkpointId: string, source?: string) =>
+		queryOptions({
+			queryKey: checkpointsQueryKeys.logs(checkpointId, source),
+			queryFn: () => fetchCheckpointLogs(checkpointId, source),
 		}),
 };

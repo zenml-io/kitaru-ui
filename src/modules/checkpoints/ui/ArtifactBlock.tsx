@@ -1,7 +1,7 @@
 import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils/styles";
-import { Check, ChevronDown, Copy01 } from "@untitledui/icons";
+import { Check, ChevronDown, Copy } from "lucide-react";
 import { useState } from "react";
 
 interface ArtifactBlockProps {
@@ -52,7 +52,7 @@ export function ArtifactBlock({
 					{copied ? (
 						<Check className="text-success h-3.5 w-3.5" />
 					) : (
-						<Copy01 className="text-muted-foreground h-3.5 w-3.5" />
+						<Copy className="text-muted-foreground h-3.5 w-3.5" />
 					)}
 					<span className="sr-only">
 						{copied ? "Copied" : "Copy to clipboard"}

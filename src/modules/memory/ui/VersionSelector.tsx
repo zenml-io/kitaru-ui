@@ -6,7 +6,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { ChevronDown } from "@untitledui/icons";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/shared/utils/styles";
 import type { MemoryEntry } from "../domain/memory";
 import { VersionListItem } from "./VersionListItem";

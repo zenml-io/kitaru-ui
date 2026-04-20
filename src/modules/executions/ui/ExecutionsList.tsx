@@ -36,6 +36,7 @@ export function ExecutionsList({
 					<ExecutionName index={execution.index} />
 					<div className="flex shrink-0 items-center gap-1.5">
 						<StatusDot
+							showTooltip={false}
 							status={(execution.status ?? "unknown") as StatusDotVariant}
 						/>
 						<span className="text-muted-foreground text-xs capitalize">

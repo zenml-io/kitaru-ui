@@ -1,5 +1,6 @@
-import { Database01 } from "@untitledui/icons";
+import { Database } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import { cn } from "@/shared/utils/styles";
 import type { MemoryScopeType } from "../domain/memory";
 
@@ -38,15 +39,14 @@ export function MemoryChip({
 			)}
 			aria-pressed={isSelected}
 			onClick={onClick}
-			title={label}
 		>
-			<Database01
+			<Database
 				className={cn(
 					"size-3 shrink-0",
 					isSelected ? "text-primary-foreground/70" : SCOPE_COLOR[scopeType]
 				)}
 			/>
-			<span className="max-w-40 truncate">{label}</span>
+			<TruncatedText className="max-w-40">{label}</TruncatedText>
 		</Badge>
 	);
 }

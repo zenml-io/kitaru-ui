@@ -2,6 +2,7 @@ import type { MemoryEntry } from "../domain/memory";
 import { Badge } from "@/shared/ui/badge";
 import { DetailItem } from "@/shared/ui/detail-list/DetailItem";
 import { DetailList } from "@/shared/ui/detail-list/DetailList";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 
 type MemoryMetadataProps = {
 	entry: MemoryEntry;
@@ -31,9 +32,9 @@ export function MemoryMetadata({ entry }: MemoryMetadataProps) {
 				{entry.createdAt.toLocaleString()}
 			</DetailItem>
 			<DetailItem label="Artifact ID">
-				<code className="text-muted-foreground truncate font-mono">
+				<TruncatedText className="text-muted-foreground font-mono">
 					{entry.artifactId}
-				</code>
+				</TruncatedText>
 			</DetailItem>
 		</DetailList>
 	);

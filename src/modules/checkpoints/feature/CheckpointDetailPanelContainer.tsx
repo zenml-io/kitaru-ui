@@ -14,13 +14,18 @@ import {
 } from "../ui/CheckpointDetailPanelTabs";
 import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
+import { CheckpointLogsTabContainer } from "./CheckpointLogsTabContainer";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
+	activeTab: PanelTab;
+	onTabChange: (tab: PanelTab) => void;
 };
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
+	activeTab,
+	onTabChange,
 }: CheckpointDetailPanelContainerProps) {
 	if (!checkpointId) {
 		return <CheckpointDetailsEmptyView />;
@@ -28,15 +33,23 @@ export function CheckpointDetailPanelContainer({
 
 	return (
 		<Suspense fallback={<CheckpointDetailPanelSkeleton />}>
-			<CheckpointDetailPanelContentContainer checkpointId={checkpointId} />
+			<CheckpointDetailPanelContentContainer
+				checkpointId={checkpointId}
+				activeTab={activeTab}
+				onTabChange={onTabChange}
+			/>
 		</Suspense>
 	);
 }
 
 function CheckpointDetailPanelContentContainer({
 	checkpointId,
+	activeTab,
+	onTabChange,
 }: {
 	checkpointId: string;
+	activeTab: PanelTab;
+	onTabChange: (tab: PanelTab) => void;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
 		refetchInterval: getCheckpointDetailsPollingInterval,
@@ -45,14 +58,13 @@ function CheckpointDetailPanelContentContainer({
 	const inputs = detailsData?.inputs ?? [];
 	const outputs = detailsData?.outputs ?? [];
 
-	const [activeTab, setActiveTab] = useState<PanelTab>("checkpoint");
 	const [selectedArtifact, setSelectedArtifact] = useState<{
 		artifact: ArtifactEntry;
 		direction: "input" | "output";
 	} | null>(null);
 
 	function handleTabChange(tab: PanelTab) {
-		setActiveTab(tab);
+		onTabChange(tab);
 		if (tab === "artifacts" && !selectedArtifact) {
 			const first = outputs[0] ?? inputs[0];
 			if (first) {
@@ -90,6 +102,13 @@ function CheckpointDetailPanelContentContainer({
 				{activeTab === "memory" && (
 					<CheckpointMemoryTabContainer
 						checkpointStartTime={detailsData?.startTime}
+					/>
+				)}
+				{activeTab === "logs" && (
+					<CheckpointLogsTabContainer
+						checkpointId={checkpointId}
+						logSources={detailsData?.logSources ?? []}
+						checkpointStatus={detailsData?.status}
 					/>
 				)}
 			</div>

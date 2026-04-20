@@ -1,5 +1,5 @@
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@/shared/ui/empty";
-import { Archive } from "@untitledui/icons";
+import { Archive } from "lucide-react";
 
 export function NoVisualizationFallback() {
 	return (
