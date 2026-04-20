@@ -142,7 +142,7 @@ Both are excluded from ESLint.
 
 ## CI
 
-GitHub Actions (`.github/workflows/build-validation.yml`) runs on push to `main` and on all PRs:
+GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `main` and `develop`, on all PRs, and by manual dispatch:
 
 1. `pnpm install --frozen-lockfile`
 2. `pnpm lint`
