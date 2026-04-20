@@ -245,9 +245,12 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 2. `pnpm lint`
 3. `pnpm build`
 4. `pnpm test:unit`
+5. `zizmor` audit for GitHub Actions workflow hardening
 
 ### GitHub Actions hardening
 
 - Every workflow must declare explicit `permissions:` using least privilege. Build/test workflows should normally use `contents: read`; release workflows should only request the write scopes they actually need.
 - Pin all `uses:` actions to full commit SHAs, keeping a nearby version comment for human review and Dependabot maintenance.
 - Set `persist-credentials: false` on `actions/checkout` unless the workflow explicitly needs persisted git credentials.
+- Dependabot is configured only for the `github-actions` ecosystem and targets `develop`; do not add npm/pnpm Dependabot updates unless explicitly requested because they are intentionally avoided to reduce noise.
+- CI runs `zizmor` 1.24.1 against `.github` and blocks non-informational findings (`min-severity: low`) so workflow and Dependabot changes should be checked locally with `uvx zizmor==1.24.1 --min-severity low .github` when possible.

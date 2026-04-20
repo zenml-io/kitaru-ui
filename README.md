@@ -148,6 +148,7 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 2. `pnpm lint`
 3. `pnpm build`
 4. `pnpm test:unit`
+5. `zizmor` audit for GitHub Actions workflow hardening
 
 ## Contributing
 
