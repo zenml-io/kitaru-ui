@@ -143,6 +143,82 @@ const jsonPrimitiveUuidArtifact: ArtifactVisualization = {
 	value: JSON.stringify("550e8400-e29b-41d4-a716-446655440000"),
 };
 
+const jsonUnparseableArtifact: ArtifactVisualization = {
+	type: "json",
+	value: `{ "broken": true, "missing_quote: "oops" }`,
+};
+
+const jsonArrayArtifact: ArtifactVisualization = {
+	type: "json",
+	value: JSON.stringify(
+		[
+			{ id: 1, status: "ok", latency_ms: 128 },
+			{ id: 2, status: "ok", latency_ms: 97 },
+			{ id: 3, status: "degraded", latency_ms: 612 },
+		],
+		null,
+		2
+	),
+};
+
+const jsonObjectMultipleMarkdownFieldsArtifact: ArtifactVisualization = {
+	type: "json",
+	value: JSON.stringify(
+		{
+			summary: `# Summary\n\nTwo Markdown fields means we should **not** promote either one — they render as part of the JSON tree instead.`,
+			analysis: `## Analysis\n\n- Candidate A: ambiguous\n- Candidate B: ambiguous`,
+			run_id: "run-2026-04-18-a",
+		},
+		null,
+		2
+	),
+};
+
+const jsonStringEnvelopePlainTextArtifact: ArtifactVisualization = {
+	type: "json",
+	value: JSON.stringify(
+		`The audit concluded without material findings. Two minor observations were logged for follow-up during the next quarterly review; neither blocks deployment.`
+	),
+};
+
+const markdownLongReportArtifact: ArtifactVisualization = {
+	type: "markdown",
+	value: `# Weekly Evaluation Run
+
+## Overview
+
+${Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1}: the evaluation harness processed the nightly batch and recorded aggregate metrics. No regressions were detected against the baseline from the previous week.`).join("\n\n")}
+
+## Metrics
+
+| Run | Accuracy | Recall | Notes |
+|-----|----------|--------|-------|
+${Array.from({ length: 20 }, (_, i) => `| run-${String(i + 1).padStart(3, "0")} | 0.${90 + (i % 9)}${i % 10} | 0.${85 + (i % 9)}${i % 10} | completed |`).join("\n")}
+
+## Script
+
+\`\`\`python
+for run in runs:
+	evaluate(run)
+	publish(run)
+\`\`\`
+`,
+};
+
+const csvEmptyArtifact: ArtifactVisualization = {
+	type: "csv",
+	value: "",
+};
+
+const csvSingleColumnArtifact: ArtifactVisualization = {
+	type: "csv",
+	value: `event
+session.started
+tool.invoked
+tool.completed
+session.completed`,
+};
+
 const htmlStyledReportArtifact: ArtifactVisualization = {
 	type: "html",
 	value: `<!DOCTYPE html>
@@ -280,6 +356,48 @@ export const JsonPrimitiveNumber: Story = {
 export const JsonPrimitiveUuid: Story = {
 	args: {
 		artifact: jsonPrimitiveUuidArtifact,
+	},
+};
+
+export const JsonUnparseable: Story = {
+	args: {
+		artifact: jsonUnparseableArtifact,
+	},
+};
+
+export const JsonArray: Story = {
+	args: {
+		artifact: jsonArrayArtifact,
+	},
+};
+
+export const JsonObjectMultipleMarkdownFields: Story = {
+	args: {
+		artifact: jsonObjectMultipleMarkdownFieldsArtifact,
+	},
+};
+
+export const JsonStringEnvelopePlainText: Story = {
+	args: {
+		artifact: jsonStringEnvelopePlainTextArtifact,
+	},
+};
+
+export const MarkdownLongReport: Story = {
+	args: {
+		artifact: markdownLongReportArtifact,
+	},
+};
+
+export const CsvEmpty: Story = {
+	args: {
+		artifact: csvEmptyArtifact,
+	},
+};
+
+export const CsvSingleColumn: Story = {
+	args: {
+		artifact: csvSingleColumnArtifact,
 	},
 };
 
