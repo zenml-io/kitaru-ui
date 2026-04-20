@@ -1,5 +1,6 @@
-import { Info } from "lucide-react";
+import { Check, Copy, Info } from "lucide-react";
 
+import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button } from "@/shared/ui/button";
 import { CodeBlock } from "@/shared/ui/CodeBlock";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
@@ -32,6 +33,8 @@ export function SecretInfoTooltip({
 	keyName,
 }: SecretInfoTooltipProps) {
 	const code = buildSnippet(secretName, keyName);
+	const { copied, copy } = useCopy();
+
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -52,9 +55,24 @@ export function SecretInfoTooltip({
 			/>
 			<TooltipContent
 				side="right"
-				className="bg-card text-card-foreground ring-foreground/10 max-w-sm p-0 ring-1"
+				className="bg-card text-card-foreground ring-foreground/10 flex max-w-sm flex-col gap-2 p-3 ring-1"
 			>
-				<CodeBlock code={code} language="python" wrap />
+				<p className="text-muted-foreground text-xs">
+					To use your secret in a step, you can use the following code:
+				</p>
+				<div className="bg-background/50 relative overflow-hidden rounded-md">
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon-xs"
+						aria-label={copied ? "Copied" : "Copy code"}
+						className="text-muted-foreground hover:text-foreground absolute top-2 right-2 z-10"
+						onClick={() => copy(code)}
+					>
+						{copied ? <Check /> : <Copy />}
+					</Button>
+					<CodeBlock code={code} language="python" wrap />
+				</div>
 			</TooltipContent>
 		</Tooltip>
 	);

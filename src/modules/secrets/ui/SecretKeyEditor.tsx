@@ -51,12 +51,13 @@ export function SecretKeyEditor({
 								value={row.value}
 								autoComplete="off"
 								onChange={(e) => onUpdate(row.id, "value", e.target.value)}
+								className="pr-9"
 							/>
 							<Button
 								type="button"
 								variant="ghost"
 								size="icon-xs"
-								className="absolute top-1/2 right-1 -translate-y-1/2"
+								className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2.5 -translate-y-1/2"
 								aria-label={row.visible ? "Hide value" : "Show value"}
 								onClick={() => onToggleVisibility(row.id)}
 							>
