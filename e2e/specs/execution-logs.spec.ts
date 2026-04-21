@@ -249,3 +249,29 @@ test("copy button writes log entries to the clipboard", async ({
 	expect(clipboardText).toContain("hello world");
 	expect(clipboardText).toContain("INFO");
 });
+
+test("download button offers a .log file with the execution id", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "downloadable line",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	const [download] = await Promise.all([
+		page.waitForEvent("download"),
+		page.getByRole("button", { name: "Download logs" }).click(),
+	]);
+
+	expect(download.suggestedFilename()).toBe(`execution-${EXECUTION_ID}.log`);
+});
