@@ -3,6 +3,7 @@ import {
 	makeExecution,
 	makeLogEntries,
 	makeDagResponse,
+	makeCheckpoint,
 	makePipeline,
 } from "../fixtures/api";
 
@@ -244,9 +245,7 @@ test("copy button writes log entries to the clipboard", async ({
 	await page.getByRole("button", { name: "Copy all logs" }).click();
 
 	const clipboardText = await page.evaluate(() =>
-		(
-			navigator as unknown as { clipboard: { readText: () => Promise<string> } }
-		).clipboard.readText()
+		navigator.clipboard.readText()
 	);
 	expect(clipboardText).toContain("hello world");
 	expect(clipboardText).toContain("INFO");
@@ -295,31 +294,7 @@ test("scope sidebar switches between execution and checkpoint logs", async ({
 			],
 		},
 		"/api/v1/steps/{step_id}": {
-			get: {
-				id: CHECKPOINT_ID,
-				name: "load_data",
-				body: {
-					created: "2024-01-01T00:00:00Z",
-					updated: "2024-01-01T00:00:00Z",
-					project_id: "00000000-0000-0000-0000-000000000000",
-					status: "completed",
-					version: 1,
-					is_retriable: false,
-				},
-				resources: {
-					log_collection: [
-						{
-							id: "99999999-9999-9999-9999-999999999999",
-							body: {
-								created: "2024-01-01T00:00:00Z",
-								updated: "2024-01-01T00:00:00Z",
-								project_id: "00000000-0000-0000-0000-000000000000",
-								source: "stdout",
-							},
-						},
-					],
-				},
-			},
+			get: makeCheckpoint({ id: CHECKPOINT_ID }),
 		},
 		"/api/v1/steps/{step_id}/logs": {
 			get: [

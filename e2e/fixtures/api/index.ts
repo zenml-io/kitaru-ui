@@ -14,5 +14,6 @@ export {
 	makeLogEntry,
 	makeLogEntries,
 	makeCheckpointNode,
+	makeCheckpoint,
 	makeDagResponse,
 } from "./executions";
