@@ -275,3 +275,71 @@ test("download button offers a .log file with the execution id", async ({
 
 	expect(download.suggestedFilename()).toBe(`execution-${EXECUTION_ID}.log`);
 });
+
+test("scope sidebar switches between execution and checkpoint logs", async ({
+	page,
+	mockApi,
+}) => {
+	const CHECKPOINT_ID = "33333333-3333-3333-3333-333333333333";
+
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "execution-level line",
+				},
+			],
+		},
+		"/api/v1/steps/{step_id}": {
+			get: {
+				id: CHECKPOINT_ID,
+				name: "load_data",
+				body: {
+					created: "2024-01-01T00:00:00Z",
+					updated: "2024-01-01T00:00:00Z",
+					project_id: "00000000-0000-0000-0000-000000000000",
+					status: "completed",
+					pipeline_run_id: EXECUTION_ID,
+				},
+				resources: {
+					log_collection: [
+						{
+							id: "99999999-9999-9999-9999-999999999999",
+							body: {
+								created: "2024-01-01T00:00:00Z",
+								updated: "2024-01-01T00:00:00Z",
+								project_id: "00000000-0000-0000-0000-000000000000",
+								source: "stdout",
+							},
+						},
+					],
+				},
+			},
+		},
+		"/api/v1/steps/{step_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "checkpoint-level line",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+	await expect(page.getByText("execution-level line")).toBeVisible();
+
+	const scopeNav = page.getByRole("navigation", { name: "Log scope" });
+	await scopeNav.getByRole("button", { name: "load_data" }).click();
+
+	await expect(page.getByText("checkpoint-level line")).toBeVisible();
+	await expect(page).toHaveURL(new RegExp(`scope=${CHECKPOINT_ID}`));
+
+	await scopeNav.getByRole("button", { name: /^Execution #/ }).click();
+
+	await expect(page.getByText("execution-level line")).toBeVisible();
+	await expect(page).not.toHaveURL(new RegExp(`scope=${CHECKPOINT_ID}`));
+});
