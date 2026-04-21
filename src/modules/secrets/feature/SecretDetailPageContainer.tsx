@@ -1,20 +1,16 @@
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import { Card, CardContent } from "@/shared/ui/card";
 import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
 import { Input } from "@/shared/ui/input";
 
-import {
-	secretQueries,
-	secretQueryKeys,
-} from "../business-logic/secret-queries";
-import { useUpdateSecret } from "../business-logic/use-update-secret";
+import { secretQueries } from "../business-logic/secret-queries";
+import { useRemoveSecretKey } from "../business-logic/use-remove-secret-key";
+import { useSecretKeySearch } from "../business-logic/use-secret-key-search";
 import { SecretDetailHeader } from "../ui/SecretDetailHeader";
 import { SecretDetailTable } from "../ui/SecretDetailTable";
-import { getErrorMessage } from "../business-logic/get-error-message";
 import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";
 import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
@@ -23,45 +19,19 @@ export function SecretDetailPageContainer() {
 		from: "/_private/_navbar/settings/secrets/$secretId",
 	});
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const { data: secret } = useSuspenseQuery(secretQueries.detail(secretId));
 
 	const [editOpen, setEditOpen] = useState(false);
 	const [deleteSecretOpen, setDeleteSecretOpen] = useState(false);
-	const [keyToDelete, setKeyToDelete] = useState<string | undefined>();
-	const [search, setSearch] = useState("");
 
-	const searchQuery = search.toLowerCase();
-	const filteredKeys = secret.keys.filter((k) =>
-		k.key.toLowerCase().includes(searchQuery)
-	);
-
-	const { updateSecret, isPending: isRemovingKey } = useUpdateSecret({
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: secretQueryKeys.all });
-			setKeyToDelete(undefined);
-			toast.success("Key removed");
-		},
-		onError: (error) =>
-			toast.error(getErrorMessage(error, "Could not remove key.")),
-	});
-
-	function removeKey(keyName: string) {
-		const exists = secret.keys.some((k) => k.key === keyName);
-		if (!exists) {
-			setKeyToDelete(undefined);
-			return;
-		}
-		const remaining = secret.keys.filter((k) => k.key !== keyName);
-		if (remaining.length === 0) {
-			toast.error("A secret must contain at least one key.");
-			return;
-		}
-		updateSecret({
-			secretId: secret.id,
-			payload: { name: secret.name, keys: remaining },
-		});
-	}
+	const { search, setSearch, filteredKeys } = useSecretKeySearch(secret.keys);
+	const {
+		keyToDelete,
+		requestRemove,
+		cancelRemove,
+		confirmRemove,
+		isPending: isRemovingKey,
+	} = useRemoveSecretKey(secret);
 
 	return (
 		<Card>
@@ -81,7 +51,7 @@ export function SecretDetailPageContainer() {
 				<SecretDetailTable
 					secretName={secret.name}
 					keys={filteredKeys}
-					onDeleteKey={setKeyToDelete}
+					onDeleteKey={requestRemove}
 				/>
 			</CardContent>
 			{editOpen && (
@@ -106,9 +76,9 @@ export function SecretDetailPageContainer() {
 					description={`You're about to remove the key "${keyToDelete}" from this secret.`}
 					open
 					onOpenChange={(open) => {
-						if (!open) setKeyToDelete(undefined);
+						if (!open) cancelRemove();
 					}}
-					onConfirm={() => removeKey(keyToDelete)}
+					onConfirm={confirmRemove}
 					isPending={isRemovingKey}
 					actionLabel="Delete key"
 					pendingLabel="Deleting..."
