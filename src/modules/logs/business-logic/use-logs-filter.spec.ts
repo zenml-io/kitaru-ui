@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { LogEntry } from "../domain/log-entry";
-import { useLogLevelFilter } from "./use-log-level-filter";
+import { useLogsFilter } from "./use-logs-filter";
 
 function makeLog(level: number, message = "m"): LogEntry {
 	return {
@@ -14,14 +14,14 @@ function makeLog(level: number, message = "m"): LogEntry {
 	};
 }
 
-describe("useLogLevelFilter", () => {
+describe("useLogsFilter — level filter", () => {
 	it("defaults to NOTSET (0) and returns every entry", () => {
 		const logs = [
 			makeLog(10, "debug"),
 			makeLog(20, "info"),
 			makeLog(40, "err"),
 		];
-		const { result } = renderHook(() => useLogLevelFilter(logs));
+		const { result } = renderHook(() => useLogsFilter(logs));
 		expect(result.current.selectedLevel).toBe(0);
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual([
 			"debug",
@@ -36,7 +36,7 @@ describe("useLogLevelFilter", () => {
 			makeLog(20, "info"),
 			makeLog(40, "err"),
 		];
-		const { result } = renderHook(() => useLogLevelFilter(logs));
+		const { result } = renderHook(() => useLogsFilter(logs));
 		act(() => result.current.setSelectedLevel(20));
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual([
 			"info",
@@ -46,7 +46,7 @@ describe("useLogLevelFilter", () => {
 
 	it("filters to level >= selectedLevel", () => {
 		const logs = [makeLog(10), makeLog(20), makeLog(30), makeLog(40)];
-		const { result } = renderHook(() => useLogLevelFilter(logs));
+		const { result } = renderHook(() => useLogsFilter(logs));
 		act(() => result.current.setSelectedLevel(30));
 		expect(result.current.filteredLogs.map((l) => l.level)).toEqual([30, 40]);
 	});
@@ -61,7 +61,7 @@ describe("useLogLevelFilter", () => {
 			originalEntry: "bare",
 		};
 		const logs = [bare, makeLog(20, "info")];
-		const { result } = renderHook(() => useLogLevelFilter(logs));
+		const { result } = renderHook(() => useLogsFilter(logs));
 		act(() => result.current.setSelectedLevel(20));
 		expect(result.current.filteredLogs.map((l) => l.message)).toEqual(["info"]);
 	});

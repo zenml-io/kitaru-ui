@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp, Copy, Download } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import {
@@ -25,6 +26,8 @@ type LogsToolbarProps = {
 	onCopyAll: () => void;
 	onDownload: () => void;
 	canExport: boolean;
+	leading?: ReactNode;
+	disabled?: boolean;
 };
 
 const LEVEL_OPTIONS = new Map<LoggingLevel, string>([
@@ -51,14 +54,18 @@ export function LogsToolbar({
 	onCopyAll,
 	onDownload,
 	canExport,
+	leading,
+	disabled = false,
 }: LogsToolbarProps) {
 	const showSourceSwitcher = sources && sources.length > 1;
 	const hasSearch = search.length > 0;
 
 	return (
 		<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
+			{leading}
 			<Select<LoggingLevel>
 				value={levelFilter}
+				disabled={disabled}
 				onValueChange={(v) => {
 					if (v !== null) onLevelFilterChange(v);
 				}}
@@ -81,6 +88,7 @@ export function LogsToolbar({
 				onChange={(e) => onSearchChange(e.target.value)}
 				placeholder="Search logs..."
 				className="h-8 min-w-24 flex-1 text-xs"
+				disabled={disabled}
 			/>
 			{hasSearch && (
 				<div className="text-2xs text-muted-foreground flex shrink-0 items-center gap-1 whitespace-nowrap tabular-nums">
@@ -94,7 +102,7 @@ export function LogsToolbar({
 						variant="ghost"
 						size="icon"
 						aria-label="Previous match"
-						disabled={matchCount === 0}
+						disabled={disabled || matchCount === 0}
 						className="size-6"
 						onClick={onPrevMatch}
 					>
@@ -105,7 +113,7 @@ export function LogsToolbar({
 						variant="ghost"
 						size="icon"
 						aria-label="Next match"
-						disabled={matchCount === 0}
+						disabled={disabled || matchCount === 0}
 						className="size-6"
 						onClick={onNextMatch}
 					>
@@ -116,6 +124,7 @@ export function LogsToolbar({
 			{showSourceSwitcher && onSourceChange && (
 				<Select
 					value={selectedSource}
+					disabled={disabled}
 					onValueChange={(v) => {
 						if (v !== null) onSourceChange(v);
 					}}
@@ -138,7 +147,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Copy all logs"
 				className="size-8"
-				disabled={!canExport}
+				disabled={disabled || !canExport}
 				onClick={onCopyAll}
 			>
 				<Copy className="size-3" />
@@ -149,7 +158,7 @@ export function LogsToolbar({
 				size="icon"
 				aria-label="Download logs"
 				className="size-8"
-				disabled={!canExport}
+				disabled={disabled || !canExport}
 				onClick={onDownload}
 			>
 				<Download className="size-3" />
