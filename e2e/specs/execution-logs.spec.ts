@@ -1,0 +1,49 @@
+import { test, expect } from "../fixtures/test";
+import {
+	makeExecution,
+	makeLogEntries,
+	makeDagResponse,
+	makePipeline,
+} from "../fixtures/api";
+
+const EXECUTION_ID = "11111111-1111-1111-1111-111111111111";
+const FLOW_ID = "22222222-2222-2222-2222-222222222222";
+
+const logsUrl = `/flows/${FLOW_ID}/executions/${EXECUTION_ID}?tab=logs`;
+
+const emptyArtifactVersionsPage = {
+	index: 1,
+	max_size: 10000,
+	total_pages: 1,
+	total: 0,
+	items: [],
+};
+
+test.beforeEach(async ({ mockApi, authenticatedPage }) => {
+	void authenticatedPage;
+	await mockApi({
+		"/api/v1/pipelines/{pipeline_id}": {
+			get: makePipeline({ id: FLOW_ID, name: "demo-flow" }),
+		},
+		"/api/v1/runs": {
+			get: {
+				index: 1,
+				max_size: 1000,
+				total_pages: 1,
+				total: 1,
+				items: [makeExecution()],
+			},
+		},
+		"/api/v1/runs/{run_id}": { get: makeExecution() },
+		"/api/v1/runs/{run_id}/dag": { get: makeDagResponse() },
+		"/api/v1/runs/{run_id}/logs": { get: makeLogEntries(5) },
+		"/api/v1/artifact_versions": { get: emptyArtifactVersionsPage },
+	});
+});
+
+test("renders execution log entries", async ({ page }) => {
+	await page.goto(logsUrl);
+
+	await expect(page.getByText("Log line 1")).toBeVisible();
+	await expect(page.getByText("Log line 5")).toBeVisible();
+});
