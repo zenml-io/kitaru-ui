@@ -111,20 +111,19 @@ export function makeCheckpointNode(overrides: Partial<Node> = {}): Node {
 			type: "step",
 		},
 		...overrides,
-	} as Node;
+	};
 }
 
-type DagResponseApi = {
-	status: string;
-	nodes: Node[];
-};
+type DagResponse = components["schemas"]["PipelineRunDAG"];
 
 export function makeDagResponse(
-	overrides: Partial<DagResponseApi> = {}
-): DagResponseApi {
+	overrides: Partial<DagResponse> = {}
+): DagResponse {
 	return {
+		id: "22222222-2222-2222-2222-222222222222",
 		status: "completed",
 		nodes: [makeCheckpointNode()],
+		edges: [],
 		...overrides,
 	};
 }
