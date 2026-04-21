@@ -28,8 +28,8 @@ export function ExecutionLogsScopeSidebar({
 				label={`Execution #${formatExecutionIndex(executionIndex)}`}
 				isActive={isRootActive}
 				onClick={onSelectRoot}
+				emphasized
 			/>
-			<div className="border-border border-t" />
 			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 				{checkpoints.map((cp) => (
 					<ScopeRow
@@ -48,19 +48,22 @@ type ScopeRowProps = {
 	label: string;
 	isActive: boolean;
 	onClick: () => void;
+	emphasized?: boolean;
 };
 
-function ScopeRow({ label, isActive, onClick }: ScopeRowProps) {
+function ScopeRow({ label, isActive, onClick, emphasized }: ScopeRowProps) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
 			aria-current={isActive ? "true" : undefined}
 			className={cn(
-				"shrink-0 truncate px-3 py-2 text-left text-xs transition-colors",
-				isActive
-					? "bg-accent text-foreground font-medium"
-					: "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+				"shrink-0 truncate px-3 text-left text-xs transition-colors",
+				emphasized
+					? "border-border text-foreground flex h-9 items-center border-b font-semibold"
+					: "text-muted-foreground hover:text-foreground py-2",
+				isActive ? "bg-accent" : "hover:bg-accent/50",
+				isActive && !emphasized && "text-foreground font-medium"
 			)}
 		>
 			{label}
