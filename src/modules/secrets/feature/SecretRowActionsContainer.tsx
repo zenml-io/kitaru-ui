@@ -1,4 +1,4 @@
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/shared/ui/button";
@@ -11,7 +11,6 @@ import {
 
 import type { Secret } from "../domain/secrets";
 import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";
-import { SecretFormDialogContainer } from "./SecretFormDialogContainer";
 
 type SecretRowActionsContainerProps = {
 	secret: Secret;
@@ -20,19 +19,10 @@ type SecretRowActionsContainerProps = {
 export function SecretRowActionsContainer({
 	secret,
 }: SecretRowActionsContainerProps) {
-	const [showEdit, setShowEdit] = useState(false);
 	const [showDelete, setShowDelete] = useState(false);
 
 	return (
 		<>
-			{showEdit && (
-				<SecretFormDialogContainer
-					mode="edit"
-					open={showEdit}
-					onOpenChange={setShowEdit}
-					secret={secret}
-				/>
-			)}
 			{showDelete && (
 				<DeleteSecretAlertDialogContainer
 					secret={secret}
@@ -54,9 +44,6 @@ export function SecretRowActionsContainer({
 					}
 				/>
 				<DropdownMenuContent align="end" className="w-40">
-					<DropdownMenuItem onClick={() => setShowEdit(true)}>
-						<Pencil className="size-4" /> Edit keys
-					</DropdownMenuItem>
 					<DropdownMenuItem
 						variant="destructive"
 						onClick={() => setShowDelete(true)}
