@@ -1,6 +1,6 @@
-import { type Query, useSuspenseQuery } from "@tanstack/react-query";
-import type { ExecutionStatus } from "../domain/execution";
+import { useQuery } from "@tanstack/react-query";
 import { getIsActiveStatus } from "@/shared/business-logic/status";
+import type { ExecutionStatus } from "../domain/execution";
 import { executionsQueries } from "./executions-queries";
 
 type Options = Omit<
@@ -15,14 +15,12 @@ export function getExecutionLogsPollingInterval(
 }
 
 export function useExecutionLogs(
-	runId: string,
+	executionId: string,
 	source: string,
 	opts: Options = {}
 ) {
-	const query = useSuspenseQuery({
-		...executionsQueries.logs(runId, source),
-		throwOnError: (_err: unknown, q: Query) => q.state.data === undefined,
+	return useQuery({
+		...executionsQueries.logs(executionId, source),
 		...opts,
 	});
-	return { ...query, logs: query.data };
 }

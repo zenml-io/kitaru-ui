@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useLogSource } from "@/modules/logs/business-logic/use-log-source";
-import { executionsQueries } from "../business-logic/executions-queries";
-import { getExecutionLogsPollingInterval } from "../business-logic/use-execution-logs";
+import {
+	getExecutionLogsPollingInterval,
+	useExecutionLogs,
+} from "../business-logic/use-execution-logs";
 import type { Execution } from "../domain/execution";
 import { ExecutionLogsPanelContainer } from "./ExecutionLogsPanelContainer";
 
@@ -24,8 +25,7 @@ export function ExecutionRunLogsContainer({
 		initialSource
 	);
 
-	const logsQuery = useQuery({
-		...executionsQueries.logs(execution.id, selectedSource),
+	const logsQuery = useExecutionLogs(execution.id, selectedSource, {
 		refetchInterval: getExecutionLogsPollingInterval(execution.status),
 	});
 
