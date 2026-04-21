@@ -42,7 +42,7 @@ export function SecretDetailTable({
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead>Key</TableHead>
+					<TableHead className="w-1/3">Key</TableHead>
 					<TableHead>Value</TableHead>
 					<TableHead className="w-[50px]">
 						<span className="sr-only">Actions</span>
@@ -72,8 +72,8 @@ export function SecretDetailTable({
 										/>
 									</div>
 								</TableCell>
-								<TableCell>
-									<div className="flex items-center gap-2">
+								<TableCell className="max-w-0">
+									<div className="flex min-w-0 items-center gap-2">
 										<Button
 											type="button"
 											variant="ghost"
@@ -83,7 +83,7 @@ export function SecretDetailTable({
 										>
 											{isVisible ? <EyeOff /> : <Eye />}
 										</Button>
-										<span className="text-muted-foreground font-mono text-sm">
+										<span className="text-muted-foreground min-w-0 flex-1 overflow-x-auto font-mono text-sm whitespace-nowrap">
 											{isVisible ? row.value : "\u2022".repeat(maskLength)}
 										</span>
 									</div>

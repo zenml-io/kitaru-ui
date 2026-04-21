@@ -129,7 +129,7 @@ export function SecretFormDialogContainer({
 						onUpdate={updateRow}
 						onToggleVisibility={toggleVisibility}
 					/>
-					<DialogFooter>
+					<DialogFooter className="sm:justify-between">
 						<Button
 							type="button"
 							variant="outline"

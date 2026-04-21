@@ -29,8 +29,8 @@ export function SecretDetailHeader({
 				<ArrowLeft className="size-4" />
 				Secrets
 			</Button>
-			<div className="flex items-start justify-between gap-4">
-				<div className="flex flex-col gap-1">
+			<div className="flex w-full items-start justify-between gap-4">
+				<div className="flex min-w-0 flex-col gap-1">
 					<h1 className="text-lg font-semibold">{secret.name}</h1>
 					<div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
 						<span className="font-mono">{secret.shortId}</span>
