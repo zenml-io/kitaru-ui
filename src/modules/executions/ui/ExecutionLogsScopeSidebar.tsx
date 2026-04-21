@@ -24,12 +24,19 @@ export function ExecutionLogsScopeSidebar({
 			aria-label="Log scope"
 			className="border-border bg-card flex w-56 shrink-0 flex-col border-r"
 		>
-			<ScopeRow
-				label={`Execution #${formatExecutionIndex(executionIndex)}`}
-				isActive={isRootActive}
+			<button
+				type="button"
 				onClick={onSelectRoot}
-			/>
-			<div className="border-border border-t" />
+				aria-current={isRootActive ? "true" : undefined}
+				className={cn(
+					"border-border flex h-9 shrink-0 items-center truncate border-b px-3 text-left text-xs font-semibold transition-colors",
+					isRootActive
+						? "bg-accent text-foreground"
+						: "text-foreground hover:bg-accent/50"
+				)}
+			>
+				Execution #{formatExecutionIndex(executionIndex)}
+			</button>
 			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 				{checkpoints.map((cp) => (
 					<ScopeRow
