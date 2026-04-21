@@ -222,3 +222,30 @@ test("source selector switches visible log entries", async ({
 	await expect(page.getByText("stderr line 1")).toBeVisible();
 	await expect(page.getByText("stdout line 1")).not.toBeVisible();
 });
+
+test("copy button writes log entries to the clipboard", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "hello world",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	await page.getByRole("button", { name: "Copy all logs" }).click();
+
+	const clipboardText = await page.evaluate(() =>
+		navigator.clipboard.readText()
+	);
+	expect(clipboardText).toContain("hello world");
+	expect(clipboardText).toContain("INFO");
+});
