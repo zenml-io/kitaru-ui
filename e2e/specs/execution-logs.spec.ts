@@ -47,3 +47,18 @@ test("renders execution log entries", async ({ page }) => {
 	await expect(page.getByText("Log line 1")).toBeVisible();
 	await expect(page.getByText("Log line 5")).toBeVisible();
 });
+
+test("shows empty state when no logs exist", async ({ page, mockApi }) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}": {
+			get: makeExecution({ resources: { log_collection: [] } }),
+		},
+		"/api/v1/runs/{run_id}/logs": { get: [] },
+	});
+
+	await page.goto(logsUrl);
+
+	await expect(
+		page.getByText("No logs are available for this execution yet.")
+	).toBeVisible();
+});
