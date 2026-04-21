@@ -184,3 +184,41 @@ test("level filter hides entries below the selected level", async ({
 	await expect(page.getByText("info entry")).not.toBeVisible();
 	await expect(page.getByText("another info")).not.toBeVisible();
 });
+
+test("source selector switches visible log entries", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: ({ query }) => {
+				if (query.source === "stderr") {
+					return [
+						{
+							timestamp: "2024-01-01T00:00:00Z",
+							level: 40,
+							message: "stderr line 1",
+						},
+					];
+				}
+				return [
+					{
+						timestamp: "2024-01-01T00:00:00Z",
+						level: 20,
+						message: "stdout line 1",
+					},
+				];
+			},
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	await expect(page.getByText("stdout line 1")).toBeVisible();
+
+	await page.getByRole("combobox").filter({ hasText: "stdout" }).click();
+	await page.getByRole("option", { name: "stderr" }).click();
+
+	await expect(page.getByText("stderr line 1")).toBeVisible();
+	await expect(page.getByText("stdout line 1")).not.toBeVisible();
+});
