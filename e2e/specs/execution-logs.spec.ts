@@ -62,3 +62,40 @@ test("shows empty state when no logs exist", async ({ page, mockApi }) => {
 		page.getByText("No logs are available for this execution yet.")
 	).toBeVisible();
 });
+
+test("search filters log entries to matching messages", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "Loading data",
+				},
+				{
+					timestamp: "2024-01-01T00:00:01Z",
+					level: 20,
+					message: "Training model",
+				},
+				{
+					timestamp: "2024-01-01T00:00:02Z",
+					level: 20,
+					message: "Saving output",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	await expect(page.getByText("Loading data")).toBeVisible();
+	await expect(page.getByText("Training model")).toBeVisible();
+
+	await page.getByPlaceholder("Search logs...").fill("Training");
+
+	await expect(page.getByText("Training model")).toBeVisible();
+	await expect(page.getByText("1 of 1")).toBeVisible();
+});
