@@ -24,19 +24,12 @@ export function ExecutionLogsScopeSidebar({
 			aria-label="Log scope"
 			className="border-border bg-card flex w-56 shrink-0 flex-col border-r"
 		>
-			<button
-				type="button"
+			<ScopeRow
+				label={`Execution #${formatExecutionIndex(executionIndex)}`}
+				isActive={isRootActive}
 				onClick={onSelectRoot}
-				aria-current={isRootActive ? "true" : undefined}
-				className={cn(
-					"border-border flex h-9 shrink-0 items-center truncate border-b px-3 text-left text-xs font-semibold transition-colors",
-					isRootActive
-						? "bg-accent text-foreground"
-						: "text-foreground hover:bg-accent/50"
-				)}
-			>
-				Execution #{formatExecutionIndex(executionIndex)}
-			</button>
+				emphasized
+			/>
 			<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 				{checkpoints.map((cp) => (
 					<ScopeRow
@@ -55,19 +48,22 @@ type ScopeRowProps = {
 	label: string;
 	isActive: boolean;
 	onClick: () => void;
+	emphasized?: boolean;
 };
 
-function ScopeRow({ label, isActive, onClick }: ScopeRowProps) {
+function ScopeRow({ label, isActive, onClick, emphasized }: ScopeRowProps) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
 			aria-current={isActive ? "true" : undefined}
 			className={cn(
-				"shrink-0 truncate px-3 py-2 text-left text-xs transition-colors",
-				isActive
-					? "bg-accent text-foreground font-medium"
-					: "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+				"shrink-0 truncate px-3 text-left text-xs transition-colors",
+				emphasized
+					? "border-border text-foreground flex h-9 items-center border-b font-semibold"
+					: "text-muted-foreground hover:text-foreground py-2",
+				isActive ? "bg-accent" : "hover:bg-accent/50",
+				isActive && !emphasized && "text-foreground font-medium"
 			)}
 		>
 			{label}
