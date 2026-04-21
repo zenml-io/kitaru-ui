@@ -244,7 +244,9 @@ test("copy button writes log entries to the clipboard", async ({
 	await page.getByRole("button", { name: "Copy all logs" }).click();
 
 	const clipboardText = await page.evaluate(() =>
-		navigator.clipboard.readText()
+		(
+			navigator as unknown as { clipboard: { readText: () => Promise<string> } }
+		).clipboard.readText()
 	);
 	expect(clipboardText).toContain("hello world");
 	expect(clipboardText).toContain("INFO");
@@ -301,7 +303,8 @@ test("scope sidebar switches between execution and checkpoint logs", async ({
 					updated: "2024-01-01T00:00:00Z",
 					project_id: "00000000-0000-0000-0000-000000000000",
 					status: "completed",
-					pipeline_run_id: EXECUTION_ID,
+					version: 1,
+					is_retriable: false,
 				},
 				resources: {
 					log_collection: [
