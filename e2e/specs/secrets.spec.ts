@@ -31,7 +31,7 @@ test.describe("secrets > list", () => {
 	test("filters by search input", async ({ page }) => {
 		await page.goto("/settings/secrets");
 
-		await page.getByPlaceholder("Search secrets...").fill("beta");
+		await page.getByPlaceholder("Search...").fill("beta");
 
 		await expect(page.getByText("beta-secret")).toBeVisible();
 		await expect(page.getByText("alpha-secret")).not.toBeVisible();

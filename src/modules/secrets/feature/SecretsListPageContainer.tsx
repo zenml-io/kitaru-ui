@@ -1,19 +1,18 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 import { useState } from "react";
 
-import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
 
 import { secretQueries } from "../business-logic/secret-queries";
 import { SecretsTable } from "../ui/SecretsTable";
 import { SecretRowActionsContainer } from "./SecretRowActionsContainer";
-import { SecretsListToolbarContainer } from "./SecretsListToolbarContainer";
+import { SecretsListHeaderContainer } from "./SecretsListHeaderContainer";
 
 export function SecretsListPageContainer() {
 	const [searchValue, setSearchValue] = useState("");
 	const { data, refetch } = useSuspenseQuery(secretQueries.list());
-	const { refresh, isPending: isManualRefreshPending } =
-		useManualRefresh(refetch);
 
 	const query = searchValue.toLowerCase();
 	const filtered = data.items.filter((secret) => {
@@ -25,16 +24,17 @@ export function SecretsListPageContainer() {
 
 	return (
 		<Card>
-			<CardHeader>
-				<CardTitle className="text-lg font-semibold">Secrets</CardTitle>
-			</CardHeader>
+			<SecretsListHeaderContainer refetch={refetch} />
 			<CardContent className="space-y-6">
-				<SecretsListToolbarContainer
-					isRefreshing={isManualRefreshPending}
-					onRefresh={refresh}
-					searchValue={searchValue}
-					setSearchValue={setSearchValue}
-				/>
+				<div className="relative w-full max-w-sm">
+					<Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+					<Input
+						placeholder="Search..."
+						value={searchValue}
+						onChange={(event) => setSearchValue(event.target.value)}
+						className="pl-9"
+					/>
+				</div>
 				<SecretsTable
 					secrets={filtered}
 					renderActions={(secret) => (
