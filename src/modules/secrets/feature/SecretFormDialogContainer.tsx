@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Button } from "@/shared/ui/button";
@@ -10,16 +11,19 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/shared/ui/dialog";
-import { Field, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 
 import { useCreateSecret } from "../business-logic/use-create-secret";
 import { useUpdateSecret } from "../business-logic/use-update-secret";
 import { secretQueryKeys } from "../business-logic/secret-queries";
+import {
+	secretFormSchema,
+	type SecretFormValues,
+} from "../business-logic/secret-form-schema";
 import type { Secret } from "../domain/secrets";
 import { SecretKeyEditor } from "../ui/SecretKeyEditor";
 import { getErrorMessage } from "../business-logic/get-error-message";
-import { createKeyRows, useKeyRows } from "../business-logic/use-key-rows";
 
 type Mode = "add" | "edit";
 
@@ -30,6 +34,11 @@ type SecretFormDialogContainerProps = {
 	secret?: Secret;
 };
 
+function initialKeys(secret?: Secret) {
+	if (!secret?.keys?.length) return [{ key: "", value: "" }];
+	return secret.keys.map((k) => ({ key: k.key, value: k.value }));
+}
+
 export function SecretFormDialogContainer({
 	mode,
 	open,
@@ -37,10 +46,17 @@ export function SecretFormDialogContainer({
 	secret,
 }: SecretFormDialogContainerProps) {
 	const queryClient = useQueryClient();
-	const [name, setName] = useState(secret?.name ?? "");
-	const { rows, addRow, removeRow, updateRow, toggleVisibility } = useKeyRows(
-		createKeyRows(secret?.keys)
-	);
+	const form = useForm<SecretFormValues>({
+		resolver: zodResolver(secretFormSchema),
+		defaultValues: {
+			name: secret?.name ?? "",
+			keys: initialKeys(secret),
+		},
+	});
+	const { fields, append, remove } = useFieldArray({
+		control: form.control,
+		name: "keys",
+	});
 
 	const { createSecret, isPending: isCreatePending } = useCreateSecret({
 		onSuccess: async () => {
@@ -64,43 +80,34 @@ export function SecretFormDialogContainer({
 
 	const isPending = isCreatePending || isUpdatePending;
 
-	function handleSubmit(e: React.FormEvent) {
-		e.preventDefault();
-		if (isPending) return;
-
-		const trimmedName = name.trim();
-		if (!trimmedName) {
-			toast.error("Please enter a secret name.");
-			return;
-		}
-
-		const keys = rows
+	function handleFormSubmit(data: SecretFormValues) {
+		const keys = data.keys
 			.filter((row) => row.key.trim() !== "")
 			.map((row) => ({ key: row.key.trim(), value: row.value }));
 
-		if (keys.length === 0) {
-			toast.error("Add at least one key.");
-			return;
-		}
-
-		const seen = new Set<string>();
-		for (const k of keys) {
-			if (seen.has(k.key)) {
-				toast.error(`Duplicate key: "${k.key}".`);
-				return;
-			}
-			seen.add(k.key);
-		}
-
 		if (mode === "add") {
-			createSecret({ name: trimmedName, keys });
+			createSecret({ name: data.name, keys });
 			return;
 		}
 		if (!secret) return;
-		updateSecret({ secretId: secret.id, payload: { name: trimmedName, keys } });
+		updateSecret({ secretId: secret.id, payload: { name: data.name, keys } });
+	}
+
+	function handleAddRow() {
+		append({ key: "", value: "" });
+	}
+
+	function handleRemoveRow(index: number) {
+		if (fields.length <= 1) {
+			form.setValue(`keys.${index}.key`, "");
+			form.setValue(`keys.${index}.value`, "");
+			return;
+		}
+		remove(index);
 	}
 
 	const submitLabel = mode === "add" ? "Register Secret" : "Save Secret";
+	const keysArrayError = form.formState.errors.keys?.root?.message;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -110,24 +117,33 @@ export function SecretFormDialogContainer({
 						{mode === "add" ? "Register New Secret" : "Edit Keys"}
 					</DialogTitle>
 				</DialogHeader>
-				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-					<Field>
-						<FieldLabel htmlFor="secret-name">Secret name</FieldLabel>
-						<Input
-							id="secret-name"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							placeholder="my-api-credentials"
-							disabled={mode === "edit"}
-							required
-						/>
-					</Field>
+				<form
+					onSubmit={form.handleSubmit(handleFormSubmit)}
+					className="flex flex-col gap-6"
+				>
+					<Controller
+						control={form.control}
+						name="name"
+						render={({ field, fieldState }) => (
+							<Field data-invalid={fieldState.invalid}>
+								<FieldLabel htmlFor="secret-name">Secret name</FieldLabel>
+								<Input
+									{...field}
+									id="secret-name"
+									placeholder="my-api-credentials"
+									disabled={mode === "edit"}
+									aria-invalid={fieldState.invalid}
+								/>
+								{fieldState.error && <FieldError errors={[fieldState.error]} />}
+							</Field>
+						)}
+					/>
 					<SecretKeyEditor
-						rows={rows}
-						onAdd={addRow}
-						onRemove={removeRow}
-						onUpdate={updateRow}
-						onToggleVisibility={toggleVisibility}
+						control={form.control}
+						fields={fields}
+						arrayError={keysArrayError}
+						onAdd={handleAddRow}
+						onRemove={handleRemoveRow}
 					/>
 					<DialogFooter className="sm:justify-between">
 						<Button

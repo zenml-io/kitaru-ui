@@ -1,27 +1,44 @@
 import { Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import {
+	Controller,
+	type Control,
+	type FieldArrayWithId,
+} from "react-hook-form";
 
 import { Button } from "@/shared/ui/button";
+import { Field, FieldError } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
-import type { KeyRow } from "../domain/key-row";
+import type { SecretFormValues } from "../business-logic/secret-form-schema";
 
 type SecretKeyEditorProps = {
-	rows: KeyRow[];
+	control: Control<SecretFormValues>;
+	fields: FieldArrayWithId<SecretFormValues, "keys", "id">[];
+	arrayError?: string;
 	onAdd: () => void;
-	onRemove: (id: string) => void;
-	onUpdate: (id: string, field: "key" | "value", value: string) => void;
-	onToggleVisibility: (id: string) => void;
+	onRemove: (index: number) => void;
 };
 
 export function SecretKeyEditor({
-	rows,
+	control,
+	fields,
+	arrayError,
 	onAdd,
 	onRemove,
-	onUpdate,
-	onToggleVisibility,
 }: SecretKeyEditorProps) {
-	const canRemove = rows.length > 1;
+	const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
+	const canRemove = fields.length > 1;
+
+	function toggleVisibility(id: string) {
+		setVisibleIds((prev) => {
+			const next = new Set(prev);
+			if (next.has(id)) next.delete(id);
+			else next.add(id);
+			return next;
+		});
+	}
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -31,47 +48,64 @@ export function SecretKeyEditor({
 				<span>Value</span>
 				<span aria-hidden="true" />
 			</div>
-			{rows.map((row, index) => {
-				const isLast = index === rows.length - 1;
+			{fields.map((field, index) => {
+				const isLast = index === fields.length - 1;
+				const isVisible = visibleIds.has(field.id);
 				return (
 					<div
-						key={row.id}
-						className="grid grid-cols-[1fr_1fr_72px] items-center gap-2"
+						key={field.id}
+						className="grid grid-cols-[1fr_1fr_72px] items-start gap-2"
 					>
-						<Input
-							placeholder="Key"
-							value={row.key}
-							autoComplete="off"
-							onChange={(e) => onUpdate(row.id, "key", e.target.value)}
+						<Controller
+							control={control}
+							name={`keys.${index}.key`}
+							render={({ field: f, fieldState }) => (
+								<Field data-invalid={fieldState.invalid}>
+									<Input
+										{...f}
+										placeholder="Key"
+										autoComplete="off"
+										aria-invalid={fieldState.invalid}
+									/>
+									{fieldState.error && (
+										<FieldError errors={[fieldState.error]} />
+									)}
+								</Field>
+							)}
 						/>
-						<div className="relative">
-							<Input
-								placeholder="Value"
-								type={row.visible ? "text" : "password"}
-								value={row.value}
-								autoComplete="off"
-								onChange={(e) => onUpdate(row.id, "value", e.target.value)}
-								className="pr-9"
-							/>
-							<Button
-								type="button"
-								variant="ghost"
-								size="icon-xs"
-								className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2.5 -translate-y-1/2"
-								aria-label={row.visible ? "Hide value" : "Show value"}
-								onClick={() => onToggleVisibility(row.id)}
-							>
-								{row.visible ? <EyeOff /> : <Eye />}
-							</Button>
-						</div>
-						<div className="flex items-center gap-1">
+						<Controller
+							control={control}
+							name={`keys.${index}.value`}
+							render={({ field: f }) => (
+								<div className="relative">
+									<Input
+										{...f}
+										placeholder="Value"
+										type={isVisible ? "text" : "password"}
+										autoComplete="off"
+										className="pr-9"
+									/>
+									<Button
+										type="button"
+										variant="ghost"
+										size="icon-xs"
+										className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2.5 -translate-y-1/2"
+										aria-label={isVisible ? "Hide value" : "Show value"}
+										onClick={() => toggleVisibility(field.id)}
+									>
+										{isVisible ? <EyeOff /> : <Eye />}
+									</Button>
+								</div>
+							)}
+						/>
+						<div className="flex items-center gap-1 pt-0.5">
 							{canRemove && (
 								<Button
 									type="button"
 									variant="ghost"
 									size="icon-sm"
 									aria-label="Remove key"
-									onClick={() => onRemove(row.id)}
+									onClick={() => onRemove(index)}
 								>
 									<Trash2 />
 								</Button>
@@ -91,6 +125,7 @@ export function SecretKeyEditor({
 					</div>
 				);
 			})}
+			{arrayError && <FieldError errors={[{ message: arrayError }]} />}
 		</div>
 	);
 }
