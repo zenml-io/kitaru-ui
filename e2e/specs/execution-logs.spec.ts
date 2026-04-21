@@ -375,3 +375,40 @@ test("shows error state with retry when logs endpoint fails", async ({
 	await expect(page.getByText("after retry")).toBeVisible();
 	await expect(page.getByText("Failed to load logs")).not.toBeVisible();
 });
+
+test("shows stale banner when polling fails after initial success", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}": {
+			get: makeExecution({ body: { status: "running" } }),
+		},
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "initial line",
+				},
+			],
+		},
+	});
+
+	await page.clock.install();
+
+	await page.goto(logsUrl);
+	await expect(page.getByText("initial line")).toBeVisible();
+
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: { status: 500, body: { detail: "polling broke" } },
+		},
+	});
+
+	await page.clock.fastForward(4000);
+
+	await expect(
+		page.getByText("Live updates paused — couldn't reach the server.")
+	).toBeVisible();
+});
