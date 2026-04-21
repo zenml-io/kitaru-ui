@@ -145,3 +145,42 @@ test("search match navigation advances through matches", async ({
 	await page.getByRole("button", { name: "Previous match" }).click();
 	await expect(page.getByText("2 of 3")).toBeVisible();
 });
+
+test("level filter hides entries below the selected level", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "info entry",
+				},
+				{
+					timestamp: "2024-01-01T00:00:01Z",
+					level: 20,
+					message: "another info",
+				},
+				{
+					timestamp: "2024-01-01T00:00:02Z",
+					level: 40,
+					message: "error entry",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	await expect(page.getByText("info entry")).toBeVisible();
+	await expect(page.getByText("error entry")).toBeVisible();
+
+	await page.getByRole("combobox").filter({ hasText: "All levels" }).click();
+	await page.getByRole("option", { name: "Error" }).click();
+
+	await expect(page.getByText("error entry")).toBeVisible();
+	await expect(page.getByText("info entry")).not.toBeVisible();
+	await expect(page.getByText("another info")).not.toBeVisible();
+});
