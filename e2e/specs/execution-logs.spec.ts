@@ -99,3 +99,49 @@ test("search filters log entries to matching messages", async ({
 	await expect(page.getByText("Training model")).toBeVisible();
 	await expect(page.getByText("1 of 1")).toBeVisible();
 });
+
+test("search match navigation advances through matches", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "match one",
+				},
+				{
+					timestamp: "2024-01-01T00:00:01Z",
+					level: 20,
+					message: "no hit",
+				},
+				{
+					timestamp: "2024-01-01T00:00:02Z",
+					level: 20,
+					message: "match two",
+				},
+				{
+					timestamp: "2024-01-01T00:00:03Z",
+					level: 20,
+					message: "match three",
+				},
+			],
+		},
+	});
+
+	await page.goto(logsUrl);
+	await page.getByPlaceholder("Search logs...").fill("match");
+
+	await expect(page.getByText("1 of 3")).toBeVisible();
+
+	await page.getByRole("button", { name: "Next match" }).click();
+	await expect(page.getByText("2 of 3")).toBeVisible();
+
+	await page.getByRole("button", { name: "Next match" }).click();
+	await expect(page.getByText("3 of 3")).toBeVisible();
+
+	await page.getByRole("button", { name: "Previous match" }).click();
+	await expect(page.getByText("2 of 3")).toBeVisible();
+});
