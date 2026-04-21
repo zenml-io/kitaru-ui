@@ -343,3 +343,35 @@ test("scope sidebar switches between execution and checkpoint logs", async ({
 	await expect(page.getByText("execution-level line")).toBeVisible();
 	await expect(page).not.toHaveURL(new RegExp(`scope=${CHECKPOINT_ID}`));
 });
+
+test("shows error state with retry when logs endpoint fails", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: { status: 500, body: { detail: "boom" } },
+		},
+	});
+
+	await page.goto(logsUrl);
+
+	await expect(page.getByText("Failed to load logs")).toBeVisible();
+
+	await mockApi({
+		"/api/v1/runs/{run_id}/logs": {
+			get: [
+				{
+					timestamp: "2024-01-01T00:00:00Z",
+					level: 20,
+					message: "after retry",
+				},
+			],
+		},
+	});
+
+	await page.getByRole("button", { name: "Retry" }).click();
+
+	await expect(page.getByText("after retry")).toBeVisible();
+	await expect(page.getByText("Failed to load logs")).not.toBeVisible();
+});
