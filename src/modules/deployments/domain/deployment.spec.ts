@@ -84,7 +84,7 @@ describe("deploymentFromApiToDomain", () => {
 		expect(result?.createdAt).toEqual(new Date("2026-04-22T10:00:00Z"));
 	});
 
-	it("derives tag kind: default / exclusive / general", () => {
+	it("decodes kitaru tag names and drops marker + non-kitaru tags", () => {
 		const snapshot = mkSnapshot({
 			resources: {
 				pipeline: {
@@ -98,8 +98,8 @@ describe("deploymentFromApiToDomain", () => {
 				},
 				tags: [
 					{
-						id: "tag-default",
-						name: "default",
+						id: "tag-marker",
+						name: "kitaru:deployment",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -107,8 +107,17 @@ describe("deploymentFromApiToDomain", () => {
 						},
 					},
 					{
+						id: "tag-default",
+						name: "kitaru:deployment:tag:default:exclusive",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: true,
+						},
+					},
+					{
 						id: "tag-canary",
-						name: "canary",
+						name: "kitaru:deployment:tag:canary:exclusive",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -117,7 +126,16 @@ describe("deploymentFromApiToDomain", () => {
 					},
 					{
 						id: "tag-beta",
-						name: "beta",
+						name: "kitaru:deployment:tag:beta:shared",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: false,
+						},
+					},
+					{
+						id: "tag-foreign",
+						name: "some-zenml-project-tag",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -171,6 +189,7 @@ describe("deploymentFromApiToDomain", () => {
 			} as any,
 		});
 		const result = deploymentFromApiToDomain(snapshot);
+		expect(result?.stackId).toBe("stack-1");
 		expect(result?.stackName).toBe("prod-stack");
 		expect(result?.latestRunId).toBe("run-99");
 		expect(result?.latestRunStatus).toBe("completed");
