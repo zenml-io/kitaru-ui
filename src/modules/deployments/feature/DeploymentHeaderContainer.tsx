@@ -1,6 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
+import { stacksQueries } from "@/modules/stacks/business-logic/stacks-queries";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
 import { DeploymentHeader } from "../ui/DeploymentHeader";
@@ -18,5 +19,16 @@ export function DeploymentHeaderContainer() {
 
 	const selected = resolveSelectedDeployment(deployments, version);
 
-	return <DeploymentHeader flowName={flow.name} deployment={selected} />;
+	const { data: stack } = useQuery({
+		...stacksQueries.detail(selected?.stackId ?? ""),
+		enabled: Boolean(selected?.stackId),
+	});
+
+	return (
+		<DeploymentHeader
+			flowName={flow.name}
+			deployment={selected}
+			stackComponents={stack?.components}
+		/>
+	);
 }
