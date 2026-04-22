@@ -1,4 +1,4 @@
-export type NormalizedJson =
+type NormalizedJson =
 	| { kind: "value"; value: unknown; wasStringEnvelope: boolean }
 	| { kind: "unparseable"; raw: string };
 
@@ -51,7 +51,7 @@ export function looksMarkdownish(text: string): boolean {
 	return MARKDOWN_HINTS.some((pattern) => pattern.test(text));
 }
 
-export type PromotedMarkdownField = {
+type PromotedMarkdownField = {
 	fieldName: string;
 	markdown: string;
 	metadataEntries: [string, unknown][];
