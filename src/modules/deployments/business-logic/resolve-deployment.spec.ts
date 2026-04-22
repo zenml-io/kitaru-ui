@@ -6,6 +6,7 @@ import {
 	resolveDeploymentByExclusiveTag,
 	resolveDeploymentByVersion,
 	resolveDeploymentForExecution,
+	resolveSelectedDeployment,
 } from "./resolve-deployment";
 
 function mkDeployment(overrides: Partial<Deployment>): Deployment {
@@ -99,6 +100,30 @@ describe("resolveDeploymentByExclusiveTag", () => {
 		expect(
 			resolveDeploymentByExclusiveTag(deployments, "no-such-tag")
 		).toBeUndefined();
+	});
+});
+
+describe("resolveSelectedDeployment", () => {
+	it("returns the deployment matching ?version=N when present", () => {
+		expect(resolveSelectedDeployment(deployments, 2)).toBe(d2);
+	});
+
+	it("falls back to the default-tag holder when ?version=N is not given", () => {
+		expect(resolveSelectedDeployment(deployments, undefined)).toBe(d3);
+	});
+
+	it("falls back to the default-tag holder when ?version=N does not match", () => {
+		expect(resolveSelectedDeployment(deployments, 99)).toBe(d3);
+	});
+
+	it("falls back to the first deployment when no default tag exists", () => {
+		const noDefault = [d1, d2];
+		expect(resolveSelectedDeployment(noDefault, undefined)).toBe(d1);
+	});
+
+	it("returns undefined for an empty list", () => {
+		expect(resolveSelectedDeployment([], undefined)).toBeUndefined();
+		expect(resolveSelectedDeployment([], 1)).toBeUndefined();
 	});
 });
 

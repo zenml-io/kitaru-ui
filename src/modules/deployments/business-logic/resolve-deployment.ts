@@ -26,6 +26,18 @@ export function resolveDeploymentByExclusiveTag(
 	);
 }
 
+export function resolveSelectedDeployment(
+	deployments: Deployment[],
+	version: number | undefined
+): Deployment | undefined {
+	if (deployments.length === 0) return undefined;
+	if (version !== undefined) {
+		const byVersion = resolveDeploymentByVersion(deployments, version);
+		if (byVersion) return byVersion;
+	}
+	return resolveDefaultDeployment(deployments) ?? deployments[0];
+}
+
 export function resolveDeploymentForExecution(
 	execution: Execution,
 	deployments: Deployment[]
