@@ -8,6 +8,8 @@ import { fetchWaitConditions } from "../domain/fetch-wait-conditions";
 export const executionsQueryKeys = {
 	base: ["executions"] as const,
 	all: (flowId: string) => [...executionsQueryKeys.base, flowId] as const,
+	listWithSnapshots: (flowId: string) =>
+		[...executionsQueryKeys.base, "list-with-snapshots", flowId] as const,
 	detail: (executionId: string) =>
 		[...executionsQueryKeys.base, "detail", executionId] as const,
 	logs: (runId: string, source: string) =>
@@ -23,6 +25,11 @@ export const executionsQueries = {
 		queryOptions({
 			queryKey: executionsQueryKeys.all(flowId),
 			queryFn: () => fetchExecutions(flowId),
+		}),
+	listWithSnapshots: (flowId: string) =>
+		queryOptions({
+			queryKey: executionsQueryKeys.listWithSnapshots(flowId),
+			queryFn: () => fetchExecutions(flowId, { hydrate: true }),
 		}),
 	detail: (executionId: string) =>
 		queryOptions({
