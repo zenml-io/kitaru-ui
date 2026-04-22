@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiClient } from "@/shared/api/domain/api-client";
+import { FetchError } from "@/shared/api/domain/fetch-error";
 
 import {
 	buildPersonalServiceAccountName,
@@ -96,10 +97,15 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			},
 			response: new Response(null, { status: 200 }),
 		} as never);
-		vi.spyOn(apiClient, "POST").mockResolvedValue({
-			error: { detail: "already exists" },
-			response: new Response(null, { status: 409 }),
-		} as never);
+		const post = vi.spyOn(apiClient, "POST").mockRejectedValue(
+			new FetchError({
+				status: 409,
+				statusText: "Conflict",
+				message: "already exists",
+				url: "/api/v1/service_accounts",
+				method: "POST",
+			})
+		);
 		get.mockResolvedValueOnce({
 			data: {
 				index: 1,
@@ -114,5 +120,9 @@ describe("findOrCreatePersonalServiceAccount", () => {
 		const result = await findOrCreatePersonalServiceAccount(userId);
 
 		expect(result).toEqual({ id: "sa-raced" });
+		expect(get).toHaveBeenCalledTimes(2);
+		expect(post).toHaveBeenCalledTimes(1);
+		expect(get.mock.calls[0][0]).toBe("/api/v1/service_accounts");
+		expect(get.mock.calls[1][0]).toBe("/api/v1/service_accounts");
 	});
 });

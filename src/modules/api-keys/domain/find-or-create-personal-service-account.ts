@@ -33,27 +33,22 @@ export async function findOrCreatePersonalServiceAccount(
 	const existing = await fetchSingleByName(name);
 	if (existing) return { id: existing.id };
 
-	const createResponse = await apiClient.POST("/api/v1/service_accounts", {
-		body: {
-			name,
-			active: true,
-			description: PERSONAL_SA_DESCRIPTION,
-		},
-	});
-	if (createResponse.error === undefined && createResponse.data) {
-		return { id: createResponse.data.id };
+	try {
+		const createResponse = await apiClient.POST("/api/v1/service_accounts", {
+			body: {
+				name,
+				active: true,
+				description: PERSONAL_SA_DESCRIPTION,
+			},
+		});
+		return { id: expectData(createResponse).id };
+	} catch (error) {
+		if (error instanceof FetchError && error.status === 409) {
+			const raced = await fetchSingleByName(name);
+			if (raced) return { id: raced.id };
+		}
+		throw error;
 	}
-	if (createResponse.response.status === 409) {
-		const raced = await fetchSingleByName(name);
-		if (raced) return { id: raced.id };
-	}
-	throw new FetchError({
-		status: createResponse.response.status,
-		statusText: "Error while fetching data",
-		message: `Could not provision personal service account: ${createResponse.response.url}`,
-		url: createResponse.response.url,
-		details: createResponse,
-	});
 }
 
 export async function findPersonalServiceAccount(
