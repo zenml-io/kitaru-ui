@@ -35,17 +35,17 @@ function mkExecution(overrides: Partial<Execution>): Execution {
 const d3 = mkDeployment({
 	id: "snap-3",
 	versionNumber: 3,
-	tags: [{ id: "t1", name: "default", exclusive: true }],
+	tags: [{ id: "t1", name: "default", kind: "default" }],
 });
 const d2 = mkDeployment({
 	id: "snap-2",
 	versionNumber: 2,
-	tags: [{ id: "t2", name: "beta", exclusive: false }],
+	tags: [{ id: "t2", name: "beta", kind: "general" }],
 });
 const d1 = mkDeployment({
 	id: "snap-1",
 	versionNumber: 1,
-	tags: [{ id: "t2", name: "beta", exclusive: false }],
+	tags: [{ id: "t2", name: "beta", kind: "general" }],
 });
 const deployments: Deployment[] = [d1, d3, d2];
 
@@ -74,8 +74,19 @@ describe("resolveDeploymentByVersion", () => {
 });
 
 describe("resolveDeploymentByExclusiveTag", () => {
-	it("returns the deployment whose tag matches by name and is exclusive", () => {
+	it("treats the reserved 'default' tag as exclusive", () => {
 		expect(resolveDeploymentByExclusiveTag(deployments, "default")).toBe(d3);
+	});
+
+	it("resolves a non-default exclusive tag holder", () => {
+		const dCanary = mkDeployment({
+			id: "snap-canary",
+			versionNumber: 4,
+			tags: [{ id: "t3", name: "canary", kind: "exclusive" }],
+		});
+		expect(
+			resolveDeploymentByExclusiveTag([...deployments, dCanary], "canary")
+		).toBe(dCanary);
 	});
 
 	it("returns undefined when the named tag exists but is not exclusive", () => {

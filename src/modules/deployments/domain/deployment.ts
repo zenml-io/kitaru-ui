@@ -4,10 +4,12 @@ import { parseBackendTimestamp } from "@/shared/utils/time";
 
 export const KITARU_SNAPSHOT_NAME = /^kitaru::(.+)::v(\d+)$/;
 
+export type TagKind = "default" | "exclusive" | "general";
+
 export type DeploymentTag = {
 	id: string;
 	name: string;
-	exclusive: boolean;
+	kind: TagKind;
 	color?: components["schemas"]["ColorVariants"];
 };
 
@@ -37,10 +39,16 @@ export class NotAKitaruDeploymentError extends Error {
 function tagFromApiToDomain(
 	tag: components["schemas"]["TagResponse"]
 ): DeploymentTag {
+	const kind: TagKind =
+		tag.name === "default"
+			? "default"
+			: tag.body?.exclusive
+				? "exclusive"
+				: "general";
 	return {
 		id: tag.id,
 		name: tag.name,
-		exclusive: tag.body?.exclusive ?? false,
+		kind,
 		color: tag.body?.color,
 	};
 }

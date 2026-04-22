@@ -84,7 +84,7 @@ describe("deploymentFromApiToDomain", () => {
 		expect(result?.createdAt).toEqual(new Date("2026-04-22T10:00:00Z"));
 	});
 
-	it("maps tags with exclusive flag preserved", () => {
+	it("derives tag kind: default / exclusive / general", () => {
 		const snapshot = mkSnapshot({
 			resources: {
 				pipeline: {
@@ -100,6 +100,15 @@ describe("deploymentFromApiToDomain", () => {
 					{
 						id: "tag-default",
 						name: "default",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: false,
+						},
+					},
+					{
+						id: "tag-canary",
+						name: "canary",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -121,8 +130,9 @@ describe("deploymentFromApiToDomain", () => {
 		});
 		const result = deploymentFromApiToDomain(snapshot);
 		expect(result?.tags).toEqual([
-			{ id: "tag-default", name: "default", exclusive: true, color: undefined },
-			{ id: "tag-beta", name: "beta", exclusive: false, color: undefined },
+			{ id: "tag-default", name: "default", kind: "default", color: undefined },
+			{ id: "tag-canary", name: "canary", kind: "exclusive", color: undefined },
+			{ id: "tag-beta", name: "beta", kind: "general", color: undefined },
 		]);
 	});
 
