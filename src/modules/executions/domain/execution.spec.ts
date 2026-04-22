@@ -61,4 +61,19 @@ describe("executionFromApiToDomain", () => {
 			executionFromApiToDomain(mkRun({ log_collection: undefined })).logSources
 		).toEqual([]);
 	});
+
+	it("extracts snapshotId when the run is hydrated with a snapshot resource", () => {
+		const run = mkRun({
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			snapshot: { id: "snap-42" } as any,
+		});
+		const result = executionFromApiToDomain(run);
+		expect(result.snapshotId).toBe("snap-42");
+	});
+
+	it("leaves snapshotId undefined when run.resources.snapshot is absent", () => {
+		const run = mkRun();
+		const result = executionFromApiToDomain(run);
+		expect(result.snapshotId).toBeUndefined();
+	});
 });

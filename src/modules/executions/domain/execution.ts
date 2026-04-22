@@ -45,6 +45,7 @@ export type Execution = {
 		id?: string;
 		name?: string;
 	};
+	snapshotId?: string;
 };
 
 export function executionFromApiToDomain(
@@ -83,5 +84,6 @@ export function executionFromApiToDomain(
 						name: run.resources?.active_wait_condition?.name,
 					}
 				: undefined,
+		snapshotId: run.resources?.snapshot?.id,
 	};
 }
