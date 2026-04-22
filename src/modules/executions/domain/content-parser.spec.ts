@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
 	looksMarkdownish,
 	normalizeJsonVisualization,
-	parseCsv,
 	selectPromotedMarkdownField,
 } from "./content-parser";
 
@@ -147,65 +146,6 @@ describe("looksMarkdownish", () => {
 			false
 		);
 		expect(looksMarkdownish('{"name":"Alice","score":10}')).toBe(false);
-	});
-});
-
-describe("parseCsv", () => {
-	it("parses simple rows", () => {
-		expect(parseCsv("name,score\nAlice,10\nBob,8")).toEqual([
-			["name", "score"],
-			["Alice", "10"],
-			["Bob", "8"],
-		]);
-	});
-
-	it("handles quoted commas", () => {
-		expect(parseCsv('name,note\nAlice,"one, two"')).toEqual([
-			["name", "note"],
-			["Alice", "one, two"],
-		]);
-	});
-
-	it("handles escaped quotes inside quoted fields", () => {
-		expect(parseCsv('speaker,quote\nAlice,"She said ""hello""."')).toEqual([
-			["speaker", "quote"],
-			["Alice", 'She said "hello".'],
-		]);
-	});
-
-	it("handles CRLF row separators and newlines inside quoted fields", () => {
-		const csv = 'name,note\r\nAlice,"line 1\r\nline 2"\r\nBob,done';
-
-		expect(parseCsv(csv)).toEqual([
-			["name", "note"],
-			["Alice", "line 1\r\nline 2"],
-			["Bob", "done"],
-		]);
-	});
-
-	it("keeps a trailing row without a final newline", () => {
-		expect(parseCsv("name,score\nAlice,10")).toEqual([
-			["name", "score"],
-			["Alice", "10"],
-		]);
-	});
-
-	it("keeps trailing empty fields and quoted empty fields", () => {
-		expect(parseCsv('name,note,empty\nAlice,"",')).toEqual([
-			["name", "note", "empty"],
-			["Alice", "", ""],
-		]);
-	});
-
-	it("returns no rows for empty input", () => {
-		expect(parseCsv("")).toEqual([]);
-	});
-
-	it("strips a leading UTF-8 BOM", () => {
-		expect(parseCsv("\uFEFFname,score\nAlice,10")).toEqual([
-			["name", "score"],
-			["Alice", "10"],
-		]);
 	});
 });
 

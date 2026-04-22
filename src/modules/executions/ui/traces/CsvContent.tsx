@@ -1,5 +1,6 @@
+import Papa from "papaparse";
+
 import { CodeBlock } from "@/shared/ui/CodeBlock";
-import { parseCsv } from "../../domain/content-parser";
 import { ViewerFrame } from "./ViewerFrame";
 
 type CsvContentProps = {
@@ -47,7 +48,7 @@ function CsvTable({ rows }: { rows: string[][] }) {
 }
 
 export function CsvContent({ value }: CsvContentProps) {
-	const rows = parseCsv(value);
+	const rows = Papa.parse<string[]>(value, { skipEmptyLines: true }).data;
 	const header = rows[0];
 	const sizeLabel = header
 		? `${Math.max(rows.length - 1, 0)} rows × ${header.length} cols`

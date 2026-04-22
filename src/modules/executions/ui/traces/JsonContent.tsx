@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { JsonView, allExpanded, defaultStyles } from "react-json-view-lite";
+import "react-json-view-lite/dist/index.css";
 
 import { CodeBlock } from "@/shared/ui/CodeBlock";
 import {
@@ -6,7 +8,6 @@ import {
 	normalizeJsonVisualization,
 	selectPromotedMarkdownField,
 } from "../../domain/content-parser";
-import { JsonArtifactViewer } from "./JsonArtifactViewer";
 import { RenderedMarkdown } from "./MarkdownContent";
 import { ViewerFrame } from "./ViewerFrame";
 
@@ -20,6 +21,38 @@ type JsonRenderPlan = {
 	sizeLabel: string;
 	decodedFromJson: boolean;
 };
+
+const jsonViewStyles = {
+	...defaultStyles,
+	container: "font-mono text-xs leading-relaxed",
+	basicChildStyle: "my-0",
+	label: "text-foreground mr-1",
+	clickableLabel: "text-foreground mr-1 cursor-pointer",
+	nullValue: "text-muted-foreground italic",
+	undefinedValue: "text-muted-foreground italic",
+	numberValue: "text-primary",
+	stringValue: "text-success whitespace-pre-wrap",
+	booleanValue: "text-primary",
+	otherValue: "text-foreground",
+	punctuation: `${defaultStyles.punctuation} !text-muted-foreground`,
+	expandIcon: `${defaultStyles.expandIcon} !text-muted-foreground`,
+	collapseIcon: `${defaultStyles.collapseIcon} !text-muted-foreground`,
+	childFieldsContainer: "border-l border-border ml-2 pl-2",
+	quotesForFieldNames: true,
+};
+
+function JsonTree({ data }: { data: object }) {
+	return (
+		<div className="overflow-x-auto p-4">
+			<JsonView
+				data={data}
+				shouldExpandNode={allExpanded}
+				clickToExpandNode
+				style={jsonViewStyles}
+			/>
+		</div>
+	);
+}
 
 function stringifyJsonValue(value: unknown): string {
 	return JSON.stringify(value, null, 2) ?? String(value);
@@ -73,7 +106,7 @@ function PromotedMarkdownObject({
 						{metadataEntries.length === 1 ? "field" : "fields"})
 					</summary>
 					<div className="border-border bg-muted/20 mt-3 overflow-hidden rounded-md border">
-						<JsonArtifactViewer data={metadata} />
+						<JsonTree data={metadata} />
 					</div>
 				</details>
 			)}
@@ -130,7 +163,7 @@ function planParsedJson(
 
 	const copyText = stringifyJsonValue(value);
 	return {
-		rendered: <JsonArtifactViewer data={value} />,
+		rendered: <JsonTree data={value as object} />,
 		copyText,
 		sizeLabel: `${copyText.length} chars decoded`,
 		decodedFromJson: wasStringEnvelope,

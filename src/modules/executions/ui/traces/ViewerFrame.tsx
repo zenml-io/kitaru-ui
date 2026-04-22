@@ -56,7 +56,7 @@ export function ViewerFrame({
 	const displayedCopyText = showRaw ? rawText : (copyText ?? rawText);
 
 	return (
-		<section className="border-border bg-background overflow-hidden rounded-md border">
+		<section className="bg-background overflow-hidden rounded-md">
 			<header className="border-border bg-muted/30 flex items-center gap-2 border-b px-3 py-2">
 				<span className="bg-secondary text-secondary-foreground rounded px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wide uppercase">
 					{type}
