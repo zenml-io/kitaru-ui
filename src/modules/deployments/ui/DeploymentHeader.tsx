@@ -1,14 +1,20 @@
+import type React from "react";
 import { Separator } from "@/shared/ui/separator";
 import { cn } from "@/shared/utils/styles";
 import type { Deployment } from "../domain/deployment";
+import type { StackComponent } from "@/modules/stacks/domain/stack";
 import { DeploymentTagChip } from "./DeploymentTagChip";
 
 export function DeploymentHeader({
 	flowName,
 	deployment,
+	stackComponents,
+	invokeSlot,
 }: {
 	flowName: string;
 	deployment?: Deployment;
+	stackComponents?: StackComponent[];
+	invokeSlot?: React.ReactNode;
 }) {
 	const isDefault = deployment?.tags.some((t) => t.kind === "default") ?? false;
 	const hasTags = (deployment?.tags.length ?? 0) > 0;
@@ -47,15 +53,18 @@ export function DeploymentHeader({
 						</>
 					)}
 
-					{!deployment && (
-						<span className="text-muted-foreground ml-auto text-xs">
-							No deployments yet
-						</span>
-					)}
+					<div className="ml-auto flex items-center gap-2">
+						{!deployment && (
+							<span className="text-muted-foreground text-xs">
+								No deployments yet
+							</span>
+						)}
+						{invokeSlot}
+					</div>
 				</div>
 
 				{deployment?.stackName && (
-					<div className="mt-3 flex items-center gap-2">
+					<div className="mt-3 flex flex-wrap items-center gap-2">
 						<span
 							className={cn(
 								"text-2xs font-semibold tracking-wider uppercase",
@@ -64,15 +73,39 @@ export function DeploymentHeader({
 						>
 							Stack
 						</span>
-						<span
-							className={cn(
-								"inline-flex h-6 items-center rounded-md px-2",
-								"border-border bg-card border",
-								"text-foreground font-mono text-xs"
-							)}
-						>
-							{deployment.stackName}
-						</span>
+						{stackComponents && stackComponents.length > 0 ? (
+							stackComponents.map((c) => (
+								<span
+									key={c.id}
+									className={cn(
+										"inline-flex h-6 items-center gap-1.5 rounded-md px-2",
+										"border-border bg-card border",
+										"text-foreground font-mono text-xs"
+									)}
+									title={`${c.type}: ${c.flavorName}`}
+								>
+									{c.logoUrl && (
+										<img
+											src={c.logoUrl}
+											alt=""
+											className="size-3.5 shrink-0"
+											aria-hidden
+										/>
+									)}
+									<span className="truncate">{c.flavorName}</span>
+								</span>
+							))
+						) : (
+							<span
+								className={cn(
+									"inline-flex h-6 items-center rounded-md px-2",
+									"border-border bg-card border",
+									"text-foreground font-mono text-xs"
+								)}
+							>
+								{deployment.stackName}
+							</span>
+						)}
 					</div>
 				)}
 			</div>
