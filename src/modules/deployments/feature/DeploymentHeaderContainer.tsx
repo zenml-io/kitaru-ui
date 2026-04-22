@@ -5,6 +5,7 @@ import { stacksQueries } from "@/modules/stacks/business-logic/stacks-queries";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
 import { DeploymentHeader } from "../ui/DeploymentHeader";
+import { InvokeDeploymentContainer } from "./InvokeDeploymentContainer";
 
 export function DeploymentHeaderContainer() {
 	const { flowId } = useParams({ from: "/_private/_navbar/flows/$flowId" });
@@ -29,6 +30,9 @@ export function DeploymentHeaderContainer() {
 			flowName={flow.name}
 			deployment={selected}
 			stackComponents={stack?.components}
+			invokeSlot={
+				selected ? <InvokeDeploymentContainer deployment={selected} /> : null
+			}
 		/>
 	);
 }
