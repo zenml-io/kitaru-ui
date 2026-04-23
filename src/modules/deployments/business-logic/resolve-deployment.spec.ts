@@ -125,6 +125,21 @@ describe("resolveSelectedDeployment", () => {
 		expect(resolveSelectedDeployment([], undefined)).toBeUndefined();
 		expect(resolveSelectedDeployment([], 1)).toBeUndefined();
 	});
+
+	it("selects the synthetic local deployment when version === 'local' and it exists in the list", () => {
+		const local = mkDeployment({
+			id: "local",
+			versionNumber: 0,
+			tags: [],
+		});
+		expect(resolveSelectedDeployment([...deployments, local], "local")).toBe(
+			local
+		);
+	});
+
+	it("falls back to the default-tag holder when version === 'local' but the local entry isn't present", () => {
+		expect(resolveSelectedDeployment(deployments, "local")).toBe(d3);
+	});
 });
 
 describe("resolveDeploymentForExecution", () => {

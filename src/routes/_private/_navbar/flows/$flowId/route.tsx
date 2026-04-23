@@ -10,10 +10,16 @@ import {
 import { z } from "zod";
 
 const flowSearchSchema = z.object({
-	version: z.coerce.number().int().positive().optional(),
+	version: z
+		.union([z.literal("local"), z.coerce.number().int().positive()])
+		.optional(),
+	versions: z.enum(["all"]).optional(),
 });
 
-type FlowSearchSchemaInput = SearchSchemaInput & { version?: number };
+type FlowSearchSchemaInput = SearchSchemaInput & {
+	version?: number | "local";
+	versions?: "all";
+};
 
 function FlowRoute() {
 	return (

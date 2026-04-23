@@ -28,10 +28,13 @@ export function resolveDeploymentByExclusiveTag(
 
 export function resolveSelectedDeployment(
 	deployments: Deployment[],
-	version: number | undefined
+	version: number | "local" | undefined
 ): Deployment | undefined {
 	if (deployments.length === 0) return undefined;
-	if (version !== undefined) {
+	if (version === "local") {
+		const local = deployments.find((d) => d.id === "local");
+		if (local) return local;
+	} else if (version !== undefined) {
 		const byVersion = resolveDeploymentByVersion(deployments, version);
 		if (byVersion) return byVersion;
 	}
