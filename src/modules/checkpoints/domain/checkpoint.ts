@@ -22,6 +22,7 @@ export type Checkpoint = {
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
 	logSources: string[];
+	runMetadata?: Record<string, unknown>;
 };
 
 export function checkpointFromApiToDomain(
@@ -49,6 +50,7 @@ export function checkpointFromApiToDomain(
 			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 		logSources: extractLogSources(checkpoint.resources?.log_collection),
+		runMetadata: checkpoint.metadata?.run_metadata,
 	};
 }
 
