@@ -21,7 +21,6 @@ export function ImageContent({ value }: ImageContentProps) {
 			copyText={value}
 			sizeLabel="image"
 			rawLanguage="text"
-			collapseLong={false}
 		/>
 	);
 }

@@ -1,4 +1,5 @@
 import { Dialog } from "@/shared/ui/dialog";
+import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { FullscreenArtifactButtonTrigger } from "../ui/FullscreenArtifactButtonTrigger";
 import { FullscreenArtifactDialogContent } from "../ui/FullscreenArtifactDialogContent";
 import { ArtifactVisualizationContainer } from "./ArtifactVisualizationContainer";
@@ -24,7 +25,11 @@ export function FullscreenArtifactButtonContainer({
 					/>
 				}
 			>
-				<ArtifactVisualizationContainer artifactVersionId={artifactVersionId} />
+				<ViewerFrameFullHeight>
+					<ArtifactVisualizationContainer
+						artifactVersionId={artifactVersionId}
+					/>
+				</ViewerFrameFullHeight>
 			</FullscreenArtifactDialogContent>
 		</Dialog>
 	);

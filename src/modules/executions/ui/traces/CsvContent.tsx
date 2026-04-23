@@ -69,7 +69,6 @@ export function CsvContent({ value }: CsvContentProps) {
 			sizeLabel={sizeLabel}
 			rawLanguage="csv"
 			density="compact"
-			collapseLong
 		/>
 	);
 }

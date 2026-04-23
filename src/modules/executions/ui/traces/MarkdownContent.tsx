@@ -165,7 +165,6 @@ export function MarkdownContent({ value }: MarkdownContentProps) {
 			sizeLabel={`${value.length} chars`}
 			rawLanguage="markdown"
 			density="compact"
-			collapseLong
 		/>
 	);
 }

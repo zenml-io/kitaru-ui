@@ -191,7 +191,6 @@ export function JsonContent({ value }: JsonContentProps) {
 			sizeLabel={plan.sizeLabel}
 			decodedFromJson={plan.decodedFromJson}
 			rawLanguage="json"
-			collapseLong={false}
 		/>
 	);
 }

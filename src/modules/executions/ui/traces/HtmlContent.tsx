@@ -33,7 +33,6 @@ export function HtmlContent({ value }: HtmlContentProps) {
 			sizeLabel={`${value.length} chars`}
 			rawLanguage="html"
 			density="compact"
-			collapseLong
 		/>
 	);
 }

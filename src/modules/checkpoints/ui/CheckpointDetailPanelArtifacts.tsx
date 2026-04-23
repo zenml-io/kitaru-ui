@@ -1,4 +1,5 @@
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
+import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
@@ -67,9 +68,11 @@ export function CheckpointDetailPanelArtifacts({
 					</div>
 					<Separator />
 					<div className="bg-background flex-1">
-						<ArtifactVisualizationContainer
-							artifactVersionId={selectedArtifact.artifact.id}
-						/>
+						<ViewerFrameFullHeight>
+							<ArtifactVisualizationContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+							/>
+						</ViewerFrameFullHeight>
 					</div>
 				</div>
 			)}

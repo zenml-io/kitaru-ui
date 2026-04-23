@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+	createContext,
+	useContext,
+	useLayoutEffect,
+	useState,
+	type ReactNode,
+} from "react";
 import { Check, Copy } from "lucide-react";
 
 import { useCopy } from "@/shared/business-logic/use-copy";
@@ -17,10 +23,19 @@ type ViewerFrameProps = {
 	decodedFromJson?: boolean;
 	rawLanguage?: string;
 	density?: "compact" | "default";
-	collapseLong?: boolean;
 };
 
 const COLLAPSED_HEIGHT_PX = 320;
+
+const ViewerFrameClampContext = createContext(true);
+
+export function ViewerFrameFullHeight({ children }: { children: ReactNode }) {
+	return (
+		<ViewerFrameClampContext.Provider value={false}>
+			{children}
+		</ViewerFrameClampContext.Provider>
+	);
+}
 
 export function ViewerFrame({
 	type,
@@ -31,28 +46,28 @@ export function ViewerFrame({
 	decodedFromJson,
 	rawLanguage = "text",
 	density = "default",
-	collapseLong = false,
 }: ViewerFrameProps) {
+	const clampEnabled = useContext(ViewerFrameClampContext);
 	const [showRaw, setShowRaw] = useState(false);
 	const [expanded, setExpanded] = useState(false);
 	const [isOverflowing, setIsOverflowing] = useState(false);
-	const renderedBodyRef = useRef<HTMLDivElement>(null);
+	const [renderedBody, setRenderedBody] = useState<HTMLDivElement | null>(null);
 	const { copied, copy } = useCopy();
 
-	useEffect(() => {
-		if (!collapseLong || showRaw) return;
+	useLayoutEffect(() => {
+		if (!clampEnabled || showRaw || !renderedBody) return;
 
-		const frame = requestAnimationFrame(() => {
-			const body = renderedBodyRef.current;
-			setIsOverflowing(
-				Boolean(body && body.scrollHeight > COLLAPSED_HEIGHT_PX)
-			);
-		});
+		const check = () => {
+			setIsOverflowing(renderedBody.scrollHeight > COLLAPSED_HEIGHT_PX);
+		};
+		check();
+		const observer = new ResizeObserver(check);
+		observer.observe(renderedBody);
+		return () => observer.disconnect();
+	}, [clampEnabled, showRaw, renderedBody]);
 
-		return () => cancelAnimationFrame(frame);
-	}, [collapseLong, rendered, showRaw]);
-
-	const shouldClamp = collapseLong && !showRaw && isOverflowing && !expanded;
+	const canCollapse = clampEnabled && !showRaw && isOverflowing;
+	const shouldClamp = canCollapse && !expanded;
 	const displayedCopyText = showRaw ? rawText : (copyText ?? rawText);
 
 	return (
@@ -110,7 +125,7 @@ export function ViewerFrame({
 					<CodeBlock code={rawText} language={rawLanguage} wrap />
 				) : (
 					<div
-						ref={renderedBodyRef}
+						ref={setRenderedBody}
 						className={cn(
 							shouldClamp && "max-h-80 overflow-hidden",
 							density === "compact" ? "text-xs" : "text-sm"
@@ -127,6 +142,17 @@ export function ViewerFrame({
 							onClick={() => setExpanded(true)}
 						>
 							Show full content
+						</Button>
+					</div>
+				)}
+				{canCollapse && expanded && (
+					<div className="flex justify-center pt-3 pb-3">
+						<Button
+							variant="outline"
+							size="xs"
+							onClick={() => setExpanded(false)}
+						>
+							Collapse
 						</Button>
 					</div>
 				)}
