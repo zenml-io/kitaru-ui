@@ -23,7 +23,7 @@ export function HtmlContent({ value }: HtmlContentProps) {
 						srcDoc={value}
 						sandbox=""
 						referrerPolicy="no-referrer"
-						className="h-full min-h-64 w-full rounded-md border-0 bg-white"
+						className="min-h-64 w-full rounded-md border-0 bg-white"
 						title="visualization"
 					/>
 				</div>
