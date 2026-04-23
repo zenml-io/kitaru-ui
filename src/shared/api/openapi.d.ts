@@ -5162,6 +5162,11 @@ export type paths = {
 		 *     Args:
 		 *         trigger_id: The ID of the trigger.
 		 *         snapshot_id: The ID of the snapshot.
+		 *         run_configuration: Configuration for the follow-up trigger runs.
+		 *         allow_replace: Allow replacement if attachment already exists.
+		 *
+		 *     Raises:
+		 *         IllegalOperationError: If the trigger is already attached to the snapshot.
 		 */
 		put: operations["attach_trigger_to_snapshot_api_v1_triggers__trigger_id__pipeline_snapshots__snapshot_id__put"];
 		post?: never;
@@ -5366,7 +5371,15 @@ export type components = {
 			tags?: string[] | null;
 			/** Run Metadata */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			} | null;
 			artifact_type?: components["schemas"]["ArtifactType"] | null;
 		};
@@ -5570,7 +5583,15 @@ export type components = {
 			save_type: components["schemas"]["ArtifactSaveType"];
 			/** Metadata of the artifact version. */
 			metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			} | null;
 			/** The number of items in the artifact version if it is sequence-like. This should only be set for artifacts that can be split into parts, like lists or arrays. */
 			item_count?: number | null;
@@ -5658,7 +5679,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 		};
 		/**
@@ -6286,7 +6315,7 @@ export type components = {
 			flavor: string;
 			/** Environment variables to set when running on this component. */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** Secrets to set as environment variables when running on this component. */
 			secrets?: string[] | null;
@@ -6370,7 +6399,7 @@ export type components = {
 			 * @default {}
 			 */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * Secrets to set as environment variables when running on this component.
@@ -6414,7 +6443,7 @@ export type components = {
 			} | null;
 			/** Environment variables to set when running on this component. */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/**
 			 * Connector Resource Id
@@ -7793,7 +7822,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 		};
 		/**
@@ -8465,6 +8502,39 @@ export type components = {
 			items: components["schemas"]["UserResponse"][];
 		};
 		/**
+		 * PartialArtifactConfiguration
+		 * @description Class representing a partial input/output artifact configuration.
+		 */
+		PartialArtifactConfiguration: {
+			/** Materializer Source */
+			materializer_source?: components["schemas"]["Source"][] | null;
+			default_materializer_source?: components["schemas"]["Source"] | null;
+			artifact_config?: components["schemas"]["ArtifactConfig"] | null;
+		};
+		/**
+		 * PipelineBuildBase
+		 * @description Base model for pipeline builds.
+		 */
+		PipelineBuildBase: {
+			/**
+			 * The images of this build.
+			 * @default {}
+			 */
+			images?: {
+				[key: string]: components["schemas"]["BuildItem"];
+			};
+			/** Whether the build images are stored in a container registry or locally. */
+			is_local: boolean;
+			/** Whether any image of the build contains user code. */
+			contains_code: boolean;
+			/** The version of ZenML used for this build. */
+			zenml_version?: string | null;
+			/** The Python version used for this build. */
+			python_version?: string | null;
+			/** The duration of the build in seconds. */
+			duration?: number | null;
+		};
+		/**
 		 * PipelineBuildRequest
 		 * @description Request model for pipelines builds.
 		 */
@@ -8481,7 +8551,7 @@ export type components = {
 			 * @default {}
 			 */
 			images?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BuildItem"];
 			};
 			/** Whether the build images are stored in a container registry or locally. */
 			is_local: boolean;
@@ -8563,7 +8633,7 @@ export type components = {
 			 * @default {}
 			 */
 			images?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BuildItem"];
 			};
 			/** The version of ZenML used for this build. */
 			zenml_version?: string | null;
@@ -8626,7 +8696,7 @@ export type components = {
 			 * @default {}
 			 */
 			settings?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BaseSettings"];
 			};
 			/** Tags */
 			tags?: (string | components["schemas"]["Tag"])[] | null;
@@ -8656,7 +8726,7 @@ export type components = {
 			 * @default {}
 			 */
 			substitutions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			cache_policy?: components["schemas"]["CachePolicy-Input"] | null;
 			/** Name */
@@ -8671,6 +8741,15 @@ export type components = {
 			 * @default false
 			 */
 			skip_successful_steps?: boolean;
+			/**
+			 * Step Input Overrides
+			 * @default {}
+			 */
+			step_input_overrides?: {
+				[key: string]: {
+					[key: string]: string;
+				};
+			};
 		};
 		/**
 		 * PipelineConfiguration
@@ -8708,7 +8787,7 @@ export type components = {
 			 * @default {}
 			 */
 			settings?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BaseSettings"];
 			};
 			/** Tags */
 			tags?: (string | components["schemas"]["Tag"])[] | null;
@@ -8738,7 +8817,7 @@ export type components = {
 			 * @default {}
 			 */
 			substitutions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			cache_policy?: components["schemas"]["CachePolicy-Output"] | null;
 			/** Name */
@@ -8753,6 +8832,15 @@ export type components = {
 			 * @default false
 			 */
 			skip_successful_steps?: boolean;
+			/**
+			 * Step Input Overrides
+			 * @default {}
+			 */
+			step_input_overrides?: {
+				[key: string]: {
+					[key: string]: string;
+				};
+			};
 		};
 		/**
 		 * PipelineRequest
@@ -8850,6 +8938,129 @@ export type components = {
 			visualizations?: components["schemas"]["CuratedVisualizationResponse"][];
 		} & {
 			[key: string]: unknown;
+		};
+		/**
+		 * PipelineRunConfiguration
+		 * @description Class for pipeline run configurations.
+		 */
+		PipelineRunConfiguration: {
+			/**
+			 * Run Name
+			 * @description The name of the pipeline run.
+			 */
+			run_name?: string | null;
+			/**
+			 * Enable Cache
+			 * @description Whether to enable cache for all steps of the pipeline run.
+			 */
+			enable_cache?: boolean | null;
+			/**
+			 * Enable Artifact Metadata
+			 * @description Whether to enable metadata for the output artifacts of all steps of the pipeline run.
+			 */
+			enable_artifact_metadata?: boolean | null;
+			/**
+			 * Enable Artifact Visualization
+			 * @description Whether to enable visualizations for the output artifacts of all steps of the pipeline run.
+			 */
+			enable_artifact_visualization?: boolean | null;
+			/**
+			 * Enable Step Logs
+			 * @description Whether to enable logs for all steps of the pipeline run.
+			 */
+			enable_step_logs?: boolean | null;
+			/**
+			 * Enable Pipeline Logs
+			 * @description Whether to enable pipeline logs for the pipeline run.
+			 */
+			enable_pipeline_logs?: boolean | null;
+			/**
+			 * Enable Heartbeat
+			 * @description Whether to enable heartbeat for all steps of the pipeline run
+			 */
+			enable_heartbeat?: boolean | null;
+			/** @description The schedule on which to run the pipeline. */
+			schedule?: components["schemas"]["Schedule"] | null;
+			/**
+			 * Build
+			 * @description The build to use for the pipeline run.
+			 */
+			build?: components["schemas"]["PipelineBuildBase"] | string | null;
+			/**
+			 * Steps
+			 * @description Configurations for the steps of the pipeline run.
+			 */
+			steps?: {
+				[key: string]: components["schemas"]["StepConfigurationUpdate"];
+			} | null;
+			/**
+			 * Settings
+			 * @description Settings for the pipeline run.
+			 */
+			settings?: {
+				[key: string]: components["schemas"]["BaseSettings"];
+			} | null;
+			/**
+			 * Environment
+			 * @description The environment for all steps of the pipeline run.
+			 */
+			environment?: {
+				[key: string]: unknown;
+			} | null;
+			/**
+			 * Secrets
+			 * @description The secrets for all steps of the pipeline run.
+			 */
+			secrets?: string[] | null;
+			/**
+			 * Tags
+			 * @description Tags to apply to the pipeline run.
+			 */
+			tags?: (string | components["schemas"]["Tag"])[] | null;
+			/**
+			 * Extra
+			 * @description Extra configurations for the pipeline run.
+			 */
+			extra?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The model to use for the pipeline run. */
+			model?: components["schemas"]["Model"] | null;
+			/**
+			 * Parameters
+			 * @description Parameters for the pipeline function.
+			 */
+			parameters?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The retry configuration for all steps of the pipeline run. */
+			retry?: components["schemas"]["StepRetryConfig"] | null;
+			/** @description The failure hook source for all steps of the pipeline run. */
+			failure_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The init hook source for the pipeline run. */
+			init_hook_source?: components["schemas"]["Source"] | null;
+			/**
+			 * Init Hook Kwargs
+			 * @description The init hook args for the pipeline run.
+			 */
+			init_hook_kwargs?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The cleanup hook source for the pipeline run. */
+			cleanup_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The success hook source for all steps of the pipeline run. */
+			success_hook_source?: components["schemas"]["Source"] | null;
+			/**
+			 * Substitutions
+			 * @description The substitutions for the pipeline run.
+			 */
+			substitutions?: {
+				[key: string]: string;
+			} | null;
+			/** @description The cache policy for all steps of the pipeline run. */
+			cache_policy?: components["schemas"]["CachePolicy-Input"] | null;
+			/** @description The execution mode for the pipeline run. */
+			execution_mode?: components["schemas"]["ExecutionMode"] | null;
 		};
 		/**
 		 * PipelineRunDAG
@@ -8979,7 +9190,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 			/** The pipeline configuration used for this pipeline run. */
 			config: components["schemas"]["PipelineConfiguration-Output"];
@@ -9116,7 +9335,7 @@ export type components = {
 			 * @default {}
 			 */
 			step_configurations?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["Step-Input"];
 			};
 			/**
 			 * The client environment for this snapshot.
@@ -9252,7 +9471,7 @@ export type components = {
 			 * @default {}
 			 */
 			step_configurations?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["Step-Output"];
 			};
 			/**
 			 * The client environment for this snapshot.
@@ -9580,7 +9799,7 @@ export type components = {
 			 * @default {}
 			 */
 			required_configuration?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * Use Resource Value As Fixed Config
@@ -9610,11 +9829,19 @@ export type components = {
 			stack_component_id?: string | null;
 			/** The metadata to be created. */
 			values: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 			/** The types of the metadata to be created. */
 			types: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["MetadataTypeEnum"];
 			};
 			/** The ID of the step execution that published this metadata. */
 			publisher_step_id?: string | null;
@@ -9828,7 +10055,15 @@ export type components = {
 			 * @default {}
 			 */
 			metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 		};
 		/**
@@ -9926,7 +10161,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 			/** Optional JSON schema. */
 			data_schema?: {
@@ -9961,6 +10204,54 @@ export type components = {
 		 * @enum {string}
 		 */
 		RunWaitConditionType: "external_input";
+		/**
+		 * Schedule
+		 * @description Class for defining a pipeline schedule.
+		 *
+		 *     Attributes:
+		 *         name: Optional name to give to the schedule. If not set, a default name
+		 *             will be generated based on the pipeline name and the current date
+		 *             and time.
+		 *         cron_expression: Cron expression for the pipeline schedule. If a value
+		 *             for this is set it takes precedence over the start time + interval.
+		 *         start_time: When the schedule should start. If this is a datetime object
+		 *             without any timezone, it is treated as a datetime in the local
+		 *             timezone.
+		 *         end_time: When the schedule should end. If this is a datetime object
+		 *             without any timezone, it is treated as a datetime in the local
+		 *             timezone.
+		 *         interval_second: datetime timedelta indicating the seconds between two
+		 *             recurring runs for a periodic schedule.
+		 *         catchup: Whether the recurring run should catch up if behind schedule.
+		 *             For example, if the recurring run is paused for a while and
+		 *             re-enabled afterward. If catchup=True, the scheduler will catch
+		 *             up on (backfill) each missed interval. Otherwise, it only
+		 *             schedules the latest interval if more than one interval is ready to
+		 *             be scheduled. Usually, if your pipeline handles backfill
+		 *             internally, you should turn catchup off to avoid duplicate backfill.
+		 *         run_once_start_time: When to run the pipeline once. If this is a
+		 *             datetime object without any timezone, it is treated as a datetime
+		 *             in the local timezone.
+		 */
+		Schedule: {
+			/** Name */
+			name?: string | null;
+			/** Cron Expression */
+			cron_expression?: string | null;
+			/** Start Time */
+			start_time?: string | null;
+			/** End Time */
+			end_time?: string | null;
+			/** Interval Second */
+			interval_second?: string | null;
+			/**
+			 * Catchup
+			 * @default false
+			 */
+			catchup?: boolean;
+			/** Run Once Start Time */
+			run_once_start_time?: string | null;
+		};
 		/**
 		 * ScheduleRequest
 		 * @description Request model for schedules.
@@ -10077,7 +10368,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 		};
 		/**
@@ -10288,7 +10587,7 @@ export type components = {
 			private?: boolean;
 			/** The values stored in this secret. */
 			values?: {
-				[key: string]: unknown;
+				[key: string]: string | null;
 			};
 		};
 		/**
@@ -10339,7 +10638,7 @@ export type components = {
 			private?: boolean;
 			/** The values stored in this secret. */
 			values?: {
-				[key: string]: unknown;
+				[key: string]: string | null;
 			};
 		};
 		/**
@@ -10368,7 +10667,7 @@ export type components = {
 			private?: boolean | null;
 			/** The values stored in this secret. */
 			values?: {
-				[key: string]: unknown;
+				[key: string]: string | null;
 			} | null;
 		};
 		/**
@@ -10502,7 +10801,7 @@ export type components = {
 			 * @default {}
 			 */
 			metadata?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/** Timestamp of latest user activity traced on the server. */
 			last_user_activity?: string | null;
@@ -10773,7 +11072,7 @@ export type components = {
 			};
 			/** Service connector labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 		};
 		/**
@@ -10785,7 +11084,7 @@ export type components = {
 			connector_type: string;
 			/** Components Resources Info */
 			components_resources_info: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ResourcesInfo"][];
 			};
 		};
 		/**
@@ -10892,7 +11191,7 @@ export type components = {
 			expiration_seconds?: number | null;
 			/** Service connector labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 		};
 		/**
@@ -11025,7 +11324,7 @@ export type components = {
 			} | null;
 			/** Service connector labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 		};
 		/**
@@ -11063,7 +11362,7 @@ export type components = {
 			};
 			/** The service labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** The status of the service. */
 			status?: {
@@ -11132,7 +11431,7 @@ export type components = {
 			service_type: components["schemas"]["ServiceType"];
 			/** The service labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** The current state of the service. */
 			state?: components["schemas"]["ServiceState"] | null;
@@ -11252,7 +11551,7 @@ export type components = {
 			health_check_url?: string | null;
 			/** The service labels. */
 			labels?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** The model version id linked to the service. */
 			model_version_id?: string | null;
@@ -11364,21 +11663,21 @@ export type components = {
 			 * @description The permissions granted to ZenML to access the cloud resources, as a dictionary grouping permissions by resource.
 			 */
 			permissions: {
-				[key: string]: unknown;
+				[key: string]: string[];
 			};
 			/**
 			 * The locations where the stack can be deployed.
 			 * @description The locations where the stack can be deployed, as a dictionary mapping location names to descriptions.
 			 */
 			locations: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * The locations where the Skypilot clusters can be deployed by default.
 			 * @description The locations where the Skypilot clusters can be deployed by default, as a dictionary mapping location names to descriptions.
 			 */
 			skypilot_default_regions: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 		};
 		/**
@@ -11408,11 +11707,11 @@ export type components = {
 			 * @description The mapping from component types to either UUIDs of existing components or request information for brand new components.
 			 */
 			components: {
-				[key: string]: unknown;
+				[key: string]: (string | components["schemas"]["ComponentInfo"])[];
 			};
 			/** Environment variables to set when running on this stack. */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** Secrets to set as environment variables when running on this stack. */
 			secrets?: string[] | null;
@@ -11479,7 +11778,7 @@ export type components = {
 		StackResponseMetadata: {
 			/** A mapping of stack component types to the actualinstances of components of this type. */
 			components: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ComponentResponse"][];
 			};
 			/**
 			 * The description of the stack
@@ -11493,7 +11792,7 @@ export type components = {
 			 * @default {}
 			 */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * Secrets to set as environment variables when running on this stack.
@@ -11528,11 +11827,11 @@ export type components = {
 			stack_spec_path?: string | null;
 			/** A mapping of stack component types to the actualinstances of components of this type. */
 			components?: {
-				[key: string]: unknown;
+				[key: string]: string[];
 			} | null;
 			/** Environment variables to set when running on this stack. */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			} | null;
 			/** The stack labels. */
 			labels?: {
@@ -11608,14 +11907,14 @@ export type components = {
 			 * @default {}
 			 */
 			settings?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BaseSettings"];
 			};
 			/**
 			 * Environment
 			 * @default {}
 			 */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * Secrets
@@ -11642,7 +11941,7 @@ export type components = {
 			 * @default {}
 			 */
 			substitutions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * @default {
@@ -11668,7 +11967,7 @@ export type components = {
 			 * @default {}
 			 */
 			outputs?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ArtifactConfiguration-Input"];
 			};
 			/** Name */
 			name: string;
@@ -11687,21 +11986,21 @@ export type components = {
 			 * @default {}
 			 */
 			external_input_artifacts?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ExternalArtifactConfiguration"];
 			};
 			/**
 			 * Model Artifacts Or Metadata
 			 * @default {}
 			 */
 			model_artifacts_or_metadata?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ModelVersionDataLazyLoader"];
 			};
 			/**
 			 * Client Lazy Loaders
 			 * @default {}
 			 */
 			client_lazy_loaders?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ClientLazyLoader"];
 			};
 		};
 		/**
@@ -11751,14 +12050,14 @@ export type components = {
 			 * @default {}
 			 */
 			settings?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["BaseSettings"];
 			};
 			/**
 			 * Environment
 			 * @default {}
 			 */
 			environment?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * Secrets
@@ -11785,7 +12084,7 @@ export type components = {
 			 * @default {}
 			 */
 			substitutions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/**
 			 * @default {
@@ -11811,7 +12110,7 @@ export type components = {
 			 * @default {}
 			 */
 			outputs?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ArtifactConfiguration-Output"];
 			};
 			/** Name */
 			name: string;
@@ -11830,21 +12129,124 @@ export type components = {
 			 * @default {}
 			 */
 			external_input_artifacts?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ExternalArtifactConfiguration"];
 			};
 			/**
 			 * Model Artifacts Or Metadata
 			 * @default {}
 			 */
 			model_artifacts_or_metadata?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ModelVersionDataLazyLoader"];
 			};
 			/**
 			 * Client Lazy Loaders
 			 * @default {}
 			 */
 			client_lazy_loaders?: {
+				[key: string]: components["schemas"]["ClientLazyLoader"];
+			};
+		};
+		/**
+		 * StepConfigurationUpdate
+		 * @description Class for step configuration updates.
+		 */
+		StepConfigurationUpdate: {
+			/**
+			 * Enable Cache
+			 * @description Whether to enable cache for the step.
+			 */
+			enable_cache?: boolean | null;
+			/**
+			 * Enable Artifact Metadata
+			 * @description Whether to store metadata for the output artifacts of the step.
+			 */
+			enable_artifact_metadata?: boolean | null;
+			/**
+			 * Enable Artifact Visualization
+			 * @description Whether to enable visualizations for the output artifacts of the step.
+			 */
+			enable_artifact_visualization?: boolean | null;
+			/**
+			 * Enable Step Logs
+			 * @description Whether to enable logs for the step.
+			 */
+			enable_step_logs?: boolean | null;
+			/**
+			 * Step Operator
+			 * @description The step operator to use for the step.
+			 */
+			step_operator?: boolean | string | null;
+			/**
+			 * Experiment Tracker
+			 * @description The experiment tracker to use for the step.
+			 */
+			experiment_tracker?: boolean | string | null;
+			/**
+			 * Parameters
+			 * @description Parameters for the step function.
+			 */
+			parameters?: {
 				[key: string]: unknown;
+			} | null;
+			/**
+			 * Settings
+			 * @description Settings for the step.
+			 */
+			settings?: {
+				[key: string]: components["schemas"]["BaseSettings"];
+			} | null;
+			/**
+			 * Environment
+			 * @description The environment for the step.
+			 */
+			environment?: {
+				[key: string]: string;
+			} | null;
+			/**
+			 * Secrets
+			 * @description The secrets for the step.
+			 */
+			secrets?: string[] | null;
+			/**
+			 * Extra
+			 * @description Extra configurations for the step.
+			 */
+			extra?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The failure hook source for the step. */
+			failure_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The success hook source for the step. */
+			success_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The model to use for the step. */
+			model?: components["schemas"]["Model"] | null;
+			/** @description The retry configuration for the step. */
+			retry?: components["schemas"]["StepRetryConfig"] | null;
+			/**
+			 * Substitutions
+			 * @description The substitutions for the step.
+			 */
+			substitutions?: {
+				[key: string]: string;
+			} | null;
+			/** @description The cache policy for the step. */
+			cache_policy?: components["schemas"]["CachePolicy-Input"] | null;
+			/** @description The step runtime. If not configured, the step will run inline unless a step operator or docker/resource settings are configured. This is only applicable for dynamic pipelines. */
+			runtime?: components["schemas"]["StepRuntime"] | null;
+			/**
+			 * Heartbeat Healthy Threshold
+			 * @description The amount of time (in minutes) that a running step has not received heartbeat and is considered healthy. By default, set to 30 minutes.
+			 * @default 30
+			 */
+			heartbeat_healthy_threshold?: number;
+			/** @description The group information for the step. */
+			group?: components["schemas"]["GroupInfo"] | null;
+			/**
+			 * Outputs
+			 * @default {}
+			 */
+			outputs?: {
+				[key: string]: components["schemas"]["PartialArtifactConfiguration"];
 			};
 		};
 		/**
@@ -11895,7 +12297,12 @@ export type components = {
 		 * @description All possible types of a step run input artifact.
 		 * @enum {string}
 		 */
-		StepRunInputArtifactType: "step_output" | "manual" | "external" | "lazy";
+		StepRunInputArtifactType:
+			| "step_output"
+			| "manual"
+			| "external"
+			| "lazy"
+			| "override";
 		/**
 		 * StepRunInputResponse
 		 * @description Response model for step run inputs.
@@ -11976,11 +12383,11 @@ export type components = {
 			parent_step_ids?: string[];
 			/** The IDs of the input artifact versions of the step run. */
 			inputs?: {
-				[key: string]: unknown;
+				[key: string]: string[];
 			};
 			/** The IDs of the output artifact versions of the step run. */
 			outputs?: {
-				[key: string]: unknown;
+				[key: string]: string[];
 			};
 			/** Logs associated with this step run. */
 			logs?: string | components["schemas"]["LogsRequest"] | null;
@@ -12056,7 +12463,7 @@ export type components = {
 			 * @default {}
 			 */
 			substitutions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/** The applied heartbeat healthiness threshold */
 			heartbeat_threshold?: number | null;
@@ -12101,7 +12508,15 @@ export type components = {
 			 * @default {}
 			 */
 			run_metadata?: {
-				[key: string]: unknown;
+				[key: string]:
+					| string
+					| number
+					| boolean
+					| {
+							[key: string]: unknown;
+					  }
+					| unknown[]
+					| unknown[];
 			};
 		};
 		/**
@@ -12116,11 +12531,11 @@ export type components = {
 			model_version?: components["schemas"]["ModelVersionResponse"] | null;
 			/** The input artifact versions of the step run. */
 			inputs?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["StepRunInputResponse"][];
 			};
 			/** The output artifact versions of the step run. */
 			outputs?: {
-				[key: string]: unknown;
+				[key: string]: components["schemas"]["ArtifactVersionResponse"][];
 			};
 		} & {
 			[key: string]: unknown;
@@ -12135,14 +12550,14 @@ export type components = {
 			 * @default {}
 			 */
 			outputs?: {
-				[key: string]: unknown;
+				[key: string]: string[];
 			};
 			/**
 			 * The IDs of artifact versions that were loaded by this step run.
 			 * @default {}
 			 */
 			loaded_artifact_versions?: {
-				[key: string]: unknown;
+				[key: string]: string;
 			};
 			/** The status of the step. */
 			status?: components["schemas"]["ExecutionStatus"] | null;
@@ -12174,7 +12589,9 @@ export type components = {
 			 * @default {}
 			 */
 			inputs?: {
-				[key: string]: unknown;
+				[key: string]:
+					| components["schemas"]["InputSpec"]
+					| components["schemas"]["InputSpec"][];
 			};
 			/** Invocation Id */
 			invocation_id: string;
@@ -12201,7 +12618,9 @@ export type components = {
 			 * @default {}
 			 */
 			inputs?: {
-				[key: string]: unknown;
+				[key: string]:
+					| components["schemas"]["InputSpec"]
+					| components["schemas"]["InputSpec"][];
 			};
 			/** Invocation Id */
 			invocation_id: string;
@@ -12444,8 +12863,16 @@ export type components = {
 		 */
 		TriggerResponseResources: {
 			user?: components["schemas"]["UserResponse"] | null;
-			/** Snapshots */
-			snapshots?: components["schemas"]["PipelineSnapshotResponse"][] | null;
+			/**
+			 * Snapshots
+			 * @default []
+			 */
+			snapshots?: components["schemas"]["PipelineSnapshotResponse"][];
+			/**
+			 * Executable Snapshots
+			 * @default []
+			 */
+			executable_snapshots?: components["schemas"]["PipelineSnapshotResponse"][];
 			latest_run?: components["schemas"]["PipelineRunResponse"] | null;
 		} & {
 			[key: string]: unknown;
@@ -18840,6 +19267,7 @@ export interface operations {
 				id?: string | null;
 				created?: string | null;
 				updated?: string | null;
+				run_metadata?: string[] | null;
 				scope_user?: string | null;
 				user?: string | null;
 				project?: string | null;
@@ -19494,7 +19922,7 @@ export interface operations {
 				catchup?: boolean | null;
 				name?: string | null;
 				run_once_start_time?: string | null;
-				is_archived?: boolean;
+				is_archived?: boolean | null;
 			};
 			header?: never;
 			path?: never;
@@ -21194,7 +21622,7 @@ export interface operations {
 		requestBody?: {
 			content: {
 				"application/json": {
-					[key: string]: unknown;
+					[key: string]: string | null;
 				} | null;
 			};
 		};
@@ -21335,7 +21763,7 @@ export interface operations {
 		requestBody?: {
 			content: {
 				"application/json": {
-					[key: string]: unknown;
+					[key: string]: string | null;
 				} | null;
 			};
 		};
@@ -25865,7 +26293,7 @@ export interface operations {
 				catchup?: boolean | null;
 				name?: string | null;
 				run_once_start_time?: string | null;
-				is_archived?: boolean;
+				is_archived?: boolean | null;
 			};
 			header?: never;
 			path: {
@@ -26049,7 +26477,7 @@ export interface operations {
 		requestBody?: {
 			content: {
 				"application/json": {
-					[key: string]: unknown;
+					[key: string]: string | null;
 				} | null;
 			};
 		};
@@ -26173,7 +26601,7 @@ export interface operations {
 		requestBody?: {
 			content: {
 				"application/json": {
-					[key: string]: unknown;
+					[key: string]: string | null;
 				} | null;
 			};
 		};
@@ -27137,7 +27565,9 @@ export interface operations {
 	};
 	attach_trigger_to_snapshot_api_v1_triggers__trigger_id__pipeline_snapshots__snapshot_id__put: {
 		parameters: {
-			query?: never;
+			query?: {
+				allow_replace?: boolean;
+			};
 			header?: never;
 			path: {
 				trigger_id: string;
@@ -27145,7 +27575,13 @@ export interface operations {
 			};
 			cookie?: never;
 		};
-		requestBody?: never;
+		requestBody?: {
+			content: {
+				"application/json":
+					| components["schemas"]["PipelineRunConfiguration"]
+					| null;
+			};
+		};
 		responses: {
 			/** @description Successful Response */
 			200: {
