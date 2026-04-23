@@ -1,22 +1,16 @@
-import {
-	PageHeader,
-	PageHeaderBody,
-	PageHeaderContent,
-} from "@/shared/ui/PageHeader";
-import { Stat } from "@/modules/flows/ui/Stat";
-import { getCanShowDuration } from "@/shared/business-logic/duration";
 import { useScrollHighlight } from "@/shared/business-logic/use-scroll-highlight";
-import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
-import type { Execution } from "../domain/execution";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
 import type { TimelineEntry } from "../domain/waiting-block";
 import { CheckpointThread } from "./traces/CheckpointThread";
 import { ExecutionTimelineBar } from "./traces/ExecutionTimelineBar";
 import { WaitInputSection } from "./WaitInputSection";
+import {
+	ToggleLeftPanelButton,
+	ToggleRightPanelButton,
+} from "@/shared/ui/ThreePanelLayoutContext";
 
 type ExecutionDetailsProps = {
-	execution: Execution;
 	timelineEntries: TimelineEntry[];
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
@@ -25,19 +19,12 @@ type ExecutionDetailsProps = {
 };
 
 export function ExecutionDetails({
-	execution,
 	timelineEntries,
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
 	resumeHint,
 }: ExecutionDetailsProps) {
-	const canShowDuration = getCanShowDuration({
-		status: execution.status,
-		startTime: execution.startTime,
-		endTime: execution.endTime,
-	});
-
 	const scrollHighlight = useScrollHighlight();
 
 	const handleTimelineSelect = (entry: TimelineEntry) => {
@@ -50,26 +37,19 @@ export function ExecutionDetails({
 
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
-			<PageHeader>
-				<PageHeaderContent>
-					<PageHeaderBody>
-						{canShowDuration && (
-							<Stat
-								label="Duration"
-								value={
-									<LiveDurationMs
-										status={execution.status}
-										startTime={execution.startTime}
-										endTime={execution.endTime}
-									/>
-								}
-								valueColor="default"
-								valueSize="sm"
-							/>
-						)}
-					</PageHeaderBody>
-				</PageHeaderContent>
-			</PageHeader>
+			<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
+				<ToggleLeftPanelButton
+					ariaLabel={(open) =>
+						open ? "Close executions list" : "Open executions list"
+					}
+				/>
+				<div className="flex-1" />
+				<ToggleRightPanelButton
+					ariaLabel={(open) =>
+						open ? "Close checkpoint details" : "Open checkpoint details"
+					}
+				/>
+			</div>
 			<ExecutionTimelineBar
 				timelineEntries={timelineEntries}
 				onSelect={handleTimelineSelect}

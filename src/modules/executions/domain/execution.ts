@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
+import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 
@@ -39,10 +40,12 @@ export type Execution = {
 	startTime?: Date;
 	endTime?: Date;
 	durationMs?: number;
+	logSources: string[];
 	activeWaitConditionEntry?: {
 		id?: string;
 		name?: string;
 	};
+	snapshotId?: string;
 };
 
 export function executionFromApiToDomain(
@@ -72,6 +75,7 @@ export function executionFromApiToDomain(
 				? parseBackendTimestamp(run.metadata.end_time).getTime() -
 					parseBackendTimestamp(run.metadata.start_time).getTime()
 				: undefined,
+		logSources: extractLogSources(run.resources?.log_collection),
 		activeWaitConditionEntry:
 			run.resources?.active_wait_condition?.id ||
 			run.resources?.active_wait_condition?.name
@@ -80,5 +84,6 @@ export function executionFromApiToDomain(
 						name: run.resources?.active_wait_condition?.name,
 					}
 				: undefined,
+		snapshotId: run.resources?.source_snapshot?.id,
 	};
 }

@@ -1,5 +1,6 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 import {
 	extractInputArtifactEntries,
@@ -20,6 +21,8 @@ export type Checkpoint = {
 	costUsd?: number;
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
+	logSources: string[];
+	runMetadata?: Record<string, unknown>;
 };
 
 export function checkpointFromApiToDomain(
@@ -46,6 +49,8 @@ export function checkpointFromApiToDomain(
 		costUsd:
 			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
+		logSources: extractLogSources(checkpoint.resources?.log_collection),
+		runMetadata: checkpoint.metadata?.run_metadata,
 	};
 }
 

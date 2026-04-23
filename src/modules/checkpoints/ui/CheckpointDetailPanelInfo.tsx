@@ -1,4 +1,5 @@
 import { getCanShowDuration } from "@/shared/business-logic/duration";
+import { JsonTree } from "@/modules/executions/ui/traces/JsonTree";
 import { DetailItem } from "@/shared/ui/detail-list/DetailItem";
 import { DetailList } from "@/shared/ui/detail-list/DetailList";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
@@ -33,7 +34,6 @@ export function CheckpointDetailPanelInfo({
 						<LiveDurationMs
 							status={checkpoint.status}
 							startTime={checkpoint.startTime}
-							endTime={checkpoint.endTime}
 							durationMs={checkpoint.durationMs}
 						/>
 					</DetailItem>
@@ -49,6 +49,15 @@ export function CheckpointDetailPanelInfo({
 					</>
 				)}
 			</DetailList>
+			{checkpoint.runMetadata &&
+				Object.keys(checkpoint.runMetadata).length > 0 && (
+					<div className="space-y-2">
+						<div className="text-muted-foreground text-[10px] font-semibold tracking-wide uppercase">
+							Metadata
+						</div>
+						<JsonTree data={checkpoint.runMetadata} />
+					</div>
+				)}
 		</div>
 	);
 }

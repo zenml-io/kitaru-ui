@@ -4,8 +4,9 @@ import {
 	flowTabs,
 	type FlowTab,
 } from "@/modules/flows/domain/flow";
+import { FlowInvocationContainer } from "@/modules/deployments/feature/FlowInvocationContainer";
 import { FlowContextBarContainer } from "@/modules/flows/feature/FlowContextBarContainer";
-import { FlowOverviewContainer } from "@/modules/flows/feature/FlowOverviewContainer";
+import { FlowExecutionsContainer } from "@/modules/flows/feature/FlowExecutionsContainer";
 import { memoryQueries } from "@/modules/memory/business-logic/memory-queries";
 import { FlowMemoryContainer } from "@/modules/memory/feature/FlowMemoryContainer";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
@@ -17,7 +18,8 @@ import { z } from "zod";
 const tabSchema = z.enum(flowTabs);
 
 const TAB_COMPONENTS: Record<FlowTab, React.ComponentType> = {
-	overview: FlowOverviewContainer,
+	overview: FlowInvocationContainer,
+	executions: FlowExecutionsContainer,
 	memory: FlowMemoryContainer,
 };
 

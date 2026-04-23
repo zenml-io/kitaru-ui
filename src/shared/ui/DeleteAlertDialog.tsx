@@ -71,7 +71,7 @@ export function DeleteAlertDialog({
 							autoComplete="off"
 						/>
 					</Field>
-					<AlertDialogFooter className="mt-6">
+					<AlertDialogFooter className="mt-6 sm:justify-between">
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
 							type="submit"

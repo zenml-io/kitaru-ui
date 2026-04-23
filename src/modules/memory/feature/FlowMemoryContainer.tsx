@@ -1,14 +1,17 @@
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useParams } from "@tanstack/react-router";
-import { ErrorBoundary } from "react-error-boundary";
 import { useFlow } from "@/modules/flows/business-logic/use-flow";
 import { useFlowMemories } from "@/modules/memory/business-logic/use-flow-memories";
 import { useMemoryHistory } from "@/modules/memory/business-logic/use-memory-history";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
+import {
+	ThreePanelLayoutProvider,
+	ToggleLeftPanelButton,
+	ToggleRightPanelButton,
+} from "@/shared/ui/ThreePanelLayoutContext";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
-import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
 import { deriveScopesFromEntries } from "../business-logic/memory-operations";
 import type { MemoryEntry, MemoryScopeInfo } from "../domain/memory";
 import { MemorySidebar } from "../ui/MemorySidebar";
@@ -122,16 +125,9 @@ export function FlowMemoryContainer() {
 	const preview = detailEntry?.isDeleted ? (
 		<MemoryEmptyState variant="no-preview" />
 	) : detailEntry ? (
-		<ErrorBoundary
-			key={detailEntry.artifactId}
-			fallback={<MemoryEmptyState variant="no-preview" />}
-		>
-			<Suspense fallback={<VisualizationSkeleton />}>
-				<ArtifactVisualizationContainer
-					artifactVersionId={detailEntry.artifactId}
-				/>
-			</Suspense>
-		</ErrorBoundary>
+		<ArtifactVisualizationContainer
+			artifactVersionId={detailEntry.artifactId}
+		/>
 	) : null;
 
 	const previewActions = detailEntry ? (
@@ -141,52 +137,66 @@ export function FlowMemoryContainer() {
 	) : null;
 
 	return (
-		<ThreePanelLayout
-			left={
-				<MemorySidebar
-					scopes={memoryScopesData}
-					activeScope={activeScope}
-					flowId={flowId}
-					onScopeChange={handleScopeChange}
-					entries={memoryEntriesData}
-					selectedKey={selectedKey}
-					onSelectKey={handleSelectKey}
-					isEntriesPending={isEntriesPending}
-				/>
-			}
-			center={
-				<MemoryCenterPanel
-					isPending={isEntriesPending}
-					isError={isEntriesError}
-					error={entriesError}
-					isEmpty={memoryEntriesData.length === 0}
-					isFlowScope={isFlowScope}
-					scopeName={activeScope.label ?? activeScope.scope}
-					detailEntry={detailEntry}
-					preview={preview}
-					previewActions={previewActions}
-				/>
-			}
-			right={
-				<MemoryHistorySidePanel
-					selectedKey={selectedKey}
-					isPending={isHistoryPending}
-					history={enrichedMemoryHistoryData}
-					selectedVersion={selectedVersion}
-					onSelectVersion={setSelectedVersion}
-				/>
-			}
-			centerHeader={
-				<MemoryToolbar
-					selectedKey={selectedKey}
-					selectedEntry={detailEntry}
-					selectedVersion={selectedVersion}
-					history={enrichedMemoryHistoryData}
-					onSelectVersion={setSelectedVersion}
-					isRefreshing={isRefreshing}
-					onRefresh={refresh}
-				/>
-			}
-		/>
+		<ThreePanelLayoutProvider>
+			<ThreePanelLayout
+				left={
+					<MemorySidebar
+						scopes={memoryScopesData}
+						activeScope={activeScope}
+						flowId={flowId}
+						onScopeChange={handleScopeChange}
+						entries={memoryEntriesData}
+						selectedKey={selectedKey}
+						onSelectKey={handleSelectKey}
+						isEntriesPending={isEntriesPending}
+					/>
+				}
+				center={
+					<>
+						<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
+							<ToggleLeftPanelButton
+								ariaLabel={(open) =>
+									open ? "Close memory scopes" : "Open memory scopes"
+								}
+							/>
+							<MemoryToolbar
+								selectedKey={selectedKey}
+								selectedEntry={detailEntry}
+								selectedVersion={selectedVersion}
+								history={enrichedMemoryHistoryData}
+								onSelectVersion={setSelectedVersion}
+								isRefreshing={isRefreshing}
+								onRefresh={refresh}
+							/>
+							<ToggleRightPanelButton
+								ariaLabel={(open) =>
+									open ? "Close version history" : "Open version history"
+								}
+							/>
+						</div>
+						<MemoryCenterPanel
+							isPending={isEntriesPending}
+							isError={isEntriesError}
+							error={entriesError}
+							isEmpty={memoryEntriesData.length === 0}
+							isFlowScope={isFlowScope}
+							scopeName={activeScope.label ?? activeScope.scope}
+							detailEntry={detailEntry}
+							preview={preview}
+							previewActions={previewActions}
+						/>
+					</>
+				}
+				right={
+					<MemoryHistorySidePanel
+						selectedKey={selectedKey}
+						isPending={isHistoryPending}
+						history={enrichedMemoryHistoryData}
+						selectedVersion={selectedVersion}
+						onSelectVersion={setSelectedVersion}
+					/>
+				}
+			/>
+		</ThreePanelLayoutProvider>
 	);
 }

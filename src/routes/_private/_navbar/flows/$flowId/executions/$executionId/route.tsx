@@ -9,11 +9,28 @@ import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
 
+type ExecutionSearch = {
+	tab?: "logs";
+	scope?: string;
+};
+
+function validateExecutionSearch(
+	search: Record<string, unknown>
+): ExecutionSearch {
+	const out: ExecutionSearch = {};
+	if (search.tab === "logs") out.tab = "logs";
+	if (typeof search.scope === "string" && search.scope.length > 0) {
+		out.scope = search.scope;
+	}
+	return out;
+}
+
 export const Route = createFileRoute(
 	"/_private/_navbar/flows/$flowId/executions/$executionId"
 )({
 	component: ExecutionContainer,
 	pendingComponent: PageSpinner,
+	validateSearch: validateExecutionSearch,
 
 	loader: async ({ context, params }) => {
 		const [, execution] = await Promise.all([

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
-import { codeToHtml } from "shiki";
+import { createHighlighterCore, type HighlighterCore } from "shiki/core";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import {
 	kitaruLight,
 	kitaruDark,
@@ -13,6 +14,45 @@ interface CodeBlockProps {
 	/** wrap long lines instead of horizontal scroll (use for JSON, text) */
 	wrap?: boolean;
 	className?: string;
+}
+
+const SUPPORTED_LANGS = [
+	"json",
+	"html",
+	"python",
+	"sql",
+	"bash",
+	"yaml",
+	"csv",
+	"javascript",
+] as const;
+
+type SupportedLang = (typeof SUPPORTED_LANGS)[number];
+
+function isSupportedLang(lang: string): lang is SupportedLang {
+	return (SUPPORTED_LANGS as readonly string[]).includes(lang);
+}
+
+let highlighterPromise: Promise<HighlighterCore> | null = null;
+
+function getHighlighter() {
+	if (!highlighterPromise) {
+		highlighterPromise = createHighlighterCore({
+			themes: [kitaruLight, kitaruDark],
+			langs: [
+				import("shiki/langs/json.mjs"),
+				import("shiki/langs/html.mjs"),
+				import("shiki/langs/python.mjs"),
+				import("shiki/langs/sql.mjs"),
+				import("shiki/langs/bash.mjs"),
+				import("shiki/langs/yaml.mjs"),
+				import("shiki/langs/csv.mjs"),
+				import("shiki/langs/javascript.mjs"),
+			],
+			engine: createJavaScriptRegexEngine(),
+		});
+	}
+	return highlighterPromise;
 }
 
 function useIsDark() {
@@ -38,24 +78,35 @@ export function CodeBlock({
 	wrap,
 	className,
 }: CodeBlockProps) {
-	const [html, setHtml] = useState<string | null>(null);
+	const [rendered, setRendered] = useState<{
+		key: string;
+		html: string;
+	} | null>(null);
 	const isDark = useIsDark();
+	const supported = isSupportedLang(language);
+	const renderKey = `${language}::${isDark ? "dark" : "light"}::${code}`;
+	const html = rendered?.key === renderKey ? rendered.html : null;
 
 	useEffect(() => {
+		if (!supported) return;
 		let cancelled = false;
-		const theme = isDark ? kitaruDark : kitaruLight;
-		codeToHtml(code, { lang: language, theme })
-			.then((result) => {
-				if (!cancelled) setHtml(result);
+		const themeName = isDark ? "kitaru-dark" : "kitaru-light";
+		getHighlighter()
+			.then((highlighter) => {
+				if (cancelled) return;
+				const next = highlighter.codeToHtml(code, {
+					lang: language,
+					theme: themeName,
+				});
+				setRendered({ key: renderKey, html: next });
 			})
 			.catch((err) => {
 				console.error("[CodeBlock] shiki error:", err, "lang:", language);
-				if (!cancelled) setHtml(null);
 			});
 		return () => {
 			cancelled = true;
 		};
-	}, [code, language, isDark]);
+	}, [code, language, isDark, supported, renderKey]);
 
 	if (!html) {
 		return (

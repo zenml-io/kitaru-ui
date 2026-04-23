@@ -1,10 +1,7 @@
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { Dialog } from "@/shared/ui/dialog";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { FullscreenArtifactButtonTrigger } from "../ui/FullscreenArtifactButtonTrigger";
 import { FullscreenArtifactDialogContent } from "../ui/FullscreenArtifactDialogContent";
-import { VisualizationSkeleton } from "../ui/VisualizationSkeleton";
 import { ArtifactVisualizationContainer } from "./ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "./DownloadArtifactButtonContainer";
 
@@ -28,13 +25,11 @@ export function FullscreenArtifactButtonContainer({
 					/>
 				}
 			>
-				<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-					<Suspense fallback={<VisualizationSkeleton />}>
-						<ArtifactVisualizationContainer
-							artifactVersionId={artifactVersionId}
-						/>
-					</Suspense>
-				</ErrorBoundary>
+				<ViewerFrameFullHeight>
+					<ArtifactVisualizationContainer
+						artifactVersionId={artifactVersionId}
+					/>
+				</ViewerFrameFullHeight>
 			</FullscreenArtifactDialogContent>
 		</Dialog>
 	);

@@ -1,5 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { User, Users } from "lucide-react";
+import { KeyRound, ShieldCheck, User, Users } from "lucide-react";
 
 export function SettingsNavigation() {
 	const { buildLocation } = useRouter();
@@ -14,6 +14,16 @@ export function SettingsNavigation() {
 			label: "Members",
 			to: buildLocation({ to: "/settings/members" }).pathname,
 			icon: Users,
+		},
+		{
+			label: "Secrets",
+			to: buildLocation({ to: "/settings/secrets" }).pathname,
+			icon: KeyRound,
+		},
+		{
+			label: "API keys",
+			to: buildLocation({ to: "/settings/api-keys" }).pathname,
+			icon: ShieldCheck,
 		},
 	];
 
