@@ -8,7 +8,7 @@ import { apiKeyQueryKeys } from "../business-logic/api-key-queries";
 import { getErrorMessage } from "../business-logic/get-error-message";
 import { useUpdateApiKey } from "../business-logic/use-update-api-key";
 import type { ApiKey } from "../domain/api-key";
-import { DeactivateApiKeyAlertDialogContainer } from "./DeactivateApiKeyAlertDialogContainer";
+import { DeactivateApiKeyAlertDialog } from "../ui/DeactivateApiKeyAlertDialog";
 
 type ApiKeyActiveToggleContainerProps = {
 	serviceAccountId: string;
@@ -62,7 +62,7 @@ export function ApiKeyActiveToggleContainer({
 				onCheckedChange={handleCheckedChange}
 			/>
 			{showDeactivate && (
-				<DeactivateApiKeyAlertDialogContainer
+				<DeactivateApiKeyAlertDialog
 					apiKey={apiKey}
 					open={showDeactivate}
 					onOpenChange={setShowDeactivate}

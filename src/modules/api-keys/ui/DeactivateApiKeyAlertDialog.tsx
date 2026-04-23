@@ -11,7 +11,7 @@ import {
 
 import type { ApiKey } from "../domain/api-key";
 
-type DeactivateApiKeyAlertDialogContainerProps = {
+type DeactivateApiKeyAlertDialogProps = {
 	apiKey: ApiKey;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -19,13 +19,13 @@ type DeactivateApiKeyAlertDialogContainerProps = {
 	isPending?: boolean;
 };
 
-export function DeactivateApiKeyAlertDialogContainer({
+export function DeactivateApiKeyAlertDialog({
 	apiKey,
 	open,
 	onOpenChange,
 	onConfirm,
 	isPending,
-}: DeactivateApiKeyAlertDialogContainerProps) {
+}: DeactivateApiKeyAlertDialogProps) {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
