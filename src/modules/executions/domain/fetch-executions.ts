@@ -9,6 +9,7 @@ export const DEFAULT_EXECUTIONS_POLLING_INTERVAL = 5000;
 
 export type FetchExecutionsOptions = {
 	hydrate?: boolean;
+	snapshotId?: string;
 };
 
 export async function fetchExecutions(
@@ -21,6 +22,7 @@ export async function fetchExecutions(
 				page: DEFAULT_PAGE,
 				size: MAX_PAGE_SIZE,
 				pipeline_id: flowId,
+				source_snapshot_id: options?.snapshotId,
 				hydrate: options?.hydrate,
 			},
 		},
