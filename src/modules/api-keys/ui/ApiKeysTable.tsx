@@ -38,9 +38,7 @@ export function ApiKeysTable({
 	renderActions,
 	renderActiveCell,
 }: ApiKeysTableProps) {
-	const [sorting, setSorting] = useState<SortingState>([
-		{ id: "createdAt", desc: true },
-	]);
+	const [sorting, setSorting] = useState<SortingState>([]);
 
 	const columns = createColumns({ renderActions, renderActiveCell });
 
@@ -73,23 +71,15 @@ export function ApiKeysTable({
 				))}
 			</TableHeader>
 			<TableBody>
-				{table.getRowModel().rows.length ? (
-					table.getRowModel().rows.map((row) => (
-						<TableRow key={row.id}>
-							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</TableCell>
-							))}
-						</TableRow>
-					))
-				) : (
-					<TableRow>
-						<TableCell colSpan={columns.length} className="h-24 text-center">
-							No API keys yet.
-						</TableCell>
+				{table.getRowModel().rows.map((row) => (
+					<TableRow key={row.id}>
+						{row.getVisibleCells().map((cell) => (
+							<TableCell key={cell.id}>
+								{flexRender(cell.column.columnDef.cell, cell.getContext())}
+							</TableCell>
+						))}
 					</TableRow>
-				)}
+				))}
 			</TableBody>
 		</Table>
 	);

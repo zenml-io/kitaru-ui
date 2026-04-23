@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -16,6 +15,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@/shared/ui/input";
 import { Switch } from "@/shared/ui/switch";
+import { WarningBanner } from "@/shared/ui/WarningBanner";
 
 import { getErrorMessage } from "../business-logic/get-error-message";
 import {
@@ -89,7 +89,7 @@ export function RotateApiKeyDialogContainer({
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>
 						{revealKey ? "API key rotated" : `Rotate "${apiKey.name}"`}
@@ -107,14 +107,13 @@ export function RotateApiKeyDialogContainer({
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="flex flex-col gap-6"
 					>
-						<div className="bg-warning/10 text-warning-foreground border-warning/40 flex items-start gap-2 rounded-md border p-3 text-sm">
-							<TriangleAlert className="text-warning mt-0.5 size-4 shrink-0" />
+						<WarningBanner>
 							<p>
 								Your current API key will be deactivated. Any processes or
 								integrations using the old key will no longer function once the
 								new key is generated.
 							</p>
-						</div>
+						</WarningBanner>
 						<Controller
 							control={form.control}
 							name="enableRetention"
