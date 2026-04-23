@@ -29,11 +29,17 @@ function exampleFromSchema(
 }
 
 export function FlowInvocationContainer() {
-	const { flow, selected } = useSelectedVersion();
+	const { flowId, flow, realDeployments, selected } = useSelectedVersion();
 
 	if (!selected) return <InvocationEmptyState />;
 	if (isLocalDeployment(selected))
-		return <LocalOverviewCard flowName={flow.name} />;
+		return (
+			<LocalOverviewCard
+				flowName={flow.name}
+				flowId={flowId}
+				hasDeployments={realDeployments.length > 0}
+			/>
+		);
 
 	const origin = env.VITE_API_BASE_URL || window.location.origin;
 	const url = `${origin}/api/v1/pipeline_snapshots/${selected.id}/runs`;
