@@ -1,11 +1,12 @@
 import type { components } from "@/shared/api/openapi";
 
 type ComponentResponse = components["schemas"]["ComponentResponse"];
+export type StackComponentType = components["schemas"]["StackComponentType"];
 
 export type StackComponent = {
 	id: string;
 	name: string;
-	type: string;
+	type: StackComponentType;
 	flavorName: string;
 	integration?: string;
 	logoUrl?: string;
