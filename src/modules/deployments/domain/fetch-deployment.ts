@@ -12,7 +12,7 @@ export async function fetchDeployment(snapshotId: string): Promise<Deployment> {
 		{
 			params: {
 				path: { snapshot_id: snapshotId },
-				query: { hydrate: true, include_config_schema: true },
+				query: { hydrate: true },
 			},
 		}
 	);
