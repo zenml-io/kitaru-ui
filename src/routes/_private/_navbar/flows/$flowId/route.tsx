@@ -1,13 +1,38 @@
+import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
+import { DeploymentHeaderContainer } from "@/modules/deployments/feature/DeploymentHeaderContainer";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Outlet,
+	type SearchSchemaInput,
+} from "@tanstack/react-router";
+import { z } from "zod";
+
+const flowSearchSchema = z.object({
+	version: z.coerce.number().int().positive().optional(),
+});
+
+type FlowSearchSchemaInput = SearchSchemaInput & { version?: number };
+
+function FlowRoute() {
+	return (
+		<>
+			<DeploymentHeaderContainer />
+			<Outlet />
+		</>
+	);
+}
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId")({
-	component: () => <Outlet />,
+	validateSearch: (search: FlowSearchSchemaInput) =>
+		flowSearchSchema.parse(search),
+	component: FlowRoute,
 	loader: async ({ context, params }) => {
 		const flow = await ensureQueryDataOr404(
 			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
 		);
+		context.queryClient.ensureQueryData(deploymentsQueries.list(params.flowId));
 
 		return {
 			flowName: flow.name,

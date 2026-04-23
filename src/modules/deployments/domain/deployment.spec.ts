@@ -84,7 +84,7 @@ describe("deploymentFromApiToDomain", () => {
 		expect(result?.createdAt).toEqual(new Date("2026-04-22T10:00:00Z"));
 	});
 
-	it("maps tags with exclusive flag preserved", () => {
+	it("decodes kitaru tag names and drops marker + non-kitaru tags", () => {
 		const snapshot = mkSnapshot({
 			resources: {
 				pipeline: {
@@ -98,8 +98,26 @@ describe("deploymentFromApiToDomain", () => {
 				},
 				tags: [
 					{
+						id: "tag-marker",
+						name: "kitaru:deployment",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: false,
+						},
+					},
+					{
 						id: "tag-default",
-						name: "default",
+						name: "kitaru:deployment:tag:default:exclusive",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: true,
+						},
+					},
+					{
+						id: "tag-canary",
+						name: "kitaru:deployment:tag:canary:exclusive",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -108,7 +126,16 @@ describe("deploymentFromApiToDomain", () => {
 					},
 					{
 						id: "tag-beta",
-						name: "beta",
+						name: "kitaru:deployment:tag:beta:shared",
+						body: {
+							created: "2026-04-22T10:00:00Z",
+							updated: "2026-04-22T10:00:00Z",
+							exclusive: false,
+						},
+					},
+					{
+						id: "tag-foreign",
+						name: "some-zenml-project-tag",
 						body: {
 							created: "2026-04-22T10:00:00Z",
 							updated: "2026-04-22T10:00:00Z",
@@ -121,8 +148,9 @@ describe("deploymentFromApiToDomain", () => {
 		});
 		const result = deploymentFromApiToDomain(snapshot);
 		expect(result?.tags).toEqual([
-			{ id: "tag-default", name: "default", exclusive: true, color: undefined },
-			{ id: "tag-beta", name: "beta", exclusive: false, color: undefined },
+			{ id: "tag-default", name: "default", kind: "default", color: undefined },
+			{ id: "tag-canary", name: "canary", kind: "exclusive", color: undefined },
+			{ id: "tag-beta", name: "beta", kind: "general", color: undefined },
 		]);
 	});
 
@@ -161,6 +189,7 @@ describe("deploymentFromApiToDomain", () => {
 			} as any,
 		});
 		const result = deploymentFromApiToDomain(snapshot);
+		expect(result?.stackId).toBe("stack-1");
 		expect(result?.stackName).toBe("prod-stack");
 		expect(result?.latestRunId).toBe("run-99");
 		expect(result?.latestRunStatus).toBe("completed");

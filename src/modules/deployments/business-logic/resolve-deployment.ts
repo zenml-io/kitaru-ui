@@ -19,8 +19,23 @@ export function resolveDeploymentByExclusiveTag(
 	tagName: string
 ): Deployment | undefined {
 	return deployments.find((d) =>
-		d.tags.some((t) => t.name === tagName && t.exclusive)
+		d.tags.some(
+			(t) =>
+				t.name === tagName && (t.kind === "exclusive" || t.kind === "default")
+		)
 	);
+}
+
+export function resolveSelectedDeployment(
+	deployments: Deployment[],
+	version: number | undefined
+): Deployment | undefined {
+	if (deployments.length === 0) return undefined;
+	if (version !== undefined) {
+		const byVersion = resolveDeploymentByVersion(deployments, version);
+		if (byVersion) return byVersion;
+	}
+	return resolveDefaultDeployment(deployments) ?? deployments[0];
 }
 
 export function resolveDeploymentForExecution(
