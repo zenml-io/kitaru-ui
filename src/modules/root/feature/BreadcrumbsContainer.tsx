@@ -1,3 +1,4 @@
+import { DeploymentVersionSwitcherContainer } from "@/modules/deployments/feature/DeploymentVersionSwitcherContainer";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -8,6 +9,8 @@ import {
 } from "@/shared/ui/breadcrumb";
 import { isMatch, Link, useMatches } from "@tanstack/react-router";
 import { Fragment } from "react";
+
+const FLOW_DETAIL_ROUTE_ID = "/_private/_navbar/flows/$flowId";
 
 export function BreadcrumbsContainer() {
 	const matches = useMatches();
@@ -36,6 +39,9 @@ export function BreadcrumbsContainer() {
 								<BreadcrumbLink render={<Link to={match.fullPath} />}>
 									{match.loaderData?.crumb.label}
 								</BreadcrumbLink>
+							)}
+							{match.routeId === FLOW_DETAIL_ROUTE_ID && (
+								<DeploymentVersionSwitcherContainer />
 							)}
 						</BreadcrumbItem>
 						{index < matchesWithCrumbs.length - 1 ? (
