@@ -54,11 +54,9 @@ export function FlowExecutionsContainer() {
 			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
 			: executionsData;
 
-	const versionLabel = isLocal
-		? "local"
-		: selected
-			? `v${selected.versionNumber}`
-			: "";
+	let versionLabel = "";
+	if (isLocal) versionLabel = "local";
+	else if (selected) versionLabel = `v${selected.versionNumber}`;
 
 	function handleScopeChange(nextScope: ExecutionsScope) {
 		navigate({
