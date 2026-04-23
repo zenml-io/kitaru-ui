@@ -125,4 +125,33 @@ describe("findOrCreatePersonalServiceAccount", () => {
 		expect(get.mock.calls[0][0]).toBe("/api/v1/service_accounts");
 		expect(get.mock.calls[1][0]).toBe("/api/v1/service_accounts");
 	});
+
+	it("throws a clear error when a 409 has no raced SA to recover", async () => {
+		const get = vi.spyOn(apiClient, "GET");
+		const emptyPage = {
+			data: {
+				index: 1,
+				max_size: 1,
+				total_pages: 0,
+				total: 0,
+				items: [],
+			},
+			response: new Response(null, { status: 200 }),
+		} as never;
+		get.mockResolvedValueOnce(emptyPage);
+		vi.spyOn(apiClient, "POST").mockRejectedValue(
+			new FetchError({
+				status: 409,
+				statusText: "Conflict",
+				message: "already exists",
+				url: "/api/v1/service_accounts",
+				method: "POST",
+			})
+		);
+		get.mockResolvedValueOnce(emptyPage);
+
+		await expect(findOrCreatePersonalServiceAccount(userId)).rejects.toThrow(
+			/personal service account/i
+		);
+	});
 });

@@ -13,13 +13,11 @@ import { RefreshButton } from "@/shared/ui/RefreshButton";
 type ApiKeysListHeaderContainerProps = {
 	refetch: () => Promise<unknown>;
 	onCreate: () => void;
-	isCreatePending?: boolean;
 };
 
 export function ApiKeysListHeaderContainer({
 	refetch,
 	onCreate,
-	isCreatePending,
 }: ApiKeysListHeaderContainerProps) {
 	const { refresh, isPending: isRefreshing } = useManualRefresh(refetch);
 
@@ -35,7 +33,7 @@ export function ApiKeysListHeaderContainer({
 					isLoading={isRefreshing}
 					onClick={refresh}
 				/>
-				<Button onClick={onCreate} disabled={isCreatePending}>
+				<Button onClick={onCreate}>
 					<Plus className="size-4" />
 					Create API key
 				</Button>

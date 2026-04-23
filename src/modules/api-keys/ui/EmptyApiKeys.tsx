@@ -4,10 +4,9 @@ import { Button } from "@/shared/ui/button";
 
 type EmptyApiKeysProps = {
 	onCreate: () => void;
-	isPending?: boolean;
 };
 
-export function EmptyApiKeys({ onCreate, isPending }: EmptyApiKeysProps) {
+export function EmptyApiKeys({ onCreate }: EmptyApiKeysProps) {
 	return (
 		<div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
 			<div className="bg-muted flex size-12 items-center justify-center rounded-full">
@@ -20,7 +19,7 @@ export function EmptyApiKeys({ onCreate, isPending }: EmptyApiKeysProps) {
 					secure automation with the API or SDK.
 				</p>
 			</div>
-			<Button onClick={onCreate} disabled={isPending}>
+			<Button onClick={onCreate}>
 				<Plus className="size-4" /> Create API key
 			</Button>
 		</div>

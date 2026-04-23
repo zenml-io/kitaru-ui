@@ -60,7 +60,7 @@ export function ApiKeysPageContainer() {
 					open={createOpen}
 					onOpenChange={setCreateOpen}
 					userId={currentUser.id}
-					serviceAccountId={personalSa?.id ?? null}
+					serviceAccountId={personalSa?.id}
 				/>
 			)}
 		</Card>

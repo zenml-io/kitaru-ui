@@ -46,6 +46,9 @@ export async function findOrCreatePersonalServiceAccount(
 		if (error instanceof FetchError && error.status === 409) {
 			const raced = await fetchSingleByName(name);
 			if (raced) return { id: raced.id };
+			throw new Error(
+				"Could not set up your personal service account. Please try again."
+			);
 		}
 		throw error;
 	}

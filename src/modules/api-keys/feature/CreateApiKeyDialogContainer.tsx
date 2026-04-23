@@ -30,7 +30,7 @@ type CreateApiKeyDialogContainerProps = {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	userId: string;
-	serviceAccountId: string | null;
+	serviceAccountId?: string;
 };
 
 export function CreateApiKeyDialogContainer({
