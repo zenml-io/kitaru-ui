@@ -22,6 +22,7 @@ export function InvokeDeploymentContainer({
 				navigate({
 					to: "/flows/$flowId/executions/$executionId",
 					params: { flowId: deployment.flowId, executionId: runId },
+					search: { version: deployment.versionNumber },
 				});
 			},
 			onError: (error) => {

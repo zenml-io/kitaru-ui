@@ -57,7 +57,7 @@ export const Route = createFileRoute(
 		return {
 			executionIndex: formatExecutionIndex(execution.index),
 			crumb: {
-				label: `${formatExecutionIndex(execution.index)}#`,
+				label: `#${formatExecutionIndex(execution.index)}`,
 				disabled: false,
 			},
 		};

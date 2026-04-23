@@ -78,6 +78,7 @@ export function FlowExecutionsContainer() {
 				<ExecutionsTableContainer
 					executionRows={displayedExecutions}
 					flowId={flowId}
+					realDeployments={realDeployments}
 				/>
 			</div>
 		</>

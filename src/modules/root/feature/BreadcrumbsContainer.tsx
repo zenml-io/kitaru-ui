@@ -36,7 +36,9 @@ export function BreadcrumbsContainer() {
 							) : match.loaderData?.crumb.disabled ? (
 								<BreadcrumbPage>{match.loaderData?.crumb.label}</BreadcrumbPage>
 							) : (
-								<BreadcrumbLink render={<Link to={match.fullPath} />}>
+								<BreadcrumbLink
+									render={<Link to={match.fullPath} search={(prev) => prev} />}
+								>
 									{match.loaderData?.crumb.label}
 								</BreadcrumbLink>
 							)}
