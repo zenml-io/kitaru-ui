@@ -52,7 +52,10 @@ function ExecutionContainerBody() {
 
 	const setActiveTab = (tab: ExecutionTab) => {
 		navigate({
-			search: () => (tab === "logs" ? { tab: "logs" } : {}),
+			search: (prev) =>
+				tab === "logs"
+					? { version: prev.version, tab: "logs" }
+					: { version: prev.version },
 			replace: true,
 		});
 	};
@@ -63,10 +66,14 @@ function ExecutionContainerBody() {
 
 	const setSelectedScope = (scope: ExecutionLogsScope) => {
 		navigate({
-			search: () =>
+			search: (prev) =>
 				scope.kind === "root"
-					? { tab: "logs" }
-					: { tab: "logs", scope: scope.checkpointId },
+					? { version: prev.version, tab: "logs" }
+					: {
+							version: prev.version,
+							tab: "logs",
+							scope: scope.checkpointId,
+						},
 			replace: true,
 		});
 	};
