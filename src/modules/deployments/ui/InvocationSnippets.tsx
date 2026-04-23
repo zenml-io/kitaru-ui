@@ -30,11 +30,15 @@ type SnippetInputs = {
 	exampleInput: Record<string, unknown>;
 };
 
+function buildRequestBody(exampleInput: Record<string, unknown>) {
+	return { run_configuration: { parameters: exampleInput } };
+}
+
 function renderCurl({ url, exampleInput }: SnippetInputs) {
 	return `curl -X POST ${url} \\
   -H "Authorization: Bearer $KITARU_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '${JSON.stringify(exampleInput)}'`;
+  -d '${JSON.stringify(buildRequestBody(exampleInput))}'`;
 }
 
 function renderPython({ url, exampleInput }: SnippetInputs) {
@@ -45,14 +49,14 @@ response = requests.post(
         "Authorization": f"Bearer {os.environ['KITARU_API_KEY']}",
         "Content-Type": "application/json",
     },
-    json=${JSON.stringify(exampleInput, null, 2)},
+    json=${JSON.stringify(buildRequestBody(exampleInput), null, 2)},
 )
 response.raise_for_status()
 print(response.json())`;
 }
 
 function renderJavaScript({ url, exampleInput }: SnippetInputs) {
-	return `const payload = ${JSON.stringify(exampleInput, null, 2)};
+	return `const payload = ${JSON.stringify(buildRequestBody(exampleInput), null, 2)};
 const response = await fetch("${url}", {
   method: "POST",
   headers: {
