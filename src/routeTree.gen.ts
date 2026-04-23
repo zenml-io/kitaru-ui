@@ -24,6 +24,7 @@ import { Route as PrivateNavbarFlowsIndexRouteImport } from './routes/_private/_
 import { Route as PrivateNavbarSettingsSecretsRouteImport } from './routes/_private/_navbar/settings/secrets'
 import { Route as PrivateNavbarSettingsProfileRouteImport } from './routes/_private/_navbar/settings/profile'
 import { Route as PrivateNavbarSettingsMembersRouteImport } from './routes/_private/_navbar/settings/members'
+import { Route as PrivateNavbarSettingsApiKeysRouteImport } from './routes/_private/_navbar/settings/api-keys'
 import { Route as PrivateNavbarFlowsFlowIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/route'
 import { Route as PrivateNavbarSettingsSecretsIndexRouteImport } from './routes/_private/_navbar/settings/secrets/index'
 import { Route as PrivateNavbarFlowsFlowIdIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/index'
@@ -109,6 +110,12 @@ const PrivateNavbarSettingsMembersRoute =
     path: '/members',
     getParentRoute: () => PrivateNavbarSettingsRouteRoute,
   } as any)
+const PrivateNavbarSettingsApiKeysRoute =
+  PrivateNavbarSettingsApiKeysRouteImport.update({
+    id: '/api-keys',
+    path: '/api-keys',
+    getParentRoute: () => PrivateNavbarSettingsRouteRoute,
+  } as any)
 const PrivateNavbarFlowsFlowIdRouteRoute =
   PrivateNavbarFlowsFlowIdRouteRouteImport.update({
     id: '/$flowId',
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
   '/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
+  '/settings/api-keys': typeof PrivateNavbarSettingsApiKeysRoute
   '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/settings/secrets': typeof PrivateNavbarSettingsSecretsRouteWithChildren
@@ -172,6 +180,7 @@ export interface FileRoutesByTo {
   '/activate-user': typeof publicMeshActivateUserRoute
   '/login': typeof publicMeshLoginRoute
   '/devices/verify': typeof PrivateDevicesVerifyRoute
+  '/settings/api-keys': typeof PrivateNavbarSettingsApiKeysRoute
   '/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/flows': typeof PrivateNavbarFlowsIndexRoute
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/(public)/_mesh/login': typeof publicMeshLoginRoute
   '/_private/devices/verify': typeof PrivateDevicesVerifyRoute
   '/_private/_navbar/flows/$flowId': typeof PrivateNavbarFlowsFlowIdRouteRouteWithChildren
+  '/_private/_navbar/settings/api-keys': typeof PrivateNavbarSettingsApiKeysRoute
   '/_private/_navbar/settings/members': typeof PrivateNavbarSettingsMembersRoute
   '/_private/_navbar/settings/profile': typeof PrivateNavbarSettingsProfileRoute
   '/_private/_navbar/settings/secrets': typeof PrivateNavbarSettingsSecretsRouteWithChildren
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/devices/verify'
     | '/flows/$flowId'
+    | '/settings/api-keys'
     | '/settings/members'
     | '/settings/profile'
     | '/settings/secrets'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/activate-user'
     | '/login'
     | '/devices/verify'
+    | '/settings/api-keys'
     | '/settings/members'
     | '/settings/profile'
     | '/flows'
@@ -256,6 +268,7 @@ export interface FileRouteTypes {
     | '/(public)/_mesh/login'
     | '/_private/devices/verify'
     | '/_private/_navbar/flows/$flowId'
+    | '/_private/_navbar/settings/api-keys'
     | '/_private/_navbar/settings/members'
     | '/_private/_navbar/settings/profile'
     | '/_private/_navbar/settings/secrets'
@@ -380,6 +393,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarSettingsMembersRouteImport
       parentRoute: typeof PrivateNavbarSettingsRouteRoute
     }
+    '/_private/_navbar/settings/api-keys': {
+      id: '/_private/_navbar/settings/api-keys'
+      path: '/api-keys'
+      fullPath: '/settings/api-keys'
+      preLoaderRoute: typeof PrivateNavbarSettingsApiKeysRouteImport
+      parentRoute: typeof PrivateNavbarSettingsRouteRoute
+    }
     '/_private/_navbar/flows/$flowId': {
       id: '/_private/_navbar/flows/$flowId'
       path: '/$flowId'
@@ -480,6 +500,7 @@ const PrivateNavbarSettingsSecretsRouteWithChildren =
   )
 
 interface PrivateNavbarSettingsRouteRouteChildren {
+  PrivateNavbarSettingsApiKeysRoute: typeof PrivateNavbarSettingsApiKeysRoute
   PrivateNavbarSettingsMembersRoute: typeof PrivateNavbarSettingsMembersRoute
   PrivateNavbarSettingsProfileRoute: typeof PrivateNavbarSettingsProfileRoute
   PrivateNavbarSettingsSecretsRoute: typeof PrivateNavbarSettingsSecretsRouteWithChildren
@@ -488,6 +509,7 @@ interface PrivateNavbarSettingsRouteRouteChildren {
 
 const PrivateNavbarSettingsRouteRouteChildren: PrivateNavbarSettingsRouteRouteChildren =
   {
+    PrivateNavbarSettingsApiKeysRoute: PrivateNavbarSettingsApiKeysRoute,
     PrivateNavbarSettingsMembersRoute: PrivateNavbarSettingsMembersRoute,
     PrivateNavbarSettingsProfileRoute: PrivateNavbarSettingsProfileRoute,
     PrivateNavbarSettingsSecretsRoute:
