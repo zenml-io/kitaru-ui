@@ -1,40 +1,27 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { withTheme } from "@rjsf/core";
-import type RjsfForm from "@rjsf/core";
-import { Theme as shadcnTheme } from "@rjsf/shadcn";
-import type { RJSFSchema } from "@rjsf/utils";
-import validator from "@rjsf/validator-ajv8";
-import { Send, X } from "lucide-react";
+import { Loader2, Send, X } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { isRecord } from "@/shared/utils/is-record";
 import { cn } from "@/shared/utils/styles";
-
-const Form = withTheme(shadcnTheme);
-
-const UI_SCHEMA = {
-	"ui:submitButtonOptions": { norender: true },
-	"ui:title": "",
-	"ui:description": "",
-};
-
-const EMPTY_SCHEMA: RJSFSchema = {};
 
 export function InvokeDrawer({
 	open,
 	onOpenChange,
 	title,
-	schema,
+	defaultValue = "{}",
+	isLoading,
 	isSubmitting,
 	onSubmit,
 }: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	title: string;
-	schema: RJSFSchema | undefined;
+	defaultValue?: string;
+	isLoading?: boolean;
 	isSubmitting?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 }) {
-	const formRef = useRef<RjsfForm>(null);
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
 			<DialogPrimitive.Portal>
@@ -62,38 +49,107 @@ export function InvokeDrawer({
 							<span className="sr-only">Close</span>
 						</DialogPrimitive.Close>
 					</div>
-					<div className="flex-1 overflow-y-auto p-4">
-						<div className="text-xs [&_button]:text-xs [&_input]:text-xs [&_label]:text-xs">
-							<Form
-								ref={formRef}
-								schema={schema ?? EMPTY_SCHEMA}
-								validator={validator}
-								uiSchema={UI_SCHEMA}
-								onSubmit={({ formData }) => onSubmit(formData ?? {})}
-							/>
+					{isLoading ? (
+						<div className="text-muted-foreground flex flex-1 items-center justify-center gap-2 text-xs">
+							<Loader2 className="size-3.5 animate-spin" />
+							Loading parameters…
 						</div>
-					</div>
-					<div className="border-border flex gap-2 border-t px-4 py-3">
-						<Button
-							variant="outline"
-							size="sm"
-							className="flex-1"
-							onClick={() => onOpenChange(false)}
-						>
-							Cancel
-						</Button>
-						<Button
-							size="sm"
-							className="flex-1"
-							disabled={isSubmitting}
-							onClick={() => formRef.current?.submit()}
-						>
-							<Send className="size-3.5" />
-							{isSubmitting ? "Invoking…" : "Invoke"}
-						</Button>
-					</div>
+					) : (
+						<ParametersEditor
+							key={defaultValue}
+							defaultValue={defaultValue}
+							isSubmitting={isSubmitting}
+							onSubmit={onSubmit}
+							onCancel={() => onOpenChange(false)}
+						/>
+					)}
 				</DialogPrimitive.Popup>
 			</DialogPrimitive.Portal>
 		</DialogPrimitive.Root>
 	);
+}
+
+function ParametersEditor({
+	defaultValue,
+	isSubmitting,
+	onSubmit,
+	onCancel,
+}: {
+	defaultValue: string;
+	isSubmitting?: boolean;
+	onSubmit: (parameters: Record<string, unknown>) => void;
+	onCancel: () => void;
+}) {
+	const [value, setValue] = useState(defaultValue);
+	const [error, setError] = useState<string | null>(null);
+
+	function handleInvoke() {
+		const parsed = safeJsonParse(value);
+		if (!isRecord(parsed)) {
+			setError("Parameters must be a JSON object.");
+			return;
+		}
+		setError(null);
+		onSubmit(parsed);
+	}
+
+	return (
+		<>
+			<div className="flex flex-1 flex-col gap-2 overflow-y-auto p-4">
+				<label htmlFor="invoke-parameters" className="text-xs font-medium">
+					Parameters (JSON)
+				</label>
+				<textarea
+					id="invoke-parameters"
+					value={value}
+					onChange={(e) => {
+						setValue(e.target.value);
+						if (error) setError(null);
+					}}
+					spellCheck={false}
+					className={cn(
+						"border-border bg-background min-h-48 flex-1 rounded-md border p-2",
+						"font-mono text-xs leading-relaxed",
+						"focus-visible:ring-ring outline-none focus-visible:ring-2",
+						error && "border-destructive focus-visible:ring-destructive"
+					)}
+				/>
+				{error ? (
+					<p className="text-destructive text-xs">{error}</p>
+				) : (
+					<p className="text-muted-foreground text-xs">
+						Sent as{" "}
+						<code className="font-mono">run_configuration.parameters</code>.
+					</p>
+				)}
+			</div>
+			<div className="border-border flex gap-2 border-t px-4 py-3">
+				<Button
+					variant="outline"
+					size="sm"
+					className="flex-1"
+					onClick={onCancel}
+				>
+					Cancel
+				</Button>
+				<Button
+					size="sm"
+					className="flex-1"
+					disabled={isSubmitting}
+					onClick={handleInvoke}
+				>
+					<Send className="size-3.5" />
+					{isSubmitting ? "Invoking…" : "Invoke"}
+				</Button>
+			</div>
+		</>
+	);
+}
+
+function safeJsonParse(text: string): unknown {
+	try {
+		return JSON.parse(text);
+	} catch {
+		return undefined;
+	}
 }

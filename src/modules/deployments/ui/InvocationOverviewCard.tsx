@@ -17,9 +17,9 @@ export function InvocationOverviewCard({
 			<div className="border-border bg-card rounded-md border p-5">
 				<h2 className="text-sm font-semibold">Invoke</h2>
 				<p className="text-muted-foreground mt-1 text-xs">
-					Authenticate with a workspace API key. Routing resolves via the{" "}
-					<code className="font-mono text-xs">default</code> tag unless you pin
-					a specific version at call time.
+					Authenticate with a workspace API key. This URL is pinned to the
+					selected snapshot. The CLI example routes via the{" "}
+					<code className="font-mono text-xs">default</code> tag instead.
 				</p>
 				<div className="mt-4">
 					<InvocationUrlBlock url={url} className="max-w-full" />
