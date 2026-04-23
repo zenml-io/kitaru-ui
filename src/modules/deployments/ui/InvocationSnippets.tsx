@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
+import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button } from "@/shared/ui/button";
+import { CodeBlock } from "@/shared/ui/CodeBlock";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
 type Language = "curl" | "python" | "javascript" | "cli";
@@ -10,6 +12,13 @@ const LABELS: Record<Language, string> = {
 	python: "Python",
 	javascript: "JavaScript",
 	cli: "CLI",
+};
+
+const SHIKI_LANG: Record<Language, string> = {
+	curl: "bash",
+	python: "python",
+	javascript: "javascript",
+	cli: "bash",
 };
 
 const LANGUAGES = ["curl", "python", "javascript", "cli"] as const;
@@ -76,10 +85,7 @@ const RENDERERS: Record<Language, (i: SnippetInputs) => string> = {
 export function InvocationSnippets(props: SnippetInputs) {
 	const [active, setActive] = useState<Language>("curl");
 	const code = RENDERERS[active](props);
-
-	function handleCopy() {
-		void navigator.clipboard.writeText(code);
-	}
+	const { copied, copy } = useCopy();
 
 	return (
 		<div className="border-border bg-card overflow-hidden rounded-md border">
@@ -98,17 +104,23 @@ export function InvocationSnippets(props: SnippetInputs) {
 					<Button
 						variant="ghost"
 						size="icon-sm"
-						onClick={handleCopy}
-						aria-label="Copy snippet"
+						onClick={() => copy(code)}
+						aria-label={copied ? "Copied" : "Copy snippet"}
 					>
-						<Copy className="size-3.5" />
+						{copied ? (
+							<Check className="text-success size-3.5" />
+						) : (
+							<Copy className="size-3.5" />
+						)}
 					</Button>
 				</div>
 				{LANGUAGES.map((key) => (
 					<TabsContent key={key} value={key}>
-						<pre className="text-foreground p-4 font-mono text-xs whitespace-pre-wrap">
-							<code>{RENDERERS[key](props)}</code>
-						</pre>
+						<CodeBlock
+							code={RENDERERS[key](props)}
+							language={SHIKI_LANG[key]}
+							wrap
+						/>
 					</TabsContent>
 				))}
 			</Tabs>
