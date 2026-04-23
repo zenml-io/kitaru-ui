@@ -28,9 +28,9 @@ describe("apiKeyFormSchema", () => {
 		expect(result.success).toBe(false);
 	});
 
-	it("rejects names longer than 50 chars", () => {
+	it("rejects names longer than 255 chars", () => {
 		const result = apiKeyFormSchema.safeParse({
-			name: "a".repeat(51),
+			name: "a".repeat(256),
 			description: "",
 		});
 		expect(result.success).toBe(false);

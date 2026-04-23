@@ -56,6 +56,11 @@ export function RotateApiKeyDialogContainer({
 
 	function handleClose(nextOpen: boolean) {
 		if (!nextOpen) {
+			if (revealKey) {
+				void queryClient.invalidateQueries({
+					queryKey: apiKeyQueryKeys.list(serviceAccountId),
+				});
+			}
 			form.reset({ enableRetention: false, retainPeriodMinutes: "" });
 			setRevealKey(null);
 		}
@@ -70,9 +75,6 @@ export function RotateApiKeyDialogContainer({
 				retainPeriodMinutes: values.enableRetention
 					? Number(values.retainPeriodMinutes)
 					: 0,
-			});
-			await queryClient.invalidateQueries({
-				queryKey: apiKeyQueryKeys.list(serviceAccountId),
 			});
 			if (!rotated.plaintextKey) {
 				toast.error(

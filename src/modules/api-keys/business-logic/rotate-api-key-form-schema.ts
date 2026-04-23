@@ -10,7 +10,7 @@ export const rotateApiKeyFormSchema = z
 		const raw = values.retainPeriodMinutes.trim();
 		if (raw === "") {
 			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
+				code: "custom",
 				path: ["retainPeriodMinutes"],
 				message: "Enter a retention period in minutes.",
 			});
@@ -19,7 +19,7 @@ export const rotateApiKeyFormSchema = z
 		const parsed = Number(raw);
 		if (!Number.isInteger(parsed) || parsed <= 0) {
 			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
+				code: "custom",
 				path: ["retainPeriodMinutes"],
 				message: "Enter a positive whole number of minutes.",
 			});

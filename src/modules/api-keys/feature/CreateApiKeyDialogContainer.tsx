@@ -42,6 +42,9 @@ export function CreateApiKeyDialogContainer({
 	const queryClient = useQueryClient();
 	const [revealKey, setRevealKey] = useState<string | null>(null);
 	const [isResolvingSa, setIsResolvingSa] = useState(false);
+	const [resolvedServiceAccountId, setResolvedServiceAccountId] = useState<
+		string | undefined
+	>(undefined);
 
 	const form = useForm<ApiKeyFormValues>({
 		resolver: zodResolver(apiKeyFormSchema),
@@ -55,8 +58,14 @@ export function CreateApiKeyDialogContainer({
 
 	function handleClose(nextOpen: boolean) {
 		if (!nextOpen) {
+			if (revealKey && resolvedServiceAccountId) {
+				void queryClient.invalidateQueries({
+					queryKey: apiKeyQueryKeys.list(resolvedServiceAccountId),
+				});
+			}
 			form.reset({ name: "", description: "" });
 			setRevealKey(null);
+			setResolvedServiceAccountId(undefined);
 		}
 		onOpenChange(nextOpen);
 	}
@@ -77,9 +86,6 @@ export function CreateApiKeyDialogContainer({
 				name: values.name,
 				description: values.description?.trim() || undefined,
 			});
-			await queryClient.invalidateQueries({
-				queryKey: apiKeyQueryKeys.list(saId),
-			});
 			if (!created.plaintextKey) {
 				toast.error(
 					"API key was created but the plaintext value was missing from the response."
@@ -88,6 +94,7 @@ export function CreateApiKeyDialogContainer({
 				return;
 			}
 			setRevealKey(created.plaintextKey);
+			setResolvedServiceAccountId(saId);
 		} catch (error) {
 			toast.error(getErrorMessage(error, "Could not create API key."));
 		} finally {
