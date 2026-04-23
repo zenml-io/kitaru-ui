@@ -1,10 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams, useSearch } from "@tanstack/react-router";
 import { env } from "@/modules/root/domain/env";
+import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
+import {
+	isLocalDeployment,
+	withLocalDeployment,
+} from "../domain/local-deployment";
 import { InvocationSnippets } from "../ui/InvocationSnippets";
 import { InvocationUrlBlock } from "../ui/InvocationUrlBlock";
+import { LocalOverviewCard } from "../ui/LocalOverviewCard";
 
 type JsonSchemaProp = {
 	type?: string;
@@ -38,9 +44,11 @@ export function FlowInvocationContainer() {
 	const { version } = useSearch({
 		from: "/_private/_navbar/flows/$flowId",
 	});
-	const { data: deployments } = useSuspenseQuery(
+	const { data: flow } = useSuspenseQuery(flowsQueries.detail(flowId));
+	const { data: realDeployments } = useSuspenseQuery(
 		deploymentsQueries.list(flowId)
 	);
+	const deployments = withLocalDeployment(realDeployments, flowId, flow.name);
 	const selected = resolveSelectedDeployment(deployments, version);
 
 	if (!selected) {
@@ -49,6 +57,10 @@ export function FlowInvocationContainer() {
 				No deployments yet — there's nothing to invoke.
 			</div>
 		);
+	}
+
+	if (isLocalDeployment(selected)) {
+		return <LocalOverviewCard flowName={flow.name} />;
 	}
 
 	const origin = env.VITE_API_BASE_URL || window.location.origin;
@@ -60,24 +72,26 @@ export function FlowInvocationContainer() {
 		: `--version ${selected.versionNumber}`;
 
 	return (
-		<div className="container mx-auto grid gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:px-8">
-			<div>
-				<h2 className="text-base font-semibold">Invoke</h2>
-				<p className="text-muted-foreground mt-1 text-sm">
+		<div className="container mx-auto grid items-start gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:px-8">
+			<div className="border-border bg-card rounded-md border p-5">
+				<h2 className="text-sm font-semibold">Invoke</h2>
+				<p className="text-muted-foreground mt-1 text-xs">
 					Authenticate with a workspace API key. Routing resolves via the{" "}
 					<code className="font-mono text-xs">default</code> tag unless you pin
 					a specific version at call time.
 				</p>
-				<div className="mt-3">
-					<InvocationUrlBlock url={url} />
+				<div className="mt-4">
+					<InvocationUrlBlock url={url} className="max-w-full" />
 				</div>
 			</div>
-			<InvocationSnippets
-				url={url}
-				flowName={selected.flowName}
-				exampleInput={exampleInput}
-				tagOrVersionArgs={tagOrVersionArgs}
-			/>
+			<div className="flex flex-col gap-2">
+				<InvocationSnippets
+					url={url}
+					flowName={selected.flowName}
+					exampleInput={exampleInput}
+					tagOrVersionArgs={tagOrVersionArgs}
+				/>
+			</div>
 		</div>
 	);
 }

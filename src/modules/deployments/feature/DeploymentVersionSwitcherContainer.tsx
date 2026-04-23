@@ -1,21 +1,17 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useParams, useSearch } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
-import { stacksQueries } from "@/modules/stacks/business-logic/stacks-queries";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
-import {
-	isLocalDeployment,
-	withLocalDeployment,
-} from "../domain/local-deployment";
-import { DeploymentHeader } from "../ui/DeploymentHeader";
+import { withLocalDeployment } from "../domain/local-deployment";
+import { DeploymentVersionSwitcherPill } from "../ui/DeploymentVersionSwitcherPill";
 
-export function DeploymentHeaderContainer() {
+export function DeploymentVersionSwitcherContainer() {
 	const { flowId } = useParams({ from: "/_private/_navbar/flows/$flowId" });
 	const { version } = useSearch({
 		from: "/_private/_navbar/flows/$flowId",
 	});
-
+	const navigate = useNavigate();
 	const { data: flow } = useSuspenseQuery(flowsQueries.detail(flowId));
 	const { data: realDeployments } = useSuspenseQuery(
 		deploymentsQueries.list(flowId)
@@ -23,16 +19,18 @@ export function DeploymentHeaderContainer() {
 	const deployments = withLocalDeployment(realDeployments, flowId, flow.name);
 	const selected = resolveSelectedDeployment(deployments, version);
 
-	const { data: stack } = useQuery({
-		...stacksQueries.detail(selected?.stackId ?? ""),
-		enabled: Boolean(selected?.stackId) && !isLocalDeployment(selected),
-	});
+	function handleSelect(next: number | "local") {
+		navigate({
+			to: ".",
+			search: (prev) => ({ ...prev, version: next }),
+		});
+	}
 
 	return (
-		<DeploymentHeader
-			flowName={flow.name}
-			deployment={selected}
-			stackComponents={stack?.components}
+		<DeploymentVersionSwitcherPill
+			deployments={deployments}
+			selectedId={selected?.id}
+			onSelect={handleSelect}
 		/>
 	);
 }

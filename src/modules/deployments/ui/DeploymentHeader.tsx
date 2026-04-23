@@ -1,4 +1,3 @@
-import type React from "react";
 import { Separator } from "@/shared/ui/separator";
 import { cn } from "@/shared/utils/styles";
 import type { Deployment } from "../domain/deployment";
@@ -9,12 +8,10 @@ export function DeploymentHeader({
 	flowName,
 	deployment,
 	stackComponents,
-	invokeSlot,
 }: {
 	flowName: string;
 	deployment?: Deployment;
 	stackComponents?: StackComponent[];
-	invokeSlot?: React.ReactNode;
 }) {
 	const isDefault = deployment?.tags.some((t) => t.kind === "default") ?? false;
 	const hasTags = (deployment?.tags.length ?? 0) > 0;
@@ -53,14 +50,11 @@ export function DeploymentHeader({
 						</>
 					)}
 
-					<div className="ml-auto flex items-center gap-2">
-						{!deployment && (
-							<span className="text-muted-foreground text-xs">
-								No deployments yet
-							</span>
-						)}
-						{invokeSlot}
-					</div>
+					{!deployment && (
+						<span className="text-muted-foreground ml-auto text-xs">
+							No deployments yet
+						</span>
+					)}
 				</div>
 
 				{deployment?.stackName && (
