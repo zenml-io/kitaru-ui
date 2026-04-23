@@ -35,6 +35,7 @@ describe("fetchExecutions", () => {
 					page: 1,
 					size: 1000,
 					pipeline_id: "flow-1",
+					source_snapshot_id: undefined,
 					hydrate: undefined,
 				},
 			},
@@ -49,9 +50,23 @@ describe("fetchExecutions", () => {
 					page: 1,
 					size: 1000,
 					pipeline_id: "flow-1",
+					source_snapshot_id: undefined,
 					hydrate: true,
 				},
 			},
 		});
+	});
+
+	it("forwards snapshotId to the API as source_snapshot_id", async () => {
+		await fetchExecutions("flow-1", { snapshotId: "snap-42" });
+		const query = getSpy.mock.calls[0][1].params.query;
+		expect(query.source_snapshot_id).toBe("snap-42");
+		expect(query.pipeline_id).toBe("flow-1");
+	});
+
+	it("sends source_snapshot_id as undefined when snapshotId is absent", async () => {
+		await fetchExecutions("flow-1");
+		const query = getSpy.mock.calls[0][1].params.query;
+		expect(query.source_snapshot_id).toBeUndefined();
 	});
 });

@@ -2,10 +2,16 @@ import type { Deployment } from "./deployment";
 
 export const LOCAL_VERSION_ID = "local";
 
+export type LocalDeployment = Deployment & {
+	id: typeof LOCAL_VERSION_ID;
+	runnable: false;
+	deployable: false;
+};
+
 export function buildLocalDeployment(
 	flowId: string,
 	flowName: string
-): Deployment {
+): LocalDeployment {
 	return {
 		id: LOCAL_VERSION_ID,
 		flowId,
@@ -17,7 +23,9 @@ export function buildLocalDeployment(
 	};
 }
 
-export function isLocalDeployment(deployment: Deployment | undefined): boolean {
+export function isLocalDeployment(
+	deployment: Deployment | undefined
+): deployment is LocalDeployment {
 	return deployment?.id === LOCAL_VERSION_ID;
 }
 

@@ -13,25 +13,25 @@ export function InvokeDeploymentContainer({
 }) {
 	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
-	const { mutate, isPending } = useInvokeDeployment(deployment.flowId);
+	const { invokeDeployment, isPending } = useInvokeDeployment(
+		deployment.flowId,
+		{
+			onSuccess: ({ runId }) => {
+				setOpen(false);
+				toast.success("Invocation started");
+				navigate({
+					to: "/flows/$flowId/executions/$executionId",
+					params: { flowId: deployment.flowId, executionId: runId },
+				});
+			},
+			onError: (error) => {
+				toast.error(error.message || "Invoke failed");
+			},
+		}
+	);
 
 	function handleSubmit(parameters: Record<string, unknown>) {
-		mutate(
-			{ snapshotId: deployment.id, parameters },
-			{
-				onSuccess: ({ runId }) => {
-					setOpen(false);
-					toast.success("Invocation started");
-					navigate({
-						to: "/flows/$flowId/executions/$executionId",
-						params: { flowId: deployment.flowId, executionId: runId },
-					});
-				},
-				onError: (error) => {
-					toast.error(error instanceof Error ? error.message : "Invoke failed");
-				},
-			}
-		);
+		invokeDeployment({ snapshotId: deployment.id, parameters });
 	}
 
 	return (
@@ -44,7 +44,7 @@ export function InvokeDeploymentContainer({
 				open={open}
 				onOpenChange={setOpen}
 				title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
-				schema={deployment.inputSchema ?? {}}
+				schema={deployment.inputSchema}
 				isSubmitting={isPending}
 				onSubmit={handleSubmit}
 			/>

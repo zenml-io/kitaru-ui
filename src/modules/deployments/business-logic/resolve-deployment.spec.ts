@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Deployment } from "../domain/deployment";
+import {
+	LOCAL_VERSION_ID,
+	withLocalDeployment,
+} from "../domain/local-deployment";
 import type { Execution } from "@/modules/executions/domain/execution";
 import {
 	resolveDefaultDeployment,
@@ -124,6 +128,7 @@ describe("resolveSelectedDeployment", () => {
 	it("returns undefined for an empty list", () => {
 		expect(resolveSelectedDeployment([], undefined)).toBeUndefined();
 		expect(resolveSelectedDeployment([], 1)).toBeUndefined();
+		expect(resolveSelectedDeployment([], LOCAL_VERSION_ID)).toBeUndefined();
 	});
 
 	it("selects the synthetic local deployment when version === 'local' and it exists in the list", () => {
@@ -138,7 +143,17 @@ describe("resolveSelectedDeployment", () => {
 	});
 
 	it("falls back to the default-tag holder when version === 'local' but the local entry isn't present", () => {
-		expect(resolveSelectedDeployment(deployments, "local")).toBe(d3);
+		expect(resolveSelectedDeployment(deployments, LOCAL_VERSION_ID)).toBe(d3);
+	});
+
+	it("resolves the synthetic local entry produced by withLocalDeployment", () => {
+		const withLocal = withLocalDeployment(
+			deployments,
+			"flow-1",
+			"research_agent"
+		);
+		const selected = resolveSelectedDeployment(withLocal, LOCAL_VERSION_ID);
+		expect(selected?.id).toBe(LOCAL_VERSION_ID);
 	});
 });
 

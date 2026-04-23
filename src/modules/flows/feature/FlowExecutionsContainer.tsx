@@ -1,41 +1,27 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { resolveSelectedDeployment } from "@/modules/deployments/business-logic/resolve-deployment";
-import {
-	isLocalDeployment,
-	withLocalDeployment,
-} from "@/modules/deployments/domain/local-deployment";
+import { useSelectedVersion } from "@/modules/deployments/business-logic/use-selected-version";
+import { isLocalDeployment } from "@/modules/deployments/domain/local-deployment";
 import { useExecutions } from "@/modules/executions/business-logic/use-executions";
+import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "@/modules/executions/domain/fetch-executions";
 import { filterLocalExecutions } from "@/modules/executions/domain/filter-local-executions";
 import { ExecutionsTableContainer } from "@/modules/executions/feature/ExecutionsTableContainer";
 import {
 	type ExecutionsScope,
 	ExecutionsScopeToggle,
 } from "@/modules/executions/ui/ExecutionsScopeToggle";
-import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
-import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "@/modules/executions/domain/fetch-executions";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export function FlowExecutionsContainer() {
-	const { flowId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/$tab",
-	});
-	const { version, versions } = useSearch({
+	const { flowId, realDeployments, selected } = useSelectedVersion();
+	const { versions } = useSearch({
 		from: "/_private/_navbar/flows/$flowId",
 	});
 	const navigate = useNavigate();
-	const { data: flow } = useSuspenseQuery(flowsQueries.detail(flowId));
-	const { data: realDeployments } = useSuspenseQuery(
-		deploymentsQueries.list(flowId)
-	);
-	const deployments = withLocalDeployment(realDeployments, flowId, flow.name);
-	const selected = resolveSelectedDeployment(deployments, version);
 	const isLocal = isLocalDeployment(selected);
 	const activeScope: ExecutionsScope = versions === "all" ? "all" : "version";
 	const shouldServerFilter =

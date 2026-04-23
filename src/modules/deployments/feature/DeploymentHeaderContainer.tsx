@@ -1,27 +1,11 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useParams, useSearch } from "@tanstack/react-router";
-import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
+import { useQuery } from "@tanstack/react-query";
 import { stacksQueries } from "@/modules/stacks/business-logic/stacks-queries";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
-import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
-import {
-	isLocalDeployment,
-	withLocalDeployment,
-} from "../domain/local-deployment";
+import { isLocalDeployment } from "../domain/local-deployment";
+import { useSelectedVersion } from "../business-logic/use-selected-version";
 import { DeploymentHeader } from "../ui/DeploymentHeader";
 
 export function DeploymentHeaderContainer() {
-	const { flowId } = useParams({ from: "/_private/_navbar/flows/$flowId" });
-	const { version } = useSearch({
-		from: "/_private/_navbar/flows/$flowId",
-	});
-
-	const { data: flow } = useSuspenseQuery(flowsQueries.detail(flowId));
-	const { data: realDeployments } = useSuspenseQuery(
-		deploymentsQueries.list(flowId)
-	);
-	const deployments = withLocalDeployment(realDeployments, flowId, flow.name);
-	const selected = resolveSelectedDeployment(deployments, version);
+	const { flow, selected } = useSelectedVersion();
 
 	const { data: stack } = useQuery({
 		...stacksQueries.detail(selected?.stackId ?? ""),

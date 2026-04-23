@@ -3,6 +3,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { withTheme } from "@rjsf/core";
 import type RjsfForm from "@rjsf/core";
 import { Theme as shadcnTheme } from "@rjsf/shadcn";
+import type { RJSFSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { Send, X } from "lucide-react";
 import { Button } from "@/shared/ui/button";
@@ -16,6 +17,8 @@ const UI_SCHEMA = {
 	"ui:description": "",
 };
 
+const EMPTY_SCHEMA: RJSFSchema = {};
+
 export function InvokeDrawer({
 	open,
 	onOpenChange,
@@ -27,7 +30,7 @@ export function InvokeDrawer({
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	title: string;
-	schema: Record<string, unknown>;
+	schema: RJSFSchema | undefined;
 	isSubmitting?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 }) {
@@ -63,12 +66,10 @@ export function InvokeDrawer({
 						<div className="text-xs [&_button]:text-xs [&_input]:text-xs [&_label]:text-xs">
 							<Form
 								ref={formRef}
-								schema={schema as object}
+								schema={schema ?? EMPTY_SCHEMA}
 								validator={validator}
 								uiSchema={UI_SCHEMA}
-								onSubmit={({ formData }) =>
-									onSubmit((formData ?? {}) as Record<string, unknown>)
-								}
+								onSubmit={({ formData }) => onSubmit(formData ?? {})}
 							/>
 						</div>
 					</div>

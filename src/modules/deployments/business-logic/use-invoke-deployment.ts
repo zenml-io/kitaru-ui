@@ -1,18 +1,46 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { FetchError } from "@/shared/api/domain/fetch-error";
+import {
+	useMutation,
+	type UseMutationOptions,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { executionsQueryKeys } from "@/modules/executions/business-logic/executions-queries";
-import { invokeDeployment } from "../domain/invoke-deployment";
+import {
+	invokeDeployment,
+	type InvokeDeploymentArgs,
+	type InvokeDeploymentResult,
+} from "../domain/invoke-deployment";
 
-export function useInvokeDeployment(flowId: string) {
+export function useInvokeDeployment(
+	flowId: string,
+	options?: Omit<
+		UseMutationOptions<
+			InvokeDeploymentResult,
+			FetchError,
+			InvokeDeploymentArgs,
+			unknown
+		>,
+		"mutationFn"
+	>
+) {
 	const queryClient = useQueryClient();
-	return useMutation({
+	const mutation = useMutation({
+		...options,
 		mutationFn: invokeDeployment,
-		onSuccess: () => {
+		onSuccess: (...args) => {
 			queryClient.invalidateQueries({
 				queryKey: executionsQueryKeys.all(flowId),
 			});
 			queryClient.invalidateQueries({
 				queryKey: executionsQueryKeys.listWithSnapshots(flowId),
 			});
+			options?.onSuccess?.(...args);
 		},
 	});
+
+	return {
+		...mutation,
+		invokeDeployment: mutation.mutate,
+		invokeDeploymentAsync: mutation.mutateAsync,
+	};
 }

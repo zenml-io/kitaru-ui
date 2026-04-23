@@ -55,7 +55,7 @@ export function DeploymentVersionSwitcherPill({
 }: {
 	deployments: Deployment[];
 	selectedId: string | undefined;
-	onSelect: (selection: number | "local") => void;
+	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
 	className?: string;
 }) {
 	const [sort, setSort] = useState<SortOrder>("newest");

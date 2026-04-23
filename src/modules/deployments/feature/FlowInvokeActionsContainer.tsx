@@ -1,27 +1,11 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useParams, useSearch } from "@tanstack/react-router";
 import { env } from "@/modules/root/domain/env";
-import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
-import { resolveSelectedDeployment } from "../business-logic/resolve-deployment";
-import {
-	isLocalDeployment,
-	withLocalDeployment,
-} from "../domain/local-deployment";
+import { isLocalDeployment } from "../domain/local-deployment";
+import { useSelectedVersion } from "../business-logic/use-selected-version";
 import { InvocationUrlBlock } from "../ui/InvocationUrlBlock";
 import { InvokeDeploymentContainer } from "./InvokeDeploymentContainer";
 
 export function FlowInvokeActionsContainer() {
-	const { flowId } = useParams({ from: "/_private/_navbar/flows/$flowId" });
-	const { version } = useSearch({
-		from: "/_private/_navbar/flows/$flowId",
-	});
-	const { data: flow } = useSuspenseQuery(flowsQueries.detail(flowId));
-	const { data: realDeployments } = useSuspenseQuery(
-		deploymentsQueries.list(flowId)
-	);
-	const deployments = withLocalDeployment(realDeployments, flowId, flow.name);
-	const selected = resolveSelectedDeployment(deployments, version);
+	const { selected } = useSelectedVersion();
 
 	if (!selected || isLocalDeployment(selected)) return null;
 
