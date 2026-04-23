@@ -1,22 +1,25 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
 
-import { ContextBar } from "@/shared/ui/ContextBar";
-import { useFlow } from "@/modules/flows/business-logic/use-flow";
+import { FlowInvokeActionsContainer } from "@/modules/deployments/feature/FlowInvokeActionsContainer";
 import {
 	type FlowTab,
 	flowTabLabels,
 	flowTabs,
 } from "@/modules/flows/domain/flow";
+import { ContextBar } from "@/shared/ui/ContextBar";
 
 export function FlowContextBarContainer() {
 	const { flowId, tab } = useParams({
 		from: "/_private/_navbar/flows/$flowId/$tab",
 	});
-	const { flowData } = useFlow(flowId);
 	const navigate = useNavigate();
 
 	const navigateToTab = (tab: FlowTab) => {
-		navigate({ to: "/flows/$flowId/$tab", params: { flowId, tab } });
+		navigate({
+			to: "/flows/$flowId/$tab",
+			params: { flowId, tab },
+			search: (prev) => prev,
+		});
 	};
 
 	const tabs = flowTabs.map((value) => ({
@@ -24,24 +27,12 @@ export function FlowContextBarContainer() {
 		label: flowTabLabels[value],
 	}));
 
-	const metadata = [
-		{ label: "ID", value: flowData.id },
-		...(flowData.createdAt
-			? [
-					{
-						label: "Created",
-						value: flowData.createdAt.toLocaleDateString(),
-					},
-				]
-			: []),
-	];
-
 	return (
 		<ContextBar
 			tabs={tabs}
 			activeTab={tab}
 			onTabChange={(value) => navigateToTab(value as FlowTab)}
-			metadata={metadata}
+			actions={<FlowInvokeActionsContainer />}
 		/>
 	);
 }
