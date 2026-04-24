@@ -12,7 +12,7 @@ const FLOW_ID = "22222222-2222-2222-2222-222222222222";
 
 const logsUrl = `/flows/${FLOW_ID}/executions/${EXECUTION_ID}?tab=logs`;
 
-const emptyArtifactVersionsPage = {
+const emptyPage = {
 	index: 1,
 	max_size: 10000,
 	total_pages: 1,
@@ -38,7 +38,8 @@ test.beforeEach(async ({ mockApi, authenticatedPage }) => {
 		"/api/v1/runs/{run_id}": { get: makeExecution() },
 		"/api/v1/runs/{run_id}/dag": { get: makeDagResponse() },
 		"/api/v1/runs/{run_id}/logs": { get: makeLogEntries(5) },
-		"/api/v1/artifact_versions": { get: emptyArtifactVersionsPage },
+		"/api/v1/artifact_versions": { get: emptyPage },
+		"/api/v1/pipeline_snapshots": { get: emptyPage },
 	});
 });
 
