@@ -59,9 +59,7 @@ test("shows empty state when no logs exist", async ({ page, mockApi }) => {
 
 	await page.goto(logsUrl);
 
-	await expect(
-		page.getByText("No logs are available for this execution yet.")
-	).toBeVisible();
+	await expect(page.getByTestId("execution-logs-empty")).toBeVisible();
 });
 
 test("search filters log entries to matching messages", async ({
@@ -334,7 +332,7 @@ test("shows error state with retry when logs endpoint fails", async ({
 
 	await page.goto(logsUrl);
 
-	await expect(page.getByText("Failed to load logs")).toBeVisible();
+	await expect(page.getByTestId("execution-logs-error")).toBeVisible();
 
 	await mockApi({
 		"/api/v1/runs/{run_id}/logs": {
@@ -351,7 +349,7 @@ test("shows error state with retry when logs endpoint fails", async ({
 	await page.getByRole("button", { name: "Retry" }).click();
 
 	await expect(page.getByText("after retry")).toBeVisible();
-	await expect(page.getByText("Failed to load logs")).not.toBeVisible();
+	await expect(page.getByTestId("execution-logs-error")).not.toBeVisible();
 });
 
 test("shows stale banner when polling fails after initial success", async ({
@@ -386,7 +384,5 @@ test("shows stale banner when polling fails after initial success", async ({
 
 	await page.clock.fastForward(4000);
 
-	await expect(
-		page.getByText("Live updates paused — couldn't reach the server.")
-	).toBeVisible();
+	await expect(page.getByRole("status")).toBeVisible();
 });
