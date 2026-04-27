@@ -1,4 +1,4 @@
-import type { ArtifactStoreState } from "./artifact-store-state";
+import type { ArtifactStoreState } from "../domain/artifact-store-state";
 
 export function getDownloadUnavailableReason(
 	state: ArtifactStoreState

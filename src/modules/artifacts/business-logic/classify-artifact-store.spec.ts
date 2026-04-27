@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyArtifactStore } from "./artifact-store-state";
+import { classifyArtifactStore } from "./classify-artifact-store";
 import type { ArtifactStore } from "../domain/fetch-artifact-store";
 
 function makeStore(overrides: {

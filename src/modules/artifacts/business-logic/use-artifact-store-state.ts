@@ -1,5 +1,5 @@
 import { useArtifactVersion } from "@/modules/checkpoints/business-logic/use-artifact-version";
-import { classifyArtifactStore } from "./artifact-store-state";
+import { classifyArtifactStore } from "./classify-artifact-store";
 import { useArtifactStore } from "./use-artifact-store";
 
 export function useArtifactStoreState(artifactVersionId: string) {

@@ -1,10 +1,5 @@
+import type { ArtifactStoreState } from "../domain/artifact-store-state";
 import type { ArtifactStore } from "../domain/fetch-artifact-store";
-
-export type ArtifactStoreState =
-	| { kind: "local"; uri: string }
-	| { kind: "remote-no-connector"; uri: string }
-	| { kind: "remote-ok" }
-	| { kind: "unknown" };
 
 type ClassifyInput = {
 	artifactStore?: ArtifactStore;
