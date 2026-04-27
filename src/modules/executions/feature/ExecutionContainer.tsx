@@ -1,14 +1,9 @@
+import { useCheckpointPanelState } from "@/modules/checkpoints/business-logic/use-checkpoint-panel-state";
 import {
 	getCheckpointsPollingInterval,
 	useCheckpoints,
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
-import type {
-	ArtifactPanelTarget,
-	SelectedArtifact,
-} from "@/modules/checkpoints/domain/checkpoint";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
-import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
-import { useThreePanelLayout } from "@/shared/ui/ThreePanelLayoutContext";
 import { useSelectedVersion } from "@/modules/deployments/business-logic/use-selected-version";
 import { isLocalDeployment } from "@/modules/deployments/domain/local-deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
@@ -16,7 +11,6 @@ import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
 import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
@@ -110,33 +104,15 @@ function ExecutionContainerBody() {
 			]);
 		});
 
-	const [selectedCheckpointId, setSelectedCheckpointId] = useState<
-		string | undefined
-	>();
-	const [activeCheckpointTab, setActiveCheckpointTab] =
-		useState<PanelTab>("logs");
-	const [selectedArtifact, setSelectedArtifact] =
-		useState<SelectedArtifact | null>(null);
-
-	const { expandRight } = useThreePanelLayout();
-
-	const handleSelectCheckpoint = (id: string) => {
-		if (id !== selectedCheckpointId) {
-			setSelectedArtifact(null);
-		}
-		setSelectedCheckpointId(id);
-	};
-
-	const handleViewArtifactInPanel = ({
-		checkpointId,
-		artifact,
-		direction,
-	}: ArtifactPanelTarget) => {
-		setSelectedCheckpointId(checkpointId);
-		setActiveCheckpointTab("artifacts");
-		setSelectedArtifact({ artifact, direction });
-		expandRight();
-	};
+	const {
+		selectedCheckpointId,
+		activeTab: activeCheckpointTab,
+		setActiveTab: setActiveCheckpointTab,
+		selectedArtifact,
+		setSelectedArtifact,
+		selectCheckpoint,
+		viewArtifactInPanel,
+	} = useCheckpointPanelState();
 
 	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
 	const displayedExecutions =
@@ -187,8 +163,8 @@ function ExecutionContainerBody() {
 							flowId={flowId}
 							execution={executionData}
 							checkpoints={checkpointsData.checkpoints}
-							onSelectCheckpoint={handleSelectCheckpoint}
-							onViewArtifactInPanel={handleViewArtifactInPanel}
+							onSelectCheckpoint={selectCheckpoint}
+							onViewArtifactInPanel={viewArtifactInPanel}
 						/>
 					)
 				}
