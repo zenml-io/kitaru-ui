@@ -1,5 +1,8 @@
 import { checkpointsQueryKeys } from "@/modules/checkpoints/business-logic/checkpoints-queries";
-import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
+import type {
+	ArtifactPanelTarget,
+	CheckpointEntry,
+} from "@/modules/checkpoints/domain/checkpoint";
 import { CopyCommand } from "@/shared/ui/CopyCommand";
 import { StatusDot } from "@/shared/ui/StatusDot";
 import { useThreePanelLayout } from "@/shared/ui/ThreePanelLayoutContext";
@@ -18,6 +21,7 @@ type ExecutionTabContainerProps = {
 	execution: Execution;
 	checkpoints: CheckpointEntry[];
 	onSelectCheckpoint: (id: string) => void;
+	onViewArtifactInPanel: (target: ArtifactPanelTarget) => void;
 };
 
 export function ExecutionTabContainer({
@@ -26,6 +30,7 @@ export function ExecutionTabContainer({
 	execution,
 	checkpoints,
 	onSelectCheckpoint,
+	onViewArtifactInPanel,
 }: ExecutionTabContainerProps) {
 	const { expandRight } = useThreePanelLayout();
 
@@ -90,6 +95,7 @@ export function ExecutionTabContainer({
 				onSelectCheckpoint(id);
 				expandRight();
 			}}
+			onViewArtifactInPanel={onViewArtifactInPanel}
 			waitCondition={waitConditionData}
 			onResolveWaitCondition={resolveWaitCondition}
 			resumeHint={resumeHint}

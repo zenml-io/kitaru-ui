@@ -6,9 +6,18 @@ import {
 	extractInputArtifactEntries,
 	extractOutputArtifactEntries,
 } from "./artifact";
-import type { ArtifactEntry } from "./artifact";
+import type { ArtifactDirection, ArtifactEntry } from "./artifact";
 
-export type { ArtifactEntry };
+export type { ArtifactDirection, ArtifactEntry };
+
+export type SelectedArtifact = {
+	artifact: ArtifactEntry;
+	direction: ArtifactDirection;
+};
+
+export type ArtifactPanelTarget = SelectedArtifact & {
+	checkpointId: string;
+};
 
 export type Checkpoint = {
 	id: string;

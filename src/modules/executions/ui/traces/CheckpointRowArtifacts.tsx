@@ -2,32 +2,34 @@ import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
 } from "@/modules/checkpoints/business-logic/use-checkpoint-details";
-import type { ArtifactEntry } from "@/modules/checkpoints/domain/checkpoint";
+import type { SelectedArtifact } from "@/modules/checkpoints/domain/checkpoint";
 import { ArtifactVisualizationContainer } from "@/modules/checkpoints/feature/ArtifactVisualizationContainer";
 import { FullscreenArtifactButtonContainer } from "@/modules/checkpoints/feature/FullscreenArtifactButtonContainer";
 import { DownloadArtifactButtonContainer } from "@/modules/checkpoints/feature/DownloadArtifactButtonContainer";
 import { ArrowRight } from "lucide-react";
 import { Suspense, useState } from "react";
 import { NoArtifactsMessage } from "@/modules/checkpoints/ui/NoArtifactsMessage";
+import { Button } from "@/shared/ui/button";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { ArtifactChip } from "./ArtifactChip";
 
+type CheckpointRowArtifactsProps = {
+	checkpointId: string;
+	onViewArtifactInPanel: (selection: SelectedArtifact) => void;
+};
+
 function CheckpointRowArtifactsContent({
 	checkpointId,
-}: {
-	checkpointId: string;
-}) {
+	onViewArtifactInPanel,
+}: CheckpointRowArtifactsProps) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
 		refetchInterval: getCheckpointDetailsPollingInterval,
 	});
 
 	const { inputs, outputs } = detailsData;
 
-	const [selected, setSelected] = useState<{
-		entry: ArtifactEntry;
-		direction: "input" | "output";
-	} | null>(() =>
-		outputs[0] ? { entry: outputs[0], direction: "output" } : null
+	const [selected, setSelected] = useState<SelectedArtifact | null>(() =>
+		outputs[0] ? { artifact: outputs[0], direction: "output" } : null
 	);
 
 	if (inputs.length === 0 && outputs.length === 0) {
@@ -48,10 +50,12 @@ function CheckpointRowArtifactsContent({
 									key={a.id}
 									name={a.name}
 									isSelected={
-										selected?.entry.id === a.id &&
+										selected?.artifact.id === a.id &&
 										selected.direction === "input"
 									}
-									onClick={() => setSelected({ entry: a, direction: "input" })}
+									onClick={() =>
+										setSelected({ artifact: a, direction: "input" })
+									}
 								/>
 							))}
 						</div>
@@ -73,10 +77,12 @@ function CheckpointRowArtifactsContent({
 									key={a.id}
 									name={a.name}
 									isSelected={
-										selected?.entry.id === a.id &&
+										selected?.artifact.id === a.id &&
 										selected.direction === "output"
 									}
-									onClick={() => setSelected({ entry: a, direction: "output" })}
+									onClick={() =>
+										setSelected({ artifact: a, direction: "output" })
+									}
 								/>
 							))}
 						</div>
@@ -88,21 +94,30 @@ function CheckpointRowArtifactsContent({
 				<div className="border-border overflow-hidden rounded-lg border">
 					<div className="bg-muted/50 border-border flex items-center justify-between border-b px-4 py-2">
 						<TruncatedText className="text-foreground text-xs font-semibold">
-							{selected.entry.name}
+							{selected.artifact.name}
 						</TruncatedText>
 						<div className="flex items-center gap-1">
 							<DownloadArtifactButtonContainer
-								artifactVersionId={selected.entry.id}
+								artifactVersionId={selected.artifact.id}
 							/>
 							<FullscreenArtifactButtonContainer
-								artifactVersionId={selected.entry.id}
-								name={selected.entry.name}
+								artifactVersionId={selected.artifact.id}
+								name={selected.artifact.name}
 							/>
+							<Button
+								variant="ghost"
+								size="xs"
+								className="text-muted-foreground text-2xs"
+								onClick={() => onViewArtifactInPanel(selected)}
+							>
+								View in panel
+								<ArrowRight />
+							</Button>
 						</div>
 					</div>
 					<div className="bg-background">
 						<ArtifactVisualizationContainer
-							artifactVersionId={selected.entry.id}
+							artifactVersionId={selected.artifact.id}
 						/>
 					</div>
 				</div>
@@ -113,16 +128,18 @@ function CheckpointRowArtifactsContent({
 
 export function CheckpointRowArtifacts({
 	checkpointId,
-}: {
-	checkpointId: string;
-}) {
+	onViewArtifactInPanel,
+}: CheckpointRowArtifactsProps) {
 	return (
 		<Suspense
 			fallback={
 				<p className="text-2xs text-muted-foreground px-4 py-3">Loading…</p>
 			}
 		>
-			<CheckpointRowArtifactsContent checkpointId={checkpointId} />
+			<CheckpointRowArtifactsContent
+				checkpointId={checkpointId}
+				onViewArtifactInPanel={onViewArtifactInPanel}
+			/>
 		</Suspense>
 	);
 }

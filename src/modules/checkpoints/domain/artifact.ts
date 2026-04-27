@@ -7,7 +7,7 @@ export type ArtifactEntry = {
 	id: string;
 };
 
-type ArtifactDirection = "input" | "output";
+export type ArtifactDirection = "input" | "output";
 
 const visibleInputTypes = new Set<
 	components["schemas"]["StepRunInputArtifactType"]

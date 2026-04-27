@@ -2,18 +2,24 @@ import { StatusDot } from "@/shared/ui/StatusDot";
 import { CheckpointTypeBadge } from "./CheckpointTypeBadge";
 import { CheckpointRowArtifacts } from "./CheckpointRowArtifacts";
 import { ExpandableRow } from "./ExpandableRow";
-import type { CheckpointEntry } from "@/modules/checkpoints/domain/checkpoint";
+import type {
+	ArtifactPanelTarget,
+	CheckpointEntry,
+	SelectedArtifact,
+} from "@/modules/checkpoints/domain/checkpoint";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 
 type CheckpointRowProps = {
 	checkpointEntry: CheckpointEntry;
 	onSelect: (id: string) => void;
+	onViewArtifactInPanel: (target: ArtifactPanelTarget) => void;
 };
 
 export function CheckpointRow({
 	checkpointEntry,
 	onSelect,
+	onViewArtifactInPanel,
 }: CheckpointRowProps) {
 	return (
 		<ExpandableRow
@@ -37,7 +43,15 @@ export function CheckpointRow({
 				</>
 			}
 		>
-			<CheckpointRowArtifacts checkpointId={checkpointEntry.id} />
+			<CheckpointRowArtifacts
+				checkpointId={checkpointEntry.id}
+				onViewArtifactInPanel={(selection: SelectedArtifact) =>
+					onViewArtifactInPanel({
+						checkpointId: checkpointEntry.id,
+						...selection,
+					})
+				}
+			/>
 		</ExpandableRow>
 	);
 }

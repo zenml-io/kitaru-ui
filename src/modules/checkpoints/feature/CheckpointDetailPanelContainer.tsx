@@ -1,9 +1,9 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
 } from "../business-logic/use-checkpoint-details";
-import type { ArtifactEntry } from "../domain/checkpoint";
+import type { SelectedArtifact } from "../domain/checkpoint";
 import { CheckpointMemoryTabContainer } from "@/modules/memory/feature/CheckpointMemoryTabContainer";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
@@ -20,12 +20,16 @@ type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	selectedArtifact: SelectedArtifact | null;
+	onSelectArtifact: (artifact: SelectedArtifact | null) => void;
 };
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	selectedArtifact,
+	onSelectArtifact,
 }: CheckpointDetailPanelContainerProps) {
 	if (!checkpointId) {
 		return <CheckpointDetailsEmptyView />;
@@ -37,6 +41,8 @@ export function CheckpointDetailPanelContainer({
 				checkpointId={checkpointId}
 				activeTab={activeTab}
 				onTabChange={onTabChange}
+				selectedArtifact={selectedArtifact}
+				onSelectArtifact={onSelectArtifact}
 			/>
 		</Suspense>
 	);
@@ -46,10 +52,14 @@ function CheckpointDetailPanelContentContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	selectedArtifact,
+	onSelectArtifact,
 }: {
 	checkpointId: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	selectedArtifact: SelectedArtifact | null;
+	onSelectArtifact: (artifact: SelectedArtifact | null) => void;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
 		refetchInterval: getCheckpointDetailsPollingInterval,
@@ -58,17 +68,12 @@ function CheckpointDetailPanelContentContainer({
 	const inputs = detailsData?.inputs ?? [];
 	const outputs = detailsData?.outputs ?? [];
 
-	const [selectedArtifact, setSelectedArtifact] = useState<{
-		artifact: ArtifactEntry;
-		direction: "input" | "output";
-	} | null>(null);
-
 	function handleTabChange(tab: PanelTab) {
 		onTabChange(tab);
 		if (tab === "artifacts" && !selectedArtifact) {
 			const first = outputs[0] ?? inputs[0];
 			if (first) {
-				setSelectedArtifact({
+				onSelectArtifact({
 					artifact: first,
 					direction: outputs[0] ? "output" : "input",
 				});
@@ -95,7 +100,7 @@ function CheckpointDetailPanelContentContainer({
 						outputs={outputs}
 						selectedArtifact={selectedArtifact}
 						onSelectArtifact={(artifact, direction) =>
-							setSelectedArtifact({ artifact, direction })
+							onSelectArtifact({ artifact, direction })
 						}
 					/>
 				)}

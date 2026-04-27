@@ -3,16 +3,15 @@ import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFram
 import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
-import type { ArtifactEntry } from "../domain/checkpoint";
+import type {
+	ArtifactDirection,
+	ArtifactEntry,
+	SelectedArtifact,
+} from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
 import { NoArtifactsMessage } from "./NoArtifactsMessage";
-
-type SelectedArtifact = {
-	artifact: ArtifactEntry;
-	direction: "input" | "output";
-};
 
 type CheckpointDetailPanelArtifactsProps = {
 	inputs: ArtifactEntry[];
@@ -20,7 +19,7 @@ type CheckpointDetailPanelArtifactsProps = {
 	selectedArtifact: SelectedArtifact | null;
 	onSelectArtifact: (
 		artifact: ArtifactEntry,
-		direction: "input" | "output"
+		direction: ArtifactDirection
 	) => void;
 };
 
@@ -86,7 +85,7 @@ type ArtifactsToolbarProps = {
 	selectedArtifact: SelectedArtifact | null;
 	onSelectArtifact: (
 		artifact: ArtifactEntry,
-		direction: "input" | "output"
+		direction: ArtifactDirection
 	) => void;
 };
 

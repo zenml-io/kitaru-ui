@@ -2,8 +2,13 @@ import {
 	getCheckpointsPollingInterval,
 	useCheckpoints,
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
+import type {
+	ArtifactPanelTarget,
+	SelectedArtifact,
+} from "@/modules/checkpoints/domain/checkpoint";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
+import { useThreePanelLayout } from "@/shared/ui/ThreePanelLayoutContext";
 import { useSelectedVersion } from "@/modules/deployments/business-logic/use-selected-version";
 import { isLocalDeployment } from "@/modules/deployments/domain/local-deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
@@ -110,6 +115,28 @@ function ExecutionContainerBody() {
 	>();
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
+	const [selectedArtifact, setSelectedArtifact] =
+		useState<SelectedArtifact | null>(null);
+
+	const { expandRight } = useThreePanelLayout();
+
+	const handleSelectCheckpoint = (id: string) => {
+		if (id !== selectedCheckpointId) {
+			setSelectedArtifact(null);
+		}
+		setSelectedCheckpointId(id);
+	};
+
+	const handleViewArtifactInPanel = ({
+		checkpointId,
+		artifact,
+		direction,
+	}: ArtifactPanelTarget) => {
+		setSelectedCheckpointId(checkpointId);
+		setActiveCheckpointTab("artifacts");
+		setSelectedArtifact({ artifact, direction });
+		expandRight();
+	};
 
 	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
 	const displayedExecutions =
@@ -160,7 +187,8 @@ function ExecutionContainerBody() {
 							flowId={flowId}
 							execution={executionData}
 							checkpoints={checkpointsData.checkpoints}
-							onSelectCheckpoint={setSelectedCheckpointId}
+							onSelectCheckpoint={handleSelectCheckpoint}
+							onViewArtifactInPanel={handleViewArtifactInPanel}
 						/>
 					)
 				}
@@ -171,6 +199,8 @@ function ExecutionContainerBody() {
 							checkpointId={selectedCheckpointId}
 							activeTab={activeCheckpointTab}
 							onTabChange={setActiveCheckpointTab}
+							selectedArtifact={selectedArtifact}
+							onSelectArtifact={setSelectedArtifact}
 						/>
 					)
 				}

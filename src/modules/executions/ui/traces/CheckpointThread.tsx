@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/shared/utils/styles";
 import { HIGHLIGHT_MS } from "@/shared/business-logic/use-scroll-highlight";
+import type { ArtifactPanelTarget } from "@/modules/checkpoints/domain/checkpoint";
 import { CheckpointRow } from "./CheckpointRow";
 import { WaitingBlockRow } from "./WaitingBlockRow";
 import type { TimelineEntry } from "../../domain/waiting-block";
@@ -8,12 +9,14 @@ import type { TimelineEntry } from "../../domain/waiting-block";
 type CheckpointThreadProps = {
 	timelineEntries: TimelineEntry[];
 	onSelect: (id: string) => void;
+	onViewArtifactInPanel: (target: ArtifactPanelTarget) => void;
 	highlightedId?: string;
 };
 
 export function CheckpointThread({
 	timelineEntries,
 	onSelect,
+	onViewArtifactInPanel,
 	highlightedId,
 }: CheckpointThreadProps) {
 	return (
@@ -29,7 +32,11 @@ export function CheckpointThread({
 					{entry.kind === "waiting" ? (
 						<WaitingBlockRow waitingBlock={entry.data} />
 					) : (
-						<CheckpointRow checkpointEntry={entry.data} onSelect={onSelect} />
+						<CheckpointRow
+							checkpointEntry={entry.data}
+							onSelect={onSelect}
+							onViewArtifactInPanel={onViewArtifactInPanel}
+						/>
 					)}
 				</RowHighlightedWrapper>
 			))}

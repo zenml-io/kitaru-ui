@@ -1,4 +1,5 @@
 import { useScrollHighlight } from "@/shared/business-logic/use-scroll-highlight";
+import type { ArtifactPanelTarget } from "@/modules/checkpoints/domain/checkpoint";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
 import type { TimelineEntry } from "../domain/waiting-block";
@@ -13,6 +14,7 @@ import {
 type ExecutionDetailsProps = {
 	timelineEntries: TimelineEntry[];
 	onSelectCheckpoint: (id: string) => void;
+	onViewArtifactInPanel: (target: ArtifactPanelTarget) => void;
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
 	resumeHint?: React.ReactNode;
@@ -21,6 +23,7 @@ type ExecutionDetailsProps = {
 export function ExecutionDetails({
 	timelineEntries,
 	onSelectCheckpoint,
+	onViewArtifactInPanel,
 	waitCondition,
 	onResolveWaitCondition,
 	resumeHint,
@@ -57,6 +60,7 @@ export function ExecutionDetails({
 			<CheckpointThread
 				timelineEntries={timelineEntries}
 				onSelect={onSelectCheckpoint}
+				onViewArtifactInPanel={onViewArtifactInPanel}
 				highlightedId={scrollHighlight.highlightedId}
 			/>
 
