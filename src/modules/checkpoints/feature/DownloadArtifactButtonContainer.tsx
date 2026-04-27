@@ -11,8 +11,10 @@ type Props = {
 
 export function DownloadArtifactButtonContainer({ artifactVersionId }: Props) {
 	const { download, isDownloading } = useDownloadArtifact();
-	const { state } = useArtifactStoreState(artifactVersionId);
-	const unavailableReason = getDownloadUnavailableReason(state);
+	const { state, storeError } = useArtifactStoreState(artifactVersionId);
+	const unavailableReason = storeError
+		? "Download unavailable — could not load artifact store information."
+		: getDownloadUnavailableReason(state);
 	const isDisabled = isDownloading || !!unavailableReason;
 
 	return (

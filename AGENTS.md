@@ -45,7 +45,7 @@ By default, API requests are relative (`/api/v1/...`). In development, the Vite 
 
 - The intended module-based structure lives under `src/modules/<module>`.
 - Each module should be split by responsibility using these layers:
-  - **domain/** — module-owned types, API/request functions, and API↔domain mappers (`<entity>FromApiToDomain`). Logic here must operate on raw API shapes — converting them into domain types or extracting/normalizing fields off the API response. Pure functions that classify, categorize, filter, or otherwise derive from already-domain types belong in business-logic.
+  - **domain/** — module-owned types (entity types and derived-state shapes used across the module), API/request functions, and API↔domain mappers (`<entity>FromApiToDomain`). Functions in this layer must operate on raw API shapes — converting them into domain types or extracting/normalizing fields off the API response. Pure functions that classify, categorize, filter, or otherwise derive from already-domain types belong in business-logic, even when their return type is defined here.
   - **business-logic/** — TanStack Query definitions, mutation hooks, and module-specific pure logic operating on domain types (classifiers, predicates, status categorizers, state derivers used by features/UI).
   - **feature/** — stateful containers, provider composition, and feature entrypoints
   - **util/** — small module-scoped utilities

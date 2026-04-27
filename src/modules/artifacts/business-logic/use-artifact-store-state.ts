@@ -21,6 +21,7 @@ export function useArtifactStoreState(artifactVersionId: string) {
 
 	return {
 		state,
+		storeError: storeQuery.error ?? null,
 		isPending,
 	};
 }

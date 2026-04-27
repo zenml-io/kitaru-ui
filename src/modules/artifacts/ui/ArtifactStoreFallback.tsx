@@ -6,13 +6,7 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@/shared/ui/empty";
-import {
-	AlertCircle,
-	ExternalLink,
-	HardDrive,
-	KeyRound,
-	PackageX,
-} from "lucide-react";
+import { ExternalLink, HardDrive, KeyRound, PackageX } from "lucide-react";
 import type { ReactNode } from "react";
 
 type DocsLink = {
@@ -74,7 +68,7 @@ function ArtifactStoreFallbackLayout({
 const STACKS_DOCS = "https://kitaru.ai/docs/stacks/";
 
 type LocalProps = {
-	uri: string;
+	uri?: string;
 };
 
 export function LocalArtifactStoreFallback({ uri }: LocalProps) {
@@ -94,7 +88,7 @@ export function LocalArtifactStoreFallback({ uri }: LocalProps) {
 }
 
 type NoConnectorProps = {
-	uri: string;
+	uri?: string;
 };
 
 export function NoConnectorArtifactStoreFallback({ uri }: NoConnectorProps) {
@@ -124,30 +118,5 @@ export function DepsMissingArtifactStoreFallback() {
 				href: STACKS_DOCS,
 			}}
 		/>
-	);
-}
-
-type GenericProps = {
-	message?: string;
-};
-
-export function GenericArtifactStoreFallback({ message }: GenericProps) {
-	return (
-		<Empty>
-			<EmptyHeader className="max-w-md">
-				<EmptyMedia
-					variant="icon"
-					className="bg-destructive/10 text-destructive ring-destructive/20 size-14 rounded-full ring-1"
-				>
-					<AlertCircle className="size-7" />
-				</EmptyMedia>
-				<EmptyTitle>Something went wrong</EmptyTitle>
-			</EmptyHeader>
-			<EmptyContent>
-				<div className="border-border text-muted-foreground bg-muted/30 w-full max-w-lg rounded-lg border px-5 py-4 text-left font-mono text-xs text-pretty">
-					{message ?? "Unknown error"}
-				</div>
-			</EmptyContent>
-		</Empty>
 	);
 }

@@ -1,9 +1,9 @@
 import { VisualizationSkeleton } from "@/modules/checkpoints/ui/VisualizationSkeleton";
+import { VisualizationErrorFallback } from "@/modules/executions/ui/VisualizationErrorFallback";
 import { isFetchError } from "@/shared/api/domain/fetch-error";
 import { useArtifactStoreState } from "../business-logic/use-artifact-store-state";
 import {
 	DepsMissingArtifactStoreFallback,
-	GenericArtifactStoreFallback,
 	LocalArtifactStoreFallback,
 	NoConnectorArtifactStoreFallback,
 } from "../ui/ArtifactStoreFallback";
@@ -17,7 +17,8 @@ export function ArtifactStoreFallbackContainer({
 	artifactVersionId,
 	error,
 }: Props) {
-	const { state, isPending } = useArtifactStoreState(artifactVersionId);
+	const { state, storeError, isPending } =
+		useArtifactStoreState(artifactVersionId);
 
 	if (isPending) return <VisualizationSkeleton />;
 
@@ -33,5 +34,5 @@ export function ArtifactStoreFallbackContainer({
 		return <DepsMissingArtifactStoreFallback />;
 	}
 
-	return <GenericArtifactStoreFallback message={error?.message} />;
+	return <VisualizationErrorFallback error={storeError ?? error} />;
 }

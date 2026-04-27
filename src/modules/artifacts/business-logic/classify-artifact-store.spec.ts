@@ -57,10 +57,17 @@ describe("classifyArtifactStore", () => {
 		expect(result).toEqual({ kind: "remote-ok" });
 	});
 
-	it("defaults a missing uri to an empty string for local stores", () => {
+	it("preserves a missing uri as undefined for local stores", () => {
 		const result = classifyArtifactStore({
 			artifactStore: makeStore({ flavorName: "local" }),
 		});
-		expect(result).toEqual({ kind: "local", uri: "" });
+		expect(result).toEqual({ kind: "local", uri: undefined });
+	});
+
+	it("preserves a missing uri as undefined for remote stores without a connector", () => {
+		const result = classifyArtifactStore({
+			artifactStore: makeStore({ flavorName: "s3", hasConnector: false }),
+		});
+		expect(result).toEqual({ kind: "remote-no-connector", uri: undefined });
 	});
 });

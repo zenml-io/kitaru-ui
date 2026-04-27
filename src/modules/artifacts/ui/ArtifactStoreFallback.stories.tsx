@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
 	DepsMissingArtifactStoreFallback,
-	GenericArtifactStoreFallback,
 	LocalArtifactStoreFallback,
 	NoConnectorArtifactStoreFallback,
 } from "./ArtifactStoreFallback";
@@ -24,7 +23,7 @@ export const Local: Story = {
 };
 
 export const LocalNoUri: Story = {
-	render: () => <LocalArtifactStoreFallback uri="" />,
+	render: () => <LocalArtifactStoreFallback />,
 };
 
 export const LocalLongUri: Story = {
@@ -40,7 +39,7 @@ export const NoConnector: Story = {
 };
 
 export const NoConnectorNoUri: Story = {
-	render: () => <NoConnectorArtifactStoreFallback uri="" />,
+	render: () => <NoConnectorArtifactStoreFallback />,
 };
 
 export const NoConnectorLongUri: Story = {
@@ -51,14 +50,4 @@ export const NoConnectorLongUri: Story = {
 
 export const DepsMissing: Story = {
 	render: () => <DepsMissingArtifactStoreFallback />,
-};
-
-export const Generic: Story = {
-	render: () => (
-		<GenericArtifactStoreFallback message="HTTP 503: artifact store temporarily unavailable" />
-	),
-};
-
-export const GenericNoMessage: Story = {
-	render: () => <GenericArtifactStoreFallback />,
 };

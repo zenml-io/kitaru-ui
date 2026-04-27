@@ -14,11 +14,8 @@ export function classifyArtifactStore({
 
 	const flavorName = artifactStore.body?.flavor_name;
 	const hasConnector = !!artifactStore.metadata?.connector;
-	const resolvedUri = uri ?? "";
 
-	if (flavorName === "local") return { kind: "local", uri: resolvedUri };
-	if (!hasConnector) {
-		return { kind: "remote-no-connector", uri: resolvedUri };
-	}
+	if (flavorName === "local") return { kind: "local", uri };
+	if (!hasConnector) return { kind: "remote-no-connector", uri };
 	return { kind: "remote-ok" };
 }
