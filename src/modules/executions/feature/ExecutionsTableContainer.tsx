@@ -1,3 +1,5 @@
+import type { Deployment } from "@/modules/deployments/domain/deployment";
+import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
 import {
 	StatusRenderer,
 	TextRenderer,
@@ -28,15 +30,20 @@ import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
+	realDeployments,
 }: {
 	executionRows: Execution[];
 	flowId: string;
+	realDeployments: Deployment[];
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
-	const columns = useMemo(() => buildExecutionColumns(flowId), [flowId]);
+	const columns = useMemo(
+		() => buildExecutionColumns(flowId, realDeployments),
+		[flowId, realDeployments]
+	);
 
 	const table = useReactTable({
 		data: executionRows,
@@ -105,7 +112,11 @@ export function ExecutionsTableContainer({
 	);
 }
 
-function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
+function buildExecutionColumns(
+	flowId: string,
+	realDeployments: Deployment[]
+): ColumnDef<Execution>[] {
+	const deploymentBySnapshotId = new Map(realDeployments.map((d) => [d.id, d]));
 	return [
 		{
 			accessorKey: "execution",
@@ -113,15 +124,24 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
-			cell: ({ row }) => (
-				<Link
-					to="/flows/$flowId/executions/$executionId"
-					params={{ flowId, executionId: row.original.id }}
-					className="block px-2 py-3.5 hover:underline"
-				>
-					<ExecutionName index={row.original.index} />
-				</Link>
-			),
+			cell: ({ row }) => {
+				const deployment = row.original.snapshotId
+					? deploymentBySnapshotId.get(row.original.snapshotId)
+					: undefined;
+				const version: number | typeof LOCAL_VERSION_ID = deployment
+					? deployment.versionNumber
+					: LOCAL_VERSION_ID;
+				return (
+					<Link
+						to="/flows/$flowId/executions/$executionId"
+						params={{ flowId, executionId: row.original.id }}
+						search={{ version }}
+						className="block px-2 py-3.5 hover:underline"
+					>
+						<ExecutionName index={row.original.index} />
+					</Link>
+				);
+			},
 		},
 		{
 			accessorKey: "status",

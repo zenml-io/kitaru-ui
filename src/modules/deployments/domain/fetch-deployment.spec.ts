@@ -56,7 +56,7 @@ describe("fetchDeployment", () => {
 		getSpy.mockRestore();
 	});
 
-	it("calls the detail endpoint with hydrate=true", async () => {
+	it("calls the detail endpoint with hydrate and include_config_schema enabled", async () => {
 		getSpy.mockResolvedValue({
 			data: mkSnapshot(),
 			error: undefined,
@@ -71,7 +71,7 @@ describe("fetchDeployment", () => {
 			{
 				params: {
 					path: { snapshot_id: "snap-1" },
-					query: { hydrate: true },
+					query: { hydrate: true, include_config_schema: true },
 				},
 			}
 		);

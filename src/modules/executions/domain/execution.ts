@@ -84,6 +84,6 @@ export function executionFromApiToDomain(
 						name: run.resources?.active_wait_condition?.name,
 					}
 				: undefined,
-		snapshotId: run.resources?.snapshot?.id,
+		snapshotId: run.resources?.source_snapshot?.id,
 	};
 }

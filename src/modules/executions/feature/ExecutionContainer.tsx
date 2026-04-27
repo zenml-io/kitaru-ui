@@ -4,6 +4,8 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
+import { useSelectedVersion } from "@/modules/deployments/business-logic/use-selected-version";
+import { isLocalDeployment } from "@/modules/deployments/domain/local-deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
@@ -14,6 +16,7 @@ import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
 import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
+import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionsList } from "../ui/ExecutionsList";
@@ -33,16 +36,26 @@ export function ExecutionContainer() {
 }
 
 function ExecutionContainerBody() {
-	const { flowId, executionId } = useParams({ from: ROUTE_ID });
+	const { executionId } = useParams({ from: ROUTE_ID });
+	const { flowId, realDeployments, selected } = useSelectedVersion();
+	const { versions } = useSearch({ from: "/_private/_navbar/flows/$flowId" });
 	const search = useSearch({ from: ROUTE_ID });
 	const navigate = useNavigate({ from: ROUTE_PATH });
+
+	const isLocal = isLocalDeployment(selected);
+	const activeScope = versions === "all" ? "all" : "version";
+	const shouldServerFilter =
+		activeScope === "version" && !!selected && !isLocal;
 
 	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
 	const isLogsTab = activeTab === "logs";
 
 	const setActiveTab = (tab: ExecutionTab) => {
 		navigate({
-			search: () => (tab === "logs" ? { tab: "logs" } : {}),
+			search: (prev) =>
+				tab === "logs"
+					? { version: prev.version, tab: "logs" }
+					: { version: prev.version },
 			replace: true,
 		});
 	};
@@ -53,15 +66,20 @@ function ExecutionContainerBody() {
 
 	const setSelectedScope = (scope: ExecutionLogsScope) => {
 		navigate({
-			search: () =>
+			search: (prev) =>
 				scope.kind === "root"
-					? { tab: "logs" }
-					: { tab: "logs", scope: scope.checkpointId },
+					? { version: prev.version, tab: "logs" }
+					: {
+							version: prev.version,
+							tab: "logs",
+							scope: scope.checkpointId,
+						},
 			replace: true,
 		});
 	};
 
 	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
+		snapshotId: shouldServerFilter ? selected?.id : undefined,
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { executionData, refetch: refetchExecution } =
@@ -93,9 +111,17 @@ function ExecutionContainerBody() {
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
-	const executionsSortedByCreatedAtDesc = [...executionsData].sort((a, b) => {
-		return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
-	});
+	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
+	const displayedExecutions =
+		activeScope === "version" && isLocal
+			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
+			: executionsData;
+
+	const executionsSortedByCreatedAtDesc = [...displayedExecutions].sort(
+		(a, b) => {
+			return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
+		}
+	);
 
 	return (
 		<div className="flex flex-1 flex-col overflow-hidden">
