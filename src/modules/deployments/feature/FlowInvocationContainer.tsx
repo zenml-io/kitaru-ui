@@ -1,11 +1,8 @@
 import { env } from "@/modules/root/domain/env";
 import { isRecord } from "@/shared/utils/is-record";
 import { isLocalDeployment } from "../domain/local-deployment";
-import { useSelectedVersion } from "../business-logic/use-selected-version";
-import {
-	InvocationEmptyState,
-	InvocationOverviewCard,
-} from "../ui/InvocationOverviewCard";
+import { useSelectedDeployment } from "../business-logic/use-selected-deployment";
+import { InvocationOverviewCard } from "../ui/InvocationOverviewCard";
 import { LocalOverviewCard } from "../ui/LocalOverviewCard";
 
 function exampleFromSchema(
@@ -29,9 +26,8 @@ function exampleFromSchema(
 }
 
 export function FlowInvocationContainer() {
-	const { flowId, flow, realDeployments, selected } = useSelectedVersion();
+	const { flowId, flow, realDeployments, selected } = useSelectedDeployment();
 
-	if (!selected) return <InvocationEmptyState />;
 	if (isLocalDeployment(selected))
 		return (
 			<LocalOverviewCard

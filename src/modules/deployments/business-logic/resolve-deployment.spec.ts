@@ -1,16 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Deployment } from "../domain/deployment";
 import {
-	LOCAL_VERSION_ID,
-	withLocalDeployment,
-} from "../domain/local-deployment";
-import type { Execution } from "@/modules/executions/domain/execution";
-import {
 	resolveDefaultDeployment,
 	resolveDeploymentByExclusiveTag,
 	resolveDeploymentByVersion,
-	resolveDeploymentForExecution,
-	resolveSelectedDeployment,
 } from "./resolve-deployment";
 
 function mkDeployment(overrides: Partial<Deployment>): Deployment {
@@ -22,16 +15,6 @@ function mkDeployment(overrides: Partial<Deployment>): Deployment {
 		tags: [],
 		runnable: true,
 		deployable: true,
-		...overrides,
-	};
-}
-
-function mkExecution(overrides: Partial<Execution>): Execution {
-	return {
-		id: "run-1",
-		name: "run",
-		index: 1,
-		logSources: [],
 		...overrides,
 	};
 }
@@ -104,72 +87,5 @@ describe("resolveDeploymentByExclusiveTag", () => {
 		expect(
 			resolveDeploymentByExclusiveTag(deployments, "no-such-tag")
 		).toBeUndefined();
-	});
-});
-
-describe("resolveSelectedDeployment", () => {
-	it("returns the deployment matching ?version=N when present", () => {
-		expect(resolveSelectedDeployment(deployments, 2)).toBe(d2);
-	});
-
-	it("falls back to the default-tag holder when ?version=N is not given", () => {
-		expect(resolveSelectedDeployment(deployments, undefined)).toBe(d3);
-	});
-
-	it("falls back to the default-tag holder when ?version=N does not match", () => {
-		expect(resolveSelectedDeployment(deployments, 99)).toBe(d3);
-	});
-
-	it("falls back to the first deployment when no default tag exists", () => {
-		const noDefault = [d1, d2];
-		expect(resolveSelectedDeployment(noDefault, undefined)).toBe(d1);
-	});
-
-	it("returns undefined for an empty list", () => {
-		expect(resolveSelectedDeployment([], undefined)).toBeUndefined();
-		expect(resolveSelectedDeployment([], 1)).toBeUndefined();
-		expect(resolveSelectedDeployment([], LOCAL_VERSION_ID)).toBeUndefined();
-	});
-
-	it("selects the synthetic local deployment when version === 'local' and it exists in the list", () => {
-		const local = mkDeployment({
-			id: "local",
-			versionNumber: 0,
-			tags: [],
-		});
-		expect(resolveSelectedDeployment([...deployments, local], "local")).toBe(
-			local
-		);
-	});
-
-	it("falls back to the default-tag holder when version === 'local' but the local entry isn't present", () => {
-		expect(resolveSelectedDeployment(deployments, LOCAL_VERSION_ID)).toBe(d3);
-	});
-
-	it("resolves the synthetic local entry produced by withLocalDeployment", () => {
-		const withLocal = withLocalDeployment(
-			deployments,
-			"flow-1",
-			"research_agent"
-		);
-		const selected = resolveSelectedDeployment(withLocal, LOCAL_VERSION_ID);
-		expect(selected?.id).toBe(LOCAL_VERSION_ID);
-	});
-});
-
-describe("resolveDeploymentForExecution", () => {
-	it("returns the deployment matching execution.snapshotId", () => {
-		const exec = mkExecution({ snapshotId: "snap-2" });
-		expect(resolveDeploymentForExecution(exec, deployments)).toBe(d2);
-	});
-
-	it("returns undefined when execution has no snapshotId", () => {
-		const exec = mkExecution({ snapshotId: undefined });
-		expect(resolveDeploymentForExecution(exec, deployments)).toBeUndefined();
-	});
-
-	it("returns undefined when the snapshotId isn't in the list", () => {
-		const exec = mkExecution({ snapshotId: "snap-missing" });
-		expect(resolveDeploymentForExecution(exec, deployments)).toBeUndefined();
 	});
 });

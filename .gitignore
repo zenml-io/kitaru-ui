@@ -53,3 +53,9 @@ playwright-report
 test-results
 
 design/
+
+# TanStack Router plugin scratch space
+.tanstack
+
+# Dogfood skill output
+dogfood-output

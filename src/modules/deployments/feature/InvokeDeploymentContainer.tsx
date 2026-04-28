@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Deployment } from "../domain/deployment";
+import { LOCAL_VERSION_ID } from "../domain/local-deployment";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
 import { InvokeButton } from "../ui/InvokeButton";
@@ -32,10 +33,17 @@ export function InvokeDeploymentContainer({
 			onSuccess: ({ runId }) => {
 				setOpen(false);
 				toast.success("Invocation started");
+				const versionParam =
+					deployment.id === LOCAL_VERSION_ID
+						? LOCAL_VERSION_ID
+						: deployment.versionNumber;
 				navigate({
-					to: "/flows/$flowId/executions/$executionId",
-					params: { flowId: deployment.flowId, executionId: runId },
-					search: { version: deployment.versionNumber },
+					to: "/flows/$flowId/v/$version/executions/$executionId",
+					params: {
+						flowId: deployment.flowId,
+						version: versionParam,
+						executionId: runId,
+					},
 				});
 			},
 			onError: (error) => {

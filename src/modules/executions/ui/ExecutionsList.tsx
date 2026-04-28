@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import type { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
 import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
-import { formatDuration } from "@/shared/utils/time";
 import { cn } from "@/shared/utils/styles";
+import { formatDuration } from "@/shared/utils/time";
+import { Link } from "@tanstack/react-router";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "./ExecutionName";
 
@@ -9,12 +10,14 @@ type ExecutionsListProps = {
 	executions: Execution[];
 	flowId: string;
 	activeexecutionId: string;
+	versionParam: number | typeof LOCAL_VERSION_ID;
 };
 
 export function ExecutionsList({
 	executions,
 	flowId,
 	activeexecutionId,
+	versionParam,
 }: ExecutionsListProps) {
 	return (
 		<div className="flex h-full flex-col">
@@ -24,14 +27,13 @@ export function ExecutionsList({
 			{executions.map((execution) => (
 				<Link
 					key={execution.id}
-					to="/flows/$flowId/executions/$executionId"
-					params={{ flowId, executionId: execution.id }}
-					search={(prev) => {
-						const next: { tab?: "logs"; version?: typeof prev.version } = {};
-						if (prev.tab === "logs") next.tab = "logs";
-						if (prev.version !== undefined) next.version = prev.version;
-						return next;
+					to="/flows/$flowId/v/$version/executions/$executionId"
+					params={{
+						flowId,
+						version: versionParam,
+						executionId: execution.id,
 					}}
+					search={(prev) => (prev.tab === "logs" ? { tab: "logs" } : {})}
 					className={cn(
 						"flex items-center justify-between gap-2 px-3 py-1.5 text-sm transition-colors",
 						execution.id === activeexecutionId

@@ -1,13 +1,13 @@
 import { env } from "@/modules/root/domain/env";
 import { isLocalDeployment } from "../domain/local-deployment";
-import { useSelectedVersion } from "../business-logic/use-selected-version";
+import { useSelectedDeployment } from "../business-logic/use-selected-deployment";
 import { InvocationUrlBlock } from "../ui/InvocationUrlBlock";
 import { InvokeDeploymentContainer } from "./InvokeDeploymentContainer";
 
 export function FlowInvokeActionsContainer() {
-	const { selected } = useSelectedVersion();
+	const { selected } = useSelectedDeployment();
 
-	if (!selected || isLocalDeployment(selected)) return null;
+	if (isLocalDeployment(selected)) return null;
 
 	const origin = env.VITE_API_BASE_URL || window.location.origin;
 	const url = `${origin}/api/v1/pipeline_snapshots/${selected.id}/runs`;

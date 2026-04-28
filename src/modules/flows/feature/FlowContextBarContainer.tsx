@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate, useParams, useRouterState } from "@tanstack/react-router";
 
 import { FlowInvokeActionsContainer } from "@/modules/deployments/feature/FlowInvokeActionsContainer";
 import {
@@ -9,17 +9,35 @@ import {
 import { ContextBar } from "@/shared/ui/ContextBar";
 
 export function FlowContextBarContainer() {
-	const { flowId, tab } = useParams({
-		from: "/_private/_navbar/flows/$flowId/$tab",
+	const { flowId, version } = useParams({
+		from: "/_private/_navbar/flows/$flowId/v/$version",
 	});
 	const navigate = useNavigate();
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+	const activeTab: FlowTab = pathname.endsWith("/memory")
+		? "memory"
+		: /\/executions(\/|$)/.test(pathname)
+			? "executions"
+			: "overview";
 
 	const navigateToTab = (tab: FlowTab) => {
-		navigate({
-			to: "/flows/$flowId/$tab",
-			params: { flowId, tab },
-			search: (prev) => prev,
-		});
+		if (tab === "memory") {
+			navigate({
+				to: "/flows/$flowId/v/$version/memory",
+				params: { flowId, version },
+			});
+		} else if (tab === "executions") {
+			navigate({
+				to: "/flows/$flowId/v/$version/executions",
+				params: { flowId, version },
+			});
+		} else {
+			navigate({
+				to: "/flows/$flowId/v/$version/overview",
+				params: { flowId, version },
+			});
+		}
 	};
 
 	const tabs = flowTabs.map((value) => ({
@@ -30,7 +48,7 @@ export function FlowContextBarContainer() {
 	return (
 		<ContextBar
 			tabs={tabs}
-			activeTab={tab}
+			activeTab={activeTab}
 			onTabChange={(value) => navigateToTab(value as FlowTab)}
 			actions={<FlowInvokeActionsContainer />}
 		/>

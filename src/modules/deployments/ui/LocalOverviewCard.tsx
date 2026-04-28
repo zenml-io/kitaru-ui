@@ -29,11 +29,7 @@ export function LocalOverviewCard({
 							size="sm"
 							variant="outline"
 							render={
-								<Link
-									to="/flows/$flowId/$tab"
-									params={{ flowId, tab: "executions" }}
-									search={(prev) => prev}
-								/>
+								<Link to="/flows/$flowId/executions" params={{ flowId }} />
 							}
 						>
 							View executions

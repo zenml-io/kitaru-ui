@@ -31,18 +31,20 @@ export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
 	realDeployments,
+	versionParam,
 }: {
 	executionRows: Execution[];
 	flowId: string;
 	realDeployments: Deployment[];
+	versionParam: number | typeof LOCAL_VERSION_ID | undefined;
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
 	const columns = useMemo(
-		() => buildExecutionColumns(flowId, realDeployments),
-		[flowId, realDeployments]
+		() => buildExecutionColumns(flowId, realDeployments, versionParam),
+		[flowId, realDeployments, versionParam]
 	);
 
 	const table = useReactTable({
@@ -114,7 +116,8 @@ export function ExecutionsTableContainer({
 
 function buildExecutionColumns(
 	flowId: string,
-	realDeployments: Deployment[]
+	realDeployments: Deployment[],
+	versionParam: number | typeof LOCAL_VERSION_ID | undefined
 ): ColumnDef<Execution>[] {
 	const deploymentBySnapshotId = new Map(realDeployments.map((d) => [d.id, d]));
 	return [
@@ -128,14 +131,16 @@ function buildExecutionColumns(
 				const deployment = row.original.snapshotId
 					? deploymentBySnapshotId.get(row.original.snapshotId)
 					: undefined;
-				const version: number | typeof LOCAL_VERSION_ID = deployment
-					? deployment.versionNumber
-					: LOCAL_VERSION_ID;
+				const linkVersion =
+					versionParam ?? deployment?.versionNumber ?? LOCAL_VERSION_ID;
 				return (
 					<Link
-						to="/flows/$flowId/executions/$executionId"
-						params={{ flowId, executionId: row.original.id }}
-						search={{ version }}
+						to="/flows/$flowId/v/$version/executions/$executionId"
+						params={{
+							flowId,
+							version: linkVersion,
+							executionId: row.original.id,
+						}}
 						className="block px-2 py-3.5 hover:underline"
 					>
 						<ExecutionName index={row.original.index} />

@@ -85,7 +85,11 @@ export function DeploymentVersionSwitcherPill({
 				render={
 					<button
 						type="button"
-						aria-label={`Switch version. Current: v${selected.versionNumber}`}
+						aria-label={`Switch version. Current: ${
+							isLocalDeployment(selected)
+								? "local"
+								: `v${selected.versionNumber}`
+						}`}
 						className={cn(
 							"inline-flex h-7 items-center gap-1.5 rounded-md px-2",
 							"hover:bg-accent/60 focus-visible:ring-ring/40 transition-colors focus-visible:ring-2 focus-visible:outline-none",
