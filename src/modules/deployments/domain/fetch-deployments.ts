@@ -11,6 +11,7 @@ export async function fetchDeployments(flowId: string): Promise<Deployment[]> {
 		params: {
 			query: {
 				pipeline: flowId,
+				name: "contains:kitaru::",
 				page: DEFAULT_PAGE,
 				size: MAX_PAGE_SIZE,
 				hydrate: true,

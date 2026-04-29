@@ -1,8 +1,7 @@
 import { env } from "@/modules/root/domain/env";
 import { isRecord } from "@/shared/utils/is-record";
-import { useQuery } from "@tanstack/react-query";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useCurrentDeployment } from "../business-logic/use-current-deployment";
+import { useDeployments } from "../business-logic/use-deployments";
 import { LOCAL_VERSION_ID } from "../domain/deployment";
 import { InvocationOverviewCard } from "../ui/InvocationOverviewCard";
 import { LocalOverviewCard } from "../ui/LocalOverviewCard";
@@ -29,14 +28,14 @@ function exampleFromSchema(
 
 export function FlowInvocationContainer() {
 	const { flowId, deployment } = useCurrentDeployment();
-	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
+	const { data: realDeployments } = useDeployments(flowId);
 
 	if (deployment.version === LOCAL_VERSION_ID)
 		return (
 			<LocalOverviewCard
 				flowName={deployment.flowName}
 				flowId={flowId}
-				hasDeployments={(realDeployments?.length ?? 0) > 0}
+				hasDeployments={realDeployments.length > 0}
 			/>
 		);
 

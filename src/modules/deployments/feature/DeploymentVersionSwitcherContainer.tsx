@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { resolveDefaultDeployment } from "../business-logic/resolve-deployment";
 import { useCurrentDeployment } from "../business-logic/use-current-deployment";
+import { useDeployments } from "../business-logic/use-deployments";
 import {
 	buildLocalDeployment,
 	type DeploymentVersion,
@@ -12,9 +11,7 @@ import { DeploymentVersionSwitcherPill } from "../ui/DeploymentVersionSwitcherPi
 export function DeploymentVersionSwitcherContainer() {
 	const { flowId, deployment } = useCurrentDeployment();
 	const navigate = useNavigate();
-	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
-
-	if (!realDeployments) return null;
+	const { data: realDeployments } = useDeployments(flowId);
 
 	const localEntry = buildLocalDeployment(flowId, deployment.flowName);
 	const defaultHolder = resolveDefaultDeployment(realDeployments);

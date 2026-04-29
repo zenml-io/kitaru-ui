@@ -55,7 +55,7 @@ describe("fetchDeployments", () => {
 		getSpy.mockRestore();
 	});
 
-	it("calls the snapshots endpoint with pipeline filter and hydrate=true", async () => {
+	it("calls the snapshots endpoint with pipeline + kitaru:: name filter and hydrate=true", async () => {
 		getSpy.mockResolvedValue({
 			data: { items: [], total: 0, page: 1, size: 1000, total_pages: 0 },
 			error: undefined,
@@ -69,6 +69,7 @@ describe("fetchDeployments", () => {
 			params: {
 				query: {
 					pipeline: "flow-1",
+					name: "contains:kitaru::",
 					page: 1,
 					size: 1000,
 					hydrate: true,
@@ -77,7 +78,7 @@ describe("fetchDeployments", () => {
 		});
 	});
 
-	it("filters out non-Kitaru snapshots", async () => {
+	it("filters out non-Kitaru snapshots client-side as a safety net", async () => {
 		getSpy.mockResolvedValue({
 			data: {
 				items: [

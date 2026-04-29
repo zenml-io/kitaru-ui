@@ -9,8 +9,14 @@ export const deploymentsQueryKeys = {
 		[...deploymentsQueryKeys.base, "list", flowId] as const,
 	detail: (snapshotId: string) =>
 		[...deploymentsQueryKeys.base, "detail", snapshotId] as const,
-	byVersion: (flowId: string, version: number) =>
-		[...deploymentsQueryKeys.base, "byVersion", flowId, version] as const,
+	byVersion: (flowId: string, flowName: string, version: number) =>
+		[
+			...deploymentsQueryKeys.base,
+			"byVersion",
+			flowId,
+			flowName,
+			version,
+		] as const,
 };
 
 export const deploymentsQueries = {
@@ -26,7 +32,7 @@ export const deploymentsQueries = {
 		}),
 	byVersion: (flowId: string, flowName: string, version: number) =>
 		queryOptions({
-			queryKey: deploymentsQueryKeys.byVersion(flowId, version),
+			queryKey: deploymentsQueryKeys.byVersion(flowId, flowName, version),
 			queryFn: () => fetchDeploymentByVersion(flowId, flowName, version),
 		}),
 };

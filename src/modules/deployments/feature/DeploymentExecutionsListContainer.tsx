@@ -1,5 +1,5 @@
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
 import { useCurrentDeployment } from "@/modules/deployments/business-logic/use-current-deployment";
+import { useDeployments } from "@/modules/deployments/business-logic/use-deployments";
 import {
 	formatVersion,
 	LOCAL_VERSION_ID,
@@ -22,12 +22,11 @@ import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export function DeploymentExecutionsListContainer() {
 	const { flowId, deployment } = useCurrentDeployment();
-	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
+	const { data: realDeployments } = useDeployments(flowId);
 	const [activeScope, setActiveScope] = useState<ExecutionsScope>("version");
 
 	const isLocal = deployment.version === LOCAL_VERSION_ID;
@@ -40,7 +39,7 @@ export function DeploymentExecutionsListContainer() {
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
 
-	const kitaruSnapshotIds = new Set(realDeployments?.map((d) => d.id) ?? []);
+	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
 	const displayedExecutions =
 		activeScope === "version" && isLocal
 			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
@@ -52,7 +51,7 @@ export function DeploymentExecutionsListContainer() {
 		activeScope === "version" ? deployment.version : undefined;
 
 	const versionLookup: SnapshotVersionLookup = new Map(
-		realDeployments?.map((d) => [d.id, d.version]) ?? []
+		realDeployments.map((d) => [d.id, d.version])
 	);
 
 	return (

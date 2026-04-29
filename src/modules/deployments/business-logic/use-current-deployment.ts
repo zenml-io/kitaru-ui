@@ -1,7 +1,7 @@
-import { useLoaderData, useParams } from "@tanstack/react-router";
+import { getRouteApi } from "@tanstack/react-router";
 import type { Deployment } from "../domain/deployment";
 
-const ROUTE_ID = "/_private/_navbar/flows/$flowId/v/$version" as const;
+const route = getRouteApi("/_private/_navbar/flows/$flowId/v/$version");
 
 export type UseCurrentDeploymentResult = {
 	flowId: string;
@@ -9,7 +9,7 @@ export type UseCurrentDeploymentResult = {
 };
 
 export function useCurrentDeployment(): UseCurrentDeploymentResult {
-	const { flowId } = useParams({ from: ROUTE_ID });
-	const { deployment } = useLoaderData({ from: ROUTE_ID });
+	const { flowId } = route.useParams();
+	const { deployment } = route.useLoaderData();
 	return { flowId, deployment };
 }
