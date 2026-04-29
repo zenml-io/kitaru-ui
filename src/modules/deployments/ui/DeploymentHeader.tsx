@@ -14,7 +14,6 @@ export function DeploymentHeader({
 	deployment?: Deployment;
 	stackComponents?: StackComponent[];
 }) {
-	const isDefault = deployment?.tags.some((t) => t.kind === "default") ?? false;
 	const hasTags = (deployment?.tags.length ?? 0) > 0;
 
 	return (
@@ -43,11 +42,6 @@ export function DeploymentHeader({
 									</span>
 								</>
 							))}
-						{deployment && !isLocalDeployment(deployment) && isDefault && (
-							<span className="text-muted-foreground text-xs font-normal">
-								(default)
-							</span>
-						)}
 					</h1>
 
 					{deployment && !isLocalDeployment(deployment) && hasTags && (

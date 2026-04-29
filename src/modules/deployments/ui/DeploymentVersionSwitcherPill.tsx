@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
+import type { CategorizedDeployments } from "../business-logic/categorize-deployments";
 import type { Deployment, DeploymentTag } from "../domain/deployment";
 import {
 	isLocalDeployment,
@@ -48,36 +49,23 @@ function formatDate(d: Date | undefined): string {
 }
 
 export function DeploymentVersionSwitcherPill({
-	deployments,
-	selectedId,
+	selected,
+	selectedDefaultTag,
+	defaultHolder,
+	restRealVersions,
+	localEntry,
 	onSelect,
 	className,
-}: {
-	deployments: Deployment[];
-	selectedId: string | undefined;
+}: CategorizedDeployments & {
 	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
 	className?: string;
 }) {
 	const [sort, setSort] = useState<SortOrder>("newest");
 
-	if (deployments.length === 0) return null;
-
-	const selected =
-		deployments.find((d) => d.id === selectedId) ?? deployments[0];
-	const selectedDefaultTag = selected.tags.find((t) => t.kind === "default");
-	const defaultHolder = deployments.find((d) =>
-		d.tags.some((t) => t.kind === "default")
-	);
-
 	const dir = sort === "newest" ? -1 : 1;
-	const sortedDeployments = [...deployments].sort(
+	const sortedRealVersions = [...restRealVersions].sort(
 		(a, b) => dir * (deploymentTime(a) - deploymentTime(b))
 	);
-	const restVersions = sortedDeployments.filter(
-		(d) => d.id !== defaultHolder?.id
-	);
-	const localEntry = deployments.find(isLocalDeployment);
-	const restRealVersions = restVersions.filter((d) => !isLocalDeployment(d));
 
 	return (
 		<DropdownMenu>
@@ -149,14 +137,16 @@ export function DeploymentVersionSwitcherPill({
 							</>
 						)}
 
-						{(restRealVersions.length > 0 || defaultHolder) && (
+						{(sortedRealVersions.length > 0 || defaultHolder) && (
 							<div className="text-muted-foreground text-2xs flex items-center gap-1.5 px-3 pt-2.5 pb-1 font-semibold tracking-wider uppercase">
 								<span>All versions</span>
 								<span aria-hidden>·</span>
-								<span className="tabular-nums">{restRealVersions.length}</span>
+								<span className="tabular-nums">
+									{sortedRealVersions.length}
+								</span>
 							</div>
 						)}
-						{restRealVersions.map((d) => (
+						{sortedRealVersions.map((d) => (
 							<VersionRow
 								key={d.id}
 								deployment={d}
