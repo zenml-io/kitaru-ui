@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { components } from "@/shared/api/openapi";
-import { checkpointFromApiToDomain } from "./checkpoint";
+import {
+	checkpointFromApiToDomain,
+	checkpointEntryFromApiToDomain,
+} from "./checkpoint";
 
 type ArtifactSaveType = components["schemas"]["ArtifactSaveType"];
 type StepRunInputArtifactType =
@@ -333,5 +336,36 @@ describe("checkpointFromApiToDomain", () => {
 		expect(checkpointFromApiToDomain(checkpoint).outputs).toEqual([
 			{ id: "good-output-id", name: "good" },
 		]);
+	});
+
+	it("maps StepRunResponse body.type = 'memory_call' to Checkpoint.type", () => {
+		const checkpoint = {
+			id: "checkpoint-id-memory",
+			name: "remember_user_pref",
+			body: {
+				status: "completed",
+				type: "memory_call",
+			},
+			resources: { inputs: {}, outputs: {} },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).type).toBe("memory_call");
+	});
+});
+
+describe("checkpointEntryFromApiToDomain", () => {
+	it("maps DAG node metadata.type = 'memory_call' to CheckpointEntry.type", () => {
+		const node = {
+			id: "node-memory-1",
+			node_id: "node-memory-1",
+			name: "remember_user_pref",
+			type: "step",
+			metadata: {
+				status: "completed",
+				type: "memory_call",
+			},
+		} as unknown as components["schemas"]["Node"];
+
+		expect(checkpointEntryFromApiToDomain(node).type).toBe("memory_call");
 	});
 });
