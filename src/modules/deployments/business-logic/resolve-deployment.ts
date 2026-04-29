@@ -10,7 +10,7 @@ export function resolveDeploymentByVersion(
 	deployments: Deployment[],
 	version: number
 ): Deployment | undefined {
-	return deployments.find((d) => d.versionNumber === version);
+	return deployments.find((d) => d.version === version);
 }
 
 export function resolveDeploymentByExclusiveTag(

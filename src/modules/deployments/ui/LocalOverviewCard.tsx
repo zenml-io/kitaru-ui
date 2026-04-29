@@ -1,4 +1,4 @@
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
+import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/deployment";
 import { Button } from "@/shared/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Info } from "lucide-react";

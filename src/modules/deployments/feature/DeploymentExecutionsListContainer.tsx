@@ -1,9 +1,10 @@
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { useSelectedDeployment } from "@/modules/deployments/business-logic/use-selected-deployment";
+import { useCurrentDeployment } from "@/modules/deployments/business-logic/use-current-deployment";
 import {
+	formatVersion,
 	LOCAL_VERSION_ID,
-	isLocalDeployment,
-} from "@/modules/deployments/domain/local-deployment";
+	type DeploymentVersion,
+} from "@/modules/deployments/domain/deployment";
 import { useExecutions } from "@/modules/executions/business-logic/use-executions";
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "@/modules/executions/domain/fetch-executions";
 import { filterLocalExecutions } from "@/modules/executions/domain/filter-local-executions";
@@ -25,15 +26,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export function DeploymentExecutionsListContainer() {
-	const { flowId, selected } = useSelectedDeployment();
+	const { flowId, deployment } = useCurrentDeployment();
 	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 	const [activeScope, setActiveScope] = useState<ExecutionsScope>("version");
 
-	const isLocal = isLocalDeployment(selected);
+	const isLocal = deployment.version === LOCAL_VERSION_ID;
 	const shouldServerFilter = activeScope === "version" && !isLocal;
 
 	const { executionsData, refetch } = useExecutions(flowId, {
-		snapshotId: shouldServerFilter ? selected.id : undefined,
+		snapshotId: shouldServerFilter ? deployment.id : undefined,
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
@@ -45,20 +46,13 @@ export function DeploymentExecutionsListContainer() {
 			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
 			: executionsData;
 
-	const versionLabel = isLocal ? "local" : `v${selected.versionNumber}`;
+	const versionLabel = formatVersion(deployment.version);
 
-	const versionParam: number | typeof LOCAL_VERSION_ID | undefined =
-		activeScope === "version"
-			? isLocal
-				? LOCAL_VERSION_ID
-				: selected.versionNumber
-			: undefined;
+	const versionParam: DeploymentVersion | undefined =
+		activeScope === "version" ? deployment.version : undefined;
 
 	const versionLookup: SnapshotVersionLookup = new Map(
-		realDeployments?.map((d) => [
-			d.id,
-			isLocalDeployment(d) ? "local" : d.versionNumber,
-		]) ?? []
+		realDeployments?.map((d) => [d.id, d.version]) ?? []
 	);
 
 	return (

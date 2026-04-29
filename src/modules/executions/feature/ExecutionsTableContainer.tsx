@@ -21,11 +21,12 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 
-export type SnapshotVersionLookup = Map<string, number | "local">;
+export type SnapshotVersionLookup = Map<string, DeploymentVersion>;
 
 export function ExecutionsTableContainer({
 	executionRows,
@@ -36,7 +37,7 @@ export function ExecutionsTableContainer({
 	executionRows: Execution[];
 	flowId: string;
 	versionLookup: SnapshotVersionLookup;
-	versionParam: number | "local" | undefined;
+	versionParam: DeploymentVersion | undefined;
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
@@ -117,7 +118,7 @@ export function ExecutionsTableContainer({
 function buildExecutionColumns(
 	flowId: string,
 	versionLookup: SnapshotVersionLookup,
-	versionParam: number | "local" | undefined
+	versionParam: DeploymentVersion | undefined
 ): ColumnDef<Execution>[] {
 	return [
 		{

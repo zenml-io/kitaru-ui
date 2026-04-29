@@ -1,5 +1,5 @@
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
+import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/deployment";
 import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { createFileRoute, redirect } from "@tanstack/react-router";
@@ -40,7 +40,7 @@ export const Route = createFileRoute(
 			to: "/flows/$flowId/v/$version/executions/$executionId",
 			params: {
 				flowId: params.flowId,
-				version: deployment?.versionNumber ?? LOCAL_VERSION_ID,
+				version: deployment?.version ?? LOCAL_VERSION_ID,
 				executionId: params.executionId,
 			},
 			search: location.search,

@@ -1,3 +1,4 @@
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { StatusDot, type StatusDotVariant } from "@/shared/ui/StatusDot";
 import { cn } from "@/shared/utils/styles";
 import { formatDuration } from "@/shared/utils/time";
@@ -9,7 +10,7 @@ type ExecutionsListProps = {
 	executions: Execution[];
 	flowId: string;
 	activeexecutionId: string;
-	versionParam: number | "local";
+	versionParam: DeploymentVersion;
 };
 
 export function ExecutionsList({

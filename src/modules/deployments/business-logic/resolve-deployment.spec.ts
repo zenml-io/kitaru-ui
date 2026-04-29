@@ -11,7 +11,7 @@ function mkDeployment(overrides: Partial<Deployment>): Deployment {
 		id: "snap-x",
 		flowId: "flow-1",
 		flowName: "research_agent",
-		versionNumber: 1,
+		version: 1,
 		tags: [],
 		runnable: true,
 		deployable: true,
@@ -22,17 +22,17 @@ function mkDeployment(overrides: Partial<Deployment>): Deployment {
 // Intentionally unsorted — selectors must not depend on list order.
 const d3 = mkDeployment({
 	id: "snap-3",
-	versionNumber: 3,
+	version: 3,
 	tags: [{ id: "t1", name: "default", kind: "default" }],
 });
 const d2 = mkDeployment({
 	id: "snap-2",
-	versionNumber: 2,
+	version: 2,
 	tags: [{ id: "t2", name: "beta", kind: "general" }],
 });
 const d1 = mkDeployment({
 	id: "snap-1",
-	versionNumber: 1,
+	version: 1,
 	tags: [{ id: "t2", name: "beta", kind: "general" }],
 });
 const deployments: Deployment[] = [d1, d3, d2];
@@ -69,7 +69,7 @@ describe("resolveDeploymentByExclusiveTag", () => {
 	it("resolves a non-default exclusive tag holder", () => {
 		const dCanary = mkDeployment({
 			id: "snap-canary",
-			versionNumber: 4,
+			version: 4,
 			tags: [{ id: "t3", name: "canary", kind: "exclusive" }],
 		});
 		expect(

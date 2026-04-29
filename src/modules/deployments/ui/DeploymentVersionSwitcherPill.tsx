@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import type { Deployment, DeploymentTag } from "../domain/deployment";
 import {
-	isLocalDeployment,
+	formatVersion,
 	LOCAL_VERSION_ID,
-} from "../domain/local-deployment";
+	type Deployment,
+	type DeploymentTag,
+	type DeploymentVersion,
+} from "../domain/deployment";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -53,7 +55,7 @@ type DeploymentVersionSwitcherPillProps = {
 	defaultHolder: Deployment | undefined;
 	restRealVersions: Deployment[];
 	localEntry: Deployment | undefined;
-	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
+	onSelect: (selection: DeploymentVersion) => void;
 	className?: string;
 };
 
@@ -79,11 +81,7 @@ export function DeploymentVersionSwitcherPill({
 				render={
 					<button
 						type="button"
-						aria-label={`Switch version. Current: ${
-							isLocalDeployment(selected)
-								? "local"
-								: `v${selected.versionNumber}`
-						}`}
+						aria-label={`Switch version. Current: ${formatVersion(selected.version)}`}
 						className={cn(
 							"inline-flex h-7 items-center gap-1.5 rounded-md px-2",
 							"hover:bg-accent/60 focus-visible:ring-ring/40 transition-colors focus-visible:ring-2 focus-visible:outline-none",
@@ -92,9 +90,7 @@ export function DeploymentVersionSwitcherPill({
 						)}
 					>
 						<span className="text-foreground font-mono text-sm font-semibold">
-							{isLocalDeployment(selected)
-								? "local"
-								: `v${selected.versionNumber}`}
+							{formatVersion(selected.version)}
 						</span>
 						{selectedDefaultTag && (
 							<DeploymentTagChip tag={selectedDefaultTag} size="sm" />
@@ -137,7 +133,7 @@ export function DeploymentVersionSwitcherPill({
 								<VersionRow
 									deployment={defaultHolder}
 									isSelected={selected.id === defaultHolder.id}
-									onSelect={() => onSelect(defaultHolder.versionNumber)}
+									onSelect={() => onSelect(defaultHolder.version)}
 								/>
 								<div className="border-border border-b" />
 							</>
@@ -157,7 +153,7 @@ export function DeploymentVersionSwitcherPill({
 								key={d.id}
 								deployment={d}
 								isSelected={selected.id === d.id}
-								onSelect={() => onSelect(d.versionNumber)}
+								onSelect={() => onSelect(d.version)}
 							/>
 						))}
 						{localEntry && (
@@ -191,7 +187,7 @@ function VersionRow({
 	isSelected: boolean;
 	onSelect: () => void;
 }) {
-	if (isLocalDeployment(deployment)) {
+	if (deployment.version === LOCAL_VERSION_ID) {
 		return (
 			<button
 				type="button"
@@ -250,7 +246,7 @@ function VersionRow({
 			</div>
 
 			<span className="text-foreground min-w-[32px] shrink-0 font-mono text-sm font-semibold">
-				v{deployment.versionNumber}
+				{formatVersion(deployment.version)}
 			</span>
 
 			<div className="flex min-w-0 flex-1 items-center gap-1">

@@ -1,22 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { ExecutionContainer } from "@/modules/executions/feature/ExecutionContainer";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
-import { useSelectedDeployment } from "../business-logic/use-selected-deployment";
-import { isLocalDeployment } from "../domain/local-deployment";
+import { useCurrentDeployment } from "../business-logic/use-current-deployment";
+import { LOCAL_VERSION_ID } from "../domain/deployment";
 
 export function DeploymentExecutionContainer() {
-	const { flowId, selected } = useSelectedDeployment();
+	const { flowId, deployment } = useCurrentDeployment();
 	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 
-	const isLocal = isLocalDeployment(selected);
-	const versionParam: number | "local" = isLocal
-		? "local"
-		: selected.versionNumber;
+	const isLocal = deployment.version === LOCAL_VERSION_ID;
 
 	return (
 		<ExecutionContainer
-			versionParam={versionParam}
-			serverFilterSnapshotId={isLocal ? undefined : selected.id}
+			versionParam={deployment.version}
+			serverFilterSnapshotId={isLocal ? undefined : deployment.id}
 			clientFilterRealSnapshotIds={
 				isLocal ? new Set(realDeployments?.map((d) => d.id) ?? []) : undefined
 			}

@@ -1,9 +1,8 @@
 import { Separator } from "@/shared/ui/separator";
 import { cn } from "@/shared/utils/styles";
-import type { Deployment } from "../domain/deployment";
+import { LOCAL_VERSION_ID, type Deployment } from "../domain/deployment";
 import type { StackComponent } from "@/modules/stacks/domain/stack";
 import { DeploymentTagChip } from "./DeploymentTagChip";
-import { isLocalDeployment } from "../domain/local-deployment";
 
 export function DeploymentHeader({
 	flowName,
@@ -23,7 +22,7 @@ export function DeploymentHeader({
 					<h1 className="text-foreground inline-flex min-w-0 flex-wrap items-baseline gap-2 font-mono text-lg font-semibold">
 						<span className="truncate">{flowName}</span>
 						{deployment &&
-							(isLocalDeployment(deployment) ? (
+							(deployment.version === LOCAL_VERSION_ID ? (
 								<>
 									<span className="text-muted-foreground" aria-hidden>
 										·
@@ -37,14 +36,12 @@ export function DeploymentHeader({
 									<span className="text-muted-foreground" aria-hidden>
 										·
 									</span>
-									<span className="text-foreground">
-										v{deployment.versionNumber}
-									</span>
+									<span className="text-foreground">v{deployment.version}</span>
 								</>
 							))}
 					</h1>
 
-					{deployment && !isLocalDeployment(deployment) && hasTags && (
+					{deployment && deployment.version !== LOCAL_VERSION_ID && hasTags && (
 						<>
 							<Separator orientation="vertical" className="h-5" />
 							<div className="flex min-w-0 flex-wrap items-center gap-1">
@@ -63,7 +60,7 @@ export function DeploymentHeader({
 				</div>
 
 				{deployment &&
-					!isLocalDeployment(deployment) &&
+					deployment.version !== LOCAL_VERSION_ID &&
 					deployment.stackName && (
 						<div className="mt-3 flex flex-wrap items-center gap-2">
 							<span

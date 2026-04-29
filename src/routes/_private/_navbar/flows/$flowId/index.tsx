@@ -1,6 +1,9 @@
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
 import { resolveDefaultDeployment } from "@/modules/deployments/business-logic/resolve-deployment";
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
+import {
+	LOCAL_VERSION_ID,
+	type Deployment,
+} from "@/modules/deployments/domain/deployment";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId/")({
@@ -11,24 +14,22 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/")({
 		const target =
 			resolveDefaultDeployment(realDeployments) ??
 			highestVersionDeployment(realDeployments);
-		if (target) {
-			throw redirect({
-				to: "/flows/$flowId/v/$version/overview",
-				params: { flowId: params.flowId, version: target.versionNumber },
-			});
-		}
 		throw redirect({
 			to: "/flows/$flowId/v/$version/overview",
-			params: { flowId: params.flowId, version: LOCAL_VERSION_ID },
+			params: {
+				flowId: params.flowId,
+				version: target?.version ?? LOCAL_VERSION_ID,
+			},
 		});
 	},
 });
 
-function highestVersionDeployment<T extends { versionNumber: number }>(
-	deployments: T[]
-): T | undefined {
-	if (deployments.length === 0) return undefined;
-	return deployments.reduce((acc, d) =>
-		d.versionNumber > acc.versionNumber ? d : acc
+function highestVersionDeployment(
+	deployments: Deployment[]
+): Deployment | undefined {
+	const real = deployments.filter(
+		(d): d is Deployment & { version: number } => typeof d.version === "number"
 	);
+	if (real.length === 0) return undefined;
+	return real.reduce((acc, d) => (d.version > acc.version ? d : acc));
 }

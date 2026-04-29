@@ -3,13 +3,13 @@ import type { Deployment } from "../domain/deployment";
 
 const ROUTE_ID = "/_private/_navbar/flows/$flowId/v/$version" as const;
 
-export type UseSelectedDeploymentResult = {
+export type UseCurrentDeploymentResult = {
 	flowId: string;
-	selected: Deployment;
+	deployment: Deployment;
 };
 
-export function useSelectedDeployment(): UseSelectedDeploymentResult {
+export function useCurrentDeployment(): UseCurrentDeploymentResult {
 	const { flowId } = useParams({ from: ROUTE_ID });
-	const { selected } = useLoaderData({ from: ROUTE_ID });
-	return { flowId, selected };
+	const { deployment } = useLoaderData({ from: ROUTE_ID });
+	return { flowId, deployment };
 }

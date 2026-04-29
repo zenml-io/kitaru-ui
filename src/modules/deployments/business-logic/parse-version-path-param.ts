@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LOCAL_VERSION_ID } from "../domain/local-deployment";
+import { LOCAL_VERSION_ID, type DeploymentVersion } from "../domain/deployment";
 
 const versionSchema = z.union([
 	z.literal(LOCAL_VERSION_ID),
@@ -11,7 +11,7 @@ const versionSchema = z.union([
 
 export function parseVersionPathParam(
 	raw: string
-): number | typeof LOCAL_VERSION_ID | undefined {
+): DeploymentVersion | undefined {
 	const result = versionSchema.safeParse(raw);
 	return result.success ? result.data : undefined;
 }

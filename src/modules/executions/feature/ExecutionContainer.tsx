@@ -8,6 +8,7 @@ import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
@@ -30,7 +31,7 @@ type ExecutionSearch = { tab?: "logs"; scope?: string };
 
 type ExecutionContainerProps = {
 	/** Version segment used to build links in the side list. */
-	versionParam: number | "local";
+	versionParam: DeploymentVersion;
 	/** When defined, server-filter the side list to this snapshot. */
 	serverFilterSnapshotId: string | undefined;
 	/** When defined, client-filter the side list to executions whose snapshotId is NOT in this set (i.e. local + orphan execs). */

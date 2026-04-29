@@ -3,7 +3,7 @@ import { parseVersionPathParam } from "@/modules/deployments/business-logic/pars
 import {
 	buildLocalDeployment,
 	LOCAL_VERSION_ID,
-} from "@/modules/deployments/domain/local-deployment";
+} from "@/modules/deployments/domain/deployment";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
@@ -26,13 +26,7 @@ export const Route = createFileRoute(
 		const flow = await ensureQueryDataOr404(
 			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
 		);
-		// Warm the full list in the background for the version switcher and other
-		// consumers — don't await; this loader should only block on the single
-		// deployment we actually need to render.
-		void context.queryClient.ensureQueryData(
-			deploymentsQueries.list(params.flowId)
-		);
-		const selected =
+		const deployment =
 			params.version === LOCAL_VERSION_ID
 				? buildLocalDeployment(params.flowId, flow.name)
 				: await context.queryClient.ensureQueryData(
@@ -42,8 +36,8 @@ export const Route = createFileRoute(
 							params.version
 						)
 					);
-		if (!selected) throw notFound();
-		return { selected };
+		if (!deployment) throw notFound();
+		return { deployment };
 	},
 	component: () => <Outlet />,
 });
