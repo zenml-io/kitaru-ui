@@ -1,9 +1,8 @@
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
 import { parseVersionPathParam } from "@/modules/deployments/business-logic/parse-version-path-param";
 import {
-	isLocalDeployment,
+	buildLocalDeployment,
 	LOCAL_VERSION_ID,
-	withLocalDeployment,
 } from "@/modules/deployments/domain/local-deployment";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
@@ -23,36 +22,28 @@ export const Route = createFileRoute(
 			version: String(version),
 		}),
 	},
-	beforeLoad: async ({ context, params }) => {
-		if (params.version === LOCAL_VERSION_ID) return;
-		const realDeployments = await context.queryClient.ensureQueryData(
-			deploymentsQueries.list(params.flowId)
-		);
-		const exists = realDeployments.some(
-			(d) => d.versionNumber === params.version
-		);
-		if (!exists) throw notFound();
-	},
 	loader: async ({ context, params }) => {
-		const [flow, realDeployments] = await Promise.all([
-			ensureQueryDataOr404(
-				context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
-			),
-			context.queryClient.ensureQueryData(
-				deploymentsQueries.list(params.flowId)
-			),
-		]);
-		const deployments = withLocalDeployment(
-			realDeployments,
-			params.flowId,
-			flow.name
+		const flow = await ensureQueryDataOr404(
+			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
+		);
+		// Warm the full list in the background for the version switcher and other
+		// consumers — don't await; this loader should only block on the single
+		// deployment we actually need to render.
+		void context.queryClient.ensureQueryData(
+			deploymentsQueries.list(params.flowId)
 		);
 		const selected =
 			params.version === LOCAL_VERSION_ID
-				? deployments.find(isLocalDeployment)
-				: realDeployments.find((d) => d.versionNumber === params.version);
+				? buildLocalDeployment(params.flowId, flow.name)
+				: await context.queryClient.ensureQueryData(
+						deploymentsQueries.byVersion(
+							params.flowId,
+							flow.name,
+							params.version
+						)
+					);
 		if (!selected) throw notFound();
-		return { flow, realDeployments, deployments, selected };
+		return { flow, selected };
 	},
 	component: () => <Outlet />,
 });

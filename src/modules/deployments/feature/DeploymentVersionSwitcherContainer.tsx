@@ -1,15 +1,33 @@
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { categorizeDeployments } from "../business-logic/categorize-deployments";
+import { deploymentsQueries } from "../business-logic/deployments-queries";
+import { resolveDefaultDeployment } from "../business-logic/resolve-deployment";
 import { useSelectedDeployment } from "../business-logic/use-selected-deployment";
-import { LOCAL_VERSION_ID } from "../domain/local-deployment";
+import {
+	isLocalDeployment,
+	LOCAL_VERSION_ID,
+	withLocalDeployment,
+} from "../domain/local-deployment";
 import { DeploymentVersionSwitcherPill } from "../ui/DeploymentVersionSwitcherPill";
 
 export function DeploymentVersionSwitcherContainer() {
-	const { flowId, deployments, selected } = useSelectedDeployment();
+	const { flowId, flow, selected } = useSelectedDeployment();
 	const navigate = useNavigate();
+	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 
-	const categorized = categorizeDeployments(deployments, selected.id);
-	if (!categorized) return null;
+	if (!realDeployments) return null;
+
+	const deploymentsWithLocal = withLocalDeployment(
+		realDeployments,
+		flowId,
+		flow.name
+	);
+	const defaultHolder = resolveDefaultDeployment(deploymentsWithLocal);
+	const localEntry = deploymentsWithLocal.find(isLocalDeployment);
+	const restRealVersions = deploymentsWithLocal.filter(
+		(d) => d.id !== defaultHolder?.id && !isLocalDeployment(d)
+	);
+	const selectedDefaultTag = selected.tags.find((t) => t.kind === "default");
 
 	function handleSelect(next: number | typeof LOCAL_VERSION_ID) {
 		navigate({
@@ -19,6 +37,13 @@ export function DeploymentVersionSwitcherContainer() {
 	}
 
 	return (
-		<DeploymentVersionSwitcherPill {...categorized} onSelect={handleSelect} />
+		<DeploymentVersionSwitcherPill
+			selected={selected}
+			selectedDefaultTag={selectedDefaultTag}
+			defaultHolder={defaultHolder}
+			restRealVersions={restRealVersions}
+			localEntry={localEntry}
+			onSelect={handleSelect}
+		/>
 	);
 }

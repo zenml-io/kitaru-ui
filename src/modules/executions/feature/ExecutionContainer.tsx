@@ -4,11 +4,13 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
+import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
 import { useSelectedDeployment } from "@/modules/deployments/business-logic/use-selected-deployment";
 import {
 	LOCAL_VERSION_ID,
 	isLocalDeployment,
 } from "@/modules/deployments/domain/local-deployment";
+import { useQuery } from "@tanstack/react-query";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
@@ -34,8 +36,9 @@ const ROUTE_PATH = "/flows/$flowId/v/$version/executions/$executionId" as const;
 type ExecutionSearch = { tab?: "logs"; scope?: string };
 
 export function ExecutionContainer() {
-	const { selected, realDeployments } = useSelectedDeployment();
+	const { selected } = useSelectedDeployment();
 	const { flowId, executionId, version } = useParams({ from: ROUTE_ID });
+	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 	const search = useSearch({ from: ROUTE_ID });
 	const navigate = useNavigate();
 
@@ -104,7 +107,7 @@ export function ExecutionContainer() {
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
-	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
+	const kitaruSnapshotIds = new Set(realDeployments?.map((d) => d.id) ?? []);
 	const displayedExecutions = isLocal
 		? filterLocalExecutions(executionsData, kitaruSnapshotIds)
 		: executionsData;

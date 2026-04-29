@@ -19,7 +19,7 @@ import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -36,7 +36,8 @@ export function FlowExecutionsContainer({
 }
 
 function VersionedFlowExecutionsContainer() {
-	const { flowId, realDeployments, selected } = useSelectedDeployment();
+	const { flowId, selected } = useSelectedDeployment();
+	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 	const [activeScope, setActiveScope] = useState<ExecutionsScope>("version");
 
 	const isLocal = isLocalDeployment(selected);
@@ -50,7 +51,7 @@ function VersionedFlowExecutionsContainer() {
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
 
-	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
+	const kitaruSnapshotIds = new Set(realDeployments?.map((d) => d.id) ?? []);
 	const displayedExecutions =
 		activeScope === "version" && isLocal
 			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
@@ -85,7 +86,7 @@ function VersionedFlowExecutionsContainer() {
 				<ExecutionsTableContainer
 					executionRows={displayedExecutions}
 					flowId={flowId}
-					realDeployments={realDeployments}
+					realDeployments={realDeployments ?? []}
 					versionParam={versionParam}
 				/>
 			</div>

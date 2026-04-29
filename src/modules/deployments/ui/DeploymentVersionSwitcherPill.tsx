@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import type { CategorizedDeployments } from "../business-logic/categorize-deployments";
 import type { Deployment, DeploymentTag } from "../domain/deployment";
 import {
 	isLocalDeployment,
@@ -48,6 +47,16 @@ function formatDate(d: Date | undefined): string {
 	});
 }
 
+type DeploymentVersionSwitcherPillProps = {
+	selected: Deployment;
+	selectedDefaultTag: DeploymentTag | undefined;
+	defaultHolder: Deployment | undefined;
+	restRealVersions: Deployment[];
+	localEntry: Deployment | undefined;
+	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
+	className?: string;
+};
+
 export function DeploymentVersionSwitcherPill({
 	selected,
 	selectedDefaultTag,
@@ -56,10 +65,7 @@ export function DeploymentVersionSwitcherPill({
 	localEntry,
 	onSelect,
 	className,
-}: CategorizedDeployments & {
-	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
-	className?: string;
-}) {
+}: DeploymentVersionSwitcherPillProps) {
 	const [sort, setSort] = useState<SortOrder>("newest");
 
 	const dir = sort === "newest" ? -1 : 1;
