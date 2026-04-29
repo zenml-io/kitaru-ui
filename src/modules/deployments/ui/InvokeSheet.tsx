@@ -1,4 +1,4 @@
-import { MonacoYamlEditor } from "@/modules/monaco/ui/MonacoYamlEditor";
+import { MonacoJsonSchemaEditor } from "@/modules/monaco/ui/MonacoJsonSchemaEditor";
 import { Button } from "@/shared/ui/button";
 import {
 	Sheet,
@@ -10,7 +10,6 @@ import {
 import { isRecord } from "@/shared/utils/is-record";
 import { Loader2, Play, Send, X } from "lucide-react";
 import { useState } from "react";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 
 export function InvokeSheet({
 	open,
@@ -89,11 +88,10 @@ function ParametersEditor({
 	jsonSchema?: Record<string, unknown>;
 	snapshotId: string;
 }) {
-	const defaultYamlValue = jsonStringToYaml(defaultValue);
-	const [value, setValue] = useState(defaultYamlValue);
+	const [value, setValue] = useState(defaultValue);
 
 	function handleInvoke() {
-		const parsed = safeYamlParse(value);
+		const parsed = JSON.parse(value);
 		if (!isRecord(parsed)) return null;
 		onSubmit(parsed);
 	}
@@ -105,12 +103,12 @@ function ParametersEditor({
 					Parameters (YAML)
 				</label>
 
-				<MonacoYamlEditor
+				<MonacoJsonSchemaEditor
 					className="h-full"
 					jsonSchema={jsonSchema}
 					schemaId={snapshotId}
-					defaultValue={defaultYamlValue}
-					onChange={(value) => setValue(value ?? defaultYamlValue)}
+					defaultValue={defaultValue}
+					onChange={(value) => setValue(value ?? defaultValue)}
 				/>
 			</div>
 			<div className="border-border flex gap-2 border-t px-4 py-3">
@@ -134,25 +132,4 @@ function ParametersEditor({
 			</div>
 		</>
 	);
-}
-
-function safeJsonParse(text: string): unknown {
-	try {
-		return JSON.parse(text);
-	} catch {
-		return undefined;
-	}
-}
-
-function jsonStringToYaml(text: string): string {
-	const parsed = safeJsonParse(text);
-	return stringifyYaml(parsed ?? {});
-}
-
-function safeYamlParse(text: string): unknown {
-	try {
-		return parseYaml(text);
-	} catch {
-		return undefined;
-	}
 }
