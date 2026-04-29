@@ -4,9 +4,9 @@ import { cn } from "@/shared/utils/styles";
 import { Separator } from "@/shared/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
-export type ContextBarTab = {
+export type ContextBarTab<T extends string = string> = {
 	label: string;
-	value: string;
+	value: T;
 };
 
 export type ContextBarMetadataItem = {
@@ -14,23 +14,23 @@ export type ContextBarMetadataItem = {
 	value: React.ReactNode;
 };
 
-type ContextBarProps = {
-	tabs?: ContextBarTab[];
-	activeTab?: string;
-	onTabChange?: (value: string) => void;
+type ContextBarProps<T extends string> = {
+	tabs?: ContextBarTab<T>[];
+	activeTab?: T;
+	onTabChange?: (value: T) => void;
 	metadata?: ContextBarMetadataItem[];
 	actions?: React.ReactNode;
 	className?: string;
 };
 
-function ContextBar({
+function ContextBar<T extends string>({
 	tabs,
 	activeTab,
 	onTabChange,
 	metadata,
 	actions,
 	className,
-}: ContextBarProps) {
+}: ContextBarProps<T>) {
 	const hasTabs = tabs && tabs.length > 0 && onTabChange;
 	const hasMetadata = metadata && metadata.length > 0;
 
@@ -46,7 +46,13 @@ function ContextBar({
 		>
 			<div className="flex items-center">
 				{hasTabs && (
-					<Tabs value={activeTab} onValueChange={onTabChange}>
+					<Tabs
+						value={activeTab}
+						onValueChange={(value) => {
+							const next = tabs.find((t) => t.value === value);
+							if (next) onTabChange(next.value);
+						}}
+					>
 						<TabsList className="bg-secondary">
 							{tabs.map((t) => (
 								<TabsTrigger key={t.value} value={t.value}>
