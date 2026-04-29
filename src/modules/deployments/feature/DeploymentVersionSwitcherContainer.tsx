@@ -11,7 +11,7 @@ import {
 import { DeploymentVersionSwitcherPill } from "../ui/DeploymentVersionSwitcherPill";
 
 export function DeploymentVersionSwitcherContainer() {
-	const { flowId, flow, selected } = useSelectedDeployment();
+	const { flowId, selected } = useSelectedDeployment();
 	const navigate = useNavigate();
 	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 
@@ -20,7 +20,7 @@ export function DeploymentVersionSwitcherContainer() {
 	const deploymentsWithLocal = withLocalDeployment(
 		realDeployments,
 		flowId,
-		flow.name
+		selected.flowName
 	);
 	const defaultHolder = resolveDefaultDeployment(deploymentsWithLocal);
 	const localEntry = deploymentsWithLocal.find(isLocalDeployment);

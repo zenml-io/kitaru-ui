@@ -1,5 +1,5 @@
 import { checkpointsQueries } from "@/modules/checkpoints/business-logic/checkpoints-queries";
-import { ExecutionContainer } from "@/modules/executions/feature/ExecutionContainer";
+import { DeploymentExecutionContainer } from "@/modules/deployments/feature/DeploymentExecutionContainer";
 import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
 import { formatExecutionIndex } from "@/modules/executions/util/execution";
 import { memoryQueries } from "@/modules/memory/business-logic/memory-queries";
@@ -27,7 +27,7 @@ function validateExecutionSearch(
 export const Route = createFileRoute(
 	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId"
 )({
-	component: ExecutionContainer,
+	component: DeploymentExecutionContainer,
 	pendingComponent: PageSpinner,
 	validateSearch: validateExecutionSearch,
 

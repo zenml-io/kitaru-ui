@@ -1,10 +1,7 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { buildSnapshotName } from "../util/snapshot-name";
 import { type Deployment, deploymentFromApiToDomain } from "./deployment";
-
-function snapshotName(flowName: string, version: number): string {
-	return `kitaru::${flowName}::v${version}`;
-}
 
 export async function fetchDeploymentByVersion(
 	flowId: string,
@@ -15,7 +12,7 @@ export async function fetchDeploymentByVersion(
 		params: {
 			query: {
 				pipeline: flowId,
-				name: snapshotName(flowName, version),
+				name: buildSnapshotName(flowName, version),
 				page: 1,
 				size: 1,
 				hydrate: true,

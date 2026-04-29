@@ -1,5 +1,5 @@
 import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
-import { FlowExecutionsContainer } from "@/modules/flows/feature/FlowExecutionsContainer";
+import { DeploymentExecutionsListContainer } from "@/modules/deployments/feature/DeploymentExecutionsListContainer";
 import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute } from "@tanstack/react-router";
@@ -9,7 +9,7 @@ export const Route = createFileRoute(
 )({
 	loader: ({ context, params }) =>
 		context.queryClient.ensureQueryData(executionsQueries.all(params.flowId)),
-	component: () => <FlowExecutionsContainer scope="version" />,
+	component: DeploymentExecutionsListContainer,
 	pendingComponent: PageSpinner,
 	head: () => ({ meta: [{ title: buildPageTitles("Executions") }] }),
 });

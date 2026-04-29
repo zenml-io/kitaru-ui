@@ -4,13 +4,6 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { useSelectedDeployment } from "@/modules/deployments/business-logic/use-selected-deployment";
-import {
-	LOCAL_VERSION_ID,
-	isLocalDeployment,
-} from "@/modules/deployments/domain/local-deployment";
-import { useQuery } from "@tanstack/react-query";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
@@ -23,10 +16,10 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
-import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
+import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
 
 const ROUTE_ID =
@@ -35,10 +28,21 @@ const ROUTE_PATH = "/flows/$flowId/v/$version/executions/$executionId" as const;
 
 type ExecutionSearch = { tab?: "logs"; scope?: string };
 
-export function ExecutionContainer() {
-	const { selected } = useSelectedDeployment();
+type ExecutionContainerProps = {
+	/** Version segment used to build links in the side list. */
+	versionParam: number | "local";
+	/** When defined, server-filter the side list to this snapshot. */
+	serverFilterSnapshotId: string | undefined;
+	/** When defined, client-filter the side list to executions whose snapshotId is NOT in this set (i.e. local + orphan execs). */
+	clientFilterRealSnapshotIds: Set<string> | undefined;
+};
+
+export function ExecutionContainer({
+	versionParam,
+	serverFilterSnapshotId,
+	clientFilterRealSnapshotIds,
+}: ExecutionContainerProps) {
 	const { flowId, executionId, version } = useParams({ from: ROUTE_ID });
-	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 	const search = useSearch({ from: ROUTE_ID });
 	const navigate = useNavigate();
 
@@ -49,11 +53,6 @@ export function ExecutionContainer() {
 			search: next,
 			replace: true,
 		});
-
-	const isLocal = isLocalDeployment(selected);
-	const versionParam: number | typeof LOCAL_VERSION_ID = isLocal
-		? LOCAL_VERSION_ID
-		: selected.versionNumber;
 
 	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
 	const isLogsTab = activeTab === "logs";
@@ -75,7 +74,7 @@ export function ExecutionContainer() {
 	};
 
 	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
-		snapshotId: isLocal ? undefined : selected.id,
+		snapshotId: serverFilterSnapshotId,
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { executionData, refetch: refetchExecution } =
@@ -107,9 +106,8 @@ export function ExecutionContainer() {
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
-	const kitaruSnapshotIds = new Set(realDeployments?.map((d) => d.id) ?? []);
-	const displayedExecutions = isLocal
-		? filterLocalExecutions(executionsData, kitaruSnapshotIds)
+	const displayedExecutions = clientFilterRealSnapshotIds
+		? filterLocalExecutions(executionsData, clientFilterRealSnapshotIds)
 		: executionsData;
 
 	const executionsSortedByCreatedAtDesc = [...displayedExecutions].sort(

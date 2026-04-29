@@ -1,5 +1,3 @@
-import type { Deployment } from "@/modules/deployments/domain/deployment";
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
 import {
 	StatusRenderer,
 	TextRenderer,
@@ -27,24 +25,26 @@ import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 
+export type SnapshotVersionLookup = Map<string, number | "local">;
+
 export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
-	realDeployments,
+	versionLookup,
 	versionParam,
 }: {
 	executionRows: Execution[];
 	flowId: string;
-	realDeployments: Deployment[];
-	versionParam: number | typeof LOCAL_VERSION_ID | undefined;
+	versionLookup: SnapshotVersionLookup;
+	versionParam: number | "local" | undefined;
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
 	const columns = useMemo(
-		() => buildExecutionColumns(flowId, realDeployments, versionParam),
-		[flowId, realDeployments, versionParam]
+		() => buildExecutionColumns(flowId, versionLookup, versionParam),
+		[flowId, versionLookup, versionParam]
 	);
 
 	const table = useReactTable({
@@ -116,10 +116,9 @@ export function ExecutionsTableContainer({
 
 function buildExecutionColumns(
 	flowId: string,
-	realDeployments: Deployment[],
-	versionParam: number | typeof LOCAL_VERSION_ID | undefined
+	versionLookup: SnapshotVersionLookup,
+	versionParam: number | "local" | undefined
 ): ColumnDef<Execution>[] {
-	const deploymentBySnapshotId = new Map(realDeployments.map((d) => [d.id, d]));
 	return [
 		{
 			accessorKey: "execution",
@@ -128,11 +127,10 @@ function buildExecutionColumns(
 				<SortableHeader column={column} label="Execution" />
 			),
 			cell: ({ row }) => {
-				const deployment = row.original.snapshotId
-					? deploymentBySnapshotId.get(row.original.snapshotId)
+				const lookedUp = row.original.snapshotId
+					? versionLookup.get(row.original.snapshotId)
 					: undefined;
-				const linkVersion =
-					versionParam ?? deployment?.versionNumber ?? LOCAL_VERSION_ID;
+				const linkVersion = versionParam ?? lookedUp ?? "local";
 				return (
 					<Link
 						to="/flows/$flowId/v/$version/executions/$executionId"

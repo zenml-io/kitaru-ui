@@ -43,7 +43,7 @@ export const Route = createFileRoute(
 						)
 					);
 		if (!selected) throw notFound();
-		return { flow, selected };
+		return { selected };
 	},
 	component: () => <Outlet />,
 });

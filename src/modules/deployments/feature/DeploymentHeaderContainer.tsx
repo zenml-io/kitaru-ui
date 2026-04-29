@@ -5,7 +5,7 @@ import { useSelectedDeployment } from "../business-logic/use-selected-deployment
 import { DeploymentHeader } from "../ui/DeploymentHeader";
 
 export function DeploymentHeaderContainer() {
-	const { flow, selected } = useSelectedDeployment();
+	const { selected } = useSelectedDeployment();
 
 	const { data: stack } = useQuery({
 		...stacksQueries.detail(selected.stackId ?? ""),
@@ -14,7 +14,7 @@ export function DeploymentHeaderContainer() {
 
 	return (
 		<DeploymentHeader
-			flowName={flow.name}
+			flowName={selected.flowName}
 			deployment={selected}
 			stackComponents={stack?.components}
 		/>

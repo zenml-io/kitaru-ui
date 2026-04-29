@@ -28,13 +28,13 @@ function exampleFromSchema(
 }
 
 export function FlowInvocationContainer() {
-	const { flowId, flow, selected } = useSelectedDeployment();
+	const { flowId, selected } = useSelectedDeployment();
 	const { data: realDeployments } = useQuery(deploymentsQueries.list(flowId));
 
 	if (isLocalDeployment(selected))
 		return (
 			<LocalOverviewCard
-				flowName={flow.name}
+				flowName={selected.flowName}
 				flowId={flowId}
 				hasDeployments={(realDeployments?.length ?? 0) > 0}
 			/>

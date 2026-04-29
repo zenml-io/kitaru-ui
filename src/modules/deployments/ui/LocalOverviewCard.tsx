@@ -1,6 +1,7 @@
+import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
+import { Button } from "@/shared/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Info } from "lucide-react";
-import { Button } from "@/shared/ui/button";
 
 export function LocalOverviewCard({
 	flowName,
@@ -29,7 +30,10 @@ export function LocalOverviewCard({
 							size="sm"
 							variant="outline"
 							render={
-								<Link to="/flows/$flowId/executions" params={{ flowId }} />
+								<Link
+									to="/flows/$flowId/v/$version/executions"
+									params={{ flowId, version: LOCAL_VERSION_ID }}
+								/>
 							}
 						>
 							View executions
