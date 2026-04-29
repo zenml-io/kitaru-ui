@@ -11,6 +11,7 @@ export default defineConfig({
 		baseURL: E2E_BASE_URL,
 		trace: "retain-on-failure",
 		screenshot: "only-on-failure",
+		permissions: ["clipboard-read", "clipboard-write"],
 	},
 	projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
 	webServer: {

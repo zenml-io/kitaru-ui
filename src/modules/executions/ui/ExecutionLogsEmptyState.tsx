@@ -12,7 +12,10 @@ export function ExecutionLogsEmptyState({
 	leading,
 }: ExecutionLogsEmptyStateProps) {
 	return (
-		<div className="flex h-full min-h-0 flex-col">
+		<div
+			data-testid="execution-logs-empty"
+			className="flex h-full min-h-0 flex-col"
+		>
 			<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
 				{leading}
 			</div>
