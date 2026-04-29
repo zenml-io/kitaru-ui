@@ -59,19 +59,19 @@ describe("secretFromApiToDomain", () => {
 		]);
 	});
 
-	it("stringifies non-string values as a defensive fallback", () => {
+	it("stringifies null values to 'null'", () => {
 		const result = secretFromApiToDomain(
 			apiSecret({
 				body: {
 					created: "2026-01-01T00:00:00Z",
 					updated: "2026-01-01T00:00:00Z",
-					values: { port: 5432, tags: ["a", "b"] } as Record<string, unknown>,
+					values: { api_key: "sk-123", missing: null },
 				},
 			})
 		);
 		expect(result.keys).toEqual([
-			{ key: "port", value: "5432" },
-			{ key: "tags", value: '["a","b"]' },
+			{ key: "api_key", value: "sk-123" },
+			{ key: "missing", value: "null" },
 		]);
 	});
 
