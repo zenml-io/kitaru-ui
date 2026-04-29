@@ -1,30 +1,25 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
-import type { Deployment } from "../domain/deployment";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
-import { InvokeButton } from "../ui/InvokeButton";
-import { InvokeDrawer } from "../ui/InvokeDrawer";
+import { InvokeSheet } from "../ui/InvokeSheet";
 
 export function InvokeDeploymentContainer({
-	deployment,
+	deploymentId,
 }: {
-	deployment: Deployment;
+	deploymentId: string;
 }) {
-	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
-
-	const detailQuery = useQuery({
-		...deploymentsQueries.detail(deployment.id),
-		enabled: open,
+	const [open, setOpen] = useState(false);
+	const { data: deployment } = useSuspenseQuery({
+		...deploymentsQueries.detail(deploymentId),
 	});
 
-	const defaultValue =
-		detailQuery.data?.defaultParameters != null
-			? JSON.stringify(detailQuery.data.defaultParameters, null, 2)
-			: "{}";
+	const defaultValue = deployment.defaultParameters
+		? JSON.stringify(deployment.defaultParameters, null, 2)
+		: "{}";
 
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
@@ -50,16 +45,14 @@ export function InvokeDeploymentContainer({
 
 	return (
 		<>
-			<InvokeButton
-				onClick={() => setOpen(true)}
-				disabled={!deployment.runnable}
-			/>
-			<InvokeDrawer
+			<InvokeSheet
 				open={open}
 				onOpenChange={setOpen}
+				snapshotId={deployment.id}
+				jsonSchema={deployment.inputSchema}
 				title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
 				defaultValue={defaultValue}
-				isLoading={open && detailQuery.isPending}
+				isLoading={open && isPending}
 				isSubmitting={isPending}
 				onSubmit={handleSubmit}
 			/>

@@ -1,7 +1,6 @@
-import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import type { components } from "@/shared/api/openapi";
 import { parseBackendTimestamp } from "@/shared/utils/time";
-import { isRecord } from "@/shared/utils/is-record";
 
 export const KITARU_SNAPSHOT_NAME = /^kitaru::(.+)::v(\d+)$/;
 
@@ -91,20 +90,10 @@ export function deploymentFromApiToDomain(
 		stackId: snapshot.resources?.stack?.id,
 		stackName: snapshot.resources?.stack?.name,
 		inputSchema: snapshot.metadata?.config_schema ?? undefined,
-		defaultParameters: extractDefaultParameters(
-			snapshot.metadata?.config_template
-		),
+		defaultParameters: snapshot.metadata?.config_template ?? undefined,
 		latestRunId: snapshot.resources?.latest_run_id ?? undefined,
 		latestRunStatus: snapshot.resources?.latest_run_status ?? undefined,
 		runnable: snapshot.body?.runnable ?? false,
 		deployable: snapshot.body?.deployable ?? false,
 	};
-}
-
-function extractDefaultParameters(
-	configTemplate: Record<string, unknown> | null | undefined
-): Record<string, unknown> | undefined {
-	if (!configTemplate) return undefined;
-	const params = configTemplate.parameters;
-	return isRecord(params) ? params : undefined;
 }
