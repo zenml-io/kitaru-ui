@@ -1797,6 +1797,34 @@ export type paths = {
 		patch?: never;
 		trace?: never;
 	};
+	"/api/v1/pipeline_snapshots/{snapshot_id}/runs": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Create Snapshot Run
+		 * @description Run a pipeline from a snapshot.
+		 *
+		 *     Args:
+		 *         snapshot_id: The ID of the snapshot.
+		 *         run_request: Run request.
+		 *         auth_context: Authentication context.
+		 *
+		 *     Returns:
+		 *         The created pipeline run.
+		 */
+		post: operations["create_snapshot_run_api_v1_pipeline_snapshots__snapshot_id__runs_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	"/api/v1/runs": {
 		parameters: {
 			query?: never;
@@ -2105,6 +2133,37 @@ export type paths = {
 		patch?: never;
 		trace?: never;
 	};
+	"/api/v1/runs/{run_id}/replay": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Replay Run
+		 * @description Replay a specific pipeline run.
+		 *
+		 *     Args:
+		 *         run_id: The ID of the pipeline run to replay.
+		 *         run_configuration: The replay configuration.
+		 *         auth_context: The authentication context.
+		 *
+		 *     Raises:
+		 *         ValueError: If the run does not have a snapshot.
+		 *
+		 *     Returns:
+		 *         The replayed pipeline run.
+		 */
+		post: operations["replay_run_api_v1_runs__run_id__replay_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	"/api/v1/run-metadata": {
 		parameters: {
 			query?: never;
@@ -2323,6 +2382,38 @@ export type paths = {
 		 *         template_id: ID of the run template to delete.
 		 */
 		delete: operations["delete_run_template_api_v1_run_templates__template_id__delete"];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/api/v1/run_templates/{template_id}/runs": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Create Template Run
+		 * @deprecated
+		 * @description Run a pipeline from a template.
+		 *
+		 *     Args:
+		 *         template_id: The ID of the template.
+		 *         config: Configuration for the pipeline run.
+		 *         auth_context: Authentication context.
+		 *
+		 *     Raises:
+		 *         ValueError: If the template can not be run.
+		 *
+		 *     Returns:
+		 *         The created pipeline run.
+		 */
+		post: operations["create_template_run_api_v1_run_templates__template_id__runs_post"];
+		delete?: never;
 		options?: never;
 		head?: never;
 		patch?: never;
@@ -9868,6 +9959,18 @@ export type components = {
 			[key: string]: unknown;
 		};
 		/**
+		 * PipelineSnapshotRunRequest
+		 * @description Request model for running a pipeline snapshot.
+		 */
+		PipelineSnapshotRunRequest: {
+			/** The run configuration for the snapshot. */
+			run_configuration?:
+				| components["schemas"]["PipelineRunConfiguration"]
+				| null;
+			/** The ID of the step run that ran the snapshot. */
+			step_run?: string | null;
+		};
+		/**
 		 * PipelineSnapshotUpdate
 		 * @description Pipeline snapshot update model.
 		 */
@@ -10221,6 +10324,148 @@ export type components = {
 			display_name?: string | null;
 			/** The description of the project. */
 			description?: string | null;
+		};
+		/**
+		 * ReplayRunConfiguration
+		 * @description Configuration for replaying a pipeline run.
+		 */
+		ReplayRunConfiguration: {
+			/**
+			 * Run Name
+			 * @description The name of the pipeline run.
+			 */
+			run_name?: string | null;
+			/**
+			 * Enable Cache
+			 * @description Whether to enable cache for all steps of the pipeline run.
+			 */
+			enable_cache?: boolean | null;
+			/**
+			 * Enable Artifact Metadata
+			 * @description Whether to enable metadata for the output artifacts of all steps of the pipeline run.
+			 */
+			enable_artifact_metadata?: boolean | null;
+			/**
+			 * Enable Artifact Visualization
+			 * @description Whether to enable visualizations for the output artifacts of all steps of the pipeline run.
+			 */
+			enable_artifact_visualization?: boolean | null;
+			/**
+			 * Enable Step Logs
+			 * @description Whether to enable logs for all steps of the pipeline run.
+			 */
+			enable_step_logs?: boolean | null;
+			/**
+			 * Enable Pipeline Logs
+			 * @description Whether to enable pipeline logs for the pipeline run.
+			 */
+			enable_pipeline_logs?: boolean | null;
+			/**
+			 * Enable Heartbeat
+			 * @description Whether to enable heartbeat for all steps of the pipeline run
+			 */
+			enable_heartbeat?: boolean | null;
+			/** @description The schedule on which to run the pipeline. */
+			schedule?: components["schemas"]["Schedule"] | null;
+			/**
+			 * Build
+			 * @description The build to use for the pipeline run.
+			 */
+			build?: components["schemas"]["PipelineBuildBase"] | string | null;
+			/**
+			 * Steps
+			 * @description Configurations for the steps of the pipeline run.
+			 */
+			steps?: {
+				[key: string]: components["schemas"]["StepConfigurationUpdate"];
+			} | null;
+			/**
+			 * Settings
+			 * @description Settings for the pipeline run.
+			 */
+			settings?: {
+				[key: string]: components["schemas"]["BaseSettings"];
+			} | null;
+			/**
+			 * Environment
+			 * @description The environment for all steps of the pipeline run.
+			 */
+			environment?: {
+				[key: string]: unknown;
+			} | null;
+			/**
+			 * Secrets
+			 * @description The secrets for all steps of the pipeline run.
+			 */
+			secrets?: string[] | null;
+			/**
+			 * Tags
+			 * @description Tags to apply to the pipeline run.
+			 */
+			tags?: (string | components["schemas"]["Tag"])[] | null;
+			/**
+			 * Extra
+			 * @description Extra configurations for the pipeline run.
+			 */
+			extra?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The model to use for the pipeline run. */
+			model?: components["schemas"]["Model"] | null;
+			/**
+			 * Parameters
+			 * @description Parameters for the pipeline function.
+			 */
+			parameters?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The retry configuration for all steps of the pipeline run. */
+			retry?: components["schemas"]["StepRetryConfig"] | null;
+			/** @description The failure hook source for all steps of the pipeline run. */
+			failure_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The init hook source for the pipeline run. */
+			init_hook_source?: components["schemas"]["Source"] | null;
+			/**
+			 * Init Hook Kwargs
+			 * @description The init hook args for the pipeline run.
+			 */
+			init_hook_kwargs?: {
+				[key: string]: unknown;
+			} | null;
+			/** @description The cleanup hook source for the pipeline run. */
+			cleanup_hook_source?: components["schemas"]["Source"] | null;
+			/** @description The success hook source for all steps of the pipeline run. */
+			success_hook_source?: components["schemas"]["Source"] | null;
+			/**
+			 * Substitutions
+			 * @description The substitutions for the pipeline run.
+			 */
+			substitutions?: {
+				[key: string]: string;
+			} | null;
+			/** @description The cache policy for all steps of the pipeline run. */
+			cache_policy?: components["schemas"]["CachePolicy-Input"] | null;
+			/** @description The execution mode for the pipeline run. */
+			execution_mode?: components["schemas"]["ExecutionMode"] | null;
+			/**
+			 * Skip Successful Steps
+			 * @description Whether to skip successful steps of the original run.
+			 */
+			skip_successful_steps?: boolean | null;
+			/**
+			 * Steps To Skip
+			 * @description The steps to skip when replaying the pipeline.
+			 */
+			steps_to_skip?: string[] | null;
+			/**
+			 * Step Input Overrides
+			 * @description The step input overrides for the pipeline run.
+			 */
+			step_input_overrides?: {
+				[key: string]: {
+					[key: string]: unknown;
+				};
+			} | null;
 		};
 		/**
 		 * ResourcePoolAllocation
@@ -19280,6 +19525,77 @@ export interface operations {
 			};
 		};
 	};
+	create_snapshot_run_api_v1_pipeline_snapshots__snapshot_id__runs_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				snapshot_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["PipelineSnapshotRunRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PipelineRunResponse"];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Unprocessable Entity */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Too Many Requests */
+			429: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+		};
+	};
 	list_runs_api_v1_runs_get: {
 		parameters: {
 			query?: {
@@ -20146,6 +20462,79 @@ export interface operations {
 			};
 		};
 	};
+	replay_run_api_v1_runs__run_id__replay_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				run_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				"application/json":
+					| components["schemas"]["ReplayRunConfiguration"]
+					| null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PipelineRunResponse"];
+				};
+			};
+			/** @description Bad Request */
+			400: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Unprocessable Entity */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+		};
+	};
 	create_run_metadata_api_v1_run_metadata_post: {
 		parameters: {
 			query?: {
@@ -20840,6 +21229,79 @@ export interface operations {
 			};
 			/** @description Unprocessable Entity */
 			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+		};
+	};
+	create_template_run_api_v1_run_templates__template_id__runs_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				template_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				"application/json":
+					| components["schemas"]["PipelineRunConfiguration"]
+					| null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PipelineRunResponse"];
+				};
+			};
+			/** @description Unauthorized */
+			401: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Forbidden */
+			403: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Not Found */
+			404: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Unprocessable Entity */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ErrorModel"];
+				};
+			};
+			/** @description Too Many Requests */
+			429: {
 				headers: {
 					[name: string]: unknown;
 				};
