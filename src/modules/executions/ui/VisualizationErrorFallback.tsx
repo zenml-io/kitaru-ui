@@ -6,9 +6,12 @@ import {
 	EmptyTitle,
 } from "@/shared/ui/empty";
 import { AlertCircle } from "lucide-react";
-import type { FallbackProps } from "react-error-boundary";
 
-export function VisualizationErrorFallback({ error }: FallbackProps) {
+type Props = {
+	error?: unknown;
+};
+
+export function VisualizationErrorFallback({ error }: Props) {
 	const errorMessage = error instanceof Error ? error.message : "Unknown error";
 	return (
 		<Empty>
