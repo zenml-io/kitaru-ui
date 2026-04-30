@@ -1,4 +1,5 @@
 import { env } from "@/modules/root/domain/env";
+import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { isRecord } from "@/shared/utils/is-record";
 import { isLocalDeployment } from "../domain/local-deployment";
 import { useSelectedVersion } from "../business-logic/use-selected-version";
@@ -9,7 +10,7 @@ import {
 import { LocalOverviewCard } from "../ui/LocalOverviewCard";
 
 function exampleFromSchema(
-	schema: Record<string, unknown> | undefined
+	schema: JsonSchema | undefined
 ): Record<string, unknown> {
 	if (!schema) return {};
 	const props = schema.properties;

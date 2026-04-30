@@ -1,11 +1,12 @@
 import "@/modules/monaco/util/setup";
+import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { cn } from "@/shared/utils/styles";
 import type { EditorProps, OnMount } from "@monaco-editor/react";
 import Monaco from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 
 type MonacoYamlEditorProps = EditorProps & {
-	jsonSchema?: Record<string, unknown>;
+	jsonSchema?: JsonSchema;
 	schemaId: string;
 };
 

@@ -1,4 +1,5 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import type { components } from "@/shared/api/openapi";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 
@@ -26,7 +27,7 @@ export type Deployment = {
 	updatedAt?: Date;
 	stackId?: string;
 	stackName?: string;
-	inputSchema?: Record<string, unknown>;
+	inputSchema?: JsonSchema;
 	defaultParameters?: Record<string, unknown>;
 	latestRunId?: string;
 	latestRunStatus?: ExecutionStatus;

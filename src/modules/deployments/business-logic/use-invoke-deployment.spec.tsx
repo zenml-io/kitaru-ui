@@ -46,7 +46,7 @@ describe("useInvokeDeployment", () => {
 
 		result.current.invokeDeployment({
 			snapshotId: "snap-1",
-			parameters: {},
+			runConfiguration: { parameters: {} },
 		});
 
 		await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -69,14 +69,14 @@ describe("useInvokeDeployment", () => {
 
 		result.current.invokeDeployment({
 			snapshotId: "snap-1",
-			parameters: { topic: "hi" },
+			runConfiguration: { parameters: { topic: "hi" } },
 		});
 
 		await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
 		expect(onSuccess.mock.calls[0][0]).toEqual({ runId: "run-1" });
 		expect(onSuccess.mock.calls[0][1]).toEqual({
 			snapshotId: "snap-1",
-			parameters: { topic: "hi" },
+			runConfiguration: { parameters: { topic: "hi" } },
 		});
 	});
 

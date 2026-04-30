@@ -1,4 +1,5 @@
 import { MonacoJsonSchemaEditor } from "@/modules/monaco/ui/MonacoJsonSchemaEditor";
+import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import {
@@ -29,7 +30,7 @@ export function InvokeSheet({
 	title: string;
 	defaultValue?: string;
 	isSubmitting?: boolean;
-	jsonSchema?: Record<string, unknown>;
+	jsonSchema?: JsonSchema;
 	snapshotId: string;
 	disabled?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
@@ -95,7 +96,7 @@ function ParametersEditor({
 	isSubmitting?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 	onCancel: () => void;
-	jsonSchema?: Record<string, unknown>;
+	jsonSchema?: JsonSchema;
 	snapshotId: string;
 }) {
 	const form = useForm<InvokeFormType>({

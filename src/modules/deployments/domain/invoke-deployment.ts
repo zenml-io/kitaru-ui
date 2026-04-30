@@ -1,22 +1,23 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import type { RunConfiguration } from "./invoke-parameters-editor";
 
 export type InvokeDeploymentArgs = {
 	snapshotId: string;
-	parameters: Record<string, unknown>;
+	runConfiguration: RunConfiguration;
 };
 
 export type InvokeDeploymentResult = { runId: string };
 
 export async function invokeDeployment({
 	snapshotId,
-	parameters,
+	runConfiguration,
 }: InvokeDeploymentArgs): Promise<InvokeDeploymentResult> {
 	const response = await apiClient.POST(
 		"/api/v1/pipeline_snapshots/{snapshot_id}/runs",
 		{
 			body: {
-				run_configuration: { parameters },
+				run_configuration: runConfiguration,
 			},
 			params: {
 				path: { snapshot_id: snapshotId },

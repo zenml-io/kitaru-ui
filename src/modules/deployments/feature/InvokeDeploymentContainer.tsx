@@ -2,6 +2,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+	getEditableParameters,
+	getParametersJsonSchema,
+	mergeRunConfigurationWithParameters,
+} from "../domain/invoke-parameters-editor";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
 import { InvokeSheet } from "../ui/InvokeSheet";
@@ -17,9 +22,12 @@ export function InvokeDeploymentContainer({
 		...deploymentsQueries.detail(deploymentId),
 	});
 
-	const defaultValue = deployment.defaultParameters
-		? JSON.stringify(deployment.defaultParameters, null, 2)
-		: "{}";
+	const defaultValue = JSON.stringify(
+		getEditableParameters(deployment.defaultParameters),
+		null,
+		2
+	);
+	const parametersSchema = getParametersJsonSchema(deployment.inputSchema);
 
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
@@ -40,7 +48,11 @@ export function InvokeDeploymentContainer({
 	);
 
 	function handleSubmit(parameters: Record<string, unknown>) {
-		invokeDeployment({ snapshotId: deployment.id, parameters });
+		const runConfiguration = mergeRunConfigurationWithParameters(
+			deployment.defaultParameters,
+			parameters
+		);
+		invokeDeployment({ snapshotId: deployment.id, runConfiguration });
 	}
 
 	return (
@@ -48,7 +60,7 @@ export function InvokeDeploymentContainer({
 			open={open}
 			onOpenChange={setOpen}
 			snapshotId={deployment.id}
-			jsonSchema={deployment.inputSchema}
+			jsonSchema={parametersSchema}
 			title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
 			defaultValue={defaultValue}
 			isSubmitting={isPending}
