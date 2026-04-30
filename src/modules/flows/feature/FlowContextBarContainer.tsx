@@ -1,28 +1,15 @@
-import { useMatchRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
 import { FlowInvokeActionsContainer } from "@/modules/deployments/feature/FlowInvokeActionsContainer";
-import {
-	type FlowTab,
-	flowTabLabels,
-	flowTabs,
-} from "@/modules/flows/domain/flow";
+import { flowTabLabels, flowTabs } from "@/modules/flows/domain/flow";
 import { ContextBar } from "@/shared/ui/ContextBar";
 
-const tabRoutes = {
-	overview: "/flows/$flowId/v/$version/overview",
-	executions: "/flows/$flowId/v/$version/executions",
-	memory: "/flows/$flowId/v/$version/memory",
-} as const satisfies Record<FlowTab, string>;
+const TAB_ROUTE_ID =
+	"/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab" as const;
 
 export function FlowContextBarContainer() {
-	const { flowId, version } = useParams({
-		from: "/_private/_navbar/flows/$flowId/v/$version",
-	});
+	const { flowId, version, tab } = useParams({ from: TAB_ROUTE_ID });
 	const navigate = useNavigate();
-	const matchRoute = useMatchRoute();
-
-	const activeTab: FlowTab =
-		flowTabs.find((tab) => matchRoute({ to: tabRoutes[tab] })) ?? "overview";
 
 	const tabs = flowTabs.map((value) => ({
 		value,
@@ -32,9 +19,12 @@ export function FlowContextBarContainer() {
 	return (
 		<ContextBar
 			tabs={tabs}
-			activeTab={activeTab}
-			onTabChange={(tab) =>
-				navigate({ to: tabRoutes[tab], params: { flowId, version } })
+			activeTab={tab}
+			onTabChange={(next) =>
+				navigate({
+					to: "/flows/$flowId/v/$version/$tab",
+					params: { flowId, version, tab: next },
+				})
 			}
 			actions={<FlowInvokeActionsContainer />}
 		/>

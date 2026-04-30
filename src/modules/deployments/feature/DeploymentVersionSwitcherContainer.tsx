@@ -22,8 +22,8 @@ export function DeploymentVersionSwitcherContainer() {
 
 	function handleSelect(next: DeploymentVersion) {
 		navigate({
-			to: "/flows/$flowId/v/$version/executions",
-			params: { flowId, version: next },
+			to: "/flows/$flowId/v/$version/$tab",
+			params: { flowId, version: next, tab: "executions" },
 		});
 	}
 

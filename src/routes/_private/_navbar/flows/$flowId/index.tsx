@@ -15,10 +15,11 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/")({
 			resolveDefaultDeployment(realDeployments) ??
 			highestVersionDeployment(realDeployments);
 		throw redirect({
-			to: "/flows/$flowId/v/$version/overview",
+			to: "/flows/$flowId/v/$version/$tab",
 			params: {
 				flowId: params.flowId,
 				version: target?.version ?? LOCAL_VERSION_ID,
+				tab: "overview",
 			},
 		});
 	},

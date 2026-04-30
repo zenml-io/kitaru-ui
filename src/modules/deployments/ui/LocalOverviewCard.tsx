@@ -31,8 +31,12 @@ export function LocalOverviewCard({
 							variant="outline"
 							render={
 								<Link
-									to="/flows/$flowId/v/$version/executions"
-									params={{ flowId, version: LOCAL_VERSION_ID }}
+									to="/flows/$flowId/v/$version/$tab"
+									params={{
+										flowId,
+										version: LOCAL_VERSION_ID,
+										tab: "executions",
+									}}
 								/>
 							}
 						>
