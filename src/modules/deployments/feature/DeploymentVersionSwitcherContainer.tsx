@@ -1,23 +1,39 @@
 import { useNavigate } from "@tanstack/react-router";
-import { LOCAL_VERSION_ID } from "../domain/local-deployment";
-import { useSelectedVersion } from "../business-logic/use-selected-version";
+import { resolveDefaultDeployment } from "../business-logic/resolve-deployment";
+import { useCurrentDeployment } from "../business-logic/use-current-deployment";
+import { useDeployments } from "../business-logic/use-deployments";
+import {
+	buildLocalDeployment,
+	type DeploymentVersion,
+} from "../domain/deployment";
 import { DeploymentVersionSwitcherPill } from "../ui/DeploymentVersionSwitcherPill";
 
 export function DeploymentVersionSwitcherContainer() {
-	const { deployments, selected } = useSelectedVersion();
+	const { flowId, deployment } = useCurrentDeployment();
 	const navigate = useNavigate();
+	const { data: realDeployments } = useDeployments(flowId);
 
-	function handleSelect(next: number | typeof LOCAL_VERSION_ID) {
+	const localEntry = buildLocalDeployment(flowId, deployment.flowName);
+	const defaultHolder = resolveDefaultDeployment(realDeployments);
+	const restRealVersions = realDeployments.filter(
+		(d) => d.id !== defaultHolder?.id
+	);
+	const selectedDefaultTag = deployment.tags.find((t) => t.kind === "default");
+
+	function handleSelect(next: DeploymentVersion) {
 		navigate({
-			to: ".",
-			search: (prev) => ({ ...prev, version: next }),
+			to: "/flows/$flowId/v/$version/$tab",
+			params: { flowId, version: next, tab: "executions" },
 		});
 	}
 
 	return (
 		<DeploymentVersionSwitcherPill
-			deployments={deployments}
-			selectedId={selected?.id}
+			selected={deployment}
+			selectedDefaultTag={selectedDefaultTag}
+			defaultHolder={defaultHolder}
+			restRealVersions={restRealVersions}
+			localEntry={localEntry}
 			onSelect={handleSelect}
 		/>
 	);

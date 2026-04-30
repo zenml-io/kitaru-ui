@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import type { Deployment, DeploymentTag } from "../domain/deployment";
 import {
-	isLocalDeployment,
+	formatVersion,
 	LOCAL_VERSION_ID,
-} from "../domain/local-deployment";
+	type Deployment,
+	type DeploymentTag,
+	type DeploymentVersion,
+} from "../domain/deployment";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -47,37 +49,31 @@ function formatDate(d: Date | undefined): string {
 	});
 }
 
+type DeploymentVersionSwitcherPillProps = {
+	selected: Deployment;
+	selectedDefaultTag: DeploymentTag | undefined;
+	defaultHolder: Deployment | undefined;
+	restRealVersions: Deployment[];
+	localEntry: Deployment | undefined;
+	onSelect: (selection: DeploymentVersion) => void;
+	className?: string;
+};
+
 export function DeploymentVersionSwitcherPill({
-	deployments,
-	selectedId,
+	selected,
+	selectedDefaultTag,
+	defaultHolder,
+	restRealVersions,
+	localEntry,
 	onSelect,
 	className,
-}: {
-	deployments: Deployment[];
-	selectedId: string | undefined;
-	onSelect: (selection: number | typeof LOCAL_VERSION_ID) => void;
-	className?: string;
-}) {
+}: DeploymentVersionSwitcherPillProps) {
 	const [sort, setSort] = useState<SortOrder>("newest");
 
-	if (deployments.length === 0) return null;
-
-	const selected =
-		deployments.find((d) => d.id === selectedId) ?? deployments[0];
-	const selectedDefaultTag = selected.tags.find((t) => t.kind === "default");
-	const defaultHolder = deployments.find((d) =>
-		d.tags.some((t) => t.kind === "default")
-	);
-
 	const dir = sort === "newest" ? -1 : 1;
-	const sortedDeployments = [...deployments].sort(
+	const sortedRealVersions = [...restRealVersions].sort(
 		(a, b) => dir * (deploymentTime(a) - deploymentTime(b))
 	);
-	const restVersions = sortedDeployments.filter(
-		(d) => d.id !== defaultHolder?.id
-	);
-	const localEntry = deployments.find(isLocalDeployment);
-	const restRealVersions = restVersions.filter((d) => !isLocalDeployment(d));
 
 	return (
 		<DropdownMenu>
@@ -85,7 +81,7 @@ export function DeploymentVersionSwitcherPill({
 				render={
 					<button
 						type="button"
-						aria-label={`Switch version. Current: v${selected.versionNumber}`}
+						aria-label={`Switch version. Current: ${formatVersion(selected.version)}`}
 						className={cn(
 							"inline-flex h-7 items-center gap-1.5 rounded-md px-2",
 							"hover:bg-accent/60 focus-visible:ring-ring/40 transition-colors focus-visible:ring-2 focus-visible:outline-none",
@@ -94,9 +90,7 @@ export function DeploymentVersionSwitcherPill({
 						)}
 					>
 						<span className="text-foreground font-mono text-sm font-semibold">
-							{isLocalDeployment(selected)
-								? "local"
-								: `v${selected.versionNumber}`}
+							{formatVersion(selected.version)}
 						</span>
 						{selectedDefaultTag && (
 							<DeploymentTagChip tag={selectedDefaultTag} size="sm" />
@@ -139,25 +133,27 @@ export function DeploymentVersionSwitcherPill({
 								<VersionRow
 									deployment={defaultHolder}
 									isSelected={selected.id === defaultHolder.id}
-									onSelect={() => onSelect(defaultHolder.versionNumber)}
+									onSelect={() => onSelect(defaultHolder.version)}
 								/>
 								<div className="border-border border-b" />
 							</>
 						)}
 
-						{(restRealVersions.length > 0 || defaultHolder) && (
+						{(sortedRealVersions.length > 0 || defaultHolder) && (
 							<div className="text-muted-foreground text-2xs flex items-center gap-1.5 px-3 pt-2.5 pb-1 font-semibold tracking-wider uppercase">
 								<span>All versions</span>
 								<span aria-hidden>·</span>
-								<span className="tabular-nums">{restRealVersions.length}</span>
+								<span className="tabular-nums">
+									{sortedRealVersions.length}
+								</span>
 							</div>
 						)}
-						{restRealVersions.map((d) => (
+						{sortedRealVersions.map((d) => (
 							<VersionRow
 								key={d.id}
 								deployment={d}
 								isSelected={selected.id === d.id}
-								onSelect={() => onSelect(d.versionNumber)}
+								onSelect={() => onSelect(d.version)}
 							/>
 						))}
 						{localEntry && (
@@ -191,7 +187,7 @@ function VersionRow({
 	isSelected: boolean;
 	onSelect: () => void;
 }) {
-	if (isLocalDeployment(deployment)) {
+	if (deployment.version === LOCAL_VERSION_ID) {
 		return (
 			<button
 				type="button"
@@ -250,7 +246,7 @@ function VersionRow({
 			</div>
 
 			<span className="text-foreground min-w-[32px] shrink-0 font-mono text-sm font-semibold">
-				v{deployment.versionNumber}
+				{formatVersion(deployment.version)}
 			</span>
 
 			<div className="flex min-w-0 flex-1 items-center gap-1">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import type { Deployment } from "../domain/deployment";
+import { formatVersion, type Deployment } from "../domain/deployment";
 import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
 import { InvokeButton } from "../ui/InvokeButton";
@@ -33,9 +33,12 @@ export function InvokeDeploymentContainer({
 				setOpen(false);
 				toast.success("Invocation started");
 				navigate({
-					to: "/flows/$flowId/executions/$executionId",
-					params: { flowId: deployment.flowId, executionId: runId },
-					search: { version: deployment.versionNumber },
+					to: "/flows/$flowId/v/$version/executions/$executionId",
+					params: {
+						flowId: deployment.flowId,
+						version: deployment.version,
+						executionId: runId,
+					},
 				});
 			},
 			onError: (error) => {
@@ -57,7 +60,7 @@ export function InvokeDeploymentContainer({
 			<InvokeDrawer
 				open={open}
 				onOpenChange={setOpen}
-				title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
+				title={`Invoke ${deployment.flowName} · ${formatVersion(deployment.version)}`}
 				defaultValue={defaultValue}
 				isLoading={open && detailQuery.isPending}
 				isSubmitting={isPending}

@@ -88,7 +88,7 @@ describe("fetchDeployment", () => {
 		const result = await fetchDeployment("snap-1");
 
 		expect(result.id).toBe("snap-1");
-		expect(result.versionNumber).toBe(3);
+		expect(result.version).toBe(3);
 		expect(result.flowName).toBe("research_agent");
 	});
 
