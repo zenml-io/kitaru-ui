@@ -44,18 +44,15 @@ export function InvokeDeploymentContainer({
 	}
 
 	return (
-		<>
-			<InvokeSheet
-				open={open}
-				onOpenChange={setOpen}
-				snapshotId={deployment.id}
-				jsonSchema={deployment.inputSchema}
-				title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
-				defaultValue={defaultValue}
-				isLoading={open && isPending}
-				isSubmitting={isPending}
-				onSubmit={handleSubmit}
-			/>
-		</>
+		<InvokeSheet
+			open={open}
+			onOpenChange={setOpen}
+			snapshotId={deployment.id}
+			jsonSchema={deployment.inputSchema}
+			title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
+			defaultValue={defaultValue}
+			isSubmitting={isPending}
+			onSubmit={handleSubmit}
+		/>
 	);
 }

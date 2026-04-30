@@ -1,5 +1,6 @@
 import { MonacoJsonSchemaEditor } from "@/modules/monaco/ui/MonacoJsonSchemaEditor";
 import { Button } from "@/shared/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import {
 	Sheet,
 	SheetClose,
@@ -7,16 +8,16 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/shared/ui/sheet";
-import { isRecord } from "@/shared/utils/is-record";
-import { Loader2, Play, Send, X } from "lucide-react";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Play, Send, X } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
 export function InvokeSheet({
 	open,
 	onOpenChange,
 	title,
 	defaultValue = "{}",
-	isLoading,
 	isSubmitting,
 	onSubmit,
 	jsonSchema,
@@ -27,7 +28,6 @@ export function InvokeSheet({
 	onOpenChange: (open: boolean) => void;
 	title: string;
 	defaultValue?: string;
-	isLoading?: boolean;
 	isSubmitting?: boolean;
 	jsonSchema?: Record<string, unknown>;
 	snapshotId: string;
@@ -52,26 +52,36 @@ export function InvokeSheet({
 						<span className="sr-only">Close</span>
 					</SheetClose>
 				</div>
-				{isLoading ? (
-					<div className="text-muted-foreground flex flex-1 items-center justify-center gap-2 text-xs">
-						<Loader2 className="size-3.5 animate-spin" />
-						Loading parameters…
-					</div>
-				) : (
-					<ParametersEditor
-						jsonSchema={jsonSchema}
-						snapshotId={snapshotId}
-						key={defaultValue}
-						defaultValue={defaultValue}
-						isSubmitting={isSubmitting}
-						onSubmit={onSubmit}
-						onCancel={() => onOpenChange(false)}
-					/>
-				)}
+				<ParametersEditor
+					jsonSchema={jsonSchema}
+					snapshotId={snapshotId}
+					key={defaultValue}
+					defaultValue={defaultValue}
+					isSubmitting={isSubmitting}
+					onSubmit={onSubmit}
+					onCancel={() => onOpenChange(false)}
+				/>
 			</SheetContent>
 		</Sheet>
 	);
 }
+
+const invokeFormSchema = z.object({
+	config: z
+		.string()
+
+		.refine((value) => {
+			try {
+				JSON.parse(value);
+				return true;
+			} catch {
+				return false;
+			}
+		}, "Parameters must be valid JSON.")
+		.transform((value) => JSON.parse(value)),
+});
+
+type InvokeFormType = z.infer<typeof invokeFormSchema>;
 
 function ParametersEditor({
 	defaultValue,
@@ -81,55 +91,68 @@ function ParametersEditor({
 	jsonSchema,
 	snapshotId,
 }: {
-	defaultValue: string;
+	defaultValue?: string;
 	isSubmitting?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 	onCancel: () => void;
 	jsonSchema?: Record<string, unknown>;
 	snapshotId: string;
 }) {
-	const [value, setValue] = useState(defaultValue);
+	const form = useForm<InvokeFormType>({
+		resolver: zodResolver(invokeFormSchema),
+		defaultValues: {
+			config: defaultValue ?? "",
+		},
+	});
 
-	function handleInvoke() {
-		const parsed = JSON.parse(value);
-		if (!isRecord(parsed)) return null;
-		onSubmit(parsed);
+	function handleSubmit(data: InvokeFormType) {
+		onSubmit(data.config);
 	}
 
 	return (
-		<>
-			<div className="flex flex-1 flex-col gap-2 overflow-y-auto p-4">
-				<label htmlFor="invoke-parameters" className="text-xs font-medium">
-					Parameters (YAML)
-				</label>
-
-				<MonacoJsonSchemaEditor
-					className="h-full"
-					jsonSchema={jsonSchema}
-					schemaId={snapshotId}
-					defaultValue={defaultValue}
-					onChange={(value) => setValue(value ?? defaultValue)}
+		<form
+			onSubmit={form.handleSubmit(handleSubmit)}
+			className="flex flex-1 flex-col gap-2 overflow-y-auto p-4"
+		>
+			<FieldGroup className="h-full gap-4">
+				<Controller
+					name="config"
+					control={form.control}
+					render={({ field: { value, onChange }, fieldState }) => (
+						<Field className="h-full" data-invalid={fieldState.invalid}>
+							<FieldLabel>Parameters (JSON)</FieldLabel>
+							<MonacoJsonSchemaEditor
+								className="h-full"
+								jsonSchema={jsonSchema}
+								schemaId={snapshotId}
+								value={value}
+								onChange={onChange}
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
+					)}
 				/>
-			</div>
-			<div className="border-border flex gap-2 border-t px-4 py-3">
-				<Button
-					variant="outline"
-					size="sm"
-					className="flex-1"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					size="sm"
-					className="flex-1"
-					disabled={isSubmitting}
-					onClick={handleInvoke}
-				>
-					<Send className="size-3.5" />
-					{isSubmitting ? "Invoking…" : "Invoke"}
-				</Button>
-			</div>
-		</>
+				<div className="border-border flex gap-2 border-t py-3">
+					<Button
+						variant="outline"
+						size="sm"
+						type="button"
+						className="flex-1"
+						onClick={onCancel}
+					>
+						Cancel
+					</Button>
+					<Button
+						size="sm"
+						className="flex-1"
+						type="submit"
+						disabled={isSubmitting}
+					>
+						<Send className="size-3.5" />
+						{isSubmitting ? "Invoking…" : "Invoke"}
+					</Button>
+				</div>
+			</FieldGroup>
+		</form>
 	);
 }

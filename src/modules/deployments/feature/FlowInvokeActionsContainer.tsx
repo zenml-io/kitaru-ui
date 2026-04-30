@@ -11,6 +11,8 @@ export function FlowInvokeActionsContainer() {
 
 	if (!selected || isLocalDeployment(selected)) return null;
 
+	if (!selected.runnable) return null;
+
 	const origin = env.VITE_API_BASE_URL || window.location.origin;
 	const url = `${origin}/api/v1/pipeline_snapshots/${selected.id}/runs`;
 
