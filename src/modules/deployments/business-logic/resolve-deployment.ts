@@ -49,7 +49,8 @@ export function resolveDeploymentForExecution(
 	execution: Execution,
 	deployments: Deployment[]
 ): Deployment | undefined {
-	return execution.sourceSnapshotId
-		? deployments.find((d) => d.id === execution.sourceSnapshotId)
+	const sourceSnapshotId = execution.sourceSnapshot?.id;
+	return sourceSnapshotId
+		? deployments.find((d) => d.id === sourceSnapshotId)
 		: undefined;
 }

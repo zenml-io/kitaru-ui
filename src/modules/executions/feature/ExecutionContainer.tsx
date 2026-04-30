@@ -10,9 +10,8 @@ import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
-import { Button } from "@base-ui/react/button";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
 import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
@@ -21,9 +20,12 @@ import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
+import { ReplayExecutionSheet } from "../ui/ReplayExecutionSheet";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { ErrorBoundary } from "react-error-boundary";
 
 const ROUTE_ID = "/_private/_navbar/flows/$flowId/executions/$executionId";
 const ROUTE_PATH = "/flows/$flowId/executions/$executionId";
@@ -129,7 +131,16 @@ function ExecutionContainerBody() {
 			<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
 				<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
 				<div className="flex items-center gap-3">
-					{executionData.snapshot?.runnable ? <Button>Rerun</Button> : null}
+					{executionData.snapshot?.runnable ? (
+						<ErrorBoundary fallbackRender={() => null}>
+							<Suspense fallback={<Skeleton className="h-8 w-20" />}>
+								<ReplayExecutionSheet
+									executionId={executionId}
+									snapshotId={executionData.snapshot.id}
+								/>
+							</Suspense>
+						</ErrorBoundary>
+					) : null}
 					<RefreshButton
 						size="sm"
 						variant="outline"

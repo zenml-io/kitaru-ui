@@ -125,8 +125,8 @@ function buildExecutionColumns(
 				<SortableHeader column={column} label="Execution" />
 			),
 			cell: ({ row }) => {
-				const deployment = row.original.sourceSnapshotId
-					? deploymentBySnapshotId.get(row.original.sourceSnapshotId)
+				const deployment = row.original.sourceSnapshot?.id
+					? deploymentBySnapshotId.get(row.original.sourceSnapshot.id)
 					: undefined;
 				const version: number | typeof LOCAL_VERSION_ID = deployment
 					? deployment.versionNumber
