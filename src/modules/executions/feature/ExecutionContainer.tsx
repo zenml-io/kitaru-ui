@@ -10,6 +10,7 @@ import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
+import { Button } from "@base-ui/react/button";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
@@ -18,9 +19,9 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
-import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
+import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
 
@@ -128,6 +129,7 @@ function ExecutionContainerBody() {
 			<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
 				<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
 				<div className="flex items-center gap-3">
+					{executionData.snapshot?.runnable ? <Button>Rerun</Button> : null}
 					<RefreshButton
 						size="sm"
 						variant="outline"

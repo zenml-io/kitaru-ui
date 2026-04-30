@@ -159,17 +159,17 @@ describe("resolveSelectedDeployment", () => {
 
 describe("resolveDeploymentForExecution", () => {
 	it("returns the deployment matching execution.snapshotId", () => {
-		const exec = mkExecution({ snapshotId: "snap-2" });
+		const exec = mkExecution({ sourceSnapshotId: "snap-2" });
 		expect(resolveDeploymentForExecution(exec, deployments)).toBe(d2);
 	});
 
 	it("returns undefined when execution has no snapshotId", () => {
-		const exec = mkExecution({ snapshotId: undefined });
+		const exec = mkExecution({ sourceSnapshotId: undefined });
 		expect(resolveDeploymentForExecution(exec, deployments)).toBeUndefined();
 	});
 
 	it("returns undefined when the snapshotId isn't in the list", () => {
-		const exec = mkExecution({ snapshotId: "snap-missing" });
+		const exec = mkExecution({ sourceSnapshotId: "snap-missing" });
 		expect(resolveDeploymentForExecution(exec, deployments)).toBeUndefined();
 	});
 });
