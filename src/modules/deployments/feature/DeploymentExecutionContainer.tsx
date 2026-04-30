@@ -1,21 +1,18 @@
 import { ExecutionContainer } from "@/modules/executions/feature/ExecutionContainer";
 import { useCurrentDeployment } from "../business-logic/use-current-deployment";
 import { useDeployments } from "../business-logic/use-deployments";
-import { LOCAL_VERSION_ID } from "../domain/deployment";
+import { executionsFilter } from "../business-logic/version-execution-filter";
 
 export function DeploymentExecutionContainer() {
 	const { flowId, deployment } = useCurrentDeployment();
 	const { data: realDeployments } = useDeployments(flowId);
-
-	const isLocal = deployment.version === LOCAL_VERSION_ID;
+	const filter = executionsFilter("version", deployment, realDeployments);
 
 	return (
 		<ExecutionContainer
 			versionParam={deployment.version}
-			serverFilterSnapshotId={isLocal ? undefined : deployment.id}
-			clientFilterRealSnapshotIds={
-				isLocal ? new Set(realDeployments.map((d) => d.id)) : undefined
-			}
+			serverFilterSnapshotId={filter.serverFilterSnapshotId}
+			clientFilterRealSnapshotIds={filter.clientFilterRealSnapshotIds}
 		/>
 	);
 }

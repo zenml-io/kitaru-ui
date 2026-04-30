@@ -1,8 +1,8 @@
 import { useCurrentDeployment } from "@/modules/deployments/business-logic/use-current-deployment";
 import { useDeployments } from "@/modules/deployments/business-logic/use-deployments";
+import { executionsFilter } from "@/modules/deployments/business-logic/version-execution-filter";
 import {
 	formatVersion,
-	LOCAL_VERSION_ID,
 	type DeploymentVersion,
 } from "@/modules/deployments/domain/deployment";
 import { useExecutions } from "@/modules/executions/business-logic/use-executions";
@@ -29,21 +29,18 @@ export function DeploymentExecutionsListContainer() {
 	const { data: realDeployments } = useDeployments(flowId);
 	const [activeScope, setActiveScope] = useState<ExecutionsScope>("version");
 
-	const isLocal = deployment.version === LOCAL_VERSION_ID;
-	const shouldServerFilter = activeScope === "version" && !isLocal;
+	const filter = executionsFilter(activeScope, deployment, realDeployments);
 
 	const { executionsData, refetch } = useExecutions(flowId, {
-		snapshotId: shouldServerFilter ? deployment.id : undefined,
+		snapshotId: filter.serverFilterSnapshotId,
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { refresh: refreshExecutions, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
 
-	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
-	const displayedExecutions =
-		activeScope === "version" && isLocal
-			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
-			: executionsData;
+	const displayedExecutions = filter.clientFilterRealSnapshotIds
+		? filterLocalExecutions(executionsData, filter.clientFilterRealSnapshotIds)
+		: executionsData;
 
 	const versionLabel = formatVersion(deployment.version);
 
