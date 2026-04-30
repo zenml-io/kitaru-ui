@@ -135,6 +135,7 @@ function ExecutionContainerBody() {
 						<ErrorBoundary fallbackRender={() => null}>
 							<Suspense fallback={<Skeleton className="h-8 w-20" />}>
 								<ReplayExecutionSheet
+									executionNumber={executionData.index.toString()}
 									executionId={executionId}
 									snapshotId={executionData.snapshot.id}
 								/>

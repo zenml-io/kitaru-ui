@@ -3,6 +3,7 @@ import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
 import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
+export type RunConfiguration = components["schemas"]["ReplayRunConfiguration"];
 
 export const executionStatusValues: ExecutionStatus[] = [
 	"initializing",

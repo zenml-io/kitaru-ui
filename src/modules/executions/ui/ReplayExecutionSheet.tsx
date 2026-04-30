@@ -1,4 +1,3 @@
-import { useDeployment } from "@/modules/deployments/business-logic/use-deployment";
 import { Button } from "@/shared/ui/button";
 import {
 	Sheet,
@@ -9,18 +8,39 @@ import {
 } from "@/shared/ui/sheet";
 import { Play, X } from "lucide-react";
 import { useState } from "react";
+import { useReplayExecution } from "../business-logic/use-replay-execution";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
 type ReplayExecutionSheetProps = {
 	executionId: string;
+	executionNumber: string;
 	snapshotId: string;
 };
 
 export function ReplayExecutionSheet({
 	executionId,
-	snapshotId,
+	executionNumber,
 }: ReplayExecutionSheetProps) {
-	const { data: deployment } = useDeployment(snapshotId);
 	const [open, setOpen] = useState(false);
+	const navigate = useNavigate();
+	const { flowId } = useParams({
+		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
+	});
+	const { replayExecution, isPending } = useReplayExecution({
+		onSuccess: (exec) => {
+			navigate({
+				to: "/flows/$flowId/executions/$executionId",
+				params: { flowId, executionId: exec.id },
+			});
+			setOpen(false);
+		},
+	});
+	// const { data: deployment } = useDeployment(snapshotId);
+
+	function handleReplay() {
+		replayExecution({ executionId });
+	}
+
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetTrigger
@@ -32,14 +52,18 @@ export function ReplayExecutionSheet({
 			<SheetContent className="sm:max-w-1/2" showCloseButton={false}>
 				<div className="border-border flex items-center justify-between border-b px-4 py-3">
 					<SheetTitle className="text-sm font-semibold">
-						Replay Execution {executionId}
+						Replay Execution #{executionNumber}
 					</SheetTitle>
 					<SheetClose render={<Button variant="ghost" size="icon-sm" />}>
 						<X className="size-4" />
 						<span className="sr-only">Close</span>
 					</SheetClose>
 				</div>
-				{deployment.flowName}
+
+				<Button onClick={handleReplay} disabled={isPending}>
+					Replay
+				</Button>
+				{/* {deployment.flowName} */}
 			</SheetContent>
 		</Sheet>
 	);
