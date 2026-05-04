@@ -1,4 +1,4 @@
-import "@/modules/monaco/util/setup";
+import "@/modules/executions/feature/setup-monaco";
 import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { cn } from "@/shared/utils/styles";
 import type { EditorProps, OnMount } from "@monaco-editor/react";

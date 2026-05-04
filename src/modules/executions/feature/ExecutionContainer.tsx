@@ -20,7 +20,7 @@ import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
-import { ReplayExecutionSheet } from "../ui/ReplayExecutionSheet";
+import { ReplayExecutionSheet } from "./ReplayExecutionSheet";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
@@ -137,7 +137,6 @@ function ExecutionContainerBody() {
 								<ReplayExecutionSheet
 									executionNumber={executionData.index.toString()}
 									executionId={executionId}
-									snapshotId={executionData.snapshot.id}
 								/>
 							</Suspense>
 						</ErrorBoundary>

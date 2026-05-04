@@ -32,12 +32,12 @@ export function InvokeDeploymentContainer({
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
 		{
-			onSuccess: ({ runId }) => {
+			onSuccess: (execution) => {
 				setOpen(false);
 				toast.success("Invocation started");
 				navigate({
 					to: "/flows/$flowId/executions/$executionId",
-					params: { flowId: deployment.flowId, executionId: runId },
+					params: { flowId: deployment.flowId, executionId: execution.id },
 					search: { version: deployment.versionNumber },
 				});
 			},

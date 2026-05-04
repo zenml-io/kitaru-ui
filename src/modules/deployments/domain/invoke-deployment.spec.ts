@@ -21,9 +21,25 @@ describe("invokeDeployment", () => {
 		postSpy.mockRestore();
 	});
 
-	it("POSTs full run_configuration and returns run id on success", async () => {
+	it("POSTs full run_configuration and returns execution on success", async () => {
 		postSpy.mockResolvedValue({
-			data: { id: "run-42" },
+			data: {
+				id: "run-42",
+				name: "run-42",
+				body: {
+					created: "2026-04-17T00:00:00Z",
+					updated: "2026-04-17T00:00:00Z",
+					status: "running",
+					index: 1,
+					in_progress: false,
+					project_id: "00000000-0000-0000-0000-000000000000",
+				},
+				resources: {
+					project_id: "00000000-0000-0000-0000-000000000000",
+					tags: [],
+					log_collection: null,
+				},
+			},
 			error: undefined,
 			response: new Response(),
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,7 +53,13 @@ describe("invokeDeployment", () => {
 			},
 		});
 
-		expect(result).toEqual({ runId: "run-42" });
+		expect(result).toMatchObject({
+			id: "run-42",
+			name: "run-42",
+			status: "running",
+			index: 1,
+			logSources: [],
+		});
 
 		expect(postSpy).toHaveBeenCalledWith(
 			"/api/v1/pipeline_snapshots/{snapshot_id}/runs",

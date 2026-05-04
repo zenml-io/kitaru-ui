@@ -1,4 +1,4 @@
-import { MonacoJsonSchemaEditor } from "@/modules/monaco/ui/MonacoJsonSchemaEditor";
+import { MonacoJsonSchemaEditor } from "@/modules/executions/ui/MonacoJsonSchemaEditor";
 import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { Button } from "@/shared/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
