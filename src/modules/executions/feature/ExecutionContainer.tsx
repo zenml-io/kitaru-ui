@@ -4,12 +4,11 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
-import { useSelectedVersion } from "@/modules/deployments/business-logic/use-selected-version";
-import { isLocalDeployment } from "@/modules/deployments/domain/local-deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useExecution } from "../business-logic/use-execution";
@@ -18,46 +17,49 @@ import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-sta
 import { DEFAULT_EXECUTIONS_POLLING_INTERVAL } from "../domain/fetch-executions";
 import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
-import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
+import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
 
-const ROUTE_ID = "/_private/_navbar/flows/$flowId/executions/$executionId";
-const ROUTE_PATH = "/flows/$flowId/executions/$executionId";
+const ROUTE_ID =
+	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId" as const;
+const ROUTE_PATH = "/flows/$flowId/v/$version/executions/$executionId" as const;
 
-export function ExecutionContainer() {
-	return (
-		<ThreePanelLayoutProvider>
-			<ExecutionContainerBody />
-		</ThreePanelLayoutProvider>
-	);
-}
+type ExecutionSearch = { tab?: "logs"; scope?: string };
 
-function ExecutionContainerBody() {
-	const { executionId } = useParams({ from: ROUTE_ID });
-	const { flowId, realDeployments, selected } = useSelectedVersion();
-	const { versions } = useSearch({ from: "/_private/_navbar/flows/$flowId" });
+type ExecutionContainerProps = {
+	/** Version segment used to build links in the side list. */
+	versionParam: DeploymentVersion;
+	/** When defined, server-filter the side list to this snapshot. */
+	serverFilterSnapshotId: string | undefined;
+	/** When defined, client-filter the side list to executions whose snapshotId is NOT in this set (i.e. local + orphan execs). */
+	clientFilterRealSnapshotIds: Set<string> | undefined;
+};
+
+export function ExecutionContainer({
+	versionParam,
+	serverFilterSnapshotId,
+	clientFilterRealSnapshotIds,
+}: ExecutionContainerProps) {
+	const { flowId, executionId, version } = useParams({ from: ROUTE_ID });
 	const search = useSearch({ from: ROUTE_ID });
-	const navigate = useNavigate({ from: ROUTE_PATH });
+	const navigate = useNavigate();
 
-	const isLocal = isLocalDeployment(selected);
-	const activeScope = versions === "all" ? "all" : "version";
-	const shouldServerFilter =
-		activeScope === "version" && !!selected && !isLocal;
+	const navigateSelf = (next: ExecutionSearch) =>
+		navigate({
+			to: ROUTE_PATH,
+			params: { flowId, version, executionId },
+			search: next,
+			replace: true,
+		});
 
 	const activeTab: ExecutionTab = search.tab === "logs" ? "logs" : "execution";
 	const isLogsTab = activeTab === "logs";
 
 	const setActiveTab = (tab: ExecutionTab) => {
-		navigate({
-			search: (prev) =>
-				tab === "logs"
-					? { version: prev.version, tab: "logs" }
-					: { version: prev.version },
-			replace: true,
-		});
+		navigateSelf(tab === "logs" ? { tab: "logs" } : {});
 	};
 
 	const selectedScope: ExecutionLogsScope = search.scope
@@ -65,21 +67,15 @@ function ExecutionContainerBody() {
 		: { kind: "root" };
 
 	const setSelectedScope = (scope: ExecutionLogsScope) => {
-		navigate({
-			search: (prev) =>
-				scope.kind === "root"
-					? { version: prev.version, tab: "logs" }
-					: {
-							version: prev.version,
-							tab: "logs",
-							scope: scope.checkpointId,
-						},
-			replace: true,
-		});
+		navigateSelf(
+			scope.kind === "root"
+				? { tab: "logs" }
+				: { tab: "logs", scope: scope.checkpointId }
+		);
 	};
 
 	const { executionsData, refetch: refetchExecutions } = useExecutions(flowId, {
-		snapshotId: shouldServerFilter ? selected?.id : undefined,
+		snapshotId: serverFilterSnapshotId,
 		refetchInterval: DEFAULT_EXECUTIONS_POLLING_INTERVAL,
 	});
 	const { executionData, refetch: refetchExecution } =
@@ -111,70 +107,72 @@ function ExecutionContainerBody() {
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
-	const kitaruSnapshotIds = new Set(realDeployments.map((d) => d.id));
-	const displayedExecutions =
-		activeScope === "version" && isLocal
-			? filterLocalExecutions(executionsData, kitaruSnapshotIds)
-			: executionsData;
+	const displayedExecutions = clientFilterRealSnapshotIds
+		? filterLocalExecutions(executionsData, clientFilterRealSnapshotIds)
+		: executionsData;
 
 	const executionsSortedByCreatedAtDesc = [...displayedExecutions].sort(
-		(a, b) => {
-			return (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0);
-		}
+		(a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0)
 	);
 
 	return (
-		<div className="flex flex-1 flex-col overflow-hidden">
-			<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
-				<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
-				<div className="flex items-center gap-3">
-					<RefreshButton
-						size="sm"
-						variant="outline"
-						onClick={refreshExecutionData}
-						isLoading={isManualRefreshPending}
-					/>
-					<ExecutionActionsDropdown executionId={executionId} flowId={flowId} />
-				</div>
-			</div>
-			<ThreePanelLayout
-				left={
-					<ExecutionsList
-						executions={executionsSortedByCreatedAtDesc}
-						flowId={flowId}
-						activeexecutionId={executionId}
-					/>
-				}
-				center={
-					isLogsTab ? (
-						<ExecutionLogsTabContainer
-							execution={executionData}
-							checkpoints={checkpointsData.checkpoints}
-							selectedScope={selectedScope}
-							onSelectScope={setSelectedScope}
-							onBack={() => setActiveTab("execution")}
+		<ThreePanelLayoutProvider>
+			<div className="flex flex-1 flex-col overflow-hidden">
+				<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
+					<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
+					<div className="flex items-center gap-3">
+						<RefreshButton
+							size="sm"
+							variant="outline"
+							onClick={refreshExecutionData}
+							isLoading={isManualRefreshPending}
 						/>
-					) : (
-						<ExecutionTabContainer
+						<ExecutionActionsDropdown
 							executionId={executionId}
 							flowId={flowId}
-							execution={executionData}
-							checkpoints={checkpointsData.checkpoints}
-							onSelectCheckpoint={setSelectedCheckpointId}
 						/>
-					)
-				}
-				right={
-					isLogsTab ? null : (
-						<CheckpointDetailPanelContainer
-							key={selectedCheckpointId}
-							checkpointId={selectedCheckpointId}
-							activeTab={activeCheckpointTab}
-							onTabChange={setActiveCheckpointTab}
+					</div>
+				</div>
+				<ThreePanelLayout
+					left={
+						<ExecutionsList
+							executions={executionsSortedByCreatedAtDesc}
+							flowId={flowId}
+							activeexecutionId={executionId}
+							versionParam={versionParam}
 						/>
-					)
-				}
-			/>
-		</div>
+					}
+					center={
+						isLogsTab ? (
+							<ExecutionLogsTabContainer
+								execution={executionData}
+								checkpoints={checkpointsData.checkpoints}
+								selectedScope={selectedScope}
+								onSelectScope={setSelectedScope}
+								onBack={() => setActiveTab("execution")}
+							/>
+						) : (
+							<ExecutionTabContainer
+								executionId={executionId}
+								flowId={flowId}
+								execution={executionData}
+								checkpoints={checkpointsData.checkpoints}
+								onSelectCheckpoint={setSelectedCheckpointId}
+							/>
+						)
+					}
+					right={
+						isLogsTab ? null : (
+							<CheckpointDetailPanelContainer
+								key={selectedCheckpointId}
+								checkpointId={selectedCheckpointId}
+								activeTab={activeCheckpointTab}
+								onTabChange={setActiveCheckpointTab}
+							/>
+						)
+					}
+				/>
+			</div>
+		</ThreePanelLayoutProvider>
 	);
 }

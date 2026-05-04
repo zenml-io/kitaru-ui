@@ -32,6 +32,11 @@ const checkpointStyles: Record<
 		surface: "bg-secondary",
 		text: "text-span-tool",
 	},
+	memory_call: {
+		fill: "bg-span-memory",
+		surface: "bg-span-memory/15",
+		text: "text-span-memory",
+	},
 	wait: {
 		fill: "bg-warning",
 		surface: "bg-warning/15",

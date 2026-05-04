@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import type { Deployment } from "../domain/deployment";
+import { formatVersion, type Deployment } from "../domain/deployment";
+import { deploymentsQueries } from "../business-logic/deployments-queries";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
 import { InvokeButton } from "../ui/InvokeButton";
 import { InvokeDrawer } from "../ui/InvokeDrawer";
@@ -13,6 +15,17 @@ export function InvokeDeploymentContainer({
 }) {
 	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
+
+	const detailQuery = useQuery({
+		...deploymentsQueries.detail(deployment.id),
+		enabled: open,
+	});
+
+	const defaultValue =
+		detailQuery.data?.defaultParameters != null
+			? JSON.stringify(detailQuery.data.defaultParameters, null, 2)
+			: "{}";
+
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
 		{
@@ -20,9 +33,12 @@ export function InvokeDeploymentContainer({
 				setOpen(false);
 				toast.success("Invocation started");
 				navigate({
-					to: "/flows/$flowId/executions/$executionId",
-					params: { flowId: deployment.flowId, executionId: runId },
-					search: { version: deployment.versionNumber },
+					to: "/flows/$flowId/v/$version/executions/$executionId",
+					params: {
+						flowId: deployment.flowId,
+						version: deployment.version,
+						executionId: runId,
+					},
 				});
 			},
 			onError: (error) => {
@@ -44,8 +60,9 @@ export function InvokeDeploymentContainer({
 			<InvokeDrawer
 				open={open}
 				onOpenChange={setOpen}
-				title={`Invoke ${deployment.flowName} · v${deployment.versionNumber}`}
-				schema={deployment.inputSchema}
+				title={`Invoke ${deployment.flowName} · ${formatVersion(deployment.version)}`}
+				defaultValue={defaultValue}
+				isLoading={open && detailQuery.isPending}
 				isSubmitting={isPending}
 				onSubmit={handleSubmit}
 			/>

@@ -19,7 +19,7 @@ export function ExecutionLogsErrorState({
 }: ExecutionLogsErrorStateProps) {
 	const message = error instanceof Error ? error.message : "Unknown error";
 	return (
-		<Empty>
+		<Empty data-testid="execution-logs-error">
 			<EmptyHeader className="max-w-md">
 				<EmptyMedia
 					variant="icon"

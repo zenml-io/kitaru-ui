@@ -1,6 +1,10 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import { parseBackendTimestamp } from "@/shared/utils/time";
+import { isRecord } from "@/shared/utils/is-record";
+
+export const LOCAL_VERSION_ID = "local" as const;
+export type DeploymentVersion = typeof LOCAL_VERSION_ID | number;
 
 export const KITARU_SNAPSHOT_NAME = /^kitaru::(.+)::v(\d+)$/;
 
@@ -20,13 +24,14 @@ export type Deployment = {
 	id: string;
 	flowId: string;
 	flowName: string;
-	versionNumber: number;
+	version: DeploymentVersion;
 	tags: DeploymentTag[];
 	createdAt?: Date;
 	updatedAt?: Date;
 	stackId?: string;
 	stackName?: string;
 	inputSchema?: Record<string, unknown>;
+	defaultParameters?: Record<string, unknown>;
 	latestRunId?: string;
 	latestRunStatus?: ExecutionStatus;
 	runnable: boolean;
@@ -70,13 +75,13 @@ export function deploymentFromApiToDomain(
 	const pipeline = snapshot.resources?.pipeline;
 	if (!pipeline) return null;
 
-	const versionNumber = Number.parseInt(match[2], 10);
+	const version = Number.parseInt(match[2], 10);
 
 	return {
 		id: snapshot.id,
 		flowId: pipeline.id,
 		flowName: pipeline.name,
-		versionNumber,
+		version,
 		tags: (snapshot.resources?.tags ?? [])
 			.map(tagFromApiToDomain)
 			.filter((t): t is DeploymentTag => t !== null),
@@ -89,9 +94,39 @@ export function deploymentFromApiToDomain(
 		stackId: snapshot.resources?.stack?.id,
 		stackName: snapshot.resources?.stack?.name,
 		inputSchema: snapshot.metadata?.config_schema ?? undefined,
+		defaultParameters: extractDefaultParameters(
+			snapshot.metadata?.config_template
+		),
 		latestRunId: snapshot.resources?.latest_run_id ?? undefined,
 		latestRunStatus: snapshot.resources?.latest_run_status ?? undefined,
 		runnable: snapshot.body?.runnable ?? false,
 		deployable: snapshot.body?.deployable ?? false,
 	};
+}
+
+function extractDefaultParameters(
+	configTemplate: Record<string, unknown> | null | undefined
+): Record<string, unknown> | undefined {
+	if (!configTemplate) return undefined;
+	const params = configTemplate.parameters;
+	return isRecord(params) ? params : undefined;
+}
+
+export function buildLocalDeployment(
+	flowId: string,
+	flowName: string
+): Deployment {
+	return {
+		id: LOCAL_VERSION_ID,
+		flowId,
+		flowName,
+		version: LOCAL_VERSION_ID,
+		tags: [],
+		runnable: false,
+		deployable: false,
+	};
+}
+
+export function formatVersion(version: DeploymentVersion): string {
+	return version === LOCAL_VERSION_ID ? LOCAL_VERSION_ID : `v${version}`;
 }

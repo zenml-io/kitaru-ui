@@ -1,4 +1,5 @@
 import { ErrorBoundary } from "react-error-boundary";
+import { ArtifactStoreFallbackContainer } from "@/modules/artifacts/feature/ArtifactStoreFallbackContainer";
 import { useArtifactVersion } from "../business-logic/use-artifact-version";
 import { useArtifactVisualization } from "../business-logic/use-artifact-visualization";
 import { VisualizationSkeleton } from "../ui/VisualizationSkeleton";
@@ -28,9 +29,9 @@ export function ArtifactVisualizationContainer({
 
 	if (versionQuery.isError) {
 		return (
-			<VisualizationErrorFallback
+			<ArtifactStoreFallbackContainer
+				artifactVersionId={artifactVersionId}
 				error={versionQuery.error}
-				resetErrorBoundary={() => versionQuery.refetch()}
 			/>
 		);
 	}
@@ -45,9 +46,9 @@ export function ArtifactVisualizationContainer({
 
 	if (visualizationQuery.isError) {
 		return (
-			<VisualizationErrorFallback
+			<ArtifactStoreFallbackContainer
+				artifactVersionId={artifactVersionId}
 				error={visualizationQuery.error}
-				resetErrorBoundary={() => visualizationQuery.refetch()}
 			/>
 		);
 	}

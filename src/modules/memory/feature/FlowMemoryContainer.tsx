@@ -22,7 +22,7 @@ import { MemoryToolbar } from "../ui/MemoryToolbar";
 
 export function FlowMemoryContainer() {
 	const { flowId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/$tab",
+		from: "/_private/_navbar/flows/$flowId",
 	});
 
 	const { flowData } = useFlow(flowId);

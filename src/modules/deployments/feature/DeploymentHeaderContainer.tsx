@@ -1,21 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
 import { stacksQueries } from "@/modules/stacks/business-logic/stacks-queries";
-import { isLocalDeployment } from "../domain/local-deployment";
-import { useSelectedVersion } from "../business-logic/use-selected-version";
+import { useQuery } from "@tanstack/react-query";
+import { useCurrentDeployment } from "../business-logic/use-current-deployment";
 import { DeploymentHeader } from "../ui/DeploymentHeader";
 
 export function DeploymentHeaderContainer() {
-	const { flow, selected } = useSelectedVersion();
+	const { deployment } = useCurrentDeployment();
 
 	const { data: stack } = useQuery({
-		...stacksQueries.detail(selected?.stackId ?? ""),
-		enabled: Boolean(selected?.stackId) && !isLocalDeployment(selected),
+		...stacksQueries.detail(deployment.stackId ?? ""),
+		enabled: Boolean(deployment.stackId),
 	});
 
 	return (
 		<DeploymentHeader
-			flowName={flow.name}
-			deployment={selected}
+			flowName={deployment.flowName}
+			deployment={deployment}
 			stackComponents={stack?.components}
 		/>
 	);
