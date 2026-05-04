@@ -15,7 +15,7 @@ export function CheckpointMemoryTabContainer({
 	checkpointStartTime,
 }: CheckpointMemoryTabContainerProps) {
 	const { flowId, executionId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
+		from: "/_private/_navbar/flows/$flowId/v/$version/executions/$executionId",
 	});
 
 	const { flowData } = useFlow(flowId);
