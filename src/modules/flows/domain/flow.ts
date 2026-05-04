@@ -2,7 +2,7 @@ import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
 import { parseBackendTimestamp } from "@/shared/utils/time";
 
-export const flowTabs = ["overview", "executions", "memory"] as const;
+export const flowTabs = ["executions", "memory", "overview"] as const;
 export type FlowTab = (typeof flowTabs)[number];
 
 export const flowTabLabels: Record<FlowTab, string> = {
