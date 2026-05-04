@@ -6,6 +6,7 @@ import {
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { CheckpointMemoryTabContainer } from "@/modules/memory/feature/CheckpointMemoryTabContainer";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
+import { CheckpointDetailPanelSourceCode } from "../ui/CheckpointDetailPanelSourceCode";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
 import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
 import {
@@ -88,6 +89,12 @@ function CheckpointDetailPanelContentContainer({
 			<div className="min-h-0 flex-1 overflow-y-auto">
 				{activeTab === "checkpoint" && (
 					<CheckpointDetailPanelInfo checkpoint={detailsData} />
+				)}
+				{activeTab === "code" && (
+					<CheckpointDetailPanelSourceCode
+						sourceCode={detailsData.sourceCode}
+						sourceFilePath={detailsData.sourceFilePath}
+					/>
 				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts

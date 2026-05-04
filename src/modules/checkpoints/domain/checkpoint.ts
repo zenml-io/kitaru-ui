@@ -23,11 +23,14 @@ export type Checkpoint = {
 	outputs: ArtifactEntry[];
 	logSources: string[];
 	runMetadata?: Record<string, unknown>;
+	sourceCode?: string;
+	sourceFilePath?: string;
 };
 
 export function checkpointFromApiToDomain(
 	checkpoint: components["schemas"]["StepRunResponse"]
 ): Checkpoint {
+	const sourceModule = checkpoint.metadata?.spec?.source?.module;
 	return {
 		id: checkpoint.id,
 		name: checkpoint.name,
@@ -51,6 +54,10 @@ export function checkpointFromApiToDomain(
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
 		logSources: extractLogSources(checkpoint.resources?.log_collection),
 		runMetadata: checkpoint.metadata?.run_metadata,
+		sourceCode: checkpoint.metadata?.source_code ?? undefined,
+		sourceFilePath: sourceModule
+			? `${sourceModule.replace(/\./g, "/")}.py`
+			: undefined,
 	};
 }
 
