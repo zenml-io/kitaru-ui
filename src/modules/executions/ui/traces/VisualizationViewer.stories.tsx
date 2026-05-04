@@ -53,7 +53,7 @@ const markdownComplianceReportArtifact: ArtifactVisualization = {
 
 ## Summary
 
-The latest memory audit found **three material changes** and one follow-up item.
+The latest state audit found **three material changes** and one follow-up item.
 
 The workflow executed \`collect_policy_changes\`, \`score_risk\`, and \`publish_report\`.
 
@@ -104,7 +104,7 @@ const jsonPydanticDoubleEncodedArtifact: ArtifactVisualization = {
 	type: "json",
 	value: JSON.stringify(
 		JSON.stringify({
-			result: `# Memory Audit Result
+			result: `# Evaluation Audit Result
 
 The Pydantic-style artifact was double encoded: the outer visualization value is JSON, and the decoded value is another JSON object string.
 

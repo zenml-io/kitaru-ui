@@ -12,7 +12,6 @@ const checkpointTypeLabels: Record<string, string> = {
 	checkpoint: "checkpoint",
 	tool: "tool",
 	tool_call: "tool",
-	memory_call: "memory",
 	wait: "wait",
 	sleep: "sleep",
 	parallel: "parallel",

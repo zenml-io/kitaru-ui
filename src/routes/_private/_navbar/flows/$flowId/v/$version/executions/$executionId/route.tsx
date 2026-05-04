@@ -2,7 +2,6 @@ import { checkpointsQueries } from "@/modules/checkpoints/business-logic/checkpo
 import { DeploymentExecutionContainer } from "@/modules/deployments/feature/DeploymentExecutionContainer";
 import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
 import { formatExecutionIndex } from "@/modules/executions/util/execution";
-import { memoryQueries } from "@/modules/memory/business-logic/memory-queries";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
@@ -43,12 +42,6 @@ export const Route = createFileRoute(
 				checkpointsQueries.all(params.executionId)
 			),
 		]);
-
-		context.queryClient.ensureQueryData(memoryQueries.namespaces());
-		context.queryClient.ensureQueryData(memoryQueries.flow(params.flowId));
-		context.queryClient.ensureQueryData(
-			memoryQueries.execution(params.executionId)
-		);
 
 		return {
 			executionIndex: formatExecutionIndex(execution.index),

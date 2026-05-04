@@ -4,7 +4,6 @@ import {
 	useCheckpointDetails,
 } from "../business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "../domain/checkpoint";
-import { CheckpointMemoryTabContainer } from "@/modules/memory/feature/CheckpointMemoryTabContainer";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
 import { CheckpointDetailPanelSourceCode } from "../ui/CheckpointDetailPanelSourceCode";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
@@ -101,11 +100,6 @@ function CheckpointDetailPanelContentContainer({
 						onSelectArtifact={(artifact, direction) =>
 							setSelectedArtifact({ artifact, direction })
 						}
-					/>
-				)}
-				{activeTab === "memory" && (
-					<CheckpointMemoryTabContainer
-						checkpointStartTime={detailsData?.startTime}
 					/>
 				)}
 				{activeTab === "logs" && (
