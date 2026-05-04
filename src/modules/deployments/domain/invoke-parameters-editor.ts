@@ -32,7 +32,7 @@ export function getParametersJsonSchema(
 	return {
 		...configSchema,
 		...parametersSchema,
-	} as JsonSchema;
+	};
 }
 
 export function mergeRunConfigurationWithParameters(
