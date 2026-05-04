@@ -1,9 +1,11 @@
 import "@/modules/executions/feature/setup-monaco";
+import { getMonacoThemeName } from "@/modules/executions/feature/monaco-themes";
 import type { JsonSchema } from "@/shared/api/domain/json-schema";
 import { cn } from "@/shared/utils/styles";
 import type { EditorProps, OnMount } from "@monaco-editor/react";
 import Monaco from "@monaco-editor/react";
 import { useTheme } from "next-themes";
+import { registerMonacoThemes } from "../feature/monaco-themes";
 
 type MonacoYamlEditorProps = EditorProps & {
 	jsonSchema?: JsonSchema;
@@ -15,10 +17,11 @@ export function MonacoJsonSchemaEditor({
 	schemaId,
 	className,
 	onMount,
+	beforeMount,
 	...props
 }: MonacoYamlEditorProps) {
 	const { resolvedTheme } = useTheme();
-	const theme = resolvedTheme === "dark" ? "vs-dark" : "vs";
+	const theme = getMonacoThemeName(resolvedTheme);
 
 	const fileMatch = `${schemaId}.json`;
 
@@ -41,6 +44,10 @@ export function MonacoJsonSchemaEditor({
 		<Monaco
 			theme={theme}
 			path={fileMatch}
+			beforeMount={(monaco) => {
+				registerMonacoThemes(monaco);
+				beforeMount?.(monaco);
+			}}
 			onMount={(editor, monaco) => {
 				handleEditorMount(editor, monaco);
 				onMount?.(editor, monaco);
