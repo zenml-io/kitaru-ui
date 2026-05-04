@@ -91,10 +91,7 @@ function CheckpointDetailPanelContentContainer({
 					<CheckpointDetailPanelInfo checkpoint={detailsData} />
 				)}
 				{activeTab === "code" && (
-					<CheckpointDetailPanelSourceCode
-						sourceCode={detailsData.sourceCode}
-						sourceFilePath={detailsData.sourceFilePath}
-					/>
+					<CheckpointDetailPanelSourceCode source={detailsData.source} />
 				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts

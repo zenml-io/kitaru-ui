@@ -13,22 +13,19 @@ import {
 import { Separator } from "@/shared/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { TruncatedText } from "@/shared/ui/truncated-text";
+import type { CheckpointSource } from "../domain/checkpoint";
+import { filePathToFileName } from "../util/file-path";
 
 interface CheckpointDetailPanelSourceCodeProps {
-	sourceCode?: string;
-	sourceFilePath?: string;
+	source?: CheckpointSource;
 }
 
 export function CheckpointDetailPanelSourceCode({
-	sourceCode,
-	sourceFilePath,
+	source,
 }: CheckpointDetailPanelSourceCodeProps) {
 	const { copied, copy } = useCopy();
-	const fileName = sourceFilePath
-		? (sourceFilePath.split("/").pop()?.replace(/\.py$/, "") ?? sourceFilePath)
-		: undefined;
 
-	if (!sourceCode) {
+	if (!source) {
 		return (
 			<div className="flex flex-1 flex-col items-center justify-center gap-1 p-4 text-center">
 				<p className="text-foreground text-xs font-medium">
@@ -41,6 +38,10 @@ export function CheckpointDetailPanelSourceCode({
 		);
 	}
 
+	const fileName = source.filePath
+		? filePathToFileName(source.filePath)
+		: undefined;
+
 	return (
 		<div className="flex h-full flex-col">
 			<Dialog>
@@ -52,9 +53,9 @@ export function CheckpointDetailPanelSourceCode({
 								{fileName}
 							</div>
 						)}
-						{sourceFilePath && (
+						{source.filePath && (
 							<div className="text-2xs text-muted-foreground truncate">
-								{sourceFilePath}
+								{source.filePath}
 							</div>
 						)}
 					</div>
@@ -65,7 +66,7 @@ export function CheckpointDetailPanelSourceCode({
 									<Button
 										variant="ghost"
 										size="icon-sm"
-										onClick={() => copy(sourceCode)}
+										onClick={() => copy(source.code)}
 										aria-label="Copy source code"
 									>
 										{copied ? (
@@ -99,7 +100,7 @@ export function CheckpointDetailPanelSourceCode({
 					</div>
 				</div>
 				<div className="min-h-0 flex-1 overflow-auto">
-					<CodeBlock code={sourceCode} language="python" />
+					<CodeBlock code={source.code} language="python" />
 				</div>
 				<DialogContent
 					showCloseButton={false}
@@ -107,13 +108,13 @@ export function CheckpointDetailPanelSourceCode({
 				>
 					<DialogHeader className="bg-muted/50 flex-row items-center justify-between gap-2 px-4 py-2">
 						<DialogTitle className="text-foreground min-w-0 flex-1 text-xs font-semibold">
-							<TruncatedText>{sourceFilePath ?? "Source code"}</TruncatedText>
+							<TruncatedText>{source.filePath ?? "Source code"}</TruncatedText>
 						</DialogTitle>
 						<div className="flex items-center gap-1">
 							<Button
 								variant="ghost"
 								size="icon-sm"
-								onClick={() => copy(sourceCode)}
+								onClick={() => copy(source.code)}
 								aria-label="Copy source code"
 							>
 								{copied ? (
@@ -134,7 +135,7 @@ export function CheckpointDetailPanelSourceCode({
 					</DialogHeader>
 					<Separator />
 					<div className="min-h-0 flex-1 overflow-auto">
-						<CodeBlock code={sourceCode} language="python" />
+						<CodeBlock code={source.code} language="python" />
 					</div>
 				</DialogContent>
 			</Dialog>
