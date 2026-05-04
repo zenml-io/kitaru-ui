@@ -1,20 +1,26 @@
 import { Button } from "@/shared/ui/button";
 import {
-	Sheet,
-	SheetClose,
-	SheetContent,
-	SheetTitle,
-	SheetTrigger,
-} from "@/shared/ui/sheet";
-import { Play, X } from "lucide-react";
-import { useState } from "react";
-import { useReplayExecution } from "../business-logic/use-replay-execution";
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { Play } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { executionsQueryKeys } from "../business-logic/executions-queries";
+import { useReplayExecution } from "../business-logic/use-replay-execution";
 
 type ReplayExecutionSheetProps = {
 	executionId: string;
 	executionNumber: string;
-	snapshotId: string;
 };
 
 export function ReplayExecutionSheet({
@@ -22,49 +28,55 @@ export function ReplayExecutionSheet({
 	executionNumber,
 }: ReplayExecutionSheetProps) {
 	const [open, setOpen] = useState(false);
+	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { flowId } = useParams({
 		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
 	});
 	const { replayExecution, isPending } = useReplayExecution({
 		onSuccess: (exec) => {
+			queryClient.invalidateQueries({
+				queryKey: executionsQueryKeys.all(flowId),
+			});
 			navigate({
 				to: "/flows/$flowId/executions/$executionId",
 				params: { flowId, executionId: exec.id },
 			});
 			setOpen(false);
 		},
+		onError: (error) => {
+			toast.error(error.message || "Failed to replay execution");
+		},
 	});
-	// const { data: deployment } = useDeployment(snapshotId);
 
 	function handleReplay() {
 		replayExecution({ executionId });
 	}
 
 	return (
-		<Sheet open={open} onOpenChange={setOpen}>
-			<SheetTrigger
+		<AlertDialog open={open} onOpenChange={setOpen}>
+			<AlertDialogTrigger
 				render={<Button variant="outline" type="button" size="sm" />}
 			>
 				<Play className="size-3.5" />
 				Replay
-			</SheetTrigger>
-			<SheetContent className="sm:max-w-1/2" showCloseButton={false}>
-				<div className="border-border flex items-center justify-between border-b px-4 py-3">
-					<SheetTitle className="text-sm font-semibold">
-						Replay Execution #{executionNumber}
-					</SheetTitle>
-					<SheetClose render={<Button variant="ghost" size="icon-sm" />}>
-						<X className="size-4" />
-						<span className="sr-only">Close</span>
-					</SheetClose>
-				</div>
-
-				<Button onClick={handleReplay} disabled={isPending}>
-					Replay
-				</Button>
-				{/* {deployment.flowName} */}
-			</SheetContent>
-		</Sheet>
+			</AlertDialogTrigger>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>
+						Replay Execution #{executionNumber}?
+					</AlertDialogTitle>
+					<AlertDialogDescription>
+						This will start a new execution using the same configuration.
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+					<AlertDialogAction onClick={handleReplay} disabled={isPending}>
+						{isPending ? "Replaying..." : "Replay"}
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	);
 }
