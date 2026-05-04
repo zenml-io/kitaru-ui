@@ -351,6 +351,62 @@ describe("checkpointFromApiToDomain", () => {
 
 		expect(checkpointFromApiToDomain(checkpoint).type).toBe("memory_call");
 	});
+
+	it("extracts source.code and derives source.filePath from spec.source.module", () => {
+		const checkpoint = {
+			id: "checkpoint-id-source",
+			name: "data_loader",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: {
+				source_code: "def data_loader():\n    pass\n",
+				spec: { source: { module: "src.flows.content_pipeline" } },
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toEqual({
+			code: "def data_loader():\n    pass\n",
+			filePath: "src/flows/content_pipeline.py",
+		});
+	});
+
+	it("returns source with code but no filePath when spec.source.module is missing", () => {
+		const checkpoint = {
+			id: "checkpoint-id-source-no-spec",
+			name: "lonely_source",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: { source_code: "def lonely_source():\n    pass\n" },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toEqual({
+			code: "def lonely_source():\n    pass\n",
+			filePath: undefined,
+		});
+	});
+
+	it("leaves source undefined when metadata is absent", () => {
+		const checkpoint = {
+			id: "checkpoint-id-no-metadata",
+			name: "no_metadata",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toBeUndefined();
+	});
+
+	it("leaves source undefined when only spec.source.module is set (no code)", () => {
+		const checkpoint = {
+			id: "checkpoint-id-spec-only",
+			name: "spec_only",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: { spec: { source: { module: "src.flows.spec_only" } } },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toBeUndefined();
+	});
 });
 
 describe("checkpointEntryFromApiToDomain", () => {
