@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useExecution } from "@/modules/executions/business-logic/use-execution";
+import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { CheckpointDetailPanelConfigurationEmpty } from "../ui/CheckpointDetailPanelConfigurationEmpty";
 import { CheckpointDetailPanelConfigurationSkeleton } from "../ui/CheckpointDetailPanelConfigurationSkeleton";
 
@@ -25,11 +27,17 @@ export function CheckpointDetailPanelConfigurationContainer({
 
 	return (
 		<div className="flex flex-col">
-			<Suspense fallback={<CheckpointDetailPanelConfigurationSkeleton />}>
-				{/* Stack and DockerImage section containers will be inserted in later tasks. */}
-				{stackId ? <div data-testid="stack-section-placeholder" /> : null}
-				{buildId ? <div data-testid="docker-section-placeholder" /> : null}
-			</Suspense>
+			<ErrorBoundary
+				fallbackRender={(props) => (
+					<ErrorFallback {...props} title="Failed to load configuration" />
+				)}
+			>
+				<Suspense fallback={<CheckpointDetailPanelConfigurationSkeleton />}>
+					{/* Stack and DockerImage section containers will be inserted in later tasks. */}
+					{stackId ? <div data-testid="stack-section-placeholder" /> : null}
+					{buildId ? <div data-testid="docker-section-placeholder" /> : null}
+				</Suspense>
+			</ErrorBoundary>
 		</div>
 	);
 }
