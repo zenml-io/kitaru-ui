@@ -30,8 +30,8 @@ export function ReplayExecutionSheet({
 	const [open, setOpen] = useState(false);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { flowId } = useParams({
-		from: "/_private/_navbar/flows/$flowId/executions/$executionId",
+	const { flowId, version } = useParams({
+		from: "/_private/_navbar/flows/$flowId/v/$version/executions/$executionId",
 	});
 	const { replayExecution, isPending } = useReplayExecution({
 		onSuccess: (exec) => {
@@ -39,8 +39,8 @@ export function ReplayExecutionSheet({
 				queryKey: executionsQueryKeys.all(flowId),
 			});
 			navigate({
-				to: "/flows/$flowId/executions/$executionId",
-				params: { flowId, executionId: exec.id },
+				to: "/flows/$flowId/v/$version/executions/$executionId",
+				params: { flowId, version, executionId: exec.id },
 			});
 			setOpen(false);
 		},
