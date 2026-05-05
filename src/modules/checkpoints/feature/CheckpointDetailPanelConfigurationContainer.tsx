@@ -4,6 +4,7 @@ import { useExecution } from "@/modules/executions/business-logic/use-execution"
 import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { CheckpointDetailPanelConfigurationEmpty } from "../ui/CheckpointDetailPanelConfigurationEmpty";
 import { CheckpointDetailPanelConfigurationSkeleton } from "../ui/CheckpointDetailPanelConfigurationSkeleton";
+import { CheckpointDockerImageSectionContainer } from "./CheckpointDockerImageSectionContainer";
 import { CheckpointStackSectionContainer } from "./CheckpointStackSectionContainer";
 
 type Props = {
@@ -14,10 +15,8 @@ type Props = {
 
 export function CheckpointDetailPanelConfigurationContainer({
 	executionId,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- wired in Task 9 (Stack section) / Task 10 (Docker)
-	checkpointName: _checkpointName,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- wired in Task 10 (Docker)
-	checkpointStepOperator: _checkpointStepOperator,
+	checkpointName,
+	checkpointStepOperator,
 }: Props) {
 	const { executionData } = useExecution(executionId);
 	const { stackId, buildId } = executionData;
@@ -37,7 +36,13 @@ export function CheckpointDetailPanelConfigurationContainer({
 					{stackId ? (
 						<CheckpointStackSectionContainer stackId={stackId} />
 					) : null}
-					{buildId ? <div data-testid="docker-section-placeholder" /> : null}
+					{buildId ? (
+						<CheckpointDockerImageSectionContainer
+							buildId={buildId}
+							checkpointName={checkpointName}
+							checkpointStepOperator={checkpointStepOperator}
+						/>
+					) : null}
 				</Suspense>
 			</ErrorBoundary>
 		</div>
