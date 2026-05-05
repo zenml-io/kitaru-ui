@@ -53,6 +53,8 @@ export type Execution = {
 		id: string;
 		runnable?: boolean;
 	};
+	stackId?: string;
+	buildId?: string;
 };
 
 export function executionFromApiToDomain(
@@ -102,5 +104,7 @@ export function executionFromApiToDomain(
 					runnable: run.resources?.snapshot?.body?.runnable,
 				}
 			: undefined,
+		stackId: run.resources?.stack?.id,
+		buildId: run.resources?.build?.id,
 	};
 }

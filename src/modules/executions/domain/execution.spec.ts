@@ -61,4 +61,26 @@ describe("executionFromApiToDomain", () => {
 			executionFromApiToDomain(mkRun({ log_collection: undefined })).logSources
 		).toEqual([]);
 	});
+
+	it("extracts stackId from resources.stack.id when present (un-hydrated stub)", () => {
+		const run = mkRun({
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			stack: { id: "stack-123" } as any,
+		});
+		expect(executionFromApiToDomain(run).stackId).toBe("stack-123");
+	});
+
+	it("extracts buildId from resources.build.id when present (un-hydrated stub)", () => {
+		const run = mkRun({
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			build: { id: "build-456" } as any,
+		});
+		expect(executionFromApiToDomain(run).buildId).toBe("build-456");
+	});
+
+	it("leaves stackId and buildId undefined when resources.stack and resources.build are absent", () => {
+		const exec = executionFromApiToDomain(mkRun());
+		expect(exec.stackId).toBeUndefined();
+		expect(exec.buildId).toBeUndefined();
+	});
 });
