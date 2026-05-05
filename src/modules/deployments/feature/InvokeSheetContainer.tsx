@@ -23,7 +23,7 @@ export function InvokeSheetContainer({
 	onSubmit,
 	jsonSchema,
 	disabled,
-	snapshotId,
+	deploymentId,
 }: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -31,7 +31,7 @@ export function InvokeSheetContainer({
 	defaultValue?: string;
 	isSubmitting?: boolean;
 	jsonSchema?: JsonSchema;
-	snapshotId: string;
+	deploymentId: string;
 	disabled?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 }) {
@@ -55,7 +55,7 @@ export function InvokeSheetContainer({
 				</div>
 				<ParametersEditor
 					jsonSchema={jsonSchema}
-					snapshotId={snapshotId}
+					deploymentId={deploymentId}
 					key={defaultValue}
 					defaultValue={defaultValue}
 					isSubmitting={isSubmitting}
@@ -90,14 +90,14 @@ function ParametersEditor({
 	onSubmit,
 	onCancel,
 	jsonSchema,
-	snapshotId,
+	deploymentId,
 }: {
 	defaultValue?: string;
 	isSubmitting?: boolean;
 	onSubmit: (parameters: Record<string, unknown>) => void;
 	onCancel: () => void;
 	jsonSchema?: JsonSchema;
-	snapshotId: string;
+	deploymentId: string;
 }) {
 	const form = useForm<InvokeFormType>({
 		resolver: zodResolver(invokeFormSchema),
@@ -125,7 +125,7 @@ function ParametersEditor({
 							<MonacoJsonSchemaEditor
 								className="h-full"
 								jsonSchema={jsonSchema}
-								schemaId={snapshotId}
+								schemaId={deploymentId}
 								value={value}
 								onChange={onChange}
 							/>

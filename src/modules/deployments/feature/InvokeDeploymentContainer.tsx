@@ -30,7 +30,7 @@ export function InvokeDeploymentContainer({
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
 		{
-			onSuccess: ({ id }) => {
+			onSuccess: ({ id: executionId }) => {
 				setOpen(false);
 				toast.success("Invocation started");
 				navigate({
@@ -38,7 +38,7 @@ export function InvokeDeploymentContainer({
 					params: {
 						flowId: deployment.flowId,
 						version: deployment.version,
-						executionId: id,
+						executionId,
 					},
 				});
 			},
@@ -60,7 +60,7 @@ export function InvokeDeploymentContainer({
 		<InvokeSheetContainer
 			open={open}
 			onOpenChange={setOpen}
-			snapshotId={deployment.id}
+			deploymentId={deployment.id}
 			jsonSchema={parametersSchema}
 			title={`Invoke ${deployment.flowName} · ${formatVersion(deployment.version)}`}
 			defaultValue={defaultValue}

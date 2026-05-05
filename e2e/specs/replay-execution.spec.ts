@@ -14,7 +14,7 @@ const emptyPage = {
 	items: [],
 };
 
-const runnableSnapshot = {
+const runnableDeployment = {
 	id: SNAPSHOT_ID,
 	name: "kitaru::demo-flow::v1",
 	body: {
@@ -30,13 +30,13 @@ const runnableSnapshot = {
 const oldExecution = makeExecution({
 	id: OLD_EXECUTION_ID,
 	body: { index: 7 },
-	resources: { snapshot: runnableSnapshot },
+	resources: { snapshot: runnableDeployment },
 });
 
 const replayedExecution = makeExecution({
 	id: NEW_EXECUTION_ID,
 	body: { index: 8 },
-	resources: { snapshot: runnableSnapshot },
+	resources: { snapshot: runnableDeployment },
 });
 
 test("replay from execution details redirects to the new execution", async ({
