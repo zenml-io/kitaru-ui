@@ -1,7 +1,7 @@
 import { InvocationSnippets } from "./InvocationSnippets";
 import { InvocationUrlBlock } from "./InvocationUrlBlock";
 
-export function InvocationOverviewCard({
+export function InvocationCard({
 	url,
 	flowName,
 	exampleInput,

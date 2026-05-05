@@ -6,7 +6,7 @@ export const Route = createFileRoute(
 	beforeLoad: ({ params }) => {
 		throw redirect({
 			to: "/flows/$flowId/v/$version/$tab",
-			params: { ...params, tab: "overview" },
+			params: { ...params, tab: "executions" },
 		});
 	},
 });

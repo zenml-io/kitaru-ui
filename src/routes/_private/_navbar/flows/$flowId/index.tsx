@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/$flowId/")({
 			params: {
 				flowId: params.flowId,
 				version: target?.version ?? LOCAL_VERSION_ID,
-				tab: "overview",
+				tab: "executions",
 			},
 		});
 	},

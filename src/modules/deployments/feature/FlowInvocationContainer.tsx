@@ -4,8 +4,8 @@ import { isRecord } from "@/shared/utils/is-record";
 import { useCurrentDeployment } from "../business-logic/use-current-deployment";
 import { useDeployments } from "../business-logic/use-deployments";
 import { LOCAL_VERSION_ID } from "../domain/deployment";
-import { InvocationOverviewCard } from "../ui/InvocationOverviewCard";
-import { LocalOverviewCard } from "../ui/LocalOverviewCard";
+import { InvocationCard } from "../ui/InvocationCard";
+import { LocalInvocationCard } from "../ui/LocalInvocationCard";
 
 function exampleFromSchema(
 	schema: JsonSchema | undefined
@@ -33,7 +33,7 @@ export function FlowInvocationContainer() {
 
 	if (deployment.version === LOCAL_VERSION_ID)
 		return (
-			<LocalOverviewCard
+			<LocalInvocationCard
 				flowName={deployment.flowName}
 				flowId={flowId}
 				hasDeployments={realDeployments.length > 0}
@@ -49,7 +49,7 @@ export function FlowInvocationContainer() {
 		: `--version ${deployment.version}`;
 
 	return (
-		<InvocationOverviewCard
+		<InvocationCard
 			url={url}
 			flowName={deployment.flowName}
 			exampleInput={exampleInput}
