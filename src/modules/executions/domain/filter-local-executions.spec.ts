@@ -14,15 +14,18 @@ function mkExecution(overrides: Partial<Execution>): Execution {
 
 describe("filterLocalExecutions", () => {
 	it("keeps runs whose snapshot isn't a known Kitaru deployment", () => {
-		const e1 = mkExecution({ id: "run-1", snapshotId: "snap-a" });
-		const e2 = mkExecution({ id: "run-2", snapshotId: "snap-kitaru" });
-		const e3 = mkExecution({ id: "run-3", snapshotId: undefined });
+		const e1 = mkExecution({ id: "run-1", sourceSnapshot: { id: "snap-a" } });
+		const e2 = mkExecution({
+			id: "run-2",
+			sourceSnapshot: { id: "snap-kitaru" },
+		});
+		const e3 = mkExecution({ id: "run-3", sourceSnapshot: undefined });
 		const kitaruIds = new Set(["snap-kitaru"]);
 		expect(filterLocalExecutions([e1, e2, e3], kitaruIds)).toEqual([e1, e3]);
 	});
 
 	it("treats a run with no snapshotId as local", () => {
-		const e = mkExecution({ id: "run-1", snapshotId: undefined });
+		const e = mkExecution({ id: "run-1", sourceSnapshot: undefined });
 		expect(filterLocalExecutions([e], new Set())).toEqual([e]);
 	});
 
