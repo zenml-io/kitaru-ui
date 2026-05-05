@@ -41,7 +41,7 @@ export const Route = createFileRoute(
 function TabComponent() {
 	const { tab } = Route.useParams();
 	switch (tab) {
-		case "overview":
+		case "invoke":
 			return <FlowInvocationContainer />;
 		case "executions":
 			return <DeploymentExecutionsListContainer />;

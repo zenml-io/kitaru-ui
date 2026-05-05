@@ -3,7 +3,7 @@ import { Button } from "@/shared/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Info } from "lucide-react";
 
-export function LocalOverviewCard({
+export function LocalInvocationCard({
 	flowName,
 	flowId,
 	hasDeployments,

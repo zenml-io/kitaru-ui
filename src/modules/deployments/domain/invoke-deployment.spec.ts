@@ -1,100 +1,89 @@
-import { describe, expect, it, vi } from "vitest";
-import { FetchError } from "@/shared/api/domain/fetch-error";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+	type MockInstance,
+} from "vitest";
+import { apiClient } from "@/shared/api/domain/api-client";
 import { invokeDeployment } from "./invoke-deployment";
 
 describe("invokeDeployment", () => {
-	it("POSTs { run_configuration: { parameters } } to /pipeline_snapshots/{id}/runs and returns run id on success", async () => {
-		const fetchSpy = vi
-			.spyOn(globalThis, "fetch")
-			.mockResolvedValue(
-				new Response(JSON.stringify({ id: "run-42" }), { status: 200 })
-			);
+	let postSpy: MockInstance;
+
+	beforeEach(() => {
+		postSpy = vi.spyOn(apiClient, "POST");
+	});
+
+	afterEach(() => {
+		postSpy.mockRestore();
+	});
+
+	it("POSTs full run_configuration and returns execution on success", async () => {
+		postSpy.mockResolvedValue({
+			data: {
+				id: "run-42",
+				name: "run-42",
+				body: {
+					created: "2026-04-17T00:00:00Z",
+					updated: "2026-04-17T00:00:00Z",
+					status: "running",
+					index: 1,
+					in_progress: false,
+					project_id: "00000000-0000-0000-0000-000000000000",
+				},
+				resources: {
+					project_id: "00000000-0000-0000-0000-000000000000",
+					tags: [],
+					log_collection: null,
+				},
+			},
+			error: undefined,
+			response: new Response(),
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} as any);
+
 		const result = await invokeDeployment({
-			snapshotId: "snap-1",
-			parameters: { topic: "hi" },
+			deploymentId: "snap-1",
+			runConfiguration: {
+				enable_cache: true,
+				parameters: { topic: "hi" },
+			},
 		});
-		expect(result).toEqual({ runId: "run-42" });
-		const [url, init] = fetchSpy.mock.calls[0];
-		expect(url).toMatch(/\/api\/v1\/pipeline_snapshots\/snap-1\/runs$/);
-		expect(init?.method).toBe("POST");
-		expect(init?.credentials).toBe("include");
-		expect(JSON.parse(String(init?.body))).toEqual({
-			run_configuration: { parameters: { topic: "hi" } },
+
+		expect(result).toMatchObject({
+			id: "run-42",
+			name: "run-42",
+			status: "running",
+			index: 1,
+			logSources: [],
 		});
-		fetchSpy.mockRestore();
-	});
 
-	it("sets Content-Type and Source-Context headers on every request", async () => {
-		const fetchSpy = vi
-			.spyOn(globalThis, "fetch")
-			.mockResolvedValue(
-				new Response(JSON.stringify({ id: "run-1" }), { status: 200 })
-			);
-		await invokeDeployment({ snapshotId: "snap-1", parameters: {} });
-		const headers = fetchSpy.mock.calls[0][1]?.headers as Record<
-			string,
-			string
-		>;
-		expect(headers["Content-Type"]).toBe("application/json");
-		expect(headers["Source-Context"]).toBe("kitaru-ui");
-		fetchSpy.mockRestore();
-	});
-
-	it("throws FetchError with the server detail when the response is not ok", async () => {
-		vi.spyOn(globalThis, "fetch").mockResolvedValue(
-			new Response(JSON.stringify({ detail: "bad params" }), { status: 400 })
+		expect(postSpy).toHaveBeenCalledWith(
+			"/api/v1/pipeline_snapshots/{snapshot_id}/runs",
+			{
+				body: {
+					run_configuration: {
+						enable_cache: true,
+						parameters: { topic: "hi" },
+					},
+				},
+				params: {
+					path: { snapshot_id: "snap-1" },
+				},
+			}
 		);
-		await expect(
-			invokeDeployment({ snapshotId: "snap-1", parameters: {} })
-		).rejects.toMatchObject({
-			name: "FetchError",
-			status: 400,
-			message: "bad params",
-		});
 	});
 
-	it("includes the raw body in the error message when the error response is not JSON", async () => {
-		vi.spyOn(globalThis, "fetch").mockResolvedValue(
-			new Response("<html>502 Bad Gateway</html>", { status: 502 })
-		);
+	it("bubbles up api client failures", async () => {
+		postSpy.mockRejectedValue(new Error("boom"));
 		await expect(
-			invokeDeployment({ snapshotId: "snap-1", parameters: {} })
-		).rejects.toThrow(/502 Bad Gateway/);
-	});
-
-	it("stringifies the payload when detail is not a string", async () => {
-		vi.spyOn(globalThis, "fetch").mockResolvedValue(
-			new Response(JSON.stringify({ detail: { code: "E_FOO" } }), {
-				status: 400,
+			invokeDeployment({
+				deploymentId: "snap-1",
+				runConfiguration: { parameters: {} },
 			})
-		);
-		await expect(
-			invokeDeployment({ snapshotId: "snap-1", parameters: {} })
-		).rejects.toThrow(/E_FOO/);
-	});
-
-	it("wraps network errors as FetchError with status 0", async () => {
-		vi.spyOn(globalThis, "fetch").mockRejectedValue(
-			new TypeError("Failed to fetch")
-		);
-		const error = await invokeDeployment({
-			snapshotId: "snap-1",
-			parameters: {},
-		}).catch((e) => e);
-		expect(error).toBeInstanceOf(FetchError);
-		expect(error.status).toBe(0);
-		expect(error.statusText).toBe("REQUEST_FAILED");
-	});
-
-	it("throws when the success response is missing a run id", async () => {
-		vi.spyOn(globalThis, "fetch").mockResolvedValue(
-			new Response(JSON.stringify({}), { status: 200 })
-		);
-		await expect(
-			invokeDeployment({ snapshotId: "snap-1", parameters: {} })
-		).rejects.toMatchObject({
-			name: "FetchError",
-			statusText: "INVALID_INVOKE_RESPONSE",
-		});
+		).rejects.toThrow("boom");
 	});
 });
