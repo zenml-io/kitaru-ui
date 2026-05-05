@@ -20,7 +20,10 @@ type Props = {
 
 function ImageRow({ dockerImage }: { dockerImage: DockerImage }) {
 	const { copied, copy } = useCopy();
-	const registryUrl = `https://${dockerImage.image.split(":")[0]}`;
+	const lastColon = dockerImage.image.lastIndexOf(":");
+	const imageWithoutTag =
+		lastColon > -1 ? dockerImage.image.slice(0, lastColon) : dockerImage.image;
+	const registryUrl = `https://${imageWithoutTag}`;
 	return (
 		<div className="flex items-center gap-4 py-1">
 			<span className="text-muted-foreground w-28 shrink-0 text-xs">
@@ -76,9 +79,9 @@ function ContainsCodeRow({ dockerImage }: { dockerImage: DockerImage }) {
 				Contains Code
 			</span>
 			{dockerImage.containsCode ? (
-				<CircleCheck className="text-success size-4" />
+				<CircleCheck className="text-success size-4" aria-label="Yes" />
 			) : (
-				<CircleSlash className="text-muted-foreground size-4" />
+				<CircleSlash className="text-muted-foreground size-4" aria-label="No" />
 			)}
 		</div>
 	);
