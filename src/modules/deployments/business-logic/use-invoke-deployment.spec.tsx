@@ -85,7 +85,7 @@ describe("useInvokeDeployment", () => {
 			logSources: [],
 		});
 		expect(onSuccess.mock.calls[0][1]).toEqual({
-			snapshotId: "snap-1",
+			deploymentId: "snap-1",
 			runConfiguration: { parameters: { topic: "hi" } },
 		});
 	});
