@@ -4,6 +4,7 @@ import { useExecution } from "@/modules/executions/business-logic/use-execution"
 import { ErrorFallback } from "@/shared/ui/ErrorFallback";
 import { CheckpointDetailPanelConfigurationEmpty } from "../ui/CheckpointDetailPanelConfigurationEmpty";
 import { CheckpointDetailPanelConfigurationSkeleton } from "../ui/CheckpointDetailPanelConfigurationSkeleton";
+import { CheckpointStackSectionContainer } from "./CheckpointStackSectionContainer";
 
 type Props = {
 	executionId: string;
@@ -33,8 +34,9 @@ export function CheckpointDetailPanelConfigurationContainer({
 				)}
 			>
 				<Suspense fallback={<CheckpointDetailPanelConfigurationSkeleton />}>
-					{/* Stack and DockerImage section containers will be inserted in later tasks. */}
-					{stackId ? <div data-testid="stack-section-placeholder" /> : null}
+					{stackId ? (
+						<CheckpointStackSectionContainer stackId={stackId} />
+					) : null}
 					{buildId ? <div data-testid="docker-section-placeholder" /> : null}
 				</Suspense>
 			</ErrorBoundary>
