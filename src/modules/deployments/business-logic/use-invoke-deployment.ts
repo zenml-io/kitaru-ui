@@ -1,25 +1,20 @@
+import { executionsQueryKeys } from "@/modules/executions/business-logic/executions-queries";
+import type { Execution } from "@/modules/executions/domain/execution";
 import type { FetchError } from "@/shared/api/domain/fetch-error";
 import {
 	useMutation,
 	type UseMutationOptions,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { executionsQueryKeys } from "@/modules/executions/business-logic/executions-queries";
 import {
 	invokeDeployment,
 	type InvokeDeploymentArgs,
-	type InvokeDeploymentResult,
 } from "../domain/invoke-deployment";
 
 export function useInvokeDeployment(
 	flowId: string,
 	options?: Omit<
-		UseMutationOptions<
-			InvokeDeploymentResult,
-			FetchError,
-			InvokeDeploymentArgs,
-			unknown
-		>,
+		UseMutationOptions<Execution, FetchError, InvokeDeploymentArgs, unknown>,
 		"mutationFn"
 	>
 ) {

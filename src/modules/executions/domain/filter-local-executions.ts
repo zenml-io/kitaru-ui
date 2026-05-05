@@ -5,6 +5,6 @@ export function filterLocalExecutions(
 	kitaruSnapshotIds: Set<string>
 ): Execution[] {
 	return executions.filter(
-		(e) => !e.snapshotId || !kitaruSnapshotIds.has(e.snapshotId)
+		(e) => !e.sourceSnapshot?.id || !kitaruSnapshotIds.has(e.sourceSnapshot.id)
 	);
 }
