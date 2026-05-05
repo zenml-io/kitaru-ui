@@ -7,9 +7,12 @@ export function selectDockerImage(
 ): DockerImage | null {
 	if (stepOperator) {
 		const compoundKey = `${checkpointName}.${stepOperator}`;
-		if (images[compoundKey]) return images[compoundKey];
+		const compoundHit = images[compoundKey];
+		if (compoundHit !== undefined) return compoundHit;
 	}
-	if (images[checkpointName]) return images[checkpointName];
-	if (images.orchestrator) return images.orchestrator;
+	const checkpointHit = images[checkpointName];
+	if (checkpointHit !== undefined) return checkpointHit;
+	const orchestratorHit = images.orchestrator;
+	if (orchestratorHit !== undefined) return orchestratorHit;
 	return null;
 }
