@@ -46,4 +46,8 @@ describe("groupStackComponents", () => {
 		const types = result.map((r) => r.type);
 		expect(types).toEqual(["orchestrator", "alerter"]);
 	});
+
+	it("returns an empty array when given no components", () => {
+		expect(groupStackComponents([])).toEqual([]);
+	});
 });

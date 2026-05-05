@@ -97,11 +97,13 @@ export function SingleStackComponentCard({
 }) {
 	return (
 		<div className="bg-secondary border-border flex items-center gap-2 rounded-lg border px-3 py-2">
-			<span className="size-3.5 shrink-0" aria-hidden />
 			{showTypeLabel && (
-				<span className="text-muted-foreground w-36 shrink-0 truncate text-xs">
-					{TYPE_LABEL[type] ?? type}
-				</span>
+				<>
+					<span className="size-3.5 shrink-0" aria-hidden />
+					<span className="text-muted-foreground w-36 shrink-0 truncate text-xs">
+						{TYPE_LABEL[type] ?? type}
+					</span>
+				</>
 			)}
 			<ComponentIdentity component={component} />
 		</div>
