@@ -53,7 +53,7 @@ export function InvokeDeploymentContainer({
 			deployment.defaultParameters,
 			parameters
 		);
-		invokeDeployment({ snapshotId: deployment.id, runConfiguration });
+		invokeDeployment({ deploymentId: deployment.id, runConfiguration });
 	}
 
 	return (

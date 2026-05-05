@@ -4,12 +4,12 @@ import type { RunConfiguration } from "./invoke-parameters-editor";
 import { executionFromApiToDomain } from "@/modules/executions/domain/execution";
 
 export type InvokeDeploymentArgs = {
-	snapshotId: string;
+	deploymentId: string;
 	runConfiguration: RunConfiguration;
 };
 
 export async function invokeDeployment({
-	snapshotId,
+	deploymentId,
 	runConfiguration,
 }: InvokeDeploymentArgs) {
 	const response = await apiClient.POST(
@@ -19,7 +19,7 @@ export async function invokeDeployment({
 				run_configuration: runConfiguration,
 			},
 			params: {
-				path: { snapshot_id: snapshotId },
+				path: { snapshot_id: deploymentId },
 			},
 		}
 	);

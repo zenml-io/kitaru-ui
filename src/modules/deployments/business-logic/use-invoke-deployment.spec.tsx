@@ -50,7 +50,7 @@ describe("useInvokeDeployment", () => {
 		});
 
 		result.current.invokeDeployment({
-			snapshotId: "snap-1",
+			deploymentId: "snap-1",
 			runConfiguration: { parameters: {} },
 		});
 
@@ -73,7 +73,7 @@ describe("useInvokeDeployment", () => {
 		);
 
 		result.current.invokeDeployment({
-			snapshotId: "snap-1",
+			deploymentId: "snap-1",
 			runConfiguration: { parameters: { topic: "hi" } },
 		});
 

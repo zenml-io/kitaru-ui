@@ -46,7 +46,7 @@ describe("invokeDeployment", () => {
 		} as any);
 
 		const result = await invokeDeployment({
-			snapshotId: "snap-1",
+			deploymentId: "snap-1",
 			runConfiguration: {
 				enable_cache: true,
 				parameters: { topic: "hi" },
@@ -81,7 +81,7 @@ describe("invokeDeployment", () => {
 		postSpy.mockRejectedValue(new Error("boom"));
 		await expect(
 			invokeDeployment({
-				snapshotId: "snap-1",
+				deploymentId: "snap-1",
 				runConfiguration: { parameters: {} },
 			})
 		).rejects.toThrow("boom");

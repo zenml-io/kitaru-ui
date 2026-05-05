@@ -4,10 +4,12 @@ import { Suspense } from "react";
 import { useCurrentDeployment } from "../business-logic/use-current-deployment";
 import { InvocationUrlBlock } from "../ui/InvocationUrlBlock";
 import { InvokeDeploymentContainer } from "./InvokeDeploymentContainer";
+import { LOCAL_VERSION_ID } from "../domain/deployment";
 
 export function FlowInvokeActionsContainer() {
 	const { deployment } = useCurrentDeployment();
 
+	if (deployment.version === LOCAL_VERSION_ID) return null;
 	if (!deployment.runnable) return null;
 
 	const origin = env.VITE_API_BASE_URL || window.location.origin;
