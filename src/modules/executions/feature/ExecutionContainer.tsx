@@ -24,7 +24,7 @@ import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
-import { ReplayExecutionSheet } from "./ReplayExecutionSheet";
+import { ReplayExecutionSheetContainer } from "./ReplayExecutionSheetContainer";
 
 const ROUTE_ID =
 	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId" as const;
@@ -127,7 +127,7 @@ export function ExecutionContainer({
 						{executionData.snapshot?.runnable ? (
 							<ErrorBoundary fallbackRender={() => null}>
 								<Suspense fallback={<Skeleton className="h-8 w-20" />}>
-									<ReplayExecutionSheet
+									<ReplayExecutionSheetContainer
 										executionNumber={executionData.index.toString()}
 										executionId={executionId}
 									/>

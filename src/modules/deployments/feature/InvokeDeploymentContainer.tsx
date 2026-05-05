@@ -1,8 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
+import { useDeployment } from "../business-logic/use-deployment";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
 import { formatVersion } from "../domain/deployment";
 import {
@@ -10,7 +9,7 @@ import {
 	getParametersJsonSchema,
 	mergeRunConfigurationWithParameters,
 } from "../domain/invoke-parameters-editor";
-import { InvokeSheet } from "../ui/InvokeSheet";
+import { InvokeSheetContainer } from "./InvokeSheetContainer";
 
 export function InvokeDeploymentContainer({
 	deploymentId,
@@ -19,9 +18,7 @@ export function InvokeDeploymentContainer({
 }) {
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
-	const { data: deployment } = useSuspenseQuery({
-		...deploymentsQueries.detail(deploymentId),
-	});
+	const { data: deployment } = useDeployment(deploymentId);
 
 	const defaultValue = JSON.stringify(
 		getEditableParameters(deployment.defaultParameters),
@@ -60,7 +57,7 @@ export function InvokeDeploymentContainer({
 	}
 
 	return (
-		<InvokeSheet
+		<InvokeSheetContainer
 			open={open}
 			onOpenChange={setOpen}
 			snapshotId={deployment.id}

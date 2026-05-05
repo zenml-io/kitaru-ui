@@ -14,7 +14,7 @@ import { Play, Send, X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-export function InvokeSheet({
+export function InvokeSheetContainer({
 	open,
 	onOpenChange,
 	title,

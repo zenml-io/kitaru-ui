@@ -23,7 +23,7 @@ type ReplayExecutionSheetProps = {
 	executionNumber: string;
 };
 
-export function ReplayExecutionSheet({
+export function ReplayExecutionSheetContainer({
 	executionId,
 	executionNumber,
 }: ReplayExecutionSheetProps) {

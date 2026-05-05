@@ -42,5 +42,5 @@ export function mergeRunConfigurationWithParameters(
 	return {
 		...(isRecord(configTemplate) ? configTemplate : {}),
 		parameters,
-	} satisfies RunConfiguration;
+	};
 }
