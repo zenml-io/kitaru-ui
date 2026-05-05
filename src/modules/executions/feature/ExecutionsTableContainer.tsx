@@ -1,5 +1,3 @@
-import type { Deployment } from "@/modules/deployments/domain/deployment";
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/local-deployment";
 import {
 	StatusRenderer,
 	TextRenderer,
@@ -23,26 +21,31 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 
+export type SnapshotVersionLookup = Map<string, DeploymentVersion>;
+
 export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
-	realDeployments,
+	versionLookup,
+	versionParam,
 }: {
 	executionRows: Execution[];
 	flowId: string;
-	realDeployments: Deployment[];
+	versionLookup: SnapshotVersionLookup;
+	versionParam: DeploymentVersion | undefined;
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
 	const columns = useMemo(
-		() => buildExecutionColumns(flowId, realDeployments),
-		[flowId, realDeployments]
+		() => buildExecutionColumns(flowId, versionLookup, versionParam),
+		[flowId, versionLookup, versionParam]
 	);
 
 	const table = useReactTable({
@@ -114,9 +117,9 @@ export function ExecutionsTableContainer({
 
 function buildExecutionColumns(
 	flowId: string,
-	realDeployments: Deployment[]
+	versionLookup: SnapshotVersionLookup,
+	versionParam: DeploymentVersion | undefined
 ): ColumnDef<Execution>[] {
-	const deploymentBySnapshotId = new Map(realDeployments.map((d) => [d.id, d]));
 	return [
 		{
 			accessorKey: "execution",
@@ -125,17 +128,18 @@ function buildExecutionColumns(
 				<SortableHeader column={column} label="Execution" />
 			),
 			cell: ({ row }) => {
-				const deployment = row.original.snapshotId
-					? deploymentBySnapshotId.get(row.original.snapshotId)
+				const lookedUp = row.original.snapshotId
+					? versionLookup.get(row.original.snapshotId)
 					: undefined;
-				const version: number | typeof LOCAL_VERSION_ID = deployment
-					? deployment.versionNumber
-					: LOCAL_VERSION_ID;
+				const linkVersion = versionParam ?? lookedUp ?? "local";
 				return (
 					<Link
-						to="/flows/$flowId/executions/$executionId"
-						params={{ flowId, executionId: row.original.id }}
-						search={{ version }}
+						to="/flows/$flowId/v/$version/executions/$executionId"
+						params={{
+							flowId,
+							version: linkVersion,
+							executionId: row.original.id,
+						}}
 						className="block px-2 py-3.5 hover:underline"
 					>
 						<ExecutionName index={row.original.index} />

@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { components } from "@/shared/api/openapi";
 import {
+	buildLocalDeployment,
 	deploymentFromApiToDomain,
+	formatVersion,
 	KITARU_SNAPSHOT_NAME,
+	LOCAL_VERSION_ID,
 	NotAKitaruDeploymentError,
 } from "./deployment";
 
@@ -78,7 +81,7 @@ describe("deploymentFromApiToDomain", () => {
 		expect(result?.id).toBe("snap-1");
 		expect(result?.flowId).toBe("flow-1");
 		expect(result?.flowName).toBe("research_agent");
-		expect(result?.versionNumber).toBe(3);
+		expect(result?.version).toBe(3);
 		expect(result?.runnable).toBe(true);
 		expect(result?.deployable).toBe(true);
 		expect(result?.createdAt).toEqual(new Date("2026-04-22T10:00:00Z"));
@@ -205,5 +208,28 @@ describe("NotAKitaruDeploymentError", () => {
 		const err = new NotAKitaruDeploymentError("snap-xyz");
 		expect(err.name).toBe("NotAKitaruDeploymentError");
 		expect(err.message).toContain("snap-xyz");
+	});
+});
+
+describe("buildLocalDeployment", () => {
+	it("produces a deployment whose id and version are LOCAL_VERSION_ID", () => {
+		const local = buildLocalDeployment("flow-1", "research_agent");
+		expect(local.id).toBe(LOCAL_VERSION_ID);
+		expect(local.version).toBe(LOCAL_VERSION_ID);
+		expect(local.flowId).toBe("flow-1");
+		expect(local.flowName).toBe("research_agent");
+		expect(local.tags).toEqual([]);
+		expect(local.runnable).toBe(false);
+		expect(local.deployable).toBe(false);
+	});
+});
+
+describe("formatVersion", () => {
+	it("returns 'local' for the synthetic local version", () => {
+		expect(formatVersion(LOCAL_VERSION_ID)).toBe("local");
+	});
+
+	it("prefixes numeric versions with 'v'", () => {
+		expect(formatVersion(7)).toBe("v7");
 	});
 });
