@@ -1,15 +1,13 @@
 import { Button } from "@/shared/ui/button";
 import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/shared/ui/alert-dialog";
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/shared/ui/dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { Play } from "lucide-react";
@@ -17,15 +15,22 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useReplayExecution } from "../business-logic/use-replay-execution";
+import type { ExecutionStatus } from "../domain/execution";
+import type { ReplayExecutionFormValues } from "../domain/replay-execution-schema";
+import { ReplayExecutionFormContainer } from "./ReplayExecutionFormContainer";
 
 type ReplayExecutionSheetProps = {
 	executionId: string;
 	executionNumber: string;
+	executionStatus?: ExecutionStatus;
 };
+
+const FORM_ID = "replay-execution-form";
 
 export function ReplayExecutionSheetContainer({
 	executionId,
 	executionNumber,
+	executionStatus,
 }: ReplayExecutionSheetProps) {
 	const [open, setOpen] = useState(false);
 	const queryClient = useQueryClient();
@@ -49,34 +54,47 @@ export function ReplayExecutionSheetContainer({
 		},
 	});
 
-	function handleReplay() {
-		replayExecution({ executionId });
+	function handleReplay({ skipSuccessfulSteps }: ReplayExecutionFormValues) {
+		replayExecution({
+			executionId,
+			payload: { skip_successful_steps: skipSuccessfulSteps },
+		});
 	}
 
 	return (
-		<AlertDialog open={open} onOpenChange={setOpen}>
-			<AlertDialogTrigger
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger
 				render={<Button variant="outline" type="button" size="sm" />}
 			>
 				<Play className="size-3.5" />
 				Replay
-			</AlertDialogTrigger>
-			<AlertDialogContent>
-				<AlertDialogHeader>
-					<AlertDialogTitle>
-						Replay Execution #{executionNumber}?
-					</AlertDialogTitle>
-					<AlertDialogDescription>
-						This will start a new execution using the same configuration.
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				<AlertDialogFooter>
-					<AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-					<AlertDialogAction onClick={handleReplay} disabled={isPending}>
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Replay Execution #{executionNumber}</DialogTitle>
+					<DialogDescription>
+						This will trigger a replay of the execution.
+					</DialogDescription>
+				</DialogHeader>
+				<ReplayExecutionFormContainer
+					formId={FORM_ID}
+					isExecutionFailed={executionStatus === "failed"}
+					onSubmit={handleReplay}
+				/>
+				<DialogFooter>
+					<Button
+						type="button"
+						variant="outline"
+						onClick={() => setOpen(false)}
+						disabled={isPending}
+					>
+						Cancel
+					</Button>
+					<Button type="submit" form={FORM_ID} disabled={isPending}>
 						{isPending ? "Replaying..." : "Replay"}
-					</AlertDialogAction>
-				</AlertDialogFooter>
-			</AlertDialogContent>
-		</AlertDialog>
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }

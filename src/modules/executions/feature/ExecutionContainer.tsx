@@ -128,6 +128,7 @@ export function ExecutionContainer({
 							<ErrorBoundary fallbackRender={() => null}>
 								<Suspense fallback={<Skeleton className="h-8 w-20" />}>
 									<ReplayExecutionSheetContainer
+										executionStatus={executionData.status}
 										executionNumber={executionData.index.toString()}
 										executionId={executionId}
 									/>
