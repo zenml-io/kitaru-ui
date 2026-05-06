@@ -3,6 +3,8 @@ import type { components } from "@/shared/api/openapi";
 import { executionFromApiToDomain } from "./execution";
 
 type PipelineRunResponse = components["schemas"]["PipelineRunResponse"];
+type StackResponse = components["schemas"]["StackResponse"];
+type PipelineBuildResponse = components["schemas"]["PipelineBuildResponse"];
 
 function mkRun(
 	overrides: Partial<PipelineRunResponse["resources"]> = {}
@@ -64,16 +66,14 @@ describe("executionFromApiToDomain", () => {
 
 	it("extracts stackId from resources.stack.id when present (un-hydrated stub)", () => {
 		const run = mkRun({
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			stack: { id: "stack-123" } as any,
+			stack: { id: "stack-123" } as unknown as StackResponse,
 		});
 		expect(executionFromApiToDomain(run).stackId).toBe("stack-123");
 	});
 
 	it("extracts buildId from resources.build.id when present (un-hydrated stub)", () => {
 		const run = mkRun({
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			build: { id: "build-456" } as any,
+			build: { id: "build-456" } as unknown as PipelineBuildResponse,
 		});
 		expect(executionFromApiToDomain(run).buildId).toBe("build-456");
 	});

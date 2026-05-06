@@ -423,10 +423,8 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 				is_retriable: false,
 			},
 			metadata: {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				config: { step_operator: "sagemaker" } as any,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				spec: {} as any,
+				config: { step_operator: "sagemaker" },
+				spec: {},
 				snapshot_id: "00000000-0000-0000-0000-000000000000",
 				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
 			},
@@ -447,10 +445,8 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 				is_retriable: false,
 			},
 			metadata: {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				config: { step_operator: true } as any,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				spec: {} as any,
+				config: { step_operator: true },
+				spec: {},
 				snapshot_id: "00000000-0000-0000-0000-000000000000",
 				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
 			},
@@ -471,10 +467,8 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 				is_retriable: false,
 			},
 			metadata: {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				config: { step_operator: null } as any,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				spec: {} as any,
+				config: { step_operator: null },
+				spec: {},
 				snapshot_id: "00000000-0000-0000-0000-000000000000",
 				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
 			},
@@ -495,10 +489,8 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 				is_retriable: false,
 			},
 			metadata: {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				config: {} as any,
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				spec: {} as any,
+				config: {},
+				spec: {},
 				snapshot_id: "00000000-0000-0000-0000-000000000000",
 				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
 			},

@@ -65,8 +65,7 @@ describe("buildFromApiToDomain", () => {
 					train: { image: "train-img", dockerfile: "FROM python\n" },
 				},
 			},
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} as any as PipelineBuildResponse;
+		} as unknown as PipelineBuildResponse;
 
 		const result = buildFromApiToDomain(api);
 		expect(result.id).toBe("build-1");
@@ -86,8 +85,7 @@ describe("buildFromApiToDomain", () => {
 		const api = {
 			id: "build-2",
 			metadata: { is_local: true, contains_code: false },
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} as any as PipelineBuildResponse;
+		} as unknown as PipelineBuildResponse;
 		expect(buildFromApiToDomain(api).images).toEqual({});
 	});
 
@@ -95,8 +93,7 @@ describe("buildFromApiToDomain", () => {
 		const api = {
 			id: "build-3",
 			metadata: null,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} as any as PipelineBuildResponse;
+		} as unknown as PipelineBuildResponse;
 		const result = buildFromApiToDomain(api);
 		expect(result.images).toEqual({});
 		expect(result.pythonVersion).toBeUndefined();
