@@ -11,18 +11,21 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { Play } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactElement } from "react";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useReplayExecution } from "../business-logic/use-replay-execution";
 import type { ExecutionStatus } from "../domain/execution";
 import type { ReplayExecutionFormValues } from "../domain/replay-execution-schema";
+import { buildReplayExecutionPayload } from "../util/build-replay-execution-payload";
 import { ReplayExecutionFormContainer } from "./ReplayExecutionFormContainer";
 
 type ReplayExecutionSheetProps = {
 	executionId: string;
 	executionNumber: string;
 	executionStatus?: ExecutionStatus;
+	stepsToSkip?: string[];
+	trigger?: ReactElement;
 };
 
 const FORM_ID = "replay-execution-form";
@@ -31,6 +34,8 @@ export function ReplayExecutionSheetContainer({
 	executionId,
 	executionNumber,
 	executionStatus,
+	stepsToSkip,
+	trigger,
 }: ReplayExecutionSheetProps) {
 	const [open, setOpen] = useState(false);
 	const queryClient = useQueryClient();
@@ -57,14 +62,14 @@ export function ReplayExecutionSheetContainer({
 	function handleReplay({ skipSuccessfulSteps }: ReplayExecutionFormValues) {
 		replayExecution({
 			executionId,
-			payload: { skip_successful_steps: skipSuccessfulSteps },
+			payload: buildReplayExecutionPayload(skipSuccessfulSteps, stepsToSkip),
 		});
 	}
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger
-				render={<Button variant="outline" type="button" size="sm" />}
+				render={trigger ?? <Button variant="outline" type="button" size="sm" />}
 			>
 				<Play className="size-3.5" />
 				Replay
@@ -81,6 +86,12 @@ export function ReplayExecutionSheetContainer({
 					isExecutionFailed={executionStatus === "failed"}
 					onSubmit={handleReplay}
 				/>
+				{stepsToSkip && stepsToSkip.length > 0 ? (
+					<p className="text-muted-foreground text-xs">
+						Skipping {stepsToSkip.length} earlier step
+						{stepsToSkip.length === 1 ? "" : "s"}.
+					</p>
+				) : null}
 				<DialogFooter>
 					<Button
 						type="button"

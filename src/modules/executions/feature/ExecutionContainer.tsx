@@ -6,11 +6,14 @@ import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/Ch
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
 import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
+import { Button } from "@/shared/ui/button";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
+import { Play } from "lucide-react";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useExecution } from "../business-logic/use-execution";
@@ -21,6 +24,7 @@ import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
+import { buildStepsToSkip } from "../util/build-steps-to-skip";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
@@ -109,6 +113,11 @@ export function ExecutionContainer({
 	>();
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
+	const executionNumber = executionData.index.toString();
+	const stepsToSkip = buildStepsToSkip(
+		checkpointsData.checkpoints,
+		selectedCheckpointId
+	);
 
 	const displayedExecutions = clientFilterRealSnapshotIds
 		? filterLocalExecutions(executionsData, clientFilterRealSnapshotIds)
@@ -129,7 +138,7 @@ export function ExecutionContainer({
 								<Suspense fallback={<Skeleton className="h-8 w-20" />}>
 									<ReplayExecutionSheetContainer
 										executionStatus={executionData.status}
-										executionNumber={executionData.index.toString()}
+										executionNumber={executionNumber}
 										executionId={executionId}
 									/>
 								</Suspense>
@@ -182,6 +191,41 @@ export function ExecutionContainer({
 								checkpointId={selectedCheckpointId}
 								activeTab={activeCheckpointTab}
 								onTabChange={setActiveCheckpointTab}
+								headerTrailing={
+									executionData.snapshot?.runnable && selectedCheckpointId ? (
+										<ErrorBoundary fallbackRender={() => null}>
+											<Suspense fallback={<Skeleton className="h-8 w-20" />}>
+												<Tooltip>
+													<ReplayExecutionSheetContainer
+														executionStatus={executionData.status}
+														executionNumber={executionNumber}
+														executionId={executionId}
+														stepsToSkip={stepsToSkip}
+														trigger={
+															<TooltipTrigger
+																render={
+																	<Button
+																		variant="outline"
+																		size="icon-xs"
+																		type="button"
+																	>
+																		<Play className="size-3.5" />
+																		<span className="sr-only">
+																			Replay from this checkpoint
+																		</span>
+																	</Button>
+																}
+															/>
+														}
+													/>
+													<TooltipContent>
+														Replay from this checkpoint
+													</TooltipContent>
+												</Tooltip>
+											</Suspense>
+										</ErrorBoundary>
+									) : null
+								}
 							/>
 						)
 					}
