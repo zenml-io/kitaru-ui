@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/shared/utils/styles";
 
-type Props = {
+type ConfigurationSectionHeaderProps = {
 	label: string;
 	expanded: boolean;
 	onToggle: () => void;
@@ -11,7 +11,7 @@ export function ConfigurationSectionHeader({
 	label,
 	expanded,
 	onToggle,
-}: Props) {
+}: ConfigurationSectionHeaderProps) {
 	return (
 		<button
 			type="button"

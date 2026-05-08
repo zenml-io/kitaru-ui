@@ -13,7 +13,7 @@ import { cn } from "@/shared/utils/styles";
 import { ConfigurationSectionHeader } from "./ConfigurationSectionHeader";
 import { DockerCodeBlock } from "./DockerCodeBlock";
 
-type Props = {
+type DockerImageSectionProps = {
 	dockerImage: DockerImage;
 	pythonVersion?: string;
 };
@@ -98,7 +98,10 @@ function ContainsCodeRow({ dockerImage }: { dockerImage: DockerImage }) {
 	);
 }
 
-export function DockerImageSection({ dockerImage, pythonVersion }: Props) {
+export function DockerImageSection({
+	dockerImage,
+	pythonVersion,
+}: DockerImageSectionProps) {
 	const [expanded, setExpanded] = useState(true);
 	return (
 		<div>

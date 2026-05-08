@@ -1,17 +1,17 @@
 import { useState } from "react";
 import type { Stack } from "@/modules/stacks/domain/stack";
 import { ConfigurationSectionHeader } from "./ConfigurationSectionHeader";
-import { groupStackComponents } from "./group-stack-components";
+import { groupStackComponents } from "@/modules/stacks/business-logic/group-stack-components";
 import {
 	SingleStackComponentCard,
 	StackComponentGroupCard,
 } from "./StackComponentCard";
 
-type Props = {
+type StackSectionProps = {
 	stack: Stack;
 };
 
-export function StackSection({ stack }: Props) {
+export function StackSection({ stack }: StackSectionProps) {
 	const [expanded, setExpanded] = useState(true);
 	const grouped = groupStackComponents(stack.components);
 	return (

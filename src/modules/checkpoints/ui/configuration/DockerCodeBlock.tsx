@@ -3,14 +3,18 @@ import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button } from "@/shared/ui/button";
 import { CodeBlock } from "@/shared/ui/CodeBlock";
 
-type Props = {
+type DockerCodeBlockProps = {
 	label: string;
 	code: string;
 	/** Pass a CodeBlock-supported language (e.g. "bash" for Dockerfile). Omit for plain monospace. */
 	language?: string;
 };
 
-export function DockerCodeBlock({ label, code, language }: Props) {
+export function DockerCodeBlock({
+	label,
+	code,
+	language,
+}: DockerCodeBlockProps) {
 	const { copied, copy } = useCopy();
 	return (
 		<div className="bg-card border-border overflow-hidden rounded-lg border">
