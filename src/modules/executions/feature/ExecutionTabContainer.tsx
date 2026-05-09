@@ -7,15 +7,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { executionsQueryKeys } from "../business-logic/executions-queries";
 import { useResolveWaitCondition } from "../business-logic/use-resolve-wait-condition";
+import { ExecutionLiveEventsPanelContainer } from "./ExecutionLiveEventsPanelContainer";
 import { useTimelineEntries } from "../business-logic/use-timeline-entries";
 import { useWaitCondition } from "../business-logic/use-wait-condition";
-import type { Execution } from "../domain/execution";
+import type { Execution, ExecutionStatus } from "../domain/execution";
 import { ExecutionDetails } from "../ui/ExecutionDetails";
 
 type ExecutionTabContainerProps = {
 	executionId: string;
 	flowId: string;
 	execution: Execution;
+	executionStatus: ExecutionStatus | undefined;
 	checkpoints: CheckpointEntry[];
 	onSelectCheckpoint: (id: string) => void;
 };
@@ -24,6 +26,7 @@ export function ExecutionTabContainer({
 	executionId,
 	flowId,
 	execution,
+	executionStatus,
 	checkpoints,
 	onSelectCheckpoint,
 }: ExecutionTabContainerProps) {
@@ -82,14 +85,25 @@ export function ExecutionTabContainer({
 		</div>
 	) : null;
 
+	function handleSelectCheckpoint(id: string) {
+		onSelectCheckpoint(id);
+		expandRight();
+	}
+
 	return (
 		<ExecutionDetails
 			key={executionId}
 			timelineEntries={timelineEntries}
-			onSelectCheckpoint={(id) => {
-				onSelectCheckpoint(id);
-				expandRight();
-			}}
+			onSelectCheckpoint={handleSelectCheckpoint}
+			liveEventsPanel={
+				<ExecutionLiveEventsPanelContainer
+					executionId={executionId}
+					executionStatus={executionStatus}
+					executionStartTime={execution.startTime ?? execution.createdAt}
+					checkpoints={checkpoints}
+					onSelectCheckpoint={handleSelectCheckpoint}
+				/>
+			}
 			waitCondition={waitConditionData}
 			onResolveWaitCondition={resolveWaitCondition}
 			resumeHint={resumeHint}

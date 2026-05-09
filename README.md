@@ -52,10 +52,14 @@ By default, the app sends requests to relative paths (for example `/api/v1/curre
 
 ### Environment Variables
 
-| Variable            | Default                 | Description                                                                                                                                      |
-| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `VITE_BACKEND_URL`  | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy                                                                                                      |
-| `VITE_API_BASE_URL` | _(unset)_               | Optional API origin override (build-time). If set (for example `https://backend.test.com`), requests are sent to `<origin>/api/v1/...` directly. |
+| Variable                       | Default                 | Description                                                                                                                                      |
+| ------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_BACKEND_URL`             | `http://localhost:8237` | ZenML server URL used by the Vite dev proxy                                                                                                      |
+| `VITE_API_BASE_URL`            | _(unset)_               | Optional API origin override (build-time). If set (for example `https://backend.test.com`), requests are sent to `<origin>/api/v1/...` directly. |
+| `DEV_PROXY_COOKIE`             | _(unset)_               | Optional local-dev cookie header forwarded by the Vite proxy to `VITE_BACKEND_URL`; useful for SSO-only staging servers.                         |
+| `DEV_PROXY_AUTHORIZATION`      | _(unset)_               | Optional local-dev authorization header forwarded by the Vite proxy to `VITE_BACKEND_URL`; copy the full value, for example `Bearer ...`.        |
+| `DEV_PROXY_CSRF_TOKEN`         | _(unset)_               | Optional local-dev CSRF token header forwarded by the Vite proxy to `VITE_BACKEND_URL`.                                                          |
+| `DEV_PROXY_PROJECT_NAME_OR_ID` | _(unset)_               | Optional local-dev project scope added to legacy list endpoints when proxying to a project-scoped backend.                                       |
 
 ### Scripts
 
@@ -138,6 +142,8 @@ Both are excluded from ESLint.
 - `apiClient` sends all requests with `credentials: "include"` (cookie auth)
 - By default requests are relative (`/api/v1/...`); optionally set `VITE_API_BASE_URL` to target a full backend origin
 - Vite proxies `/api` to `VITE_BACKEND_URL` in development
+- For SSO-only staging servers, set `DEV_PROXY_COOKIE` and/or `DEV_PROXY_AUTHORIZATION` locally so the Vite proxy can forward an existing browser session while the browser stays on localhost
+- For project-scoped staging servers, set `DEV_PROXY_PROJECT_NAME_OR_ID` locally so legacy list endpoints include the project filter expected by the backend
 - Login uses `application/x-www-form-urlencoded` content type (exception to the default JSON headers)
 
 ## CI

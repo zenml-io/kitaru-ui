@@ -16,6 +16,7 @@ type ExecutionDetailsProps = {
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
 	resumeHint?: React.ReactNode;
+	liveEventsPanel?: React.ReactNode;
 };
 
 export function ExecutionDetails({
@@ -24,6 +25,7 @@ export function ExecutionDetails({
 	waitCondition,
 	onResolveWaitCondition,
 	resumeHint,
+	liveEventsPanel,
 }: ExecutionDetailsProps) {
 	const scrollHighlight = useScrollHighlight();
 
@@ -54,6 +56,7 @@ export function ExecutionDetails({
 				timelineEntries={timelineEntries}
 				onSelect={handleTimelineSelect}
 			/>
+			{liveEventsPanel}
 			<CheckpointThread
 				timelineEntries={timelineEntries}
 				onSelect={onSelectCheckpoint}
