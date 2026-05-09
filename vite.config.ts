@@ -13,8 +13,12 @@ export default defineConfig(({ mode }) => {
 	const parsedEnv = envSchema.parse(env);
 
 	const backendUrl = parsedEnv.VITE_BACKEND_URL;
-	const devProxyCookie = parsedEnv.DEV_PROXY_COOKIE;
-	const devProxyCsrfToken = parsedEnv.DEV_PROXY_CSRF_TOKEN;
+	const devProxyCookie =
+		parsedEnv.DEV_PROXY_COOKIE ?? process.env.DEV_PROXY_COOKIE;
+	const devProxyAuthorization =
+		parsedEnv.DEV_PROXY_AUTHORIZATION ?? process.env.DEV_PROXY_AUTHORIZATION;
+	const devProxyCsrfToken =
+		parsedEnv.DEV_PROXY_CSRF_TOKEN ?? process.env.DEV_PROXY_CSRF_TOKEN;
 
 	return {
 		test: {
@@ -31,6 +35,9 @@ export default defineConfig(({ mode }) => {
 						proxy.on("proxyReq", (proxyReq) => {
 							if (devProxyCookie) {
 								proxyReq.setHeader("Cookie", devProxyCookie);
+							}
+							if (devProxyAuthorization) {
+								proxyReq.setHeader("Authorization", devProxyAuthorization);
 							}
 							if (devProxyCsrfToken) {
 								proxyReq.setHeader("X-CSRF-Token", devProxyCsrfToken);
