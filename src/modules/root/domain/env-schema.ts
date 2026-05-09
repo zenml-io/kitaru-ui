@@ -12,4 +12,5 @@ export const envSchema = z.object({
 	DEV_PROXY_COOKIE: z.string().trim().optional(),
 	DEV_PROXY_AUTHORIZATION: z.string().trim().optional(),
 	DEV_PROXY_CSRF_TOKEN: z.string().trim().optional(),
+	DEV_PROXY_PROJECT_NAME_OR_ID: z.string().trim().optional(),
 });
