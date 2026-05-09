@@ -13,6 +13,8 @@ export default defineConfig(({ mode }) => {
 	const parsedEnv = envSchema.parse(env);
 
 	const backendUrl = parsedEnv.VITE_BACKEND_URL;
+	const devProxyCookie = parsedEnv.DEV_PROXY_COOKIE;
+	const devProxyCsrfToken = parsedEnv.DEV_PROXY_CSRF_TOKEN;
 
 	return {
 		test: {
@@ -25,6 +27,16 @@ export default defineConfig(({ mode }) => {
 					target: backendUrl,
 					changeOrigin: true,
 					secure: false,
+					configure(proxy) {
+						proxy.on("proxyReq", (proxyReq) => {
+							if (devProxyCookie) {
+								proxyReq.setHeader("Cookie", devProxyCookie);
+							}
+							if (devProxyCsrfToken) {
+								proxyReq.setHeader("X-CSRF-Token", devProxyCsrfToken);
+							}
+						});
+					},
 				},
 			},
 			watch: {

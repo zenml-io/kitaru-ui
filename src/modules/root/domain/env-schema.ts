@@ -9,4 +9,6 @@ export const envSchema = z.object({
 		.transform((value) => value.replace(/\/+$/, ""))
 		.catch(""),
 	VITE_ANALYTICS_SERVER_URL: z.url().trim().optional(),
+	DEV_PROXY_COOKIE: z.string().trim().optional(),
+	DEV_PROXY_CSRF_TOKEN: z.string().trim().optional(),
 });
