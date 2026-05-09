@@ -169,6 +169,7 @@ export function ExecutionContainer({
 								executionId={executionId}
 								flowId={flowId}
 								execution={executionData}
+								executionStatus={checkpointsData.executionStatus}
 								checkpoints={checkpointsData.checkpoints}
 								onSelectCheckpoint={setSelectedCheckpointId}
 							/>
