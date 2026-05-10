@@ -52,17 +52,17 @@ describe("dockerImageFromApiToDomain", () => {
 });
 
 describe("buildFromApiToDomain", () => {
-	it("maps id, version metadata, and the images map keyed by checkpoint name and 'orchestrator'", () => {
+	it("partitions images into orchestrator, perStep, and perStepOperator", () => {
 		const api = {
 			id: "build-1",
 			metadata: {
 				python_version: "3.11.6",
 				zenml_version: "0.66.0",
 				is_local: false,
-				contains_code: true,
 				images: {
 					orchestrator: { image: "orch-img" },
 					train: { image: "train-img", dockerfile: "FROM python\n" },
+					"train.sagemaker": { image: "train-sm-img" },
 				},
 			},
 		} as unknown as PipelineBuildResponse;
@@ -72,30 +72,34 @@ describe("buildFromApiToDomain", () => {
 		expect(result.pythonVersion).toBe("3.11.6");
 		expect(result.zenmlVersion).toBe("0.66.0");
 		expect(result.isLocal).toBe(false);
-		expect(result.containsCode).toBe(true);
-		expect(Object.keys(result.images).sort()).toEqual([
-			"orchestrator",
-			"train",
-		]);
-		expect(result.images.orchestrator.image).toBe("orch-img");
-		expect(result.images.train.dockerfile).toBe("FROM python\n");
+		expect(result.images.orchestrator?.image).toBe("orch-img");
+		expect(result.images.perStep.train?.image).toBe("train-img");
+		expect(result.images.perStep.train?.dockerfile).toBe("FROM python\n");
+		expect(result.images.perStepOperator["train.sagemaker"]?.image).toBe(
+			"train-sm-img"
+		);
 	});
 
-	it("returns an empty images map when metadata.images is missing", () => {
+	it("returns empty image partitions when metadata.images is missing", () => {
 		const api = {
 			id: "build-2",
-			metadata: { is_local: true, contains_code: false },
+			metadata: { is_local: true },
 		} as unknown as PipelineBuildResponse;
-		expect(buildFromApiToDomain(api).images).toEqual({});
+		const result = buildFromApiToDomain(api);
+		expect(result.images.orchestrator).toBeUndefined();
+		expect(result.images.perStep).toEqual({});
+		expect(result.images.perStepOperator).toEqual({});
 	});
 
-	it("returns an empty images map when metadata is null", () => {
+	it("returns empty image partitions when metadata is null", () => {
 		const api = {
 			id: "build-3",
 			metadata: null,
 		} as unknown as PipelineBuildResponse;
 		const result = buildFromApiToDomain(api);
-		expect(result.images).toEqual({});
+		expect(result.images.orchestrator).toBeUndefined();
+		expect(result.images.perStep).toEqual({});
+		expect(result.images.perStepOperator).toEqual({});
 		expect(result.pythonVersion).toBeUndefined();
 		expect(result.isLocal).toBeUndefined();
 	});

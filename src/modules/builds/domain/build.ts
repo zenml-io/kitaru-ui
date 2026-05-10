@@ -11,13 +11,18 @@ export type DockerImage = {
 	requiresCodeDownload?: boolean;
 };
 
+export type BuildImages = {
+	orchestrator?: DockerImage;
+	perStep: Record<string, DockerImage>;
+	perStepOperator: Record<string, DockerImage>;
+};
+
 export type Build = {
 	id: string;
 	pythonVersion?: string;
 	zenmlVersion?: string;
 	isLocal?: boolean;
-	containsCode?: boolean;
-	images: Record<string, DockerImage>;
+	images: BuildImages;
 };
 
 export function dockerImageFromApiToDomain(item: BuildItem): DockerImage {
@@ -30,18 +35,32 @@ export function dockerImageFromApiToDomain(item: BuildItem): DockerImage {
 	};
 }
 
-export function buildFromApiToDomain(build: PipelineBuildResponse): Build {
-	const apiImages = build.metadata?.images ?? {};
-	const images: Record<string, DockerImage> = {};
+function partitionBuildImages(
+	apiImages: Record<string, BuildItem>
+): BuildImages {
+	const images: BuildImages = {
+		perStep: {},
+		perStepOperator: {},
+	};
 	for (const [key, item] of Object.entries(apiImages)) {
-		images[key] = dockerImageFromApiToDomain(item);
+		const dockerImage = dockerImageFromApiToDomain(item);
+		if (key === "orchestrator") {
+			images.orchestrator = dockerImage;
+		} else if (key.includes(".")) {
+			images.perStepOperator[key] = dockerImage;
+		} else {
+			images.perStep[key] = dockerImage;
+		}
 	}
+	return images;
+}
+
+export function buildFromApiToDomain(build: PipelineBuildResponse): Build {
 	return {
 		id: build.id,
 		pythonVersion: build.metadata?.python_version ?? undefined,
 		zenmlVersion: build.metadata?.zenml_version ?? undefined,
 		isLocal: build.metadata?.is_local,
-		containsCode: build.metadata?.contains_code,
-		images,
+		images: partitionBuildImages(build.metadata?.images ?? {}),
 	};
 }

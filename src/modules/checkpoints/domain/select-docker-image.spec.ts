@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import type { DockerImage } from "@/modules/builds/domain/build";
+import type { BuildImages, DockerImage } from "@/modules/builds/domain/build";
 import { selectDockerImage } from "./select-docker-image";
 
 const stub = (name: string): DockerImage => ({ image: `${name}-image` });
 
 describe("selectDockerImage", () => {
-	const images: Record<string, DockerImage> = {
+	const images: BuildImages = {
 		orchestrator: stub("orchestrator"),
-		train: stub("train"),
-		"train.sagemaker": stub("train.sagemaker"),
+		perStep: { train: stub("train") },
+		perStepOperator: { "train.sagemaker": stub("train.sagemaker") },
 	};
 
 	it("prefers <checkpointName>.<stepOperator> when both are present", () => {
@@ -33,7 +33,12 @@ describe("selectDockerImage", () => {
 		expect(selectDockerImage(images, "train")?.image).toBe("train-image");
 	});
 
+	it("skips the operator-prefixed lookup when stepOperator is empty", () => {
+		expect(selectDockerImage(images, "train", "")?.image).toBe("train-image");
+	});
+
 	it("returns null when no key matches", () => {
-		expect(selectDockerImage({}, "train", "sagemaker")).toBeNull();
+		const empty: BuildImages = { perStep: {}, perStepOperator: {} };
+		expect(selectDockerImage(empty, "train", "sagemaker")).toBeNull();
 	});
 });
