@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 export type NavbarTab = {
-	to: string;
+	to: "/flows" | "/executions";
 	label: string;
 };
 
