@@ -53,6 +53,10 @@ export type Execution = {
 		id: string;
 		runnable?: boolean;
 	};
+	flowId?: string;
+	flowName?: string;
+	stackId?: string;
+	stackName?: string;
 };
 
 export function executionFromApiToDomain(
@@ -102,5 +106,9 @@ export function executionFromApiToDomain(
 					runnable: run.resources?.snapshot?.body?.runnable,
 				}
 			: undefined,
+		flowId: run.resources?.pipeline?.id,
+		flowName: run.resources?.pipeline?.name,
+		stackId: run.resources?.stack?.id,
+		stackName: run.resources?.stack?.name,
 	};
 }
