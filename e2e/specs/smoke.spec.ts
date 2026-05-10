@@ -22,6 +22,6 @@ test("authenticated user is redirected to /flows and the app shell renders", asy
 	// Root "/" redirects to "/flows" — confirms auth gate passed
 	await expect(page).toHaveURL("/flows");
 
-	// NavbarLayout's <nav> is visible — confirms React mounted and no error boundary fired
-	await expect(page.getByRole("navigation")).toBeVisible();
+	// NavbarLayout's outer <nav> is visible — confirms React mounted and no error boundary fired
+	await expect(page.getByRole("navigation").first()).toBeVisible();
 });
