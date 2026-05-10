@@ -6,7 +6,7 @@ import { CodeBlock } from "@/shared/ui/CodeBlock";
 type DockerCodeBlockProps = {
 	label: string;
 	code: string;
-	/** Pass a CodeBlock-supported language (e.g. "bash" for Dockerfile). Omit for plain monospace. */
+	/** Pass a CodeBlock-supported language (e.g. "dockerfile"). Omit for plain monospace. */
 	language?: string;
 };
 

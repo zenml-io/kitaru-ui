@@ -14,19 +14,19 @@ import { ConfigurationSectionHeader } from "./ConfigurationSectionHeader";
 import { DockerCodeBlock } from "./DockerCodeBlock";
 
 type DockerImageSectionProps = {
-	dockerImage: DockerImage;
+	dockerImage: DockerImage | null;
 	pythonVersion?: string;
+	registryUrl: string | null;
 };
 
-function ImageRow({ dockerImage }: { dockerImage: DockerImage }) {
+function ImageRow({
+	dockerImage,
+	registryUrl,
+}: {
+	dockerImage: DockerImage;
+	registryUrl: string | null;
+}) {
 	const { copied, copy } = useCopy();
-	const lastSlash = dockerImage.image.lastIndexOf("/");
-	const lastColon = dockerImage.image.lastIndexOf(":");
-	const imageWithoutTag =
-		lastColon > lastSlash
-			? dockerImage.image.slice(0, lastColon)
-			: dockerImage.image;
-	const registryUrl = `https://${imageWithoutTag}`;
 	return (
 		<div className="flex items-center gap-4 py-1">
 			<span className="text-muted-foreground w-28 shrink-0 text-xs">
@@ -36,15 +36,19 @@ function ImageRow({ dockerImage }: { dockerImage: DockerImage }) {
 				{dockerImage.image}
 			</span>
 			<div className="flex shrink-0 items-center gap-0.5">
-				<a
-					href={registryUrl}
-					target="_blank"
-					rel="noopener noreferrer"
-					aria-label="Open image registry"
-					className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
-				>
-					<ExternalLink className="size-3.5" />
-				</a>
+				{registryUrl !== null && (
+					<a
+						href={registryUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="Open image registry"
+						className={cn(
+							buttonVariants({ variant: "ghost", size: "icon-sm" })
+						)}
+					>
+						<ExternalLink className="size-3.5" />
+					</a>
+				)}
 				<Button
 					variant="ghost"
 					size="icon-sm"
@@ -101,6 +105,7 @@ function ContainsCodeRow({ dockerImage }: { dockerImage: DockerImage }) {
 export function DockerImageSection({
 	dockerImage,
 	pythonVersion,
+	registryUrl,
 }: DockerImageSectionProps) {
 	const [expanded, setExpanded] = useState(true);
 	return (
@@ -112,22 +117,30 @@ export function DockerImageSection({
 			/>
 			{expanded && (
 				<div className="space-y-3 px-4 pb-4">
-					<ImageRow dockerImage={dockerImage} />
-					{dockerImage.dockerfile && (
-						<DockerCodeBlock
-							label="Dockerfile"
-							code={dockerImage.dockerfile}
-							language="bash"
-						/>
+					{dockerImage === null ? (
+						<p className="text-muted-foreground text-xs">
+							No matching Docker image was found for this checkpoint.
+						</p>
+					) : (
+						<>
+							<ImageRow dockerImage={dockerImage} registryUrl={registryUrl} />
+							{dockerImage.dockerfile && (
+								<DockerCodeBlock
+									label="Dockerfile"
+									code={dockerImage.dockerfile}
+									language="dockerfile"
+								/>
+							)}
+							{dockerImage.requirements && (
+								<DockerCodeBlock
+									label="Requirements"
+									code={dockerImage.requirements}
+								/>
+							)}
+							<PythonRow pythonVersion={pythonVersion} />
+							<ContainsCodeRow dockerImage={dockerImage} />
+						</>
 					)}
-					{dockerImage.requirements && (
-						<DockerCodeBlock
-							label="Requirements"
-							code={dockerImage.requirements}
-						/>
-					)}
-					<PythonRow pythonVersion={pythonVersion} />
-					<ContainsCodeRow dockerImage={dockerImage} />
 				</div>
 			)}
 		</div>
