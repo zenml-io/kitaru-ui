@@ -16,7 +16,7 @@ export function LabeledFilterTrigger({
 	return (
 		<SelectTrigger
 			size="sm"
-			className={cn("w-auto bg-transparent px-2.5", className)}
+			className={cn("dark:bg-input/30 w-auto bg-white px-2.5", className)}
 		>
 			<SelectValue
 				render={() => (

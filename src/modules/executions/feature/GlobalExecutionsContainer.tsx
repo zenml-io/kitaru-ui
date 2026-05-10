@@ -92,17 +92,19 @@ export function GlobalExecutionsContainer() {
 				/>
 			</Suspense>
 			<div className="flex-1 overflow-y-auto">
-				<Suspense fallback={<GlobalExecutionsTableSkeleton />}>
-					<GlobalExecutionsTableContainer
-						params={params}
-						sorting={sortingState}
-						onSortingChange={onSortingChange}
-					/>
-					<GlobalExecutionsPaginationContainer
-						params={params}
-						onPageChange={onPageChange}
-					/>
-				</Suspense>
+				<div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
+					<Suspense fallback={<GlobalExecutionsTableSkeleton />}>
+						<GlobalExecutionsTableContainer
+							params={params}
+							sorting={sortingState}
+							onSortingChange={onSortingChange}
+						/>
+						<GlobalExecutionsPaginationContainer
+							params={params}
+							onPageChange={onPageChange}
+						/>
+					</Suspense>
+				</div>
 			</div>
 		</div>
 	);

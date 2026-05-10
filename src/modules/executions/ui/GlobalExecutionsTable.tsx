@@ -26,6 +26,9 @@ import {
 	formatVersion,
 	LOCAL_VERSION_ID,
 } from "@/modules/deployments/domain/deployment";
+import { ColorDot } from "@/shared/ui/ColorDot";
+import { getStackColor } from "@/modules/stacks/util/get-stack-color";
+import { cn } from "@/shared/utils/styles";
 
 export type SnapshotVersionLookup = Map<string, Deployment>;
 
@@ -177,20 +180,39 @@ function buildGlobalExecutionColumns(
 			accessorFn: (row) => row.stackName,
 			header: () => "Stack",
 			enableSorting: false,
-			cell: ({ row }) => (
-				<TextRenderer>{row.original.stackName ?? "—"}</TextRenderer>
-			),
+			cell: ({ row }) => {
+				const { stackId, stackName } = row.original;
+				if (!stackName) return <TextRenderer>—</TextRenderer>;
+				return (
+					<span className="inline-flex items-center gap-1.5">
+						<ColorDot
+							shape="round"
+							size="xs"
+							className={getStackColor(stackId ?? stackName)}
+						/>
+						<TextRenderer>{stackName}</TextRenderer>
+					</span>
+				);
+			},
 		},
 		{
 			id: "version",
-			header: "Version",
+			header: () => "Version",
 			enableSorting: false,
 			cell: ({ row }) => {
 				const lookedUp = row.original.sourceSnapshot?.id
 					? versionLookup.get(row.original.sourceSnapshot.id)
 					: undefined;
 				const version = lookedUp?.version ?? LOCAL_VERSION_ID;
-				return <TextRenderer>{formatVersion(version)}</TextRenderer>;
+				return (
+					<span
+						className={cn(
+							"border-border bg-muted/40 text-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-xs font-semibold"
+						)}
+					>
+						{formatVersion(version)}
+					</span>
+				);
 			},
 		},
 		{

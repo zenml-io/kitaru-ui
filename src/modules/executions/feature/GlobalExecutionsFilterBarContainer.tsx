@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem } from "@/shared/ui/select";
-import { Separator } from "@/shared/ui/separator";
 import { LabeledFilterTrigger } from "../ui/LabeledFilterTrigger";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
+import { useDebouncedValue } from "@/shared/business-logic/use-debounced-value";
 import {
 	executionStatusFilterValues,
 	type ExecutionStatusFilter,
@@ -15,6 +16,8 @@ import {
 	type GlobalExecutionsRange,
 } from "../domain/global-executions-query-params";
 import { formatVersion } from "@/modules/deployments/domain/deployment";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 const STATUS_LABELS: Record<ExecutionStatusFilter, string> = {
 	all: "All",
@@ -74,6 +77,16 @@ export function GlobalExecutionsFilterBarContainer({
 	const selectedDeployment = deployments.find((d) => d.id === snapshotId);
 	const selectedStackName = stackId ? stacksById.get(stackId) : undefined;
 
+	const [localSearch, setLocalSearch] = useState(search);
+	const debouncedSearch = useDebouncedValue(localSearch, SEARCH_DEBOUNCE_MS);
+
+	useEffect(() => {
+		if (debouncedSearch !== search) {
+			onChange({ search: debouncedSearch });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [debouncedSearch]);
+
 	const handleFlowChange = (nextFlowIdRaw: string | null) => {
 		if (nextFlowIdRaw === null) return;
 		const nextFlowId = nextFlowIdRaw === "all" ? undefined : nextFlowIdRaw;
@@ -87,7 +100,7 @@ export function GlobalExecutionsFilterBarContainer({
 	};
 
 	return (
-		<div className="border-border bg-card border-b">
+		<div className="border-border border-b">
 			<div className="container mx-auto flex flex-wrap items-center gap-2 px-4 py-2.5 sm:px-6 lg:px-8">
 				<Select
 					value={status}
@@ -113,7 +126,7 @@ export function GlobalExecutionsFilterBarContainer({
 						label="Flow"
 						displayValue={selectedFlow?.name}
 					/>
-					<SelectContent>
+					<SelectContent className="w-auto min-w-[16rem]">
 						<SelectItem value="all">All flows</SelectItem>
 						{flows.map((f) => (
 							<SelectItem key={f.id} value={f.id}>
@@ -139,7 +152,7 @@ export function GlobalExecutionsFilterBarContainer({
 								: undefined
 						}
 					/>
-					<SelectContent>
+					<SelectContent className="w-auto min-w-[16rem]">
 						<SelectItem value="all">All versions</SelectItem>
 						{versionOptions.map((d) => (
 							<SelectItem key={d.id} value={d.id}>
@@ -166,7 +179,7 @@ export function GlobalExecutionsFilterBarContainer({
 						label="Stack"
 						displayValue={selectedStackName}
 					/>
-					<SelectContent>
+					<SelectContent className="w-auto min-w-[14rem]">
 						<SelectItem value="all">All stacks</SelectItem>
 						{Array.from(stacksById.entries()).map(([id, name]) => (
 							<SelectItem key={id} value={id}>
@@ -198,15 +211,11 @@ export function GlobalExecutionsFilterBarContainer({
 				<div className="relative">
 					<Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
 					<Input
-						placeholder="Search by name…"
-						value={search}
-						onChange={(e) => onChange({ search: e.target.value })}
-						className="h-8 w-[220px] pl-7 text-xs"
+						placeholder="Search #num or flow…"
+						value={localSearch}
+						onChange={(e) => setLocalSearch(e.target.value)}
+						className="dark:bg-input/30 h-8 w-[220px] bg-white pl-7 text-xs"
 					/>
-				</div>
-
-				<div className="ml-auto flex items-center gap-2.5">
-					<Separator orientation="vertical" className="h-5" />
 				</div>
 			</div>
 		</div>
