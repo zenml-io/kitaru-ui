@@ -1,9 +1,11 @@
-import { queryOptions } from "@tanstack/react-query";
-import { fetchExecutions } from "../domain/fetch-executions";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import { fetchExecution } from "../domain/fetch-execution";
 import { fetchExecutionLogs } from "../domain/fetch-execution-logs";
+import { fetchExecutions } from "../domain/fetch-executions";
+import { fetchGlobalExecutions } from "../domain/fetch-global-executions";
 import { fetchWaitCondition } from "../domain/fetch-wait-condition";
 import { fetchWaitConditions } from "../domain/fetch-wait-conditions";
+import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
 
 export const executionsQueryKeys = {
 	base: ["executions"] as const,
@@ -21,6 +23,8 @@ export const executionsQueryKeys = {
 		[...executionsQueryKeys.base, "waitCondition", waitConditionId] as const,
 	waitConditions: (executionId: string) =>
 		[...executionsQueryKeys.base, "waitConditions", executionId] as const,
+	global: (params: GlobalExecutionsQueryParams) =>
+		[...executionsQueryKeys.base, "global", params] as const,
 };
 
 export const executionsQueries = {
@@ -53,5 +57,11 @@ export const executionsQueries = {
 		queryOptions({
 			queryKey: executionsQueryKeys.waitConditions(executionId),
 			queryFn: () => fetchWaitConditions(executionId),
+		}),
+	global: (params: GlobalExecutionsQueryParams) =>
+		queryOptions({
+			queryKey: executionsQueryKeys.global(params),
+			queryFn: () => fetchGlobalExecutions(params),
+			placeholderData: keepPreviousData,
 		}),
 };
