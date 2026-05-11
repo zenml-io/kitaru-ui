@@ -88,7 +88,7 @@ export function ReplayExecutionSheetContainer({
 				/>
 				{stepsToSkip && stepsToSkip.length > 0 ? (
 					<p className="text-muted-foreground text-xs">
-						Skipping {stepsToSkip.length} earlier step
+						Skipping {stepsToSkip.length} earlier checkpoint
 						{stepsToSkip.length === 1 ? "" : "s"}.
 					</p>
 				) : null}

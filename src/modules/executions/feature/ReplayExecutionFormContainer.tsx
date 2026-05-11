@@ -47,7 +47,7 @@ export function ReplayExecutionFormContainer({
 							aria-invalid={fieldState.invalid}
 						/>
 						<FieldLabel className="w-fit" htmlFor="skip-successful-steps">
-							Skip successful steps
+							Skip successful checkpoints
 						</FieldLabel>
 						{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
 					</Field>
