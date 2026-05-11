@@ -4,13 +4,16 @@ import { Badge } from "@/shared/ui/badge";
 import { formatCost } from "@/shared/utils/currency";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import { TruncatedText } from "@/shared/ui/truncated-text";
+import type { ReactNode } from "react";
 
 type CheckpointDetailPanelHeaderProps = {
 	checkpoint: Checkpoint;
+	trailing?: ReactNode;
 };
 
 export function CheckpointDetailPanelHeader({
 	checkpoint,
+	trailing,
 }: CheckpointDetailPanelHeaderProps) {
 	return (
 		<div className="flex h-10 shrink-0 items-center gap-2 px-4">
@@ -22,6 +25,7 @@ export function CheckpointDetailPanelHeader({
 				{checkpoint.name}
 			</TruncatedText>
 			<span className="flex-1" />
+			{trailing}
 			<LiveDurationMs
 				status={checkpoint.status}
 				startTime={checkpoint.startTime}

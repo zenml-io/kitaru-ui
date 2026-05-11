@@ -186,7 +186,6 @@
 	/* Span type colors (no shadcn equivalent) */
 	--color-span-tool: oklch(0.7 0.08 65);
 	--color-span-sleep: oklch(0.7 0.02 260);
-	--color-span-memory: oklch(0.704 0.123 182.5);
 
 	--shadow-2xs: var(--shadow-2xs);
 	--shadow-xs: var(--shadow-xs);

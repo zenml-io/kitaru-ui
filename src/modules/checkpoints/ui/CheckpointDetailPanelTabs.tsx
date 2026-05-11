@@ -1,6 +1,6 @@
 import { cn } from "@/shared/utils/styles";
 
-const TABS = ["logs", "checkpoint", "code", "artifacts", "memory"] as const;
+const TABS = ["logs", "checkpoint", "code", "artifacts"] as const;
 
 export type PanelTab = (typeof TABS)[number];
 
