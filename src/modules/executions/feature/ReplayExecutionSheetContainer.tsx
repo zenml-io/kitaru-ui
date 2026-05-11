@@ -24,7 +24,7 @@ type ReplayExecutionSheetProps = {
 	executionId: string;
 	executionNumber: string;
 	executionStatus?: ExecutionStatus;
-	stepsToSkip?: string[];
+	checkpointsToSkip?: string[];
 	trigger?: ReactElement;
 	onReplaySuccess?: () => void;
 };
@@ -35,7 +35,7 @@ export function ReplayExecutionSheetContainer({
 	executionId,
 	executionNumber,
 	executionStatus,
-	stepsToSkip,
+	checkpointsToSkip,
 	trigger,
 	onReplaySuccess,
 }: ReplayExecutionSheetProps) {
@@ -66,7 +66,10 @@ export function ReplayExecutionSheetContainer({
 	function handleReplay({ skipSuccessfulSteps }: ReplayExecutionFormValues) {
 		replayExecution({
 			executionId,
-			payload: buildReplayExecutionPayload(skipSuccessfulSteps, stepsToSkip),
+			payload: buildReplayExecutionPayload(
+				skipSuccessfulSteps,
+				checkpointsToSkip
+			),
 		});
 	}
 
@@ -90,10 +93,10 @@ export function ReplayExecutionSheetContainer({
 					isExecutionFailed={executionStatus === "failed"}
 					onSubmit={handleReplay}
 				/>
-				{stepsToSkip && stepsToSkip.length > 0 ? (
+				{checkpointsToSkip && checkpointsToSkip.length > 0 ? (
 					<p className="text-muted-foreground text-xs">
-						Skipping {stepsToSkip.length} earlier checkpoint
-						{stepsToSkip.length === 1 ? "" : "s"}.
+						Skipping {checkpointsToSkip.length} earlier checkpoint
+						{checkpointsToSkip.length === 1 ? "" : "s"}.
 					</p>
 				) : null}
 				<DialogFooter>

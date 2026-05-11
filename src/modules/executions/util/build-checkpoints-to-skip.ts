@@ -2,7 +2,7 @@ type ReplayableStep = {
 	id: string;
 };
 
-export function buildStepsToSkip(
+export function buildCheckpointsToSkip(
 	steps: ReplayableStep[],
 	selectedStepId?: string
 ): string[] {
