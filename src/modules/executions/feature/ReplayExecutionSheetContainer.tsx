@@ -26,6 +26,7 @@ type ReplayExecutionSheetProps = {
 	executionStatus?: ExecutionStatus;
 	stepsToSkip?: string[];
 	trigger?: ReactElement;
+	onReplaySuccess?: () => void;
 };
 
 const FORM_ID = "replay-execution-form";
@@ -36,6 +37,7 @@ export function ReplayExecutionSheetContainer({
 	executionStatus,
 	stepsToSkip,
 	trigger,
+	onReplaySuccess,
 }: ReplayExecutionSheetProps) {
 	const [open, setOpen] = useState(false);
 	const queryClient = useQueryClient();
@@ -45,12 +47,14 @@ export function ReplayExecutionSheetContainer({
 	});
 	const { replayExecution, isPending } = useReplayExecution({
 		onSuccess: (exec) => {
+			onReplaySuccess?.();
 			queryClient.invalidateQueries({
 				queryKey: executionsQueryKeys.all(flowId),
 			});
 			navigate({
 				to: "/flows/$flowId/v/$version/executions/$executionId",
 				params: { flowId, version, executionId: exec.id },
+				search: {},
 			});
 			setOpen(false);
 		},

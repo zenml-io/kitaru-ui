@@ -113,6 +113,12 @@ export function ExecutionContainer({
 	>();
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
+
+	const resetCheckpointPanelState = () => {
+		setSelectedCheckpointId(undefined);
+		setActiveCheckpointTab("logs");
+	};
+
 	const executionNumber = executionData.index.toString();
 	const stepsToSkip = buildStepsToSkip(
 		checkpointsData.checkpoints,
@@ -140,6 +146,7 @@ export function ExecutionContainer({
 										executionStatus={executionData.status}
 										executionNumber={executionNumber}
 										executionId={executionId}
+										onReplaySuccess={resetCheckpointPanelState}
 									/>
 								</Suspense>
 							</ErrorBoundary>
@@ -201,6 +208,7 @@ export function ExecutionContainer({
 														executionNumber={executionNumber}
 														executionId={executionId}
 														stepsToSkip={stepsToSkip}
+														onReplaySuccess={resetCheckpointPanelState}
 														trigger={
 															<TooltipTrigger
 																render={
