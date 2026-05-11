@@ -30,7 +30,12 @@ describe("useInvokeDeployment", () => {
 				mutations: { retry: false },
 			},
 		});
-		mockedInvokeDeployment.mockResolvedValue({ runId: "run-1" });
+		mockedInvokeDeployment.mockResolvedValue({
+			id: "run-1",
+			name: "run-1",
+			index: 1,
+			logSources: [],
+		});
 	});
 
 	afterEach(() => {
@@ -45,8 +50,8 @@ describe("useInvokeDeployment", () => {
 		});
 
 		result.current.invokeDeployment({
-			snapshotId: "snap-1",
-			parameters: {},
+			deploymentId: "snap-1",
+			runConfiguration: { parameters: {} },
 		});
 
 		await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -68,15 +73,20 @@ describe("useInvokeDeployment", () => {
 		);
 
 		result.current.invokeDeployment({
-			snapshotId: "snap-1",
-			parameters: { topic: "hi" },
+			deploymentId: "snap-1",
+			runConfiguration: { parameters: { topic: "hi" } },
 		});
 
 		await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
-		expect(onSuccess.mock.calls[0][0]).toEqual({ runId: "run-1" });
+		expect(onSuccess.mock.calls[0][0]).toEqual({
+			id: "run-1",
+			name: "run-1",
+			index: 1,
+			logSources: [],
+		});
 		expect(onSuccess.mock.calls[0][1]).toEqual({
-			snapshotId: "snap-1",
-			parameters: { topic: "hi" },
+			deploymentId: "snap-1",
+			runConfiguration: { parameters: { topic: "hi" } },
 		});
 	});
 

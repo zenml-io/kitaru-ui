@@ -6,8 +6,6 @@ import {
 	flowTabLabels,
 	flowTabs,
 } from "@/modules/flows/domain/flow";
-import { memoryQueries } from "@/modules/memory/business-logic/memory-queries";
-import { FlowMemoryContainer } from "@/modules/memory/feature/FlowMemoryContainer";
 import { PageSpinner } from "@/shared/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 import { createFileRoute, notFound } from "@tanstack/react-router";
@@ -27,15 +25,7 @@ export const Route = createFileRoute(
 		stringify: ({ tab, ...rest }) => ({ ...rest, tab: String(tab) }),
 	},
 	loader: async ({ context, params }) => {
-		if (params.tab === "memory") {
-			await Promise.all([
-				context.queryClient.ensureQueryData(memoryQueries.namespaces()),
-				context.queryClient.ensureQueryData(memoryQueries.flow(params.flowId)),
-				context.queryClient.ensureQueryData(
-					memoryQueries.executions(params.flowId)
-				),
-			]);
-		} else if (params.tab === "executions") {
+		if (params.tab === "executions") {
 			await context.queryClient.ensureQueryData(
 				executionsQueries.all(params.flowId)
 			);
@@ -51,11 +41,9 @@ export const Route = createFileRoute(
 function TabComponent() {
 	const { tab } = Route.useParams();
 	switch (tab) {
-		case "overview":
+		case "invoke":
 			return <FlowInvocationContainer />;
 		case "executions":
 			return <DeploymentExecutionsListContainer />;
-		case "memory":
-			return <FlowMemoryContainer />;
 	}
 }

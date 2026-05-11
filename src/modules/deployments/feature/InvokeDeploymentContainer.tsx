@@ -1,35 +1,36 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
-import { formatVersion, type Deployment } from "../domain/deployment";
-import { deploymentsQueries } from "../business-logic/deployments-queries";
+import { useDeployment } from "../business-logic/use-deployment";
 import { useInvokeDeployment } from "../business-logic/use-invoke-deployment";
-import { InvokeButton } from "../ui/InvokeButton";
-import { InvokeDrawer } from "../ui/InvokeDrawer";
+import { formatVersion } from "../domain/deployment";
+import {
+	getEditableParameters,
+	getParametersJsonSchema,
+	mergeRunConfigurationWithParameters,
+} from "../domain/invoke-parameters-editor";
+import { InvokeSheetContainer } from "./InvokeSheetContainer";
 
 export function InvokeDeploymentContainer({
-	deployment,
+	deploymentId,
 }: {
-	deployment: Deployment;
+	deploymentId: string;
 }) {
-	const [open, setOpen] = useState(false);
 	const navigate = useNavigate();
+	const [open, setOpen] = useState(false);
+	const { data: deployment } = useDeployment(deploymentId);
 
-	const detailQuery = useQuery({
-		...deploymentsQueries.detail(deployment.id),
-		enabled: open,
-	});
-
-	const defaultValue =
-		detailQuery.data?.defaultParameters != null
-			? JSON.stringify(detailQuery.data.defaultParameters, null, 2)
-			: "{}";
+	const defaultValue = JSON.stringify(
+		getEditableParameters(deployment.defaultParameters),
+		null,
+		2
+	);
+	const parametersSchema = getParametersJsonSchema(deployment.inputSchema);
 
 	const { invokeDeployment, isPending } = useInvokeDeployment(
 		deployment.flowId,
 		{
-			onSuccess: ({ runId }) => {
+			onSuccess: ({ id: executionId }) => {
 				setOpen(false);
 				toast.success("Invocation started");
 				navigate({
@@ -37,7 +38,7 @@ export function InvokeDeploymentContainer({
 					params: {
 						flowId: deployment.flowId,
 						version: deployment.version,
-						executionId: runId,
+						executionId,
 					},
 				});
 			},
@@ -48,24 +49,23 @@ export function InvokeDeploymentContainer({
 	);
 
 	function handleSubmit(parameters: Record<string, unknown>) {
-		invokeDeployment({ snapshotId: deployment.id, parameters });
+		const runConfiguration = mergeRunConfigurationWithParameters(
+			deployment.defaultParameters,
+			parameters
+		);
+		invokeDeployment({ deploymentId: deployment.id, runConfiguration });
 	}
 
 	return (
-		<>
-			<InvokeButton
-				onClick={() => setOpen(true)}
-				disabled={!deployment.runnable}
-			/>
-			<InvokeDrawer
-				open={open}
-				onOpenChange={setOpen}
-				title={`Invoke ${deployment.flowName} · ${formatVersion(deployment.version)}`}
-				defaultValue={defaultValue}
-				isLoading={open && detailQuery.isPending}
-				isSubmitting={isPending}
-				onSubmit={handleSubmit}
-			/>
-		</>
+		<InvokeSheetContainer
+			open={open}
+			onOpenChange={setOpen}
+			deploymentId={deployment.id}
+			jsonSchema={parametersSchema}
+			title={`Invoke ${deployment.flowName} · ${formatVersion(deployment.version)}`}
+			defaultValue={defaultValue}
+			isSubmitting={isPending}
+			onSubmit={handleSubmit}
+		/>
 	);
 }

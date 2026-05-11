@@ -4,13 +4,15 @@ import {
 } from "@/modules/checkpoints/business-logic/use-checkpoints";
 import { CheckpointDetailPanelContainer } from "@/modules/checkpoints/feature/CheckpointDetailPanelContainer";
 import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTabs";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
-import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { useExecution } from "../business-logic/use-execution";
 import { useExecutions } from "../business-logic/use-executions";
 import { useSyncExecutionStatus } from "../business-logic/use-sync-execution-status";
@@ -19,9 +21,12 @@ import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
-import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
+import { buildCheckpointsToSkip } from "../util/build-checkpoints-to-skip";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
+import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
+import { ReplayExecutionSheetContainer } from "./ReplayExecutionSheetContainer";
+import { ReplayFromCheckpointContainer } from "./ReplayFromCheckpointContainer";
 
 const ROUTE_ID =
 	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId" as const;
@@ -107,6 +112,17 @@ export function ExecutionContainer({
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
+	const resetCheckpointPanelState = () => {
+		setSelectedCheckpointId(undefined);
+		setActiveCheckpointTab("logs");
+	};
+
+	const executionNumber = executionData.index.toString();
+	const checkpointsToSkip = buildCheckpointsToSkip(
+		checkpointsData.checkpoints,
+		selectedCheckpointId
+	);
+
 	const displayedExecutions = clientFilterRealSnapshotIds
 		? filterLocalExecutions(executionsData, clientFilterRealSnapshotIds)
 		: executionsData;
@@ -121,6 +137,18 @@ export function ExecutionContainer({
 				<div className="border-border bg-secondary flex shrink-0 items-center justify-between border-b px-5 py-2.5">
 					<ExecutionTabs activeTab={activeTab} onTabChange={setActiveTab} />
 					<div className="flex items-center gap-3">
+						{executionData.snapshot?.runnable ? (
+							<ErrorBoundary fallbackRender={() => null}>
+								<Suspense fallback={<Skeleton className="h-8 w-20" />}>
+									<ReplayExecutionSheetContainer
+										executionStatus={executionData.status}
+										executionNumber={executionNumber}
+										executionId={executionId}
+										onReplaySuccess={resetCheckpointPanelState}
+									/>
+								</Suspense>
+							</ErrorBoundary>
+						) : null}
 						<RefreshButton
 							size="sm"
 							variant="outline"
@@ -168,6 +196,21 @@ export function ExecutionContainer({
 								checkpointId={selectedCheckpointId}
 								activeTab={activeCheckpointTab}
 								onTabChange={setActiveCheckpointTab}
+								headerTrailing={
+									executionData.snapshot?.runnable && selectedCheckpointId ? (
+										<ErrorBoundary fallbackRender={() => null}>
+											<Suspense fallback={<Skeleton className="h-8 w-20" />}>
+												<ReplayFromCheckpointContainer
+													executionStatus={executionData.status}
+													executionNumber={executionNumber}
+													executionId={executionId}
+													checkpointsToSkip={checkpointsToSkip}
+													onReplaySuccess={resetCheckpointPanelState}
+												/>
+											</Suspense>
+										</ErrorBoundary>
+									) : null
+								}
 							/>
 						)
 					}

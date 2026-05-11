@@ -128,8 +128,8 @@ function buildExecutionColumns(
 				<SortableHeader column={column} label="Execution" />
 			),
 			cell: ({ row }) => {
-				const lookedUp = row.original.snapshotId
-					? versionLookup.get(row.original.snapshotId)
+				const lookedUp = row.original.sourceSnapshot?.id
+					? versionLookup.get(row.original.sourceSnapshot.id)
 					: undefined;
 				const linkVersion = versionParam ?? lookedUp ?? "local";
 				return (

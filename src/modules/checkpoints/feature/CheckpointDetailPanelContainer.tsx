@@ -1,11 +1,11 @@
-import { Suspense, useState } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
 } from "../business-logic/use-checkpoint-details";
 import type { ArtifactEntry } from "../domain/checkpoint";
-import { CheckpointMemoryTabContainer } from "@/modules/memory/feature/CheckpointMemoryTabContainer";
 import { CheckpointDetailPanelArtifacts } from "../ui/CheckpointDetailPanelArtifacts";
+import { CheckpointDetailPanelSourceCode } from "../ui/CheckpointDetailPanelSourceCode";
 import { CheckpointDetailPanelHeader } from "../ui/CheckpointDetailPanelHeader";
 import { CheckpointDetailPanelInfo } from "../ui/CheckpointDetailPanelInfo";
 import {
@@ -20,12 +20,14 @@ type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	headerTrailing?: ReactNode;
 };
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	headerTrailing,
 }: CheckpointDetailPanelContainerProps) {
 	if (!checkpointId) {
 		return <CheckpointDetailsEmptyView />;
@@ -37,6 +39,7 @@ export function CheckpointDetailPanelContainer({
 				checkpointId={checkpointId}
 				activeTab={activeTab}
 				onTabChange={onTabChange}
+				headerTrailing={headerTrailing}
 			/>
 		</Suspense>
 	);
@@ -46,10 +49,12 @@ function CheckpointDetailPanelContentContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	headerTrailing,
 }: {
 	checkpointId: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	headerTrailing?: ReactNode;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
 		refetchInterval: getCheckpointDetailsPollingInterval,
@@ -79,7 +84,10 @@ function CheckpointDetailPanelContentContainer({
 	return (
 		<div className="flex h-full flex-col">
 			<div className="border-border bg-card shrink-0 border-b">
-				<CheckpointDetailPanelHeader checkpoint={detailsData} />
+				<CheckpointDetailPanelHeader
+					checkpoint={detailsData}
+					trailing={headerTrailing}
+				/>
 				<CheckpointDetailPanelTabs
 					activeTab={activeTab}
 					onTabChange={handleTabChange}
@@ -89,6 +97,9 @@ function CheckpointDetailPanelContentContainer({
 				{activeTab === "checkpoint" && (
 					<CheckpointDetailPanelInfo checkpoint={detailsData} />
 				)}
+				{activeTab === "code" && (
+					<CheckpointDetailPanelSourceCode source={detailsData.source} />
+				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts
 						inputs={inputs}
@@ -97,11 +108,6 @@ function CheckpointDetailPanelContentContainer({
 						onSelectArtifact={(artifact, direction) =>
 							setSelectedArtifact({ artifact, direction })
 						}
-					/>
-				)}
-				{activeTab === "memory" && (
-					<CheckpointMemoryTabContainer
-						checkpointStartTime={detailsData?.startTime}
 					/>
 				)}
 				{activeTab === "logs" && (

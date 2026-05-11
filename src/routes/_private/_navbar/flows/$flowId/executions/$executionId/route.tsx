@@ -32,8 +32,9 @@ export const Route = createFileRoute(
 				deploymentsQueries.list(params.flowId)
 			),
 		]);
-		const deployment = execution.snapshotId
-			? deployments.find((d) => d.id === execution.snapshotId)
+		const sourceSnapshotId = execution.sourceSnapshot?.id;
+		const deployment = sourceSnapshotId
+			? deployments.find((d) => d.id === sourceSnapshotId)
 			: undefined;
 
 		throw redirect({

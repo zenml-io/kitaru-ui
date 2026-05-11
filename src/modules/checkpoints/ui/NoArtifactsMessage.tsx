@@ -4,9 +4,7 @@ export function NoArtifactsMessage() {
 			<p className="text-foreground text-xs font-medium">
 				No checkpoint artifacts to show here.
 			</p>
-			<p className="text-muted-foreground text-xs">
-				Memory artifacts are available in the Memory tab.
-			</p>
+			<p className="text-muted-foreground text-xs">No artifacts available.</p>
 		</div>
 	);
 }
