@@ -105,9 +105,9 @@ test("replay from execution details redirects to the new execution", async ({
 	);
 
 	await page.getByRole("button", { name: "Replay" }).first().click();
-	await expect(page.getByText("Replay Execution #7?")).toBeVisible();
+	await expect(page.getByText("Replay Execution #7")).toBeVisible();
 
-	const replayDialog = page.getByRole("alertdialog");
+	const replayDialog = page.getByRole("dialog");
 	await replayDialog.getByRole("button", { name: "Replay" }).click();
 
 	await expect(page).toHaveURL(

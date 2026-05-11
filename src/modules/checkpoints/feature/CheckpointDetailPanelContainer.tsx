@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense, useState, type ReactNode } from "react";
 import {
 	getCheckpointDetailsPollingInterval,
 	useCheckpointDetails,
@@ -20,12 +20,14 @@ type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	headerTrailing?: ReactNode;
 };
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	headerTrailing,
 }: CheckpointDetailPanelContainerProps) {
 	if (!checkpointId) {
 		return <CheckpointDetailsEmptyView />;
@@ -37,6 +39,7 @@ export function CheckpointDetailPanelContainer({
 				checkpointId={checkpointId}
 				activeTab={activeTab}
 				onTabChange={onTabChange}
+				headerTrailing={headerTrailing}
 			/>
 		</Suspense>
 	);
@@ -46,10 +49,12 @@ function CheckpointDetailPanelContentContainer({
 	checkpointId,
 	activeTab,
 	onTabChange,
+	headerTrailing,
 }: {
 	checkpointId: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
+	headerTrailing?: ReactNode;
 }) {
 	const { detailsData } = useCheckpointDetails(checkpointId, {
 		refetchInterval: getCheckpointDetailsPollingInterval,
@@ -79,7 +84,10 @@ function CheckpointDetailPanelContentContainer({
 	return (
 		<div className="flex h-full flex-col">
 			<div className="border-border bg-card shrink-0 border-b">
-				<CheckpointDetailPanelHeader checkpoint={detailsData} />
+				<CheckpointDetailPanelHeader
+					checkpoint={detailsData}
+					trailing={headerTrailing}
+				/>
 				<CheckpointDetailPanelTabs
 					activeTab={activeTab}
 					onTabChange={handleTabChange}
