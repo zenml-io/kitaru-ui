@@ -1,32 +1,62 @@
-import { useNavigate, useParams } from "@tanstack/react-router";
-
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { FlowInvokeActionsContainer } from "@/modules/deployments/feature/FlowInvokeActionsContainer";
-import { flowTabLabels, flowTabs } from "@/modules/flows/domain/flow";
-import { ContextBar } from "@/shared/ui/ContextBar";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { Link, linkOptions, useMatchRoute } from "@tanstack/react-router";
 
-const TAB_ROUTE_ID =
-	"/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab" as const;
+type FlowContextBarContainerProps = {
+	flowId: string;
+	version: DeploymentVersion;
+};
 
-export function FlowContextBarContainer() {
-	const { flowId, version, tab } = useParams({ from: TAB_ROUTE_ID });
-	const navigate = useNavigate();
+export function FlowContextBarContainer({
+	flowId,
+	version,
+}: FlowContextBarContainerProps) {
+	"use no memo";
+	const matchRoute = useMatchRoute();
+	const flowTabs = [
+		{
+			value: "executions",
+			label: "Executions",
+			link: linkOptions({
+				to: "/flows/$flowId/v/$version/executions",
+				params: { flowId, version },
+			}),
+		},
+		{
+			value: "invoke",
+			label: "Invoke",
+			link: linkOptions({
+				to: "/flows/$flowId/v/$version/invoke",
+				params: { flowId, version },
+			}),
+		},
+	] as const;
 
-	const tabs = flowTabs.map((value) => ({
-		value,
-		label: flowTabLabels[value],
-	}));
+	const activeTab = flowTabs.find((tab) => matchRoute(tab.link))?.value;
 
 	return (
-		<ContextBar
-			tabs={tabs}
-			activeTab={tab}
-			onTabChange={(next) =>
-				navigate({
-					to: "/flows/$flowId/v/$version/$tab",
-					params: { flowId, version, tab: next },
-				})
-			}
-			actions={<FlowInvokeActionsContainer />}
-		/>
+		<div
+			data-slot="context-bar"
+			className="bg-secondary border-border flex items-center justify-between border-b px-5 py-2.5"
+		>
+			<Tabs value={activeTab} className="flex items-center">
+				<TabsList className="bg-secondary">
+					{flowTabs.map((tab) => (
+						<TabsTrigger
+							key={tab.value}
+							nativeButton={false}
+							value={tab.value}
+							render={<Link {...tab.link} />}
+						>
+							{tab.label}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+			<div className="flex items-center gap-3">
+				<FlowInvokeActionsContainer />
+			</div>
+		</div>
 	);
 }

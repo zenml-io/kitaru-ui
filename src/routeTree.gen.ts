@@ -33,7 +33,8 @@ import { Route as PrivateNavbarFlowsFlowIdVVersionRouteRouteImport } from './rou
 import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/route'
 import { Route as PrivateNavbarFlowsFlowIdVVersionIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/index'
 import { Route as PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/route'
-import { Route as PrivateNavbarFlowsFlowIdVVersionTabsTabRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab'
+import { Route as PrivateNavbarFlowsFlowIdVVersionTabsInvokeRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/invoke'
+import { Route as PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/executions'
 import { Route as PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/executions/$executionId/route'
 
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
@@ -167,10 +168,16 @@ const PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute =
     id: '/_tabs',
     getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionRouteRoute,
   } as any)
-const PrivateNavbarFlowsFlowIdVVersionTabsTabRoute =
-  PrivateNavbarFlowsFlowIdVVersionTabsTabRouteImport.update({
-    id: '/$tab',
-    path: '/$tab',
+const PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute =
+  PrivateNavbarFlowsFlowIdVVersionTabsInvokeRouteImport.update({
+    id: '/invoke',
+    path: '/invoke',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute,
+  } as any)
+const PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute =
+  PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRouteImport.update({
+    id: '/executions',
+    path: '/executions',
     getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute,
   } as any)
 const PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute =
@@ -202,7 +209,8 @@ export interface FileRoutesByFullPath {
   '/flows/$flowId/v/$version': typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren
   '/flows/$flowId/v/$version/': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   '/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
-  '/flows/$flowId/v/$version/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/flows/$flowId/v/$version/executions': typeof PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute
+  '/flows/$flowId/v/$version/invoke': typeof PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PrivateIndexRoute
@@ -221,7 +229,8 @@ export interface FileRoutesByTo {
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/flows/$flowId/v/$version': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   '/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
-  '/flows/$flowId/v/$version/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/flows/$flowId/v/$version/executions': typeof PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute
+  '/flows/$flowId/v/$version/invoke': typeof PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -250,7 +259,8 @@ export interface FileRoutesById {
   '/_private/_navbar/flows/$flowId/v/$version/_tabs': typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren
   '/_private/_navbar/flows/$flowId/v/$version/': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
-  '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/_private/_navbar/flows/$flowId/v/$version/_tabs/executions': typeof PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute
+  '/_private/_navbar/flows/$flowId/v/$version/_tabs/invoke': typeof PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -276,7 +286,8 @@ export interface FileRouteTypes {
     | '/flows/$flowId/v/$version'
     | '/flows/$flowId/v/$version/'
     | '/flows/$flowId/v/$version/executions/$executionId'
-    | '/flows/$flowId/v/$version/$tab'
+    | '/flows/$flowId/v/$version/executions'
+    | '/flows/$flowId/v/$version/invoke'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -295,7 +306,8 @@ export interface FileRouteTypes {
     | '/flows/$flowId/executions/$executionId'
     | '/flows/$flowId/v/$version'
     | '/flows/$flowId/v/$version/executions/$executionId'
-    | '/flows/$flowId/v/$version/$tab'
+    | '/flows/$flowId/v/$version/executions'
+    | '/flows/$flowId/v/$version/invoke'
   id:
     | '__root__'
     | '/_private'
@@ -323,7 +335,8 @@ export interface FileRouteTypes {
     | '/_private/_navbar/flows/$flowId/v/$version/_tabs'
     | '/_private/_navbar/flows/$flowId/v/$version/'
     | '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId'
-    | '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab'
+    | '/_private/_navbar/flows/$flowId/v/$version/_tabs/executions'
+    | '/_private/_navbar/flows/$flowId/v/$version/_tabs/invoke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -501,11 +514,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionRouteRoute
     }
-    '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab': {
-      id: '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab'
-      path: '/$tab'
-      fullPath: '/flows/$flowId/v/$version/$tab'
-      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRouteImport
+    '/_private/_navbar/flows/$flowId/v/$version/_tabs/invoke': {
+      id: '/_private/_navbar/flows/$flowId/v/$version/_tabs/invoke'
+      path: '/invoke'
+      fullPath: '/flows/$flowId/v/$version/invoke'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsInvokeRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute
+    }
+    '/_private/_navbar/flows/$flowId/v/$version/_tabs/executions': {
+      id: '/_private/_navbar/flows/$flowId/v/$version/_tabs/executions'
+      path: '/executions'
+      fullPath: '/flows/$flowId/v/$version/executions'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute
     }
     '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId': {
@@ -519,13 +539,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteChildren {
-  PrivateNavbarFlowsFlowIdVVersionTabsTabRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute
+  PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute
 }
 
 const PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteChildren: PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteChildren =
   {
-    PrivateNavbarFlowsFlowIdVVersionTabsTabRoute:
-      PrivateNavbarFlowsFlowIdVVersionTabsTabRoute,
+    PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute:
+      PrivateNavbarFlowsFlowIdVVersionTabsExecutionsRoute,
+    PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute:
+      PrivateNavbarFlowsFlowIdVVersionTabsInvokeRoute,
   }
 
 const PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren =
