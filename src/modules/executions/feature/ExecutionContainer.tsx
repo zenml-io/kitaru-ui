@@ -21,10 +21,12 @@ import { filterLocalExecutions } from "../domain/filter-local-executions";
 import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
 import { ExecutionsList } from "../ui/ExecutionsList";
 import { ExecutionTabs, type ExecutionTab } from "../ui/ExecutionTabs";
+import { buildCheckpointsToSkip } from "../util/build-checkpoints-to-skip";
 import type { ExecutionLogsScope } from "./ExecutionLogsScopeSidebarContainer";
 import { ExecutionLogsTabContainer } from "./ExecutionLogsTabContainer";
 import { ExecutionTabContainer } from "./ExecutionTabContainer";
 import { ReplayExecutionSheetContainer } from "./ReplayExecutionSheetContainer";
+import { ReplayFromCheckpointContainer } from "./ReplayFromCheckpointContainer";
 
 const ROUTE_ID =
 	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId" as const;
@@ -110,6 +112,17 @@ export function ExecutionContainer({
 	const [activeCheckpointTab, setActiveCheckpointTab] =
 		useState<PanelTab>("logs");
 
+	const resetCheckpointPanelState = () => {
+		setSelectedCheckpointId(undefined);
+		setActiveCheckpointTab("logs");
+	};
+
+	const executionNumber = executionData.index.toString();
+	const checkpointsToSkip = buildCheckpointsToSkip(
+		checkpointsData.checkpoints,
+		selectedCheckpointId
+	);
+
 	const displayedExecutions = clientFilterRealSnapshotIds
 		? filterLocalExecutions(executionsData, clientFilterRealSnapshotIds)
 		: executionsData;
@@ -128,8 +141,10 @@ export function ExecutionContainer({
 							<ErrorBoundary fallbackRender={() => null}>
 								<Suspense fallback={<Skeleton className="h-8 w-20" />}>
 									<ReplayExecutionSheetContainer
-										executionNumber={executionData.index.toString()}
+										executionStatus={executionData.status}
+										executionNumber={executionNumber}
 										executionId={executionId}
+										onReplaySuccess={resetCheckpointPanelState}
 									/>
 								</Suspense>
 							</ErrorBoundary>
@@ -181,6 +196,21 @@ export function ExecutionContainer({
 								checkpointId={selectedCheckpointId}
 								activeTab={activeCheckpointTab}
 								onTabChange={setActiveCheckpointTab}
+								headerTrailing={
+									executionData.snapshot?.runnable && selectedCheckpointId ? (
+										<ErrorBoundary fallbackRender={() => null}>
+											<Suspense fallback={<Skeleton className="h-8 w-20" />}>
+												<ReplayFromCheckpointContainer
+													executionStatus={executionData.status}
+													executionNumber={executionNumber}
+													executionId={executionId}
+													checkpointsToSkip={checkpointsToSkip}
+													onReplaySuccess={resetCheckpointPanelState}
+												/>
+											</Suspense>
+										</ErrorBoundary>
+									) : null
+								}
 							/>
 						)
 					}
