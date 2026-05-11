@@ -19,37 +19,23 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import type { Execution } from "../domain/execution";
 import { ExecutionName } from "./ExecutionName";
-import {
-	type Deployment,
-	formatVersion,
-	LOCAL_VERSION_ID,
-} from "@/modules/deployments/domain/deployment";
-import { ColorDot } from "@/shared/ui/ColorDot";
-import { getStackColor } from "@/modules/stacks/util/get-stack-color";
-import { cn } from "@/shared/utils/styles";
-
-export type SnapshotVersionLookup = Map<string, Deployment>;
+import type { GlobalExecutionsTableRow } from "../business-logic/to-global-executions-rows";
 
 type GlobalExecutionsTableProps = {
-	executions: Execution[];
-	versionLookup: SnapshotVersionLookup;
+	rows: GlobalExecutionsTableRow[];
 	sorting: SortingState;
 	onSortingChange: (state: SortingState) => void;
 };
 
 export function GlobalExecutionsTable({
-	executions,
-	versionLookup,
+	rows,
 	sorting,
 	onSortingChange,
 }: GlobalExecutionsTableProps) {
-	const columns = buildGlobalExecutionColumns(versionLookup);
-
 	const table = useReactTable({
-		data: executions,
-		columns,
+		data: rows,
+		columns: GLOBAL_EXECUTION_COLUMNS,
 		state: { sorting },
 		onSortingChange: (updater) => {
 			onSortingChange(
@@ -62,7 +48,7 @@ export function GlobalExecutionsTable({
 	});
 
 	const headerGroups = table.getHeaderGroups();
-	const rows = table.getRowModel().rows;
+	const tableRows = table.getRowModel().rows;
 	const emptyColSpan = table.getVisibleLeafColumns().length;
 
 	return (
@@ -84,8 +70,8 @@ export function GlobalExecutionsTable({
 				))}
 			</TableHeader>
 			<TableBody>
-				{rows.length > 0 ? (
-					rows.map((row) => (
+				{tableRows.length > 0 ? (
+					tableRows.map((row) => (
 						<TableRow key={row.id}>
 							{row.getVisibleCells().map((cell) => (
 								<TableCell
@@ -116,132 +102,96 @@ export function GlobalExecutionsTable({
 	);
 }
 
-function buildGlobalExecutionColumns(
-	versionLookup: SnapshotVersionLookup
-): ColumnDef<Execution>[] {
-	return [
-		{
-			id: "execution",
-			meta: { isPrimaryColumn: true },
-			header: () => "Execution",
-			enableSorting: false,
-			cell: ({ row }) => {
-				const flowId = row.original.flowId;
-				const lookedUp = row.original.sourceSnapshot?.id
-					? versionLookup.get(row.original.sourceSnapshot.id)
-					: undefined;
-				const linkVersion = lookedUp?.version ?? LOCAL_VERSION_ID;
-				if (!flowId) {
-					return (
-						<span className="block px-2 py-3.5">
-							<ExecutionName index={row.original.index} />
-						</span>
-					);
-				}
+const GLOBAL_EXECUTION_COLUMNS: ColumnDef<GlobalExecutionsTableRow>[] = [
+	{
+		id: "execution",
+		meta: { isPrimaryColumn: true },
+		header: () => "Execution",
+		enableSorting: false,
+		cell: ({ row }) => {
+			const { flowId, versionForLink, executionIndex } = row.original;
+			if (!flowId) {
 				return (
-					<Link
-						to="/flows/$flowId/v/$version/executions/$executionId"
-						params={{
-							flowId,
-							version: linkVersion,
-							executionId: row.original.id,
-						}}
-						className="block px-2 py-3.5 hover:underline"
-					>
-						<ExecutionName index={row.original.index} />
-					</Link>
-				);
-			},
-		},
-		{
-			id: "flow",
-			accessorFn: (row) => row.flowName,
-			header: () => "Flow",
-			enableSorting: false,
-			cell: ({ row }) => {
-				if (!row.original.flowId) {
-					return <TextRenderer>—</TextRenderer>;
-				}
-				return (
-					<Link
-						to="/flows/$flowId"
-						params={{ flowId: row.original.flowId }}
-						className="hover:underline"
-					>
-						<TextRenderer>
-							{row.original.flowName ?? row.original.flowId}
-						</TextRenderer>
-					</Link>
-				);
-			},
-		},
-		{
-			id: "stack",
-			accessorFn: (row) => row.stackName,
-			header: () => "Stack",
-			enableSorting: false,
-			cell: ({ row }) => {
-				const { stackId, stackName } = row.original;
-				if (!stackName) return <TextRenderer>—</TextRenderer>;
-				return (
-					<span className="inline-flex items-center gap-1.5">
-						<ColorDot
-							shape="round"
-							size="xs"
-							className={getStackColor(stackId ?? stackName)}
-						/>
-						<TextRenderer>{stackName}</TextRenderer>
+					<span className="block px-2 py-3.5">
+						<ExecutionName index={executionIndex} />
 					</span>
 				);
-			},
+			}
+			return (
+				<Link
+					to="/flows/$flowId/v/$version/executions/$executionId"
+					params={{
+						flowId,
+						version: versionForLink,
+						executionId: row.original.id,
+					}}
+					className="block px-2 py-3.5 hover:underline"
+				>
+					<ExecutionName index={executionIndex} />
+				</Link>
+			);
 		},
-		{
-			id: "version",
-			header: () => "Version",
-			enableSorting: false,
-			cell: ({ row }) => {
-				const lookedUp = row.original.sourceSnapshot?.id
-					? versionLookup.get(row.original.sourceSnapshot.id)
-					: undefined;
-				const version = lookedUp?.version ?? LOCAL_VERSION_ID;
-				return (
-					<span
-						className={cn(
-							"border-border bg-muted/40 text-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-xs font-semibold"
-						)}
-					>
-						{formatVersion(version)}
-					</span>
-				);
-			},
+	},
+	{
+		id: "flow",
+		accessorFn: (row) => row.flowName,
+		header: () => "Flow",
+		enableSorting: false,
+		cell: ({ row }) => {
+			const { flowId, flowName } = row.original;
+			if (!flowId) return <TextRenderer>—</TextRenderer>;
+			return (
+				<Link
+					to="/flows/$flowId"
+					params={{ flowId }}
+					className="hover:underline"
+				>
+					<TextRenderer>{flowName ?? flowId}</TextRenderer>
+				</Link>
+			);
 		},
-		{
-			id: "status",
-			accessorFn: (row) => row.status,
-			header: ({ column }) => <SortableHeader column={column} label="Status" />,
-			cell: ({ row }) => <StatusRenderer status={row.original.status} />,
-		},
-		{
-			id: "created",
-			accessorFn: (row) => row.createdAt,
-			header: ({ column }) => <SortableHeader column={column} label="Date" />,
-			cell: ({ row }) => (
-				<TextRenderer>
-					{row.original.createdAt?.toLocaleString() ?? "—"}
-				</TextRenderer>
-			),
-		},
-		{
-			id: "author",
-			accessorFn: (row) => row.user?.name,
-			header: () => "Author",
-			enableSorting: false,
-			cell: ({ row }) => (
-				<UserRenderer
-					name={row.original.user?.name ?? ""}
-					avatarUrl={row.original.user?.avatarUrl}
-				/>
-			),
-		},
-	];
-}
+	},
+	{
+		id: "stack",
+		accessorFn: (row) => row.stackName,
+		header: () => "Stack",
+		enableSorting: false,
+		cell: ({ row }) => (
+			<TextRenderer>{row.original.stackName ?? "—"}</TextRenderer>
+		),
+	},
+	{
+		id: "version",
+		header: () => "Version",
+		enableSorting: false,
+		cell: ({ row }) => (
+			<span className="border-border bg-muted/40 text-foreground inline-flex h-5 items-center rounded border px-1.5 font-mono text-xs font-semibold">
+				{row.original.versionLabel}
+			</span>
+		),
+	},
+	{
+		id: "status",
+		accessorFn: (row) => row.status,
+		header: ({ column }) => <SortableHeader column={column} label="Status" />,
+		cell: ({ row }) => <StatusRenderer status={row.original.status} />,
+	},
+	{
+		id: "created",
+		accessorFn: (row) => row.dateLabel,
+		header: ({ column }) => <SortableHeader column={column} label="Date" />,
+		cell: ({ row }) => <TextRenderer>{row.original.dateLabel}</TextRenderer>,
+	},
+	{
+		id: "author",
+		accessorFn: (row) => row.authorName,
+		header: () => "Author",
+		enableSorting: false,
+		cell: ({ row }) => (
+			<UserRenderer
+				name={row.original.authorName}
+				avatarUrl={row.original.authorAvatarUrl}
+			/>
+		),
+	},
+];

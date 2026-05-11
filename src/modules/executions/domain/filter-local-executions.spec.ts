@@ -14,10 +14,13 @@ function mkExecution(overrides: Partial<Execution>): Execution {
 
 describe("filterLocalExecutions", () => {
 	it("keeps runs whose snapshot isn't a known Kitaru deployment", () => {
-		const e1 = mkExecution({ id: "run-1", sourceSnapshot: { id: "snap-a" } });
+		const e1 = mkExecution({
+			id: "run-1",
+			sourceSnapshot: { id: "snap-a", version: "local" },
+		});
 		const e2 = mkExecution({
 			id: "run-2",
-			sourceSnapshot: { id: "snap-kitaru" },
+			sourceSnapshot: { id: "snap-kitaru", version: 1 },
 		});
 		const e3 = mkExecution({ id: "run-3", sourceSnapshot: undefined });
 		const kitaruIds = new Set(["snap-kitaru"]);

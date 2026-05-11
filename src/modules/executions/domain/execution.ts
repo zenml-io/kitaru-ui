@@ -2,6 +2,11 @@ import type { components } from "@/shared/api/openapi";
 import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
 import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
+import {
+	type DeploymentVersion,
+	LOCAL_VERSION_ID,
+	parseVersionFromSnapshotName,
+} from "@/modules/deployments/domain/deployment";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 export type RunConfiguration = components["schemas"]["ReplayRunConfiguration"];
 
@@ -48,6 +53,7 @@ export type Execution = {
 	};
 	sourceSnapshot?: {
 		id: string;
+		version: DeploymentVersion;
 	};
 	snapshot?: {
 		id: string;
@@ -98,6 +104,9 @@ export function executionFromApiToDomain(
 		sourceSnapshot: run.resources?.source_snapshot
 			? {
 					id: run.resources.source_snapshot.id,
+					version:
+						parseVersionFromSnapshotName(run.resources.source_snapshot.name) ??
+						LOCAL_VERSION_ID,
 				}
 			: undefined,
 		snapshot: run.resources?.snapshot

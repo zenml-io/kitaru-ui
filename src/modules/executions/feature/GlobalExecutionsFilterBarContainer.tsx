@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem } from "@/shared/ui/select";
 import { LabeledFilterTrigger } from "../ui/LabeledFilterTrigger";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
+import { listStacksFromDeployments } from "@/modules/deployments/business-logic/list-stacks-from-deployments";
 import { useDebouncedValue } from "@/shared/business-logic/use-debounced-value";
 import {
 	executionStatusFilterValues,
@@ -15,6 +16,7 @@ import {
 	GLOBAL_EXECUTIONS_RANGE_VALUES,
 	type GlobalExecutionsRange,
 } from "../domain/global-executions-query-params";
+import type { FilterChange } from "../business-logic/filter-change-to-search-patch";
 import { formatVersion } from "@/modules/deployments/domain/deployment";
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -31,15 +33,6 @@ const RANGE_LABELS: Record<GlobalExecutionsRange, string> = {
 	"7d": "Last 7 days",
 	"30d": "Last 30 days",
 	all: "All time",
-};
-
-type FilterChange = {
-	status?: ExecutionStatusFilter;
-	flowId?: string;
-	snapshotId?: string;
-	stackId?: string;
-	range?: GlobalExecutionsRange;
-	search?: string;
 };
 
 type GlobalExecutionsFilterBarContainerProps = {
@@ -68,14 +61,13 @@ export function GlobalExecutionsFilterBarContainer({
 		? deployments.filter((d) => d.flowId === flowId)
 		: deployments;
 
-	const stacksById = new Map<string, string>();
-	for (const d of deployments) {
-		if (d.stackId && d.stackName) stacksById.set(d.stackId, d.stackName);
-	}
+	const stackOptions = listStacksFromDeployments(deployments);
 
 	const selectedFlow = flows.find((f) => f.id === flowId);
 	const selectedDeployment = deployments.find((d) => d.id === snapshotId);
-	const selectedStackName = stackId ? stacksById.get(stackId) : undefined;
+	const selectedStackName = stackId
+		? stackOptions.find((s) => s.id === stackId)?.name
+		: undefined;
 
 	const [localSearch, setLocalSearch] = useState(search);
 	const debouncedSearch = useDebouncedValue(localSearch, SEARCH_DEBOUNCE_MS);
@@ -181,9 +173,9 @@ export function GlobalExecutionsFilterBarContainer({
 					/>
 					<SelectContent className="w-auto min-w-[14rem]">
 						<SelectItem value="all">All stacks</SelectItem>
-						{Array.from(stacksById.entries()).map(([id, name]) => (
-							<SelectItem key={id} value={id}>
-								{name}
+						{stackOptions.map((s) => (
+							<SelectItem key={s.id} value={s.id}>
+								{s.name}
 							</SelectItem>
 						))}
 					</SelectContent>

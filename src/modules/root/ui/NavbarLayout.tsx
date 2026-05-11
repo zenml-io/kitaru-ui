@@ -1,6 +1,5 @@
 import KitaruLogo from "@/assets/icons/kitaru-logo.svg?react";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { Separator } from "@/shared/ui/separator";
 import { Link, Outlet } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { BreadcrumbsContainer } from "../feature/BreadcrumbsContainer";
@@ -26,7 +25,6 @@ export function NavbarLayout() {
 					</div>
 					<div className="flex shrink-0 items-center gap-2">
 						<NavbarTabs tabs={NAVBAR_TABS} />
-						<Separator orientation="vertical" className="h-5" />
 						<Suspense fallback={<Skeleton className="h-7 w-7 rounded-full" />}>
 							<UserDropdownContainer />
 						</Suspense>

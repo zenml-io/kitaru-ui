@@ -16,10 +16,13 @@ export function NavbarTabs({ tabs }: NavbarTabsProps) {
 				<Link
 					key={tab.to}
 					to={tab.to}
-					className="text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm font-medium no-underline"
+					className="rounded-md px-3 py-1.5 text-sm font-medium no-underline"
 					activeProps={{
 						className: "text-foreground",
 						"aria-current": "page",
+					}}
+					inactiveProps={{
+						className: "text-muted-foreground hover:text-foreground",
 					}}
 					activeOptions={{ exact: false }}
 				>

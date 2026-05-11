@@ -3,16 +3,18 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { SortingState } from "@tanstack/react-table";
 import { GlobalExecutionsHeader } from "../ui/GlobalExecutionsHeader";
 import { GlobalExecutionsTableSkeleton } from "../ui/GlobalExecutionsTableSkeleton";
+import { GlobalExecutionsFilterBarSkeleton } from "../ui/GlobalExecutionsFilterBarSkeleton";
 import { GlobalExecutionsTableContainer } from "./GlobalExecutionsTableContainer";
 import { GlobalExecutionsFilterBarContainer } from "./GlobalExecutionsFilterBarContainer";
 import { GlobalExecutionsPaginationContainer } from "./GlobalExecutionsPaginationContainer";
 import {
 	DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
 	type GlobalExecutionsQueryParams,
-	type GlobalExecutionsRange,
 } from "../domain/global-executions-query-params";
-import type { ExecutionStatusFilter } from "../domain/execution";
-import { Skeleton } from "@/shared/ui/skeleton";
+import {
+	type FilterChange,
+	filterChangeToSearchPatch,
+} from "../business-logic/filter-change-to-search-patch";
 import {
 	paramToSortingState,
 	sortingStateToParam,
@@ -53,24 +55,12 @@ export function GlobalExecutionsContainer() {
 		});
 	};
 
-	const onFilterChange = (next: {
-		status?: ExecutionStatusFilter;
-		flowId?: string;
-		snapshotId?: string;
-		stackId?: string;
-		range?: GlobalExecutionsRange;
-		search?: string;
-	}) => {
+	const onFilterChange = (next: FilterChange) => {
 		void navigate({
 			to: "/executions",
 			search: (prev) => ({
 				...prev,
-				status: "status" in next ? (next.status ?? prev.status) : prev.status,
-				flow: "flowId" in next ? next.flowId : prev.flow,
-				version: "snapshotId" in next ? next.snapshotId : prev.version,
-				stack: "stackId" in next ? next.stackId : prev.stack,
-				range: "range" in next ? (next.range ?? prev.range) : prev.range,
-				q: "search" in next ? (next.search ?? prev.q) : prev.q,
+				...filterChangeToSearchPatch(next),
 				page: 1,
 			}),
 			replace: true,
@@ -80,7 +70,7 @@ export function GlobalExecutionsContainer() {
 	return (
 		<div className="flex h-full flex-col">
 			<GlobalExecutionsHeader />
-			<Suspense fallback={<FilterBarSkeleton />}>
+			<Suspense fallback={<GlobalExecutionsFilterBarSkeleton />}>
 				<GlobalExecutionsFilterBarContainer
 					status={search.status}
 					flowId={search.flow}
@@ -106,16 +96,6 @@ export function GlobalExecutionsContainer() {
 					</Suspense>
 				</div>
 			</div>
-		</div>
-	);
-}
-
-function FilterBarSkeleton() {
-	return (
-		<div className="border-border bg-card flex gap-2 border-b px-4 py-2.5 sm:px-6 lg:px-8">
-			{Array.from({ length: 5 }).map((_, i) => (
-				<Skeleton key={i} className="h-8 w-24" />
-			))}
 		</div>
 	);
 }

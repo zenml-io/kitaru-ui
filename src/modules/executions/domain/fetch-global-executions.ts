@@ -1,6 +1,6 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import { buildRunsQuery } from "./build-runs-query";
+import { buildExecutionsQuery } from "./build-executions-query";
 import { type Execution, executionFromApiToDomain } from "./execution";
 import type { GlobalExecutionsQueryParams } from "./global-executions-query-params";
 
@@ -16,7 +16,7 @@ export async function fetchGlobalExecutions(
 ): Promise<GlobalExecutionsPage> {
 	const response = await apiClient.GET("/api/v1/runs", {
 		params: {
-			query: buildRunsQuery(params),
+			query: buildExecutionsQuery(params),
 		},
 	});
 	const page = expectData(response);
