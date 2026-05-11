@@ -19,6 +19,7 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import { Button } from "@/shared/ui/button";
 import { ExecutionName } from "./ExecutionName";
 import type { GlobalExecutionsTableRow } from "../business-logic/to-global-executions-rows";
 
@@ -26,12 +27,16 @@ type GlobalExecutionsTableProps = {
 	rows: GlobalExecutionsTableRow[];
 	sorting: SortingState;
 	onSortingChange: (state: SortingState) => void;
+	hasActiveFilters: boolean;
+	onClearFilters: () => void;
 };
 
 export function GlobalExecutionsTable({
 	rows,
 	sorting,
 	onSortingChange,
+	hasActiveFilters,
+	onClearFilters,
 }: GlobalExecutionsTableProps) {
 	const table = useReactTable({
 		data: rows,
@@ -89,11 +94,17 @@ export function GlobalExecutionsTable({
 					))
 				) : (
 					<TableRow>
-						<TableCell
-							colSpan={emptyColSpan}
-							className="text-muted-foreground py-10 text-center text-sm"
-						>
-							No executions match the current filters.
+						<TableCell colSpan={emptyColSpan} className="py-10 text-center">
+							<div className="flex flex-col items-center gap-3">
+								<p className="text-muted-foreground text-sm">
+									No executions match the current filters.
+								</p>
+								{hasActiveFilters ? (
+									<Button variant="outline" size="sm" onClick={onClearFilters}>
+										Clear filters
+									</Button>
+								) : null}
+							</div>
 						</TableCell>
 					</TableRow>
 				)}

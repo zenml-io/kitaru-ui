@@ -67,6 +67,25 @@ export function GlobalExecutionsContainer() {
 		});
 	};
 
+	const hasActiveFilters =
+		search.status !== "all" ||
+		search.flow !== undefined ||
+		search.version !== undefined ||
+		search.stack !== undefined ||
+		search.range !== "all" ||
+		search.q !== "";
+
+	const onClearFilters = () => {
+		onFilterChange({
+			status: "all",
+			flowId: undefined,
+			snapshotId: undefined,
+			stackId: undefined,
+			range: "all",
+			search: "",
+		});
+	};
+
 	return (
 		<div className="flex h-full flex-col">
 			<GlobalExecutionsHeader />
@@ -88,6 +107,8 @@ export function GlobalExecutionsContainer() {
 							params={params}
 							sorting={sortingState}
 							onSortingChange={onSortingChange}
+							hasActiveFilters={hasActiveFilters}
+							onClearFilters={onClearFilters}
 						/>
 						<GlobalExecutionsPaginationContainer
 							params={params}

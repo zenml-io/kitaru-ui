@@ -9,12 +9,16 @@ type GlobalExecutionsTableContainerProps = {
 	params: GlobalExecutionsQueryParams;
 	sorting: SortingState;
 	onSortingChange: (state: SortingState) => void;
+	hasActiveFilters: boolean;
+	onClearFilters: () => void;
 };
 
 export function GlobalExecutionsTableContainer({
 	params,
 	sorting,
 	onSortingChange,
+	hasActiveFilters,
+	onClearFilters,
 }: GlobalExecutionsTableContainerProps) {
 	const { data: page } = useSuspenseQuery(executionsQueries.global(params));
 	const rows = toGlobalExecutionsRows(page.items);
@@ -24,6 +28,8 @@ export function GlobalExecutionsTableContainer({
 			rows={rows}
 			sorting={sorting}
 			onSortingChange={onSortingChange}
+			hasActiveFilters={hasActiveFilters}
+			onClearFilters={onClearFilters}
 		/>
 	);
 }
