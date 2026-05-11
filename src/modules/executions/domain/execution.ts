@@ -28,9 +28,19 @@ export const executionStatusValues: ExecutionStatus[] = [
 
 export const executionStatusFilterValues = [
 	"all",
+	"initializing",
+	"provisioning",
 	"running",
-	"failed",
+	"retrying",
+	"paused",
+	"resuming",
+	"stopping",
+	"stopped",
 	"completed",
+	"cached",
+	"skipped",
+	"retried",
+	"failed",
 ] as const;
 
 export type ExecutionStatusFilter =
