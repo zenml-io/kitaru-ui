@@ -85,21 +85,21 @@ describe("buildExecutionsQuery", () => {
 		).toBeUndefined();
 	});
 
-	it("maps range '24h' to created: gte:<isoNow-24h>", () => {
+	it("maps range '24h' to created: gte:<now-24h> in backend datetime format", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(FIXED_NOW);
 		const q = buildExecutionsQuery({ ...base(), range: "24h" });
-		expect(q.created).toBe("gte:2026-05-09T12:00:00.000Z");
+		expect(q.created).toBe("gte:2026-05-09 12:00:00");
 	});
 
 	it("maps range '7d' / '30d' against the same now", () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(FIXED_NOW);
 		expect(buildExecutionsQuery({ ...base(), range: "7d" }).created).toBe(
-			"gte:2026-05-03T12:00:00.000Z"
+			"gte:2026-05-03 12:00:00"
 		);
 		expect(buildExecutionsQuery({ ...base(), range: "30d" }).created).toBe(
-			"gte:2026-04-10T12:00:00.000Z"
+			"gte:2026-04-10 12:00:00"
 		);
 	});
 

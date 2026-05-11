@@ -23,9 +23,19 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 const STATUS_LABELS: Record<ExecutionStatusFilter, string> = {
 	all: "All",
+	initializing: "Initializing",
+	provisioning: "Provisioning",
 	running: "Running",
-	failed: "Failed",
+	retrying: "Retrying",
+	paused: "Paused",
+	resuming: "Resuming",
+	stopping: "Stopping",
+	stopped: "Stopped",
 	completed: "Completed",
+	cached: "Cached",
+	skipped: "Skipped",
+	retried: "Retried",
+	failed: "Failed",
 };
 
 const RANGE_LABELS: Record<GlobalExecutionsRange, string> = {
@@ -76,8 +86,13 @@ export function GlobalExecutionsFilterBarContainer({
 		if (debouncedSearch !== search) {
 			onChange({ search: debouncedSearch });
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch]);
+	}, [debouncedSearch, search, onChange]);
+
+	// Sync local input when the URL-driven `search` prop changes externally
+	// (e.g. Clear filters, back/forward nav). Same-value writes are no-ops.
+	useEffect(() => {
+		setLocalSearch(search);
+	}, [search]);
 
 	const handleFlowChange = (nextFlowIdRaw: string | null) => {
 		if (nextFlowIdRaw === null) return;

@@ -1,4 +1,5 @@
 import type { operations } from "@/shared/api/openapi";
+import { formatBackendTimestamp } from "@/shared/utils/time";
 import type {
 	GlobalExecutionsQueryParams,
 	GlobalExecutionsRange,
@@ -63,5 +64,5 @@ function resolveCreatedFilter(
 ): string | undefined {
 	if (range === "all") return undefined;
 	const cutoff = new Date(Date.now() - RANGE_TO_MS[range]);
-	return `gte:${cutoff.toISOString()}`;
+	return `gte:${formatBackendTimestamp(cutoff)}`;
 }
