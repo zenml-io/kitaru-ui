@@ -20,23 +20,6 @@ import { formatVersion } from "@/modules/deployments/domain/deployment";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
-const STATUS_LABELS: Record<ExecutionStatusFilter, string> = {
-	all: "All",
-	initializing: "Initializing",
-	provisioning: "Provisioning",
-	running: "Running",
-	retrying: "Retrying",
-	paused: "Paused",
-	resuming: "Resuming",
-	stopping: "Stopping",
-	stopped: "Stopped",
-	completed: "Completed",
-	cached: "Cached",
-	skipped: "Skipped",
-	retried: "Retried",
-	failed: "Failed",
-};
-
 const RANGE_LABELS: Record<GlobalExecutionsRange, string> = {
 	"24h": "Last 24h",
 	"7d": "Last 7 days",
@@ -111,17 +94,21 @@ export function GlobalExecutionsFilterBarContainer({
 				<Select
 					value={status}
 					onValueChange={(v) => {
-						if (v !== null) onChange({ status: v as ExecutionStatusFilter });
+						if (v !== null) onChange({ status: v });
 					}}
 				>
 					<LabeledFilterTrigger
 						label="Status"
-						displayValue={status === "all" ? undefined : STATUS_LABELS[status]}
+						displayValue={
+							status === "all" ? undefined : (
+								<span className="capitalize">{status}</span>
+							)
+						}
 					/>
 					<SelectContent>
 						{executionStatusFilterValues.map((s) => (
-							<SelectItem key={s} value={s}>
-								{STATUS_LABELS[s]}
+							<SelectItem key={s} value={s} className="capitalize">
+								{s}
 							</SelectItem>
 						))}
 					</SelectContent>
@@ -198,7 +185,7 @@ export function GlobalExecutionsFilterBarContainer({
 				<Select
 					value={range}
 					onValueChange={(v) => {
-						if (v !== null) onChange({ range: v as GlobalExecutionsRange });
+						if (v !== null) onChange({ range: v });
 					}}
 				>
 					<LabeledFilterTrigger
