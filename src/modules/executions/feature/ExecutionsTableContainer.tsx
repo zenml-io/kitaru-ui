@@ -21,21 +21,32 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import type { Execution } from "../domain/execution";
 import { ExecutionName } from "../ui/ExecutionName";
+import { ExecutionActionsDropdown } from "../ui/ExecutionActionsDropdown";
+
+export type SnapshotVersionLookup = Map<string, DeploymentVersion>;
 
 export function ExecutionsTableContainer({
 	executionRows,
 	flowId,
+	versionLookup,
+	versionParam,
 }: {
 	executionRows: Execution[];
 	flowId: string;
+	versionLookup: SnapshotVersionLookup;
+	versionParam: DeploymentVersion | undefined;
 }) {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: "createdAt", desc: true },
 	]);
 
-	const columns = useMemo(() => buildExecutionColumns(flowId), [flowId]);
+	const columns = useMemo(
+		() => buildExecutionColumns(flowId, versionLookup, versionParam),
+		[flowId, versionLookup, versionParam]
+	);
 
 	const table = useReactTable({
 		data: executionRows,
@@ -104,7 +115,11 @@ export function ExecutionsTableContainer({
 	);
 }
 
-function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
+function buildExecutionColumns(
+	flowId: string,
+	versionLookup: SnapshotVersionLookup,
+	versionParam: DeploymentVersion | undefined
+): ColumnDef<Execution>[] {
 	return [
 		{
 			accessorKey: "execution",
@@ -112,15 +127,25 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 			header: ({ column }) => (
 				<SortableHeader column={column} label="Execution" />
 			),
-			cell: ({ row }) => (
-				<Link
-					to="/flows/$flowId/executions/$executionId"
-					params={{ flowId, executionId: row.original.id }}
-					className="block px-2 py-3.5 hover:underline"
-				>
-					<ExecutionName index={row.original.index} />
-				</Link>
-			),
+			cell: ({ row }) => {
+				const lookedUp = row.original.sourceSnapshot?.id
+					? versionLookup.get(row.original.sourceSnapshot.id)
+					: undefined;
+				const linkVersion = versionParam ?? lookedUp ?? "local";
+				return (
+					<Link
+						to="/flows/$flowId/v/$version/executions/$executionId"
+						params={{
+							flowId,
+							version: linkVersion,
+							executionId: row.original.id,
+						}}
+						className="block px-2 py-3.5 hover:underline"
+					>
+						<ExecutionName index={row.original.index} />
+					</Link>
+				);
+			},
 		},
 		{
 			accessorKey: "status",
@@ -152,6 +177,17 @@ function buildExecutionColumns(flowId: string): ColumnDef<Execution>[] {
 					{row.original.createdAt?.toLocaleString() ?? "-"}
 				</TextRenderer>
 			),
+		},
+		{
+			id: "actions",
+			header: () => null,
+			cell: ({ row }) => (
+				<ExecutionActionsDropdown
+					executionId={row.original.id}
+					flowId={flowId}
+				/>
+			),
+			enableSorting: false,
 		},
 	];
 }

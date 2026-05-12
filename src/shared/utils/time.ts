@@ -1,6 +1,8 @@
 import {
+	format,
 	formatDistanceToNowStrict,
 	intervalToDuration,
+	isValid,
 	parseISO,
 } from "date-fns";
 
@@ -47,6 +49,13 @@ export function formatRelativeTime(value: Date | string) {
 	return formatDistanceToNowStrict(date, {
 		addSuffix: true,
 	});
+}
+
+export function formatTimestamp(ts: string | null | undefined): string {
+	if (!ts) return "";
+	const d = new Date(ts);
+	if (!isValid(d)) return ts;
+	return format(d, "HH:mm:ss.SSS");
 }
 
 export function parseBackendTimestamp(dateString: string | number) {

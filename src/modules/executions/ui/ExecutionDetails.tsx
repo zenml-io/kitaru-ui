@@ -1,20 +1,16 @@
-import {
-	PageHeader,
-	PageHeaderBody,
-	PageHeaderContent,
-} from "@/shared/ui/PageHeader";
-import { Stat } from "@/modules/flows/ui/Stat";
-import { getCanShowDuration } from "@/shared/business-logic/duration";
-import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
-import type { Execution } from "../domain/execution";
+import { useScrollHighlight } from "@/shared/business-logic/use-scroll-highlight";
 import type { WaitCondition } from "../domain/wait-condition";
 import type { ResolveWaitConditionParams } from "../domain/resolve-wait-condition";
 import type { TimelineEntry } from "../domain/waiting-block";
 import { CheckpointThread } from "./traces/CheckpointThread";
+import { ExecutionTimelineBar } from "./traces/ExecutionTimelineBar";
 import { WaitInputSection } from "./WaitInputSection";
+import {
+	ToggleLeftPanelButton,
+	ToggleRightPanelButton,
+} from "@/shared/ui/ThreePanelLayoutContext";
 
 type ExecutionDetailsProps = {
-	execution: Execution;
 	timelineEntries: TimelineEntry[];
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
@@ -23,47 +19,46 @@ type ExecutionDetailsProps = {
 };
 
 export function ExecutionDetails({
-	execution,
 	timelineEntries,
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
 	resumeHint,
 }: ExecutionDetailsProps) {
-	const canShowDuration = getCanShowDuration({
-		status: execution.status,
-		startTime: execution.startTime,
-		endTime: execution.endTime,
-	});
+	const scrollHighlight = useScrollHighlight();
+
+	const handleTimelineSelect = (entry: TimelineEntry) => {
+		scrollHighlight.focus(entry.data.id);
+
+		if (entry.kind === "checkpoint") {
+			onSelectCheckpoint(entry.data.id);
+		}
+	};
 
 	return (
 		<main className="flex min-h-0 flex-1 flex-col">
-			<PageHeader>
-				<PageHeaderContent>
-					<PageHeaderBody>
-						{canShowDuration && (
-							<Stat
-								label="Duration"
-								value={
-									<LiveDurationMs
-										status={execution.status}
-										startTime={execution.startTime}
-										endTime={execution.endTime}
-									/>
-								}
-								valueColor="default"
-								valueSize="sm"
-							/>
-						)}
-					</PageHeaderBody>
-				</PageHeaderContent>
-			</PageHeader>
-			<div className="flex-1 overflow-y-auto">
-				<CheckpointThread
-					timelineEntries={timelineEntries}
-					onSelect={onSelectCheckpoint}
+			<div className="border-border flex shrink-0 items-center gap-2 border-b p-2">
+				<ToggleLeftPanelButton
+					ariaLabel={(open) =>
+						open ? "Close executions list" : "Open executions list"
+					}
+				/>
+				<div className="flex-1" />
+				<ToggleRightPanelButton
+					ariaLabel={(open) =>
+						open ? "Close checkpoint details" : "Open checkpoint details"
+					}
 				/>
 			</div>
+			<ExecutionTimelineBar
+				timelineEntries={timelineEntries}
+				onSelect={handleTimelineSelect}
+			/>
+			<CheckpointThread
+				timelineEntries={timelineEntries}
+				onSelect={onSelectCheckpoint}
+				highlightedId={scrollHighlight.highlightedId}
+			/>
 
 			{resumeHint && (
 				<>

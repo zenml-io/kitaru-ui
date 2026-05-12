@@ -1,6 +1,8 @@
 import type { components } from "@/shared/api/openapi";
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
+import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
+import { pythonModuleToFilePath } from "../util/file-path";
 import {
 	extractInputArtifactEntries,
 	extractOutputArtifactEntries,
@@ -8,6 +10,11 @@ import {
 import type { ArtifactEntry } from "./artifact";
 
 export type { ArtifactEntry };
+
+export type CheckpointSource = {
+	code: string;
+	filePath?: string;
+};
 
 export type Checkpoint = {
 	id: string;
@@ -20,11 +27,24 @@ export type Checkpoint = {
 	costUsd?: number;
 	inputs: ArtifactEntry[];
 	outputs: ArtifactEntry[];
+	logSources: string[];
+	runMetadata?: Record<string, unknown>;
+	source?: CheckpointSource;
 };
 
 export function checkpointFromApiToDomain(
 	checkpoint: components["schemas"]["StepRunResponse"]
 ): Checkpoint {
+	const sourceCode = checkpoint.metadata?.source_code;
+	const sourceModule = checkpoint.metadata?.spec?.source?.module;
+	const source: CheckpointSource | undefined = sourceCode
+		? {
+				code: sourceCode,
+				filePath: sourceModule
+					? pythonModuleToFilePath(sourceModule)
+					: undefined,
+			}
+		: undefined;
 	return {
 		id: checkpoint.id,
 		name: checkpoint.name,
@@ -46,6 +66,9 @@ export function checkpointFromApiToDomain(
 		costUsd:
 			// @ts-expect-error - TODO: fix this
 			checkpoint.metadata?.run_metadata?.llm_usage?.cost_usd ?? undefined,
+		logSources: extractLogSources(checkpoint.resources?.log_collection),
+		runMetadata: checkpoint.metadata?.run_metadata,
+		source,
 	};
 }
 

@@ -7,13 +7,23 @@ const DEFAULT_PAGE = 1;
 const MAX_PAGE_SIZE = 1000;
 export const DEFAULT_EXECUTIONS_POLLING_INTERVAL = 5000;
 
-export async function fetchExecutions(flowId: string): Promise<Execution[]> {
+export type FetchExecutionsOptions = {
+	hydrate?: boolean;
+	snapshotId?: string;
+};
+
+export async function fetchExecutions(
+	flowId: string,
+	options?: FetchExecutionsOptions
+): Promise<Execution[]> {
 	const response = await apiClient.GET("/api/v1/runs", {
 		params: {
 			query: {
 				page: DEFAULT_PAGE,
 				size: MAX_PAGE_SIZE,
 				pipeline_id: flowId,
+				source_snapshot_id: options?.snapshotId,
+				hydrate: options?.hydrate,
 			},
 		},
 	});

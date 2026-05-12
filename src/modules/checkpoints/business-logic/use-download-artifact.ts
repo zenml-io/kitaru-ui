@@ -16,7 +16,9 @@ export function useDownloadArtifact() {
 			window.open(url, "_blank");
 		},
 		onError: (error) => {
-			toast.error(error.message);
+			toast.error("Download failed", {
+				description: error.message,
+			});
 		},
 	});
 

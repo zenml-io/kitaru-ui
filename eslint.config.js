@@ -25,4 +25,10 @@ export default defineConfig([
 			"eslint-comments/no-unused-disable": "off",
 		},
 	},
+	{
+		files: ["e2e/**/*.ts"],
+		rules: {
+			"react-hooks/rules-of-hooks": "off",
+		},
+	},
 ]);

@@ -1,4 +1,4 @@
-import type { ThemeRegistration } from "shiki";
+import type { ThemeRegistration } from "shiki/types";
 
 export const kitaruLight: ThemeRegistration = {
 	name: "kitaru-light",

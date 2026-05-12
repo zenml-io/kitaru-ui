@@ -1,14 +1,22 @@
 import { queryOptions } from "@tanstack/react-query";
 import { fetchExecutions } from "../domain/fetch-executions";
 import { fetchExecution } from "../domain/fetch-execution";
+import { fetchExecutionLogs } from "../domain/fetch-execution-logs";
 import { fetchWaitCondition } from "../domain/fetch-wait-condition";
 import { fetchWaitConditions } from "../domain/fetch-wait-conditions";
 
 export const executionsQueryKeys = {
 	base: ["executions"] as const,
-	all: (flowId: string) => [...executionsQueryKeys.base, flowId] as const,
+	all: (flowId: string, snapshotId?: string) =>
+		snapshotId
+			? ([...executionsQueryKeys.base, flowId, "snapshot", snapshotId] as const)
+			: ([...executionsQueryKeys.base, flowId] as const),
+	listWithSnapshots: (flowId: string) =>
+		[...executionsQueryKeys.base, "list-with-snapshots", flowId] as const,
 	detail: (executionId: string) =>
 		[...executionsQueryKeys.base, "detail", executionId] as const,
+	logs: (runId: string, source: string) =>
+		[...executionsQueryKeys.base, "logs", runId, source] as const,
 	waitCondition: (waitConditionId: string) =>
 		[...executionsQueryKeys.base, "waitCondition", waitConditionId] as const,
 	waitConditions: (executionId: string) =>
@@ -16,15 +24,25 @@ export const executionsQueryKeys = {
 };
 
 export const executionsQueries = {
-	all: (flowId: string) =>
+	all: (flowId: string, snapshotId?: string) =>
 		queryOptions({
-			queryKey: executionsQueryKeys.all(flowId),
-			queryFn: () => fetchExecutions(flowId),
+			queryKey: executionsQueryKeys.all(flowId, snapshotId),
+			queryFn: () => fetchExecutions(flowId, { snapshotId }),
+		}),
+	listWithSnapshots: (flowId: string) =>
+		queryOptions({
+			queryKey: executionsQueryKeys.listWithSnapshots(flowId),
+			queryFn: () => fetchExecutions(flowId, { hydrate: true }),
 		}),
 	detail: (executionId: string) =>
 		queryOptions({
 			queryKey: executionsQueryKeys.detail(executionId),
 			queryFn: () => fetchExecution(executionId),
+		}),
+	logs: (runId: string, source: string) =>
+		queryOptions({
+			queryKey: executionsQueryKeys.logs(runId, source),
+			queryFn: () => fetchExecutionLogs(runId, source),
 		}),
 	waitCondition: (waitConditionId: string) =>
 		queryOptions({

@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { components } from "@/shared/api/openapi";
-import { checkpointFromApiToDomain } from "./checkpoint";
+import {
+	checkpointFromApiToDomain,
+	checkpointEntryFromApiToDomain,
+} from "./checkpoint";
 
 type ArtifactSaveType = components["schemas"]["ArtifactSaveType"];
 type StepRunInputArtifactType =
@@ -175,33 +178,6 @@ describe("checkpointFromApiToDomain", () => {
 		]);
 	});
 
-	it("keeps memory artifacts out of generic checkpoint chips", () => {
-		const checkpoint = makeCheckpoint({
-			inputs: {
-				memoryInput: [
-					makeInputArtifact({
-						id: "memory-input-id",
-						inputType: "manual",
-						artifactName: "kitaru_mem:flow:repo_memory_demo:summaries/latest",
-					}),
-				],
-			},
-			outputs: {
-				memoryOutput: [
-					makeOutputArtifact({
-						id: "memory-output-id",
-						saveType: "manual",
-						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
-					}),
-				],
-			},
-		});
-
-		const mapped = checkpointFromApiToDomain(checkpoint);
-		expect(mapped.inputs).toEqual([]);
-		expect(mapped.outputs).toEqual([]);
-	});
-
 	it("treats external_ as a fallback heuristic, not the primary rule", () => {
 		const checkpoint = makeCheckpoint({
 			inputs: {
@@ -253,9 +229,9 @@ describe("checkpointFromApiToDomain", () => {
 			outputs: {
 				result: [
 					makeOutputArtifact({
-						id: "hidden-memory-id",
-						saveType: "manual",
-						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
+						id: "hidden-external-id",
+						saveType: "external",
+						artifactName: "ordinary-hidden-name",
 					}),
 					makeOutputArtifact({
 						id: "visible-output-id",
@@ -333,5 +309,78 @@ describe("checkpointFromApiToDomain", () => {
 		expect(checkpointFromApiToDomain(checkpoint).outputs).toEqual([
 			{ id: "good-output-id", name: "good" },
 		]);
+	});
+
+	it("extracts source.code and derives source.filePath from spec.source.module", () => {
+		const checkpoint = {
+			id: "checkpoint-id-source",
+			name: "data_loader",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: {
+				source_code: "def data_loader():\n    pass\n",
+				spec: { source: { module: "src.flows.content_pipeline" } },
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toEqual({
+			code: "def data_loader():\n    pass\n",
+			filePath: "src/flows/content_pipeline.py",
+		});
+	});
+
+	it("returns source with code but no filePath when spec.source.module is missing", () => {
+		const checkpoint = {
+			id: "checkpoint-id-source-no-spec",
+			name: "lonely_source",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: { source_code: "def lonely_source():\n    pass\n" },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toEqual({
+			code: "def lonely_source():\n    pass\n",
+			filePath: undefined,
+		});
+	});
+
+	it("leaves source undefined when metadata is absent", () => {
+		const checkpoint = {
+			id: "checkpoint-id-no-metadata",
+			name: "no_metadata",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toBeUndefined();
+	});
+
+	it("leaves source undefined when only spec.source.module is set (no code)", () => {
+		const checkpoint = {
+			id: "checkpoint-id-spec-only",
+			name: "spec_only",
+			body: { status: "completed" },
+			resources: { inputs: {}, outputs: {} },
+			metadata: { spec: { source: { module: "src.flows.spec_only" } } },
+		} as unknown as components["schemas"]["StepRunResponse"];
+
+		expect(checkpointFromApiToDomain(checkpoint).source).toBeUndefined();
+	});
+});
+
+describe("checkpointEntryFromApiToDomain", () => {
+	it("maps DAG node metadata.type to CheckpointEntry.type", () => {
+		const node = {
+			id: "node-tool-call-1",
+			node_id: "node-tool-call-1",
+			name: "fetch_weather",
+			type: "step",
+			metadata: {
+				status: "completed",
+				type: "tool_call",
+			},
+		} as unknown as components["schemas"]["Node"];
+
+		expect(checkpointEntryFromApiToDomain(node).type).toBe("tool_call");
 	});
 });

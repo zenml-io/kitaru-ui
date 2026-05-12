@@ -1,5 +1,4 @@
 import type { components } from "@/shared/api/openapi";
-import { parseMemoryArtifactName } from "@/modules/memory/domain/memory";
 import { isRecord } from "@/shared/utils/is-record";
 
 export type ArtifactEntry = {
@@ -60,7 +59,6 @@ function parseVisibleArtifact(
 	const artifactName = artifact ? getNonEmptyString(artifact.name) : undefined;
 
 	if (!id || !artifactName) return undefined;
-	if (parseMemoryArtifactName(artifactName) !== undefined) return undefined;
 
 	if (direction === "input") {
 		const inputType = parseInputArtifactType(value.input_type);

@@ -1,9 +1,17 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { checkpointsQueries } from "./checkpoints-queries";
 
-export function useArtifactVisualization(artifactVersionId: string) {
-	const query = useSuspenseQuery(
-		checkpointsQueries.visualization(artifactVersionId)
-	);
-	return { ...query, visualizationData: query.data };
+type Options = Omit<
+	ReturnType<typeof checkpointsQueries.artifactVisualization>,
+	"queryKey" | "queryFn"
+>;
+
+export function useArtifactVisualization(
+	artifactVersionId: string,
+	opts: Options = {}
+) {
+	return useQuery({
+		...checkpointsQueries.artifactVisualization(artifactVersionId),
+		...opts,
+	});
 }

@@ -7,7 +7,6 @@ type Status = components["schemas"]["ExecutionStatus"];
 type LiveDurationMsProps = {
 	status?: Status;
 	startTime?: Date;
-	endTime?: Date;
 	durationMs?: number;
 	className?: string;
 };

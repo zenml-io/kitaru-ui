@@ -1,15 +1,13 @@
-import { VisualizationErrorBoundary } from "@/modules/executions/ui/VisualizationErrorBoundary";
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
+import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { ChipBar } from "@/shared/ui/ChipBar";
 import { Separator } from "@/shared/ui/separator";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import { TruncatedText } from "@/shared/ui/truncated-text";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";
 import { ArtifactVisualizationContainer } from "../feature/ArtifactVisualizationContainer";
 import { DownloadArtifactButtonContainer } from "../feature/DownloadArtifactButtonContainer";
 import { NoArtifactsMessage } from "./NoArtifactsMessage";
-import { VisualizationSkeleton } from "./VisualizationSkeleton";
 
 type SelectedArtifact = {
 	artifact: ArtifactEntry;
@@ -55,9 +53,9 @@ export function CheckpointDetailPanelArtifacts({
 			{hasVisibleArtifacts && selectedArtifact && (
 				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
 					<div className="bg-muted/50 flex items-center justify-between px-4 py-2">
-						<span className="text-foreground truncate text-xs font-semibold">
+						<TruncatedText className="text-foreground text-xs font-semibold">
 							{selectedArtifact.artifact.name}
-						</span>
+						</TruncatedText>
 						<div className="flex items-center gap-1">
 							<DownloadArtifactButtonContainer
 								artifactVersionId={selectedArtifact.artifact.id}
@@ -70,13 +68,11 @@ export function CheckpointDetailPanelArtifacts({
 					</div>
 					<Separator />
 					<div className="bg-background flex-1">
-						<ErrorBoundary FallbackComponent={VisualizationErrorBoundary}>
-							<Suspense fallback={<VisualizationSkeleton />}>
-								<ArtifactVisualizationContainer
-									artifactVersionId={selectedArtifact.artifact.id}
-								/>
-							</Suspense>
-						</ErrorBoundary>
+						<ViewerFrameFullHeight>
+							<ArtifactVisualizationContainer
+								artifactVersionId={selectedArtifact.artifact.id}
+							/>
+						</ViewerFrameFullHeight>
 					</div>
 				</div>
 			)}
