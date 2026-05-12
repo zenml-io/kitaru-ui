@@ -185,6 +185,7 @@ export function ExecutionContainer({
 								flowId={flowId}
 								execution={executionData}
 								checkpoints={checkpointsData.checkpoints}
+								selectedCheckpointId={selectedCheckpointId}
 								onSelectCheckpoint={setSelectedCheckpointId}
 							/>
 						)

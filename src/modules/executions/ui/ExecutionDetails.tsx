@@ -12,6 +12,7 @@ import {
 
 type ExecutionDetailsProps = {
 	timelineEntries: TimelineEntry[];
+	selectedCheckpointId: string | undefined;
 	onSelectCheckpoint: (id: string) => void;
 	waitCondition?: WaitCondition;
 	onResolveWaitCondition?: (params: ResolveWaitConditionParams) => void;
@@ -20,6 +21,7 @@ type ExecutionDetailsProps = {
 
 export function ExecutionDetails({
 	timelineEntries,
+	selectedCheckpointId,
 	onSelectCheckpoint,
 	waitCondition,
 	onResolveWaitCondition,
@@ -56,6 +58,7 @@ export function ExecutionDetails({
 			/>
 			<CheckpointThread
 				timelineEntries={timelineEntries}
+				selectedCheckpointId={selectedCheckpointId}
 				onSelect={onSelectCheckpoint}
 				highlightedId={scrollHighlight.highlightedId}
 			/>
