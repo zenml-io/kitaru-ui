@@ -7,7 +7,6 @@ import { LabeledFilterTrigger } from "../ui/LabeledFilterTrigger";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
 import { listStacksFromDeployments } from "@/modules/deployments/business-logic/list-stacks-from-deployments";
-import { useDebouncedValue } from "@/shared/business-logic/use-debounced-value";
 import {
 	executionStatusFilterValues,
 	type ExecutionStatusFilter,
@@ -80,19 +79,19 @@ export function GlobalExecutionsFilterBarContainer({
 		: undefined;
 
 	const [localSearch, setLocalSearch] = useState(search);
-	const debouncedSearch = useDebouncedValue(localSearch, SEARCH_DEBOUNCE_MS);
 
-	useEffect(() => {
-		if (debouncedSearch !== search) {
-			onChange({ search: debouncedSearch });
-		}
-	}, [debouncedSearch, search, onChange]);
-
-	// Sync local input when the URL-driven `search` prop changes externally
-	// (e.g. Clear filters, back/forward nav). Same-value writes are no-ops.
 	useEffect(() => {
 		setLocalSearch(search);
 	}, [search]);
+
+	useEffect(() => {
+		if (localSearch === search) return;
+		const id = setTimeout(
+			() => onChange({ search: localSearch }),
+			SEARCH_DEBOUNCE_MS
+		);
+		return () => clearTimeout(id);
+	}, [localSearch, search, onChange]);
 
 	const handleFlowChange = (nextFlowIdRaw: string | null) => {
 		if (nextFlowIdRaw === null) return;
