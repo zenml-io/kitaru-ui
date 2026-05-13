@@ -17,7 +17,7 @@ export function CheckpointDockerImageSectionContainer({
 }: Props) {
 	const { data: build } = useSuspenseQuery(buildsQueries.detail(buildId));
 	const dockerImage = selectDockerImage(
-		build.images,
+		build.imagesSet,
 		checkpointName,
 		checkpointStepOperator
 	);
@@ -27,9 +27,9 @@ export function CheckpointDockerImageSectionContainer({
 			checkpointName,
 			checkpointStepOperator,
 			availableKeys: {
-				orchestrator: build.images.orchestrator !== undefined,
-				perStep: Object.keys(build.images.perStep),
-				perStepOperator: Object.keys(build.images.perStepOperator),
+				orchestrator: build.imagesSet.orchestrator !== undefined,
+				perStep: Object.keys(build.imagesSet.perStep),
+				perStepOperator: Object.keys(build.imagesSet.perStepOperator),
 			},
 		});
 	}

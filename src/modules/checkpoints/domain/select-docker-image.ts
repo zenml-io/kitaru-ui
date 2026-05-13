@@ -1,7 +1,10 @@
-import type { BuildImages, DockerImage } from "@/modules/builds/domain/build";
+import type {
+	BuildImagesSet,
+	DockerImage,
+} from "@/modules/builds/domain/build";
 
 export function selectDockerImage(
-	images: BuildImages,
+	images: BuildImagesSet,
 	checkpointName: string,
 	stepOperator?: string
 ): DockerImage | null {

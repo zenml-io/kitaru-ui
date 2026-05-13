@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
-import type { BuildImages, DockerImage } from "@/modules/builds/domain/build";
+import type {
+	BuildImagesSet,
+	DockerImage,
+} from "@/modules/builds/domain/build";
 import { selectDockerImage } from "./select-docker-image";
 
 const stub = (name: string): DockerImage => ({ image: `${name}-image` });
 
 describe("selectDockerImage", () => {
-	const images: BuildImages = {
+	const images: BuildImagesSet = {
 		orchestrator: stub("orchestrator"),
 		perStep: { train: stub("train") },
 		perStepOperator: { "train.sagemaker": stub("train.sagemaker") },
@@ -38,7 +41,7 @@ describe("selectDockerImage", () => {
 	});
 
 	it("returns null when no key matches", () => {
-		const empty: BuildImages = { perStep: {}, perStepOperator: {} };
+		const empty: BuildImagesSet = { perStep: {}, perStepOperator: {} };
 		expect(selectDockerImage(empty, "train", "sagemaker")).toBeNull();
 	});
 });

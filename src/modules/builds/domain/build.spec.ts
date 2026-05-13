@@ -72,10 +72,10 @@ describe("buildFromApiToDomain", () => {
 		expect(result.pythonVersion).toBe("3.11.6");
 		expect(result.zenmlVersion).toBe("0.66.0");
 		expect(result.isLocal).toBe(false);
-		expect(result.images.orchestrator?.image).toBe("orch-img");
-		expect(result.images.perStep.train?.image).toBe("train-img");
-		expect(result.images.perStep.train?.dockerfile).toBe("FROM python\n");
-		expect(result.images.perStepOperator["train.sagemaker"]?.image).toBe(
+		expect(result.imagesSet.orchestrator?.image).toBe("orch-img");
+		expect(result.imagesSet.perStep.train?.image).toBe("train-img");
+		expect(result.imagesSet.perStep.train?.dockerfile).toBe("FROM python\n");
+		expect(result.imagesSet.perStepOperator["train.sagemaker"]?.image).toBe(
 			"train-sm-img"
 		);
 	});
@@ -86,9 +86,9 @@ describe("buildFromApiToDomain", () => {
 			metadata: { is_local: true },
 		} as unknown as PipelineBuildResponse;
 		const result = buildFromApiToDomain(api);
-		expect(result.images.orchestrator).toBeUndefined();
-		expect(result.images.perStep).toEqual({});
-		expect(result.images.perStepOperator).toEqual({});
+		expect(result.imagesSet.orchestrator).toBeUndefined();
+		expect(result.imagesSet.perStep).toEqual({});
+		expect(result.imagesSet.perStepOperator).toEqual({});
 	});
 
 	it("returns empty image partitions when metadata is null", () => {
@@ -97,9 +97,9 @@ describe("buildFromApiToDomain", () => {
 			metadata: null,
 		} as unknown as PipelineBuildResponse;
 		const result = buildFromApiToDomain(api);
-		expect(result.images.orchestrator).toBeUndefined();
-		expect(result.images.perStep).toEqual({});
-		expect(result.images.perStepOperator).toEqual({});
+		expect(result.imagesSet.orchestrator).toBeUndefined();
+		expect(result.imagesSet.perStep).toEqual({});
+		expect(result.imagesSet.perStepOperator).toEqual({});
 		expect(result.pythonVersion).toBeUndefined();
 		expect(result.isLocal).toBeUndefined();
 	});
