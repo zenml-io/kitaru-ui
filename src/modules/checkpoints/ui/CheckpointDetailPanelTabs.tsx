@@ -6,7 +6,6 @@ const TABS = [
 	"configuration",
 	"code",
 	"artifacts",
-	"memory",
 ] as const;
 
 export type PanelTab = (typeof TABS)[number];
