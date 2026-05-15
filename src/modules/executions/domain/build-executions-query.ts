@@ -1,7 +1,7 @@
 import type { operations } from "@/shared/api/openapi";
 import { formatBackendTimestamp } from "@/shared/utils/time";
 import type {
-	GlobalExecutionsQueryParams,
+	ExecutionsQueryParams,
 	GlobalExecutionsRange,
 } from "./global-executions-query-params";
 
@@ -21,6 +21,7 @@ export type ExecutionsListQuery = Pick<
 	| "stack_id"
 	| "index"
 	| "created"
+	| "hydrate"
 >;
 
 const RANGE_TO_MS: Record<Exclude<GlobalExecutionsRange, "all">, number> = {
@@ -32,7 +33,7 @@ const RANGE_TO_MS: Record<Exclude<GlobalExecutionsRange, "all">, number> = {
 // Multiple filters combine with AND on the backend by default
 // (see `BaseFilter.logical_operator` in zenml/models/v2/base/filter.py).
 export function buildExecutionsQuery(
-	params: GlobalExecutionsQueryParams
+	params: ExecutionsQueryParams
 ): ExecutionsListQuery {
 	return {
 		sort_by: params.sort,
@@ -43,6 +44,7 @@ export function buildExecutionsQuery(
 		source_snapshot_id: params.snapshotId,
 		stack_id: params.stackId,
 		created: resolveCreatedFilter(params.range),
+		hydrate: params.hydrate,
 		...resolveSearchFilter(params.search),
 	};
 }
@@ -60,9 +62,9 @@ function resolveSearchFilter(
 }
 
 function resolveCreatedFilter(
-	range: GlobalExecutionsRange
+	range: GlobalExecutionsRange | undefined
 ): string | undefined {
-	if (range === "all") return undefined;
+	if (range === undefined || range === "all") return undefined;
 	const cutoff = new Date(Date.now() - RANGE_TO_MS[range]);
 	return `gte:${formatBackendTimestamp(cutoff)}`;
 }

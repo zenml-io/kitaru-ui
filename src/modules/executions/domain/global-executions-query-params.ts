@@ -30,3 +30,21 @@ export type GlobalExecutionsQueryParams = {
 	page: number;
 	pageSize: number;
 };
+
+/**
+ * Superset of every option `fetchExecutions` accepts. The global executions
+ * view passes a fully-populated {@link GlobalExecutionsQueryParams} (which is
+ * assignable to this); flow-scoped callers pass only the fields they need.
+ */
+export type ExecutionsQueryParams = {
+	status?: ExecutionStatus | "all";
+	flowId?: string;
+	snapshotId?: string;
+	stackId?: string;
+	range?: GlobalExecutionsRange;
+	search?: string;
+	sort?: string;
+	page?: number;
+	pageSize?: number;
+	hydrate?: boolean;
+};

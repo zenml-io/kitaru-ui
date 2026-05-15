@@ -1,8 +1,7 @@
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import { fetchExecution } from "../domain/fetch-execution";
 import { fetchExecutionLogs } from "../domain/fetch-execution-logs";
-import { fetchExecutions } from "../domain/fetch-executions";
-import { fetchGlobalExecutions } from "../domain/fetch-global-executions";
+import { type ExecutionsPage, fetchExecutions } from "../domain/fetch-executions";
 import { fetchWaitCondition } from "../domain/fetch-wait-condition";
 import { fetchWaitConditions } from "../domain/fetch-wait-conditions";
 import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
@@ -27,16 +26,35 @@ export const executionsQueryKeys = {
 		[...executionsQueryKeys.base, "global", params] as const,
 };
 
+// TODO: Drop this once flow-scoped lists move to real API pagination.
+const FLOW_SCOPED_PAGE_SIZE = 1000;
+
+const toItems = (page: ExecutionsPage) => page.items;
+
 export const executionsQueries = {
 	all: (flowId: string, snapshotId?: string) =>
 		queryOptions({
 			queryKey: executionsQueryKeys.all(flowId, snapshotId),
-			queryFn: () => fetchExecutions(flowId, { snapshotId }),
+			queryFn: () =>
+				fetchExecutions({
+					flowId,
+					snapshotId,
+					page: 1,
+					pageSize: FLOW_SCOPED_PAGE_SIZE,
+				}),
+			select: toItems,
 		}),
 	listWithSnapshots: (flowId: string) =>
 		queryOptions({
 			queryKey: executionsQueryKeys.listWithSnapshots(flowId),
-			queryFn: () => fetchExecutions(flowId, { hydrate: true }),
+			queryFn: () =>
+				fetchExecutions({
+					flowId,
+					hydrate: true,
+					page: 1,
+					pageSize: FLOW_SCOPED_PAGE_SIZE,
+				}),
+			select: toItems,
 		}),
 	detail: (executionId: string) =>
 		queryOptions({
@@ -61,7 +79,7 @@ export const executionsQueries = {
 	global: (params: GlobalExecutionsQueryParams) =>
 		queryOptions({
 			queryKey: executionsQueryKeys.global(params),
-			queryFn: () => fetchGlobalExecutions(params),
+			queryFn: () => fetchExecutions(params),
 			placeholderData: keepPreviousData,
 		}),
 };

@@ -1,33 +1,36 @@
 import { apiClient } from "@/shared/api/domain/api-client";
 import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { buildExecutionsQuery } from "./build-executions-query";
 import { type Execution, executionFromApiToDomain } from "./execution";
+import type { ExecutionsQueryParams } from "./global-executions-query-params";
 
-// TODO: Remove these constants and use the API pagination instead
-const DEFAULT_PAGE = 1;
-const MAX_PAGE_SIZE = 1000;
 export const DEFAULT_EXECUTIONS_POLLING_INTERVAL = 5000;
 
-export type FetchExecutionsOptions = {
-	hydrate?: boolean;
-	snapshotId?: string;
+export type ExecutionsPage = {
+	items: Execution[];
+	page: number;
+	totalPages: number;
+	total: number;
 };
 
+/**
+ * Single entry point for listing runs. Callers in the business-logic layer
+ * shape behaviour by passing the appropriate {@link ExecutionsQueryParams}
+ * (flow-scoped list, snapshot filter, hydrate, global filtered/paginated view).
+ */
 export async function fetchExecutions(
-	flowId: string,
-	options?: FetchExecutionsOptions
-): Promise<Execution[]> {
+	params: ExecutionsQueryParams
+): Promise<ExecutionsPage> {
 	const response = await apiClient.GET("/api/v1/runs", {
 		params: {
-			query: {
-				page: DEFAULT_PAGE,
-				size: MAX_PAGE_SIZE,
-				pipeline_id: flowId,
-				source_snapshot_id: options?.snapshotId,
-				hydrate: options?.hydrate,
-			},
+			query: buildExecutionsQuery(params),
 		},
 	});
-	const executionsPage = expectData(response);
-
-	return executionsPage.items.map(executionFromApiToDomain);
+	const page = expectData(response);
+	return {
+		items: page.items.map(executionFromApiToDomain),
+		page: page.index,
+		totalPages: page.total_pages,
+		total: page.total,
+	};
 }
