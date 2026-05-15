@@ -8,6 +8,7 @@ import { GlobalExecutionsPaginatedTableContainer } from "./GlobalExecutionsPagin
 import { GlobalExecutionsFilterBarContainer } from "./GlobalExecutionsFilterBarContainer";
 import {
 	DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
+	GLOBAL_EXECUTIONS_SEARCH_DEFAULTS,
 	type GlobalExecutionsQueryParams,
 } from "../domain/global-executions-query-params";
 import {
@@ -67,21 +68,21 @@ export function GlobalExecutionsContainer() {
 	};
 
 	const hasActiveFilters =
-		search.status !== "all" ||
+		search.status !== GLOBAL_EXECUTIONS_SEARCH_DEFAULTS.status ||
+		search.range !== GLOBAL_EXECUTIONS_SEARCH_DEFAULTS.range ||
+		search.q !== GLOBAL_EXECUTIONS_SEARCH_DEFAULTS.q ||
 		search.flow !== undefined ||
 		search.version !== undefined ||
-		search.stack !== undefined ||
-		search.range !== "all" ||
-		search.q !== "";
+		search.stack !== undefined;
 
+	// Clearing filters resets every filter to its default by dropping the
+	// params entirely; the schema's `.catch()` fallbacks repopulate them.
+	// `sort` is intentionally preserved — it isn't a filter.
 	const onClearFilters = () => {
-		onFilterChange({
-			status: "all",
-			flowId: undefined,
-			snapshotId: undefined,
-			stackId: undefined,
-			range: "all",
-			search: "",
+		void navigate({
+			to: "/executions",
+			search: (prev) => ({ sort: prev.sort }),
+			replace: true,
 		});
 	};
 
