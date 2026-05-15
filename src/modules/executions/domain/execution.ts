@@ -55,6 +55,20 @@ export type Execution = {
 	};
 };
 
+function computeDurationMs(
+	run: components["schemas"]["PipelineRunResponse"]
+): number | undefined {
+	const start =
+		run.metadata?.start_time ?? (run.body ? run.body.created : undefined);
+	const end =
+		run.metadata?.end_time ?? (run.body ? run.body.updated : undefined);
+	if (!start || !end || start === end) return undefined;
+	const ms =
+		parseBackendTimestamp(end).getTime() -
+		parseBackendTimestamp(start).getTime();
+	return ms > 0 ? ms : undefined;
+}
+
 export function executionFromApiToDomain(
 	run: components["schemas"]["PipelineRunResponse"]
 ): Execution {
@@ -71,17 +85,16 @@ export function executionFromApiToDomain(
 			? userFromApiToDomain(run.resources.user)
 			: undefined,
 		createdAt: parseBackendTimestamp(run.body.created),
-		startTime: run.metadata?.start_time
-			? parseBackendTimestamp(run.metadata.start_time)
-			: undefined,
-		endTime: run.metadata?.end_time
-			? parseBackendTimestamp(run.metadata.end_time)
-			: undefined,
-		durationMs:
-			run.metadata?.end_time && run.metadata?.start_time
-				? parseBackendTimestamp(run.metadata.end_time).getTime() -
-					parseBackendTimestamp(run.metadata.start_time).getTime()
-				: undefined,
+		startTime: parseBackendTimestamp(
+			run.metadata?.start_time ?? run.body.created
+		),
+		endTime:
+			run.metadata?.end_time != null
+				? parseBackendTimestamp(run.metadata.end_time)
+				: run.body.updated != null && run.body.updated !== run.body.created
+					? parseBackendTimestamp(run.body.updated)
+					: undefined,
+		durationMs: computeDurationMs(run),
 		logSources: extractLogSources(run.resources?.log_collection),
 		activeWaitConditionEntry:
 			run.resources?.active_wait_condition?.id ||

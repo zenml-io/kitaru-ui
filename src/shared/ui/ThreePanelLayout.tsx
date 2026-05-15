@@ -11,8 +11,8 @@ import { useThreePanelLayoutInternal } from "./ThreePanelLayoutContext";
 const PANEL_IDS = { left: "left", center: "center", right: "right" } as const;
 
 const DEFAULT_SIZES = {
-	left: { default: 20, min: 10 },
-	center: { default: 50, min: 30 },
+	left: { default: 10, min: 10 },
+	center: { default: 60, min: 30 },
 	right: { default: 30, min: 10 },
 } as const;
 
