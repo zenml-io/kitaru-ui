@@ -4,9 +4,8 @@ import type { SortingState } from "@tanstack/react-table";
 import { GlobalExecutionsHeader } from "../ui/GlobalExecutionsHeader";
 import { GlobalExecutionsTableSkeleton } from "../ui/GlobalExecutionsTableSkeleton";
 import { GlobalExecutionsFilterBarSkeleton } from "../ui/GlobalExecutionsFilterBarSkeleton";
-import { GlobalExecutionsTableContainer } from "./GlobalExecutionsTableContainer";
+import { GlobalExecutionsPaginatedTableContainer } from "./GlobalExecutionsPaginatedTableContainer";
 import { GlobalExecutionsFilterBarContainer } from "./GlobalExecutionsFilterBarContainer";
-import { GlobalExecutionsPaginationContainer } from "./GlobalExecutionsPaginationContainer";
 import {
 	DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
 	type GlobalExecutionsQueryParams,
@@ -103,15 +102,12 @@ export function GlobalExecutionsContainer() {
 			<div className="flex-1 overflow-y-auto">
 				<div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
 					<Suspense fallback={<GlobalExecutionsTableSkeleton />}>
-						<GlobalExecutionsTableContainer
+						<GlobalExecutionsPaginatedTableContainer
 							params={params}
 							sorting={sortingState}
 							onSortingChange={onSortingChange}
 							hasActiveFilters={hasActiveFilters}
 							onClearFilters={onClearFilters}
-						/>
-						<GlobalExecutionsPaginationContainer
-							params={params}
 							onPageChange={onPageChange}
 						/>
 					</Suspense>

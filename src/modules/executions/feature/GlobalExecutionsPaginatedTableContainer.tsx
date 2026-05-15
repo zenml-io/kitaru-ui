@@ -3,33 +3,44 @@ import type { SortingState } from "@tanstack/react-table";
 import { executionsQueries } from "../business-logic/executions-queries";
 import { toGlobalExecutionsRows } from "../business-logic/to-global-executions-rows";
 import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
+import { GlobalExecutionsPagination } from "../ui/GlobalExecutionsPagination";
 import { GlobalExecutionsTable } from "../ui/GlobalExecutionsTable";
 
-type GlobalExecutionsTableContainerProps = {
+type GlobalExecutionsPaginatedTableContainerProps = {
 	params: GlobalExecutionsQueryParams;
 	sorting: SortingState;
 	onSortingChange: (state: SortingState) => void;
 	hasActiveFilters: boolean;
 	onClearFilters: () => void;
+	onPageChange: (page: number) => void;
 };
 
-export function GlobalExecutionsTableContainer({
+export function GlobalExecutionsPaginatedTableContainer({
 	params,
 	sorting,
 	onSortingChange,
 	hasActiveFilters,
 	onClearFilters,
-}: GlobalExecutionsTableContainerProps) {
+	onPageChange,
+}: GlobalExecutionsPaginatedTableContainerProps) {
 	const { data: page } = useSuspenseQuery(executionsQueries.global(params));
 	const rows = toGlobalExecutionsRows(page.items);
 
 	return (
-		<GlobalExecutionsTable
-			rows={rows}
-			sorting={sorting}
-			onSortingChange={onSortingChange}
-			hasActiveFilters={hasActiveFilters}
-			onClearFilters={onClearFilters}
-		/>
+		<>
+			<GlobalExecutionsTable
+				rows={rows}
+				sorting={sorting}
+				onSortingChange={onSortingChange}
+				hasActiveFilters={hasActiveFilters}
+				onClearFilters={onClearFilters}
+			/>
+			<GlobalExecutionsPagination
+				page={page.page}
+				totalPages={page.totalPages}
+				total={page.total}
+				onPageChange={onPageChange}
+			/>
+		</>
 	);
 }

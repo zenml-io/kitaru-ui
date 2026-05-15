@@ -1,22 +1,19 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { executionsQueries } from "../business-logic/executions-queries";
-import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
 
-type GlobalExecutionsPaginationContainerProps = {
-	params: GlobalExecutionsQueryParams;
+type GlobalExecutionsPaginationProps = {
+	page: number;
+	totalPages: number;
+	total: number;
 	onPageChange: (page: number) => void;
 };
 
-export function GlobalExecutionsPaginationContainer({
-	params,
+export function GlobalExecutionsPagination({
+	page,
+	totalPages,
+	total,
 	onPageChange,
-}: GlobalExecutionsPaginationContainerProps) {
-	const { data } = useSuspenseQuery(executionsQueries.global(params));
-
-	const { page, totalPages, total } = data;
-
+}: GlobalExecutionsPaginationProps) {
 	if (totalPages <= 1) return null;
 
 	return (
