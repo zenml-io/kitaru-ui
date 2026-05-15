@@ -4,6 +4,7 @@ import {
 	stripSearchParams,
 } from "@tanstack/react-router";
 import { z } from "zod";
+import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
 import { executionStatusFilterValues } from "@/modules/executions/domain/execution";
 import { GlobalExecutionsContainer } from "@/modules/executions/feature/GlobalExecutionsContainer";
 import {
@@ -11,6 +12,7 @@ import {
 	GLOBAL_EXECUTIONS_RANGE_VALUES,
 	GLOBAL_EXECUTIONS_SEARCH_DEFAULTS,
 } from "@/modules/executions/domain/global-executions-query-params";
+import { PageSpinner } from "@/shared/ui/spinner";
 import { sortBySchema } from "@/shared/utils/sorting";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
 
@@ -52,4 +54,9 @@ export const Route = createFileRoute("/_private/_navbar/executions/")({
 	head: () => ({
 		meta: [{ title: buildPageTitles("Executions") }],
 	}),
+	pendingComponent: PageSpinner,
+	loaderDeps: ({ search }) => search,
+	loader: async ({ context, deps }) => {
+		await context.queryClient.ensureQueryData(executionsQueries.global(deps));
+	},
 });

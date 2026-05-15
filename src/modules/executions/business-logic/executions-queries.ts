@@ -4,7 +4,11 @@ import { fetchExecutionLogs } from "../domain/fetch-execution-logs";
 import { type ExecutionsPage, fetchExecutions } from "../domain/fetch-executions";
 import { fetchWaitCondition } from "../domain/fetch-wait-condition";
 import { fetchWaitConditions } from "../domain/fetch-wait-conditions";
-import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
+import {
+	DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
+	type GlobalExecutionsQueryParams,
+	type GlobalExecutionsSearch,
+} from "../domain/global-executions-query-params";
 
 export const executionsQueryKeys = {
 	base: ["executions"] as const,
@@ -22,9 +26,27 @@ export const executionsQueryKeys = {
 		[...executionsQueryKeys.base, "waitCondition", waitConditionId] as const,
 	waitConditions: (executionId: string) =>
 		[...executionsQueryKeys.base, "waitConditions", executionId] as const,
-	global: (params: GlobalExecutionsQueryParams) =>
-		[...executionsQueryKeys.base, "global", params] as const,
+	global: (search: GlobalExecutionsSearch) =>
+		[...executionsQueryKeys.base, "global", search] as const,
 };
+
+// Maps the URL search to the API-consumable query params. Lives here so the
+// route loader and the container both just pass `search` and stay in sync.
+function searchToGlobalExecutionsParams(
+	search: GlobalExecutionsSearch
+): GlobalExecutionsQueryParams {
+	return {
+		status: search.status,
+		flowId: search.flow,
+		snapshotId: search.version,
+		stackId: search.stack,
+		range: search.range,
+		search: search.q,
+		sort: search.sort,
+		page: search.page,
+		pageSize: DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
+	};
+}
 
 // TODO: Drop this once flow-scoped lists move to real API pagination.
 const FLOW_SCOPED_PAGE_SIZE = 1000;
@@ -76,10 +98,10 @@ export const executionsQueries = {
 			queryKey: executionsQueryKeys.waitConditions(executionId),
 			queryFn: () => fetchWaitConditions(executionId),
 		}),
-	global: (params: GlobalExecutionsQueryParams) =>
+	global: (search: GlobalExecutionsSearch) =>
 		queryOptions({
-			queryKey: executionsQueryKeys.global(params),
-			queryFn: () => fetchExecutions(params),
+			queryKey: executionsQueryKeys.global(search),
+			queryFn: () => fetchExecutions(searchToGlobalExecutionsParams(search)),
 			placeholderData: keepPreviousData,
 		}),
 };

@@ -2,12 +2,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import type { SortingState } from "@tanstack/react-table";
 import { executionsQueries } from "../business-logic/executions-queries";
 import { toGlobalExecutionsRows } from "../business-logic/to-global-executions-rows";
-import type { GlobalExecutionsQueryParams } from "../domain/global-executions-query-params";
+import type { GlobalExecutionsSearch } from "../domain/global-executions-query-params";
 import { GlobalExecutionsPagination } from "../ui/GlobalExecutionsPagination";
 import { GlobalExecutionsTable } from "../ui/GlobalExecutionsTable";
 
 type GlobalExecutionsPaginatedTableContainerProps = {
-	params: GlobalExecutionsQueryParams;
+	search: GlobalExecutionsSearch;
 	sorting: SortingState;
 	onSortingChange: (state: SortingState) => void;
 	hasActiveFilters: boolean;
@@ -16,14 +16,14 @@ type GlobalExecutionsPaginatedTableContainerProps = {
 };
 
 export function GlobalExecutionsPaginatedTableContainer({
-	params,
+	search,
 	sorting,
 	onSortingChange,
 	hasActiveFilters,
 	onClearFilters,
 	onPageChange,
 }: GlobalExecutionsPaginatedTableContainerProps) {
-	const { data: page } = useSuspenseQuery(executionsQueries.global(params));
+	const { data: page } = useSuspenseQuery(executionsQueries.global(search));
 	const rows = toGlobalExecutionsRows(page.items);
 
 	return (

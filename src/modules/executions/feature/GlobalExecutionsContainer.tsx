@@ -6,11 +6,7 @@ import { GlobalExecutionsTableSkeleton } from "../ui/GlobalExecutionsTableSkelet
 import { GlobalExecutionsFilterBarSkeleton } from "../ui/GlobalExecutionsFilterBarSkeleton";
 import { GlobalExecutionsPaginatedTableContainer } from "./GlobalExecutionsPaginatedTableContainer";
 import { GlobalExecutionsFilterBarContainer } from "./GlobalExecutionsFilterBarContainer";
-import {
-	DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
-	GLOBAL_EXECUTIONS_SEARCH_DEFAULTS,
-	type GlobalExecutionsQueryParams,
-} from "../domain/global-executions-query-params";
+import { GLOBAL_EXECUTIONS_SEARCH_DEFAULTS } from "../domain/global-executions-query-params";
 import {
 	type FilterChange,
 	filterChangeToSearchPatch,
@@ -23,18 +19,6 @@ import {
 export function GlobalExecutionsContainer() {
 	const search = useSearch({ from: "/_private/_navbar/executions/" });
 	const navigate = useNavigate();
-
-	const params: GlobalExecutionsQueryParams = {
-		status: search.status,
-		flowId: search.flow,
-		snapshotId: search.version,
-		stackId: search.stack,
-		range: search.range,
-		search: search.q,
-		sort: search.sort,
-		page: search.page,
-		pageSize: DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE,
-	};
 
 	const sortingState = paramToSortingState(search.sort);
 
@@ -104,7 +88,7 @@ export function GlobalExecutionsContainer() {
 				<div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
 					<Suspense fallback={<GlobalExecutionsTableSkeleton />}>
 						<GlobalExecutionsPaginatedTableContainer
-							params={params}
+							search={search}
 							sorting={sortingState}
 							onSortingChange={onSortingChange}
 							hasActiveFilters={hasActiveFilters}

@@ -33,6 +33,22 @@ export const GLOBAL_EXECUTIONS_ALLOWED_SORT_FIELDS = [
 	"name",
 ] as const;
 
+/**
+ * Validated `/executions` URL search, as produced by the route's zod schema.
+ * This is the input the global executions query is keyed on; the query layer
+ * maps it to {@link GlobalExecutionsQueryParams} internally.
+ */
+export type GlobalExecutionsSearch = {
+	status: ExecutionStatus | "all";
+	flow?: string;
+	version?: string;
+	stack?: string;
+	range: GlobalExecutionsRange;
+	q: string;
+	page: number;
+	sort: string;
+};
+
 export type GlobalExecutionsQueryParams = {
 	status?: ExecutionStatus | "all";
 	flowId?: string;
