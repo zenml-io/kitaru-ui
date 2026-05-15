@@ -7,12 +7,14 @@ import type { TimelineEntry } from "../../domain/waiting-block";
 
 type CheckpointThreadProps = {
 	timelineEntries: TimelineEntry[];
+	selectedCheckpointId: string | undefined;
 	onSelect: (id: string) => void;
 	highlightedId?: string;
 };
 
 export function CheckpointThread({
 	timelineEntries,
+	selectedCheckpointId,
 	onSelect,
 	highlightedId,
 }: CheckpointThreadProps) {
@@ -29,7 +31,11 @@ export function CheckpointThread({
 					{entry.kind === "waiting" ? (
 						<WaitingBlockRow waitingBlock={entry.data} />
 					) : (
-						<CheckpointRow checkpointEntry={entry.data} onSelect={onSelect} />
+						<CheckpointRow
+							checkpointEntry={entry.data}
+							isSelected={selectedCheckpointId === entry.data.id}
+							onSelect={onSelect}
+						/>
 					)}
 				</RowHighlightedWrapper>
 			))}

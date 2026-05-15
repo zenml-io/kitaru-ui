@@ -4,8 +4,8 @@ import { cn } from "@/shared/utils/styles";
 
 type ArtifactChipProps = {
 	name: string;
-	isSelected?: boolean;
-	onClick?: () => void;
+	isSelected: boolean;
+	onClick: () => void;
 };
 
 export function ArtifactChip({ name, isSelected, onClick }: ArtifactChipProps) {
