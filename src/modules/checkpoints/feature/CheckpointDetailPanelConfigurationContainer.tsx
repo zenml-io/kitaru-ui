@@ -7,17 +7,19 @@ import { CheckpointDetailPanelConfigurationSkeleton } from "../ui/CheckpointDeta
 import { CheckpointDockerImageSectionContainer } from "./CheckpointDockerImageSectionContainer";
 import { CheckpointStackSectionContainer } from "./CheckpointStackSectionContainer";
 
-type Props = {
+type CheckpointDetailPanelConfigurationContainerProps = {
 	executionId: string;
 	checkpointName: string;
-	checkpointStepOperator?: string;
+	checkpointStepOperator?: boolean | string;
+	checkpointExperimentTracker?: boolean | string;
 };
 
 export function CheckpointDetailPanelConfigurationContainer({
 	executionId,
 	checkpointName,
 	checkpointStepOperator,
-}: Props) {
+	checkpointExperimentTracker,
+}: CheckpointDetailPanelConfigurationContainerProps) {
 	const { executionData } = useExecution(executionId);
 	const { stackId, buildId } = executionData;
 
@@ -34,13 +36,18 @@ export function CheckpointDetailPanelConfigurationContainer({
 			>
 				<Suspense fallback={<CheckpointDetailPanelConfigurationSkeleton />}>
 					{stackId ? (
-						<CheckpointStackSectionContainer stackId={stackId} />
+						<CheckpointStackSectionContainer
+							stackId={stackId}
+							checkpointStepOperator={checkpointStepOperator}
+							checkpointExperimentTracker={checkpointExperimentTracker}
+						/>
 					) : null}
 					{buildId ? (
 						<CheckpointDockerImageSectionContainer
 							buildId={buildId}
 							checkpointName={checkpointName}
 							checkpointStepOperator={checkpointStepOperator}
+							stackId={stackId}
 						/>
 					) : null}
 				</Suspense>

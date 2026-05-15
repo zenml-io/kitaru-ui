@@ -7,6 +7,7 @@ import {
 	makeExecution,
 	makePipeline,
 	makeStack,
+	makeStackComponent,
 } from "../fixtures/api";
 
 const FLOW_ID = "22222222-2222-2222-2222-222222222222";
@@ -16,6 +17,51 @@ const STACK_ID = "55555555-5555-5555-5555-555555555555";
 const BUILD_ID = "77777777-7777-7777-7777-777777777777";
 
 const executionUrl = `/flows/${FLOW_ID}/v/local/executions/${EXECUTION_ID}`;
+
+const stackWithMultiInstanceComponents = makeStack({
+	id: STACK_ID,
+	name: "ml-stack",
+	metadata: {
+		components: {
+			orchestrator: [
+				makeStackComponent("orchestrator", {
+					id: "cmp-orchestrator",
+					name: "orchestrator-default",
+				}),
+			],
+			step_operator: [
+				makeStackComponent("step_operator", {
+					id: "cmp-step-op-sagemaker",
+					name: "step-op-sagemaker",
+				}),
+				makeStackComponent("step_operator", {
+					id: "cmp-step-op-vertex",
+					name: "step-op-vertex",
+				}),
+			],
+			experiment_tracker: [
+				makeStackComponent("experiment_tracker", {
+					id: "cmp-tracker-mlflow",
+					name: "tracker-mlflow",
+				}),
+				makeStackComponent("experiment_tracker", {
+					id: "cmp-tracker-wandb",
+					name: "tracker-wandb",
+				}),
+			],
+		},
+	},
+});
+
+function makeCheckpointWithConfig(config: {
+	step_operator?: boolean | string;
+	experiment_tracker?: boolean | string;
+}) {
+	return makeCheckpoint({
+		id: CHECKPOINT_ID,
+		metadata: { config } as never,
+	});
+}
 
 const emptyPage = {
 	index: 1,
@@ -125,4 +171,81 @@ test("renders the empty state when execution has no stack or build", async ({
 	await page.getByRole("button", { name: "Configuration" }).click();
 
 	await expect(page.getByText(/no configuration/i)).toBeVisible();
+});
+
+async function openConfigurationTab(page: import("@playwright/test").Page) {
+	await page.goto(executionUrl);
+	await page
+		.getByRole("button", { name: /load_data/ })
+		.first()
+		.click();
+	await page.getByRole("button", { name: "Configuration" }).click();
+	await expect(page.getByRole("button", { name: "Stack" })).toBeVisible();
+}
+
+test("shows only the named step operator", async ({ page, mockApi }) => {
+	await mockApi({
+		"/api/v1/stacks/{stack_id}": { get: stackWithMultiInstanceComponents },
+		"/api/v1/pipeline_builds/{build_id}": { get: makeBuild({ id: BUILD_ID }) },
+		"/api/v1/steps/{step_id}": {
+			get: makeCheckpointWithConfig({ step_operator: "step-op-vertex" }),
+		},
+	});
+
+	await openConfigurationTab(page);
+
+	await expect(page.getByText("step-op-vertex")).toBeVisible();
+	await expect(page.getByText("step-op-sagemaker")).toBeHidden();
+	await expect(page.getByText("Active")).toBeHidden();
+});
+
+test("step_operator true selects the first step operator from the stack", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/stacks/{stack_id}": { get: stackWithMultiInstanceComponents },
+		"/api/v1/pipeline_builds/{build_id}": { get: makeBuild({ id: BUILD_ID }) },
+		"/api/v1/steps/{step_id}": {
+			get: makeCheckpointWithConfig({ step_operator: true }),
+		},
+	});
+
+	await openConfigurationTab(page);
+
+	await expect(page.getByText("step-op-sagemaker")).toBeVisible();
+	await expect(page.getByText("step-op-vertex")).toBeHidden();
+});
+
+test("shows only the named experiment tracker", async ({ page, mockApi }) => {
+	await mockApi({
+		"/api/v1/stacks/{stack_id}": { get: stackWithMultiInstanceComponents },
+		"/api/v1/pipeline_builds/{build_id}": { get: makeBuild({ id: BUILD_ID }) },
+		"/api/v1/steps/{step_id}": {
+			get: makeCheckpointWithConfig({ experiment_tracker: "tracker-mlflow" }),
+		},
+	});
+
+	await openConfigurationTab(page);
+
+	await expect(page.getByText("tracker-mlflow")).toBeVisible();
+	await expect(page.getByText("tracker-wandb")).toBeHidden();
+});
+
+test("experiment_tracker true keeps every tracker visible", async ({
+	page,
+	mockApi,
+}) => {
+	await mockApi({
+		"/api/v1/stacks/{stack_id}": { get: stackWithMultiInstanceComponents },
+		"/api/v1/pipeline_builds/{build_id}": { get: makeBuild({ id: BUILD_ID }) },
+		"/api/v1/steps/{step_id}": {
+			get: makeCheckpointWithConfig({ experiment_tracker: true }),
+		},
+	});
+
+	await openConfigurationTab(page);
+
+	await expect(page.getByText("tracker-mlflow")).toBeVisible();
+	await expect(page.getByText("tracker-wandb")).toBeVisible();
 });

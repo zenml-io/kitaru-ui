@@ -30,7 +30,8 @@ export type Checkpoint = {
 	logSources: string[];
 	runMetadata?: Record<string, unknown>;
 	source?: CheckpointSource;
-	stepOperator?: string;
+	stepOperator?: boolean | string;
+	experimentTracker?: boolean | string;
 };
 
 export function checkpointFromApiToDomain(
@@ -46,9 +47,6 @@ export function checkpointFromApiToDomain(
 					: undefined,
 			}
 		: undefined;
-	const rawStepOperator = checkpoint.metadata?.config?.step_operator;
-	const stepOperator =
-		typeof rawStepOperator === "string" ? rawStepOperator : undefined;
 	return {
 		id: checkpoint.id,
 		name: checkpoint.name,
@@ -73,7 +71,9 @@ export function checkpointFromApiToDomain(
 		logSources: extractLogSources(checkpoint.resources?.log_collection),
 		runMetadata: checkpoint.metadata?.run_metadata,
 		source,
-		stepOperator,
+		stepOperator: checkpoint.metadata?.config?.step_operator ?? undefined,
+		experimentTracker:
+			checkpoint.metadata?.config?.experiment_tracker ?? undefined,
 	};
 }
 

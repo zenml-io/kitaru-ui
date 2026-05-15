@@ -1,11 +1,14 @@
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
 import type {
 	StackComponent,
 	StackComponentType,
 } from "@/modules/stacks/domain/stack";
 import { Badge } from "@/shared/ui/badge";
-import { cn } from "@/shared/utils/styles";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/shared/ui/collapsible";
 
 const TYPE_LABEL: Record<StackComponentType, string> = {
 	alerter: "Alerter",
@@ -46,22 +49,14 @@ export function StackComponentGroupCard({
 	type: StackComponentType;
 	components: StackComponent[];
 }) {
-	const [expanded, setExpanded] = useState(true);
 	const usedCount = components.length;
 	return (
-		<div className="bg-card border-border overflow-hidden rounded-lg border">
-			<button
-				type="button"
-				onClick={() => setExpanded((v) => !v)}
-				className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left hover:brightness-95"
-				aria-expanded={expanded}
-			>
-				<ChevronRight
-					className={cn(
-						"text-muted-foreground size-3.5 shrink-0 transition-transform",
-						expanded && "rotate-90"
-					)}
-				/>
+		<Collapsible
+			defaultOpen
+			className="bg-card border-border overflow-hidden rounded-lg border"
+		>
+			<CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left hover:brightness-95">
+				<ChevronRight className="text-muted-foreground size-3.5 shrink-0 transition-transform group-data-[panel-open]:rotate-90" />
 				<span className="text-muted-foreground text-xs">
 					{TYPE_LABEL[type] ?? type}
 				</span>
@@ -69,20 +64,18 @@ export function StackComponentGroupCard({
 					{usedCount}
 				</Badge>
 				<span className="flex-1" />
-			</button>
-			{expanded && (
-				<div className="space-y-4 p-4">
-					{components.map((component) => (
-						<SingleStackComponentCard
-							key={component.id}
-							type={type}
-							component={component}
-							showTypeLabel={false}
-						/>
-					))}
-				</div>
-			)}
-		</div>
+			</CollapsibleTrigger>
+			<CollapsibleContent className="space-y-4 p-4">
+				{components.map((component) => (
+					<SingleStackComponentCard
+						key={component.id}
+						type={type}
+						component={component}
+						showTypeLabel={false}
+					/>
+				))}
+			</CollapsibleContent>
+		</Collapsible>
 	);
 }
 

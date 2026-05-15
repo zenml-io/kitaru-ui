@@ -5,10 +5,10 @@ import {
 	Copy,
 	ExternalLink,
 } from "lucide-react";
-import { useState } from "react";
 import type { DockerImage } from "@/modules/builds/domain/build";
 import { useCopy } from "@/shared/business-logic/use-copy";
 import { Button, buttonVariants } from "@/shared/ui/button";
+import { Collapsible, CollapsibleContent } from "@/shared/ui/collapsible";
 import { cn } from "@/shared/utils/styles";
 import { ConfigurationSectionHeader } from "./ConfigurationSectionHeader";
 import { DockerCodeBlock } from "./DockerCodeBlock";
@@ -107,42 +107,35 @@ export function DockerImageSection({
 	pythonVersion,
 	registryUrl,
 }: DockerImageSectionProps) {
-	const [expanded, setExpanded] = useState(true);
 	return (
-		<div>
-			<ConfigurationSectionHeader
-				label="Docker Image"
-				expanded={expanded}
-				onToggle={() => setExpanded((v) => !v)}
-			/>
-			{expanded && (
-				<div className="space-y-3 px-4 pb-4">
-					{dockerImage === null ? (
-						<p className="text-muted-foreground text-xs">
-							No matching Docker image was found for this checkpoint.
-						</p>
-					) : (
-						<>
-							<ImageRow dockerImage={dockerImage} registryUrl={registryUrl} />
-							{dockerImage.dockerfile && (
-								<DockerCodeBlock
-									label="Dockerfile"
-									code={dockerImage.dockerfile}
-									language="dockerfile"
-								/>
-							)}
-							{dockerImage.requirements && (
-								<DockerCodeBlock
-									label="Requirements"
-									code={dockerImage.requirements}
-								/>
-							)}
-							<PythonRow pythonVersion={pythonVersion} />
-							<ContainsCodeRow dockerImage={dockerImage} />
-						</>
-					)}
-				</div>
-			)}
-		</div>
+		<Collapsible defaultOpen>
+			<ConfigurationSectionHeader label="Docker Image" />
+			<CollapsibleContent className="space-y-3 px-4 pb-4">
+				{dockerImage === null ? (
+					<p className="text-muted-foreground text-xs">
+						No matching Docker image was found for this checkpoint.
+					</p>
+				) : (
+					<>
+						<ImageRow dockerImage={dockerImage} registryUrl={registryUrl} />
+						{dockerImage.dockerfile && (
+							<DockerCodeBlock
+								label="Dockerfile"
+								code={dockerImage.dockerfile}
+								language="dockerfile"
+							/>
+						)}
+						{dockerImage.requirements && (
+							<DockerCodeBlock
+								label="Requirements"
+								code={dockerImage.requirements}
+							/>
+						)}
+						<PythonRow pythonVersion={pythonVersion} />
+						<ContainsCodeRow dockerImage={dockerImage} />
+					</>
+				)}
+			</CollapsibleContent>
+		</Collapsible>
 	);
 }

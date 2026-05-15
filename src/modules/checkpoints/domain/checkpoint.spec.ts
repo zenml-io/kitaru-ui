@@ -432,7 +432,7 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 		expect(checkpointFromApiToDomain(step).stepOperator).toBe("sagemaker");
 	});
 
-	it("returns undefined stepOperator when config.step_operator is true (boolean form)", () => {
+	it("flags stack-default stepOperator when config.step_operator is true (boolean form)", () => {
 		const step = {
 			id: "step-1",
 			name: "train",
@@ -451,7 +451,7 @@ describe("checkpointFromApiToDomain — stepOperator", () => {
 				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
 			},
 		} as unknown as components["schemas"]["StepRunResponse"];
-		expect(checkpointFromApiToDomain(step).stepOperator).toBeUndefined();
+		expect(checkpointFromApiToDomain(step).stepOperator).toBe(true);
 	});
 
 	it("returns undefined stepOperator when config.step_operator is null", () => {

@@ -104,6 +104,7 @@ function CheckpointDetailPanelContentContainer({
 						executionId={executionId}
 						checkpointName={detailsData.name}
 						checkpointStepOperator={detailsData.stepOperator}
+						checkpointExperimentTracker={detailsData.experimentTracker}
 					/>
 				)}
 				{activeTab === "artifacts" && (
