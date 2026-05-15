@@ -15,9 +15,11 @@ import {
 import { CheckpointDetailPanelSkeleton } from "../ui/CheckpointDetailPanelSkeleton";
 import { CheckpointDetailsEmptyView } from "../ui/CheckpointDetailsEmptyView";
 import { CheckpointLogsTabContainer } from "./CheckpointLogsTabContainer";
+import { CheckpointDetailPanelConfigurationContainer } from "./CheckpointDetailPanelConfigurationContainer";
 
 type CheckpointDetailPanelContainerProps = {
 	checkpointId?: string;
+	executionId: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
 	headerTrailing?: ReactNode;
@@ -25,6 +27,7 @@ type CheckpointDetailPanelContainerProps = {
 
 export function CheckpointDetailPanelContainer({
 	checkpointId,
+	executionId,
 	activeTab,
 	onTabChange,
 	headerTrailing,
@@ -37,6 +40,7 @@ export function CheckpointDetailPanelContainer({
 		<Suspense fallback={<CheckpointDetailPanelSkeleton />}>
 			<CheckpointDetailPanelContentContainer
 				checkpointId={checkpointId}
+				executionId={executionId}
 				activeTab={activeTab}
 				onTabChange={onTabChange}
 				headerTrailing={headerTrailing}
@@ -47,11 +51,13 @@ export function CheckpointDetailPanelContainer({
 
 function CheckpointDetailPanelContentContainer({
 	checkpointId,
+	executionId,
 	activeTab,
 	onTabChange,
 	headerTrailing,
 }: {
 	checkpointId: string;
+	executionId: string;
 	activeTab: PanelTab;
 	onTabChange: (tab: PanelTab) => void;
 	headerTrailing?: ReactNode;
@@ -99,6 +105,14 @@ function CheckpointDetailPanelContentContainer({
 				)}
 				{activeTab === "code" && (
 					<CheckpointDetailPanelSourceCode source={detailsData.source} />
+				)}
+				{activeTab === "configuration" && (
+					<CheckpointDetailPanelConfigurationContainer
+						executionId={executionId}
+						checkpointName={detailsData.name}
+						checkpointStepOperator={detailsData.stepOperator}
+						checkpointExperimentTracker={detailsData.experimentTracker}
+					/>
 				)}
 				{activeTab === "artifacts" && (
 					<CheckpointDetailPanelArtifacts
