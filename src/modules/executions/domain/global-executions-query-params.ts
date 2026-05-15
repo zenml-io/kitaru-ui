@@ -13,6 +13,20 @@ export type GlobalExecutionsRange =
 export const DEFAULT_GLOBAL_EXECUTIONS_PAGE_SIZE = 50;
 export const DEFAULT_GLOBAL_EXECUTIONS_SORT = "desc:created";
 
+/**
+ * Single source of truth for the global executions view URL search defaults,
+ * keyed by the route's search param names. Consumed by both the zod schema's
+ * `.catch()` fallbacks and the `stripSearchParams` middleware so the two never
+ * drift apart.
+ */
+export const GLOBAL_EXECUTIONS_SEARCH_DEFAULTS = {
+	status: "all",
+	range: "all",
+	q: "",
+	page: 1,
+	sort: DEFAULT_GLOBAL_EXECUTIONS_SORT,
+} as const;
+
 export const GLOBAL_EXECUTIONS_ALLOWED_SORT_FIELDS = [
 	"created",
 	"status",
