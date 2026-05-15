@@ -11,7 +11,7 @@ type NavbarTabsProps = {
 
 export function NavbarTabs({ tabs }: NavbarTabsProps) {
 	return (
-		<nav className="hidden items-center gap-1 sm:flex" aria-label="Primary">
+		<nav className="flex items-center gap-1" aria-label="Primary">
 			{tabs.map((tab) => (
 				<Link
 					key={tab.to}

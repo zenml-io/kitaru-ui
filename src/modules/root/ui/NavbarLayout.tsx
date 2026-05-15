@@ -15,7 +15,7 @@ export function NavbarLayout() {
 	return (
 		<div className="flex flex-1 flex-col overflow-hidden">
 			<div className="z-20 shrink-0">
-				<nav className="bg-card border-border flex h-12 items-center justify-between gap-3 border-b px-5">
+				<header className="bg-card border-border flex h-12 items-center justify-between gap-3 border-b px-5">
 					<div className="flex min-w-0 flex-1 items-center gap-2.5">
 						<Link to="/flows" className="flex items-center gap-2 no-underline">
 							<KitaruLogo className="h-4 w-auto" />
@@ -29,7 +29,7 @@ export function NavbarLayout() {
 							<UserDropdownContainer />
 						</Suspense>
 					</div>
-				</nav>
+				</header>
 			</div>
 			<div className="flex flex-1 flex-col overflow-y-auto">
 				<Outlet />
