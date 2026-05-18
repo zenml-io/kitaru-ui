@@ -64,9 +64,6 @@ export function GlobalExecutionsFilterBarContainer({
 	const [localSearch, setLocalSearch] = useState(search);
 	const [prevSearch, setPrevSearch] = useState(search);
 
-	// Resync the input when the URL-driven search changes externally
-	// (e.g. Clear filters). Adjusting state during render is React's
-	// recommended alternative to a prop-sync effect.
 	if (search !== prevSearch) {
 		setPrevSearch(search);
 		setLocalSearch(search);
