@@ -7,6 +7,7 @@ import {
 	KITARU_SNAPSHOT_NAME,
 	LOCAL_VERSION_ID,
 	NotAKitaruDeploymentError,
+	parseVersionFromSnapshotName,
 } from "./deployment";
 
 type SnapshotResponse = components["schemas"]["PipelineSnapshotResponse"];
@@ -60,6 +61,24 @@ describe("KITARU_SNAPSHOT_NAME regex", () => {
 		expect("some-pipeline-run-42".match(KITARU_SNAPSHOT_NAME)).toBeNull();
 		expect("kitaru::research_agent".match(KITARU_SNAPSHOT_NAME)).toBeNull();
 		expect("research_agent::v1".match(KITARU_SNAPSHOT_NAME)).toBeNull();
+	});
+});
+
+describe("parseVersionFromSnapshotName", () => {
+	it("returns the version digits as a number for kitaru snapshot names", () => {
+		expect(parseVersionFromSnapshotName("kitaru::research_agent::v3")).toBe(3);
+		expect(parseVersionFromSnapshotName("kitaru::any_flow_name::v42")).toBe(42);
+	});
+
+	it("returns null when the name doesn't match the kitaru pattern", () => {
+		expect(parseVersionFromSnapshotName("vanilla-snapshot")).toBeNull();
+		expect(parseVersionFromSnapshotName("kitaru::research_agent")).toBeNull();
+	});
+
+	it("returns null for empty / null / undefined input", () => {
+		expect(parseVersionFromSnapshotName("")).toBeNull();
+		expect(parseVersionFromSnapshotName(null)).toBeNull();
+		expect(parseVersionFromSnapshotName(undefined)).toBeNull();
 	});
 });
 

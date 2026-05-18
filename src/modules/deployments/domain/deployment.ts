@@ -8,6 +8,15 @@ export type DeploymentVersion = typeof LOCAL_VERSION_ID | number;
 
 export const KITARU_SNAPSHOT_NAME = /^kitaru::(.+)::v(\d+)$/;
 
+export function parseVersionFromSnapshotName(
+	name: string | null | undefined
+): number | null {
+	if (!name) return null;
+	const match = name.match(KITARU_SNAPSHOT_NAME);
+	if (!match) return null;
+	return Number.parseInt(match[2], 10);
+}
+
 const KITARU_DEPLOYMENT_MARKER_TAG = "kitaru:deployment";
 const KITARU_DEPLOYMENT_TAG = /^kitaru:deployment:tag:(.+):(exclusive|shared)$/;
 
@@ -69,13 +78,11 @@ function tagFromApiToDomain(
 export function deploymentFromApiToDomain(
 	snapshot: components["schemas"]["PipelineSnapshotResponse"]
 ): Deployment | null {
-	const match = snapshot.name?.match(KITARU_SNAPSHOT_NAME);
-	if (!match) return null;
+	const version = parseVersionFromSnapshotName(snapshot.name);
+	if (version === null) return null;
 
 	const pipeline = snapshot.resources?.pipeline;
 	if (!pipeline) return null;
-
-	const version = Number.parseInt(match[2], 10);
 
 	return {
 		id: snapshot.id,
