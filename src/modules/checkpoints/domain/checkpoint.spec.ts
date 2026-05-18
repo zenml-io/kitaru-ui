@@ -368,6 +368,96 @@ describe("checkpointFromApiToDomain", () => {
 	});
 });
 
+describe("checkpointFromApiToDomain — stepOperator", () => {
+	it("extracts stepOperator when config.step_operator is a string", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: "sagemaker" },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBe("sagemaker");
+	});
+
+	it("flags stack-default stepOperator when config.step_operator is true (boolean form)", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: true },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBe(true);
+	});
+
+	it("returns undefined stepOperator when config.step_operator is null", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: null },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBeUndefined();
+	});
+
+	it("returns undefined stepOperator when config.step_operator is missing", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: {},
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBeUndefined();
+	});
+});
+
 describe("checkpointEntryFromApiToDomain", () => {
 	it("maps DAG node metadata.type to CheckpointEntry.type", () => {
 		const node = {

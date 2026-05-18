@@ -185,6 +185,7 @@ export function ExecutionContainer({
 								flowId={flowId}
 								execution={executionData}
 								checkpoints={checkpointsData.checkpoints}
+								selectedCheckpointId={selectedCheckpointId}
 								onSelectCheckpoint={setSelectedCheckpointId}
 							/>
 						)
@@ -194,6 +195,7 @@ export function ExecutionContainer({
 							<CheckpointDetailPanelContainer
 								key={selectedCheckpointId}
 								checkpointId={selectedCheckpointId}
+								executionId={executionId}
 								activeTab={activeCheckpointTab}
 								onTabChange={setActiveCheckpointTab}
 								headerTrailing={

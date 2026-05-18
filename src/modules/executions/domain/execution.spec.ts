@@ -3,6 +3,8 @@ import type { components } from "@/shared/api/openapi";
 import { executionFromApiToDomain } from "./execution";
 
 type PipelineRunResponse = components["schemas"]["PipelineRunResponse"];
+type StackResponse = components["schemas"]["StackResponse"];
+type PipelineBuildResponse = components["schemas"]["PipelineBuildResponse"];
 
 function mkRun(
 	overrides: Partial<PipelineRunResponse["resources"]> = {}
@@ -60,5 +62,25 @@ describe("executionFromApiToDomain", () => {
 		expect(
 			executionFromApiToDomain(mkRun({ log_collection: undefined })).logSources
 		).toEqual([]);
+	});
+
+	it("extracts stackId from resources.stack.id when present (un-hydrated stub)", () => {
+		const run = mkRun({
+			stack: { id: "stack-123" } as unknown as StackResponse,
+		});
+		expect(executionFromApiToDomain(run).stackId).toBe("stack-123");
+	});
+
+	it("extracts buildId from resources.build.id when present (un-hydrated stub)", () => {
+		const run = mkRun({
+			build: { id: "build-456" } as unknown as PipelineBuildResponse,
+		});
+		expect(executionFromApiToDomain(run).buildId).toBe("build-456");
+	});
+
+	it("leaves stackId and buildId undefined when resources.stack and resources.build are absent", () => {
+		const exec = executionFromApiToDomain(mkRun());
+		expect(exec.stackId).toBeUndefined();
+		expect(exec.buildId).toBeUndefined();
 	});
 });

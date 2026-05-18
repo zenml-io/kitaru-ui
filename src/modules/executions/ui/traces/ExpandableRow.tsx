@@ -5,14 +5,9 @@ import { ChevronRight } from "lucide-react";
 type ExpandableRowProps = {
 	header: React.ReactNode;
 	children: React.ReactNode;
-	onToggle?: () => void;
 };
 
-export function ExpandableRow({
-	header,
-	children,
-	onToggle,
-}: ExpandableRowProps) {
+export function ExpandableRow({ header, children }: ExpandableRowProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	return (
@@ -30,10 +25,7 @@ export function ExpandableRow({
 					"flex h-10 w-full cursor-pointer items-center gap-2 px-4 text-left",
 					isExpanded && "border-border border-b"
 				)}
-				onClick={() => {
-					setIsExpanded((prev) => !prev);
-					onToggle?.();
-				}}
+				onClick={() => setIsExpanded((prev) => !prev)}
 			>
 				<ChevronRight
 					className={cn(
