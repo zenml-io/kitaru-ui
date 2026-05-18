@@ -1,6 +1,5 @@
 import type { components } from "@/shared/api/openapi";
 
-type ComponentResponse = components["schemas"]["ComponentResponse"];
 export type StackComponentType = components["schemas"]["StackComponentType"];
 
 export type StackComponent = {
@@ -23,7 +22,7 @@ export function stackFromApiToDomain(
 ): Stack {
 	const componentsMap = stack.metadata?.components ?? {};
 	const stackComponents: StackComponent[] = [];
-	for (const list of Object.values(componentsMap) as ComponentResponse[][]) {
+	for (const list of Object.values(componentsMap)) {
 		for (const c of list) {
 			if (!c.body) continue;
 			stackComponents.push({

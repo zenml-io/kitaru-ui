@@ -17,6 +17,7 @@ type ExecutionTabContainerProps = {
 	flowId: string;
 	execution: Execution;
 	checkpoints: CheckpointEntry[];
+	selectedCheckpointId: string | undefined;
 	onSelectCheckpoint: (id: string) => void;
 };
 
@@ -25,6 +26,7 @@ export function ExecutionTabContainer({
 	flowId,
 	execution,
 	checkpoints,
+	selectedCheckpointId,
 	onSelectCheckpoint,
 }: ExecutionTabContainerProps) {
 	const { expandRight } = useThreePanelLayout();
@@ -86,6 +88,7 @@ export function ExecutionTabContainer({
 		<ExecutionDetails
 			key={executionId}
 			timelineEntries={timelineEntries}
+			selectedCheckpointId={selectedCheckpointId}
 			onSelectCheckpoint={(id) => {
 				onSelectCheckpoint(id);
 				expandRight();

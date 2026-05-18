@@ -219,6 +219,11 @@ See [DESIGN.md](./DESIGN.md) for design-related guidelines.
 
 ## Git Conventions
 
+### Branching
+
+- **`develop`** is the base branch for all development work — create feature branches from it and target PRs against it
+- `main` is the stable/release branch; it receives merges from `develop`
+
 ### Docs Maintenance
 
 Before committing or pushing a PR, check whether `README.md` and `AGENTS.md` need updating to reflect your changes. Common triggers:

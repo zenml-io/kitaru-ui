@@ -73,6 +73,7 @@ export type Execution = {
 	flowName?: string;
 	stackId?: string;
 	stackName?: string;
+	buildId?: string;
 };
 
 export function executionFromApiToDomain(
@@ -129,5 +130,6 @@ export function executionFromApiToDomain(
 		flowName: run.resources?.pipeline?.name,
 		stackId: run.resources?.stack?.id,
 		stackName: run.resources?.stack?.name,
+		buildId: run.resources?.build?.id,
 	};
 }

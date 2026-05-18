@@ -178,33 +178,6 @@ describe("checkpointFromApiToDomain", () => {
 		]);
 	});
 
-	it("keeps memory artifacts out of generic checkpoint chips", () => {
-		const checkpoint = makeCheckpoint({
-			inputs: {
-				memoryInput: [
-					makeInputArtifact({
-						id: "memory-input-id",
-						inputType: "manual",
-						artifactName: "kitaru_mem:flow:repo_memory_demo:summaries/latest",
-					}),
-				],
-			},
-			outputs: {
-				memoryOutput: [
-					makeOutputArtifact({
-						id: "memory-output-id",
-						saveType: "manual",
-						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
-					}),
-				],
-			},
-		});
-
-		const mapped = checkpointFromApiToDomain(checkpoint);
-		expect(mapped.inputs).toEqual([]);
-		expect(mapped.outputs).toEqual([]);
-	});
-
 	it("treats external_ as a fallback heuristic, not the primary rule", () => {
 		const checkpoint = makeCheckpoint({
 			inputs: {
@@ -256,9 +229,9 @@ describe("checkpointFromApiToDomain", () => {
 			outputs: {
 				result: [
 					makeOutputArtifact({
-						id: "hidden-memory-id",
-						saveType: "manual",
-						artifactName: "kitaru_mem:namespace:repo_docs:sessions/topic_count",
+						id: "hidden-external-id",
+						saveType: "external",
+						artifactName: "ordinary-hidden-name",
 					}),
 					makeOutputArtifact({
 						id: "visible-output-id",
@@ -338,20 +311,6 @@ describe("checkpointFromApiToDomain", () => {
 		]);
 	});
 
-	it("maps StepRunResponse body.type = 'memory_call' to Checkpoint.type", () => {
-		const checkpoint = {
-			id: "checkpoint-id-memory",
-			name: "remember_user_pref",
-			body: {
-				status: "completed",
-				type: "memory_call",
-			},
-			resources: { inputs: {}, outputs: {} },
-		} as unknown as components["schemas"]["StepRunResponse"];
-
-		expect(checkpointFromApiToDomain(checkpoint).type).toBe("memory_call");
-	});
-
 	it("extracts source.code and derives source.filePath from spec.source.module", () => {
 		const checkpoint = {
 			id: "checkpoint-id-source",
@@ -409,19 +368,109 @@ describe("checkpointFromApiToDomain", () => {
 	});
 });
 
+describe("checkpointFromApiToDomain — stepOperator", () => {
+	it("extracts stepOperator when config.step_operator is a string", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: "sagemaker" },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBe("sagemaker");
+	});
+
+	it("flags stack-default stepOperator when config.step_operator is true (boolean form)", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: true },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBe(true);
+	});
+
+	it("returns undefined stepOperator when config.step_operator is null", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: { step_operator: null },
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBeUndefined();
+	});
+
+	it("returns undefined stepOperator when config.step_operator is missing", () => {
+		const step = {
+			id: "step-1",
+			name: "train",
+			body: {
+				created: "2026-04-17T00:00:00Z",
+				updated: "2026-04-17T00:00:00Z",
+				project_id: "00000000-0000-0000-0000-000000000000",
+				status: "completed",
+				version: 1,
+				is_retriable: false,
+			},
+			metadata: {
+				config: {},
+				spec: {},
+				snapshot_id: "00000000-0000-0000-0000-000000000000",
+				pipeline_run_id: "00000000-0000-0000-0000-000000000000",
+			},
+		} as unknown as components["schemas"]["StepRunResponse"];
+		expect(checkpointFromApiToDomain(step).stepOperator).toBeUndefined();
+	});
+});
+
 describe("checkpointEntryFromApiToDomain", () => {
-	it("maps DAG node metadata.type = 'memory_call' to CheckpointEntry.type", () => {
+	it("maps DAG node metadata.type to CheckpointEntry.type", () => {
 		const node = {
-			id: "node-memory-1",
-			node_id: "node-memory-1",
-			name: "remember_user_pref",
+			id: "node-tool-call-1",
+			node_id: "node-tool-call-1",
+			name: "fetch_weather",
 			type: "step",
 			metadata: {
 				status: "completed",
-				type: "memory_call",
+				type: "tool_call",
 			},
 		} as unknown as components["schemas"]["Node"];
 
-		expect(checkpointEntryFromApiToDomain(node).type).toBe("memory_call");
+		expect(checkpointEntryFromApiToDomain(node).type).toBe("tool_call");
 	});
 });
