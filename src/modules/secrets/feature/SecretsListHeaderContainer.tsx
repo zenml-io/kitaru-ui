@@ -8,7 +8,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/shared/ui/card";
+} from "@zenml/hashi/primitives/card";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 
 import { SecretFormDialogContainer } from "./SecretFormDialogContainer";

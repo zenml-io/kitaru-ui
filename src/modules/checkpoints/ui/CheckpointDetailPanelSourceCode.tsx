@@ -9,7 +9,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/shared/ui/dialog";
+} from "@zenml/hashi/primitives/dialog";
 import { Separator } from "@zenml/hashi/primitives/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { TruncatedText } from "@/shared/ui/truncated-text";

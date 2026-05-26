@@ -8,7 +8,7 @@ import {
 	SheetContent,
 	SheetTitle,
 	SheetTrigger,
-} from "@/shared/ui/sheet";
+} from "@zenml/hashi/primitives/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Play, Send, X } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";

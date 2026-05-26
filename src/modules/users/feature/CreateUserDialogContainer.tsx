@@ -6,7 +6,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/shared/ui/dialog";
+} from "@zenml/hashi/primitives/dialog";
 import { UserPlus } from "lucide-react";
 import { useState } from "react";
 import type { CreateUserDialogSuccess } from "../domain/users";

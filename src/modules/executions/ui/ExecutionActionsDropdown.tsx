@@ -4,7 +4,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
+} from "@zenml/hashi/primitives/dropdown-menu";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DeleteExecutionAlertDialogContainer } from "../feature/DeleteExecutionAlertDialogContainer";

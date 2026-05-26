@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@zenml/hashi/primitives/card";
 import { UpdateAvatarContainer } from "./UpdateAvatarContainer";
 import { UpdateCurrentUserFormContainer } from "./UpdateCurrentUserFormContainer";
 

@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/shared/ui/card";
+import { Card, CardContent } from "@zenml/hashi/primitives/card";
 import { cn } from "@/shared/utils/styles";
 import type { ComponentProps } from "react";
 

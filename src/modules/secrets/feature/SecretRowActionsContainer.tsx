@@ -7,7 +7,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
+} from "@zenml/hashi/primitives/dropdown-menu";
 
 import type { Secret } from "../domain/secrets";
 import { DeleteSecretAlertDialogContainer } from "./DeleteSecretAlertDialogContainer";

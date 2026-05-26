@@ -1,19 +1,12 @@
 import * as React from "react";
-import { mergeProps } from "@base-ui/react/merge-props";
+import { ChevronRight, Ellipsis } from "lucide-react";
 import { useRender } from "@base-ui/react/use-render";
+import { mergeProps } from "@base-ui/react/merge-props";
 
-import { cn } from "@/shared/utils/styles";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { cn } from "../lib/utils";
 
-function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
-	return (
-		<nav
-			aria-label="breadcrumb"
-			data-slot="breadcrumb"
-			className={cn(className)}
-			{...props}
-		/>
-	);
+function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
+	return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
@@ -21,7 +14,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
 		<ol
 			data-slot="breadcrumb-list"
 			className={cn(
-				"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm wrap-break-word sm:gap-2.5",
+				"text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
 				className
 			)}
 			{...props}
@@ -40,23 +33,23 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 function BreadcrumbLink({
-	className,
 	render,
+	className,
 	...props
-}: useRender.ComponentProps<"a">) {
-	return useRender({
-		defaultTagName: "a",
-		props: mergeProps<"a">(
-			{
-				className: cn("transition-colors hover:text-foreground", className),
-			},
-			props
-		),
-		render,
-		state: {
-			slot: "breadcrumb-link",
-		},
+}: React.ComponentProps<"a"> & {
+	render?: useRender.ComponentProps<"a">["render"];
+}) {
+	const defaultProps = {
+		"data-slot": "breadcrumb-link",
+		className: cn("transition-colors hover:text-foreground", className),
+	} as React.ComponentProps<"a">;
+
+	const element = useRender({
+		render: render ?? <a />,
+		props: mergeProps<"a">(defaultProps, props),
 	});
+
+	return element;
 }
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
@@ -99,13 +92,10 @@ function BreadcrumbEllipsis({
 			data-slot="breadcrumb-ellipsis"
 			role="presentation"
 			aria-hidden="true"
-			className={cn(
-				"flex size-5 items-center justify-center [&>svg]:size-4",
-				className
-			)}
+			className={cn("flex size-9 items-center justify-center", className)}
 			{...props}
 		>
-			<MoreHorizontal />
+			<Ellipsis className="size-4" />
 			<span className="sr-only">More</span>
 		</span>
 	);

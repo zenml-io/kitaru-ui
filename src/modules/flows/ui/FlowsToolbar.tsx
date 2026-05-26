@@ -5,7 +5,7 @@ import {
 	TableToolbarContent,
 	TableToolbarRoot,
 } from "@/shared/ui/TableToolbar";
-import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@zenml/hashi/primitives/toggle-group";
 import { type FlowStatusFilter, flowStatusFilterValues } from "../domain/flow";
 
 export function FlowsToolbar({
@@ -23,26 +23,26 @@ export function FlowsToolbar({
 	onRefresh: () => void;
 	isRefreshing: boolean;
 }) {
-	const selectedStatusValues = [statusFilter];
-
 	return (
 		<TableToolbarRoot>
 			<TableToolbarContent className="justify-between">
 				<div className="flex items-center gap-2">
 					<ToggleGroup
-						value={selectedStatusValues}
+						value={statusFilter}
 						onValueChange={(nextValue) => {
 							onStatusFilterChange(getNextStatusFilter(nextValue));
 						}}
-						variant="outline"
+						variant="pill"
 						size="sm"
 						spacing={1}
+						className="rounded-md"
+						aria-label="Filter flows by status"
 					>
 						{flowStatusFilterValues.map((status) => (
 							<ToggleGroupItem
 								key={status}
 								value={status}
-								className="aria-pressed:bg-primary aria-pressed:text-primary-foreground capitalize"
+								className="capitalize"
 							>
 								{status}
 							</ToggleGroupItem>
@@ -66,11 +66,9 @@ export function FlowsToolbar({
 	);
 }
 
-function getNextStatusFilter(nextValue: readonly string[]): FlowStatusFilter {
-	const candidate = nextValue[0];
-
-	if (candidate && isFlowStatusFilter(candidate)) {
-		return candidate;
+function getNextStatusFilter(nextValue: string): FlowStatusFilter {
+	if (nextValue && isFlowStatusFilter(nextValue)) {
+		return nextValue;
 	}
 
 	return "all";

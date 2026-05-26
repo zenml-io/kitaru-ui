@@ -11,7 +11,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@/shared/ui/dialog";
+} from "@zenml/hashi/primitives/dialog";
 import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 import { Switch } from "@zenml/hashi/primitives/switch";

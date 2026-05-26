@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
-import { Card, CardContent } from "@/shared/ui/card";
+import { Card, CardContent } from "@zenml/hashi/primitives/card";
 import { Input } from "@zenml/hashi/primitives/input";
 
 import { secretQueries } from "../business-logic/secret-queries";

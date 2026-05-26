@@ -1,14 +1,14 @@
 import { useState } from "react";
 import {
 	AlertDialog,
-	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/shared/ui/alert-dialog";
+} from "@zenml/hashi/primitives/alert-dialog";
+import { Button } from "@zenml/hashi/primitives/button";
 import { Field, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 
@@ -73,13 +73,13 @@ export function DeleteAlertDialog({
 					</Field>
 					<AlertDialogFooter className="mt-6 sm:justify-between">
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
+						<Button
 							type="submit"
 							variant="destructive"
 							disabled={!isConfirmed || isPending}
 						>
 							{isPending ? pendingLabel : actionLabel}
-						</AlertDialogAction>
+						</Button>
 					</AlertDialogFooter>
 				</form>
 			</AlertDialogContent>

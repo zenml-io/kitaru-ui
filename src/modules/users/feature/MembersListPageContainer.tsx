@@ -1,5 +1,5 @@
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@zenml/hashi/primitives/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { userQueries } from "../business-logic/user-queries";

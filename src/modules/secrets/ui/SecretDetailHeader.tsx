@@ -1,7 +1,7 @@
 import { ArrowLeft, KeyRound } from "lucide-react";
 
 import { Button } from "@zenml/hashi/primitives/button";
-import { CardHeader } from "@/shared/ui/card";
+import { CardHeader } from "@zenml/hashi/primitives/card";
 
 import type { Secret } from "../domain/secrets";
 

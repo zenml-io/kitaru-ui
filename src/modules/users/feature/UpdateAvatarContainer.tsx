@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { userQueries } from "../business-logic/user-queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@zenml/hashi/primitives/avatar";
 import { UpdateAvatarDialogContainer } from "./UpdateAvatarDialogContainer";
 
 export function UpdateAvatarContainer() {

@@ -1,6 +1,6 @@
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
 import { userQueries } from "@/modules/users/business-logic/user-queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@zenml/hashi/primitives/avatar";
 import { Button } from "@zenml/hashi/primitives/button";
 import {
 	DropdownMenu,
@@ -8,7 +8,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
+} from "@zenml/hashi/primitives/dropdown-menu";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { LoginCommandContainer } from "./LoginCommandContainer";
@@ -33,7 +33,7 @@ export function UserDropdownContainer() {
 				render={
 					<Button
 						variant="ghost"
-						size="icon"
+						size="icon-sm"
 						className="rounded-full"
 						aria-label="User menu"
 					>

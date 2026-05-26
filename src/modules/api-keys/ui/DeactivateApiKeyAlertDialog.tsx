@@ -1,13 +1,13 @@
 import {
 	AlertDialog,
-	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/shared/ui/alert-dialog";
+} from "@zenml/hashi/primitives/alert-dialog";
+import { Button } from "@zenml/hashi/primitives/button";
 
 import type { ApiKey } from "../domain/api-key";
 
@@ -39,13 +39,13 @@ export function DeactivateApiKeyAlertDialog({
 				</AlertDialogHeader>
 				<AlertDialogFooter className="sm:justify-between">
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction
+					<Button
 						variant="destructive"
 						disabled={isPending}
 						onClick={onConfirm}
 					>
 						{isPending ? "Deactivating..." : "Deactivate"}
-					</AlertDialogAction>
+					</Button>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

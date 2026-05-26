@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Input } from "@zenml/hashi/primitives/input";
-import { Select, SelectContent, SelectItem } from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem } from "@zenml/hashi/primitives/select";
 import { LabeledFilterTrigger } from "../ui/LabeledFilterTrigger";
 import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
 import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";

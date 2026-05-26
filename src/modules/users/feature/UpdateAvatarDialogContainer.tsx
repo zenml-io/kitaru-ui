@@ -8,7 +8,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/shared/ui/dialog";
+} from "@zenml/hashi/primitives/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 import { zodResolver } from "@hookform/resolvers/zod";

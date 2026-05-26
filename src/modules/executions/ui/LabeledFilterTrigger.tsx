@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { SelectTrigger } from "@/shared/ui/select";
+import { SelectTrigger } from "@zenml/hashi/primitives/select";
 import { cn } from "@/shared/utils/styles";
 
 type LabeledFilterTriggerProps = {

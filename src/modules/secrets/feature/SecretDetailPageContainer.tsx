@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { Card, CardContent } from "@/shared/ui/card";
+import { Card, CardContent } from "@zenml/hashi/primitives/card";
 import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
 import { Input } from "@zenml/hashi/primitives/input";
 

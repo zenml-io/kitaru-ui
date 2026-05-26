@@ -1,4 +1,4 @@
-import { Dialog } from "@/shared/ui/dialog";
+import { Dialog } from "@zenml/hashi/primitives/dialog";
 import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { FullscreenArtifactButtonTrigger } from "../ui/FullscreenArtifactButtonTrigger";
 import { FullscreenArtifactDialogContent } from "../ui/FullscreenArtifactDialogContent";

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Card, CardContent } from "@/shared/ui/card";
+import { Card, CardContent } from "@zenml/hashi/primitives/card";
 
 type MeshFormCardProps = {
 	children: ReactNode;

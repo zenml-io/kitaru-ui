@@ -11,14 +11,14 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
-} from "@/shared/ui/dropdown-menu";
+} from "@zenml/hashi/primitives/dropdown-menu";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/shared/ui/select";
+} from "@zenml/hashi/primitives/select";
 import { cn } from "@/shared/utils/styles";
 import { DeploymentTagChip } from "./DeploymentTagChip";
 

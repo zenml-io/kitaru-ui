@@ -6,7 +6,7 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@/shared/ui/breadcrumb";
+} from "@zenml/hashi/primitives/breadcrumb";
 import { isMatch, Link, useMatches } from "@tanstack/react-router";
 import { Fragment } from "react";
 

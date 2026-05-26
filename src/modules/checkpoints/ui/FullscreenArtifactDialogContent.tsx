@@ -5,7 +5,7 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "@/shared/ui/dialog";
+} from "@zenml/hashi/primitives/dialog";
 import { Separator } from "@zenml/hashi/primitives/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { X } from "lucide-react";

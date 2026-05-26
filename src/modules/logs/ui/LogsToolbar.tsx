@@ -8,7 +8,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/shared/ui/select";
+} from "@zenml/hashi/primitives/select";
 import type { LoggingLevel } from "../domain/log-entry";
 
 type LogsToolbarProps = {

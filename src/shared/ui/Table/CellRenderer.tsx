@@ -1,6 +1,6 @@
 import type { User } from "@/modules/users/domain/users";
 import { StatusDot, type StatusDotVariant } from "../StatusDot";
-import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@zenml/hashi/primitives/avatar";
 import { cn } from "@/shared/utils/styles";
 
 function TextRenderer({

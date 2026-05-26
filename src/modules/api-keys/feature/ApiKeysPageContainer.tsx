@@ -2,7 +2,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { userQueries } from "@/modules/users/business-logic/user-queries";
-import { Card, CardContent } from "@/shared/ui/card";
+import { Card, CardContent } from "@zenml/hashi/primitives/card";
 
 import { apiKeyQueries } from "../business-logic/api-key-queries";
 import { personalServiceAccountQueries } from "../business-logic/personal-service-account-queries";

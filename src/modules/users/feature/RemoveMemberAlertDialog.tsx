@@ -1,13 +1,13 @@
 import {
 	AlertDialog,
-	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/shared/ui/alert-dialog";
+} from "@zenml/hashi/primitives/alert-dialog";
+import { Button } from "@zenml/hashi/primitives/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useDeleteUser } from "../business-logic/use-delete-user";
@@ -55,13 +55,13 @@ export function RemoveMemberAlertDialog({
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<AlertDialogAction
+					<Button
 						variant="destructive"
 						disabled={isDeletePending}
 						onClick={handleConfirm}
 					>
 						{isDeletePending ? "Removing..." : "Remove member"}
-					</AlertDialogAction>
+					</Button>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
