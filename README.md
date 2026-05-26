@@ -153,5 +153,3 @@ GitHub Actions (`.github/workflows/build-validation.yml`) runs on pushes to `mai
 ## Contributing
 
 See [AGENTS.md](./AGENTS.md) for the full coding conventions, naming rules, data fetching patterns, and architectural guidance used by coding agents and contributors.
-
-
