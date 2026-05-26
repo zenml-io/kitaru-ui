@@ -2,6 +2,11 @@ import type { components } from "@/shared/api/openapi";
 import { type User, userFromApiToDomain } from "@/modules/users/domain/users";
 import { extractLogSources } from "@/modules/logs/domain/log-mapper";
 import { parseBackendTimestamp } from "@/shared/utils/time";
+import {
+	type DeploymentVersion,
+	LOCAL_VERSION_ID,
+	parseVersionFromSnapshotName,
+} from "@/modules/deployments/domain/deployment";
 export type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 export type RunConfiguration = components["schemas"]["ReplayRunConfiguration"];
 
@@ -23,9 +28,19 @@ export const executionStatusValues: ExecutionStatus[] = [
 
 export const executionStatusFilterValues = [
 	"all",
+	"initializing",
+	"provisioning",
 	"running",
-	"failed",
+	"retrying",
+	"paused",
+	"resuming",
+	"stopping",
+	"stopped",
 	"completed",
+	"cached",
+	"skipped",
+	"retried",
+	"failed",
 ] as const;
 
 export type ExecutionStatusFilter =
@@ -48,11 +63,17 @@ export type Execution = {
 	};
 	sourceSnapshot?: {
 		id: string;
+		version: DeploymentVersion;
 	};
 	snapshot?: {
 		id: string;
 		runnable?: boolean;
 	};
+	flowId?: string;
+	flowName?: string;
+	stackId?: string;
+	stackName?: string;
+	buildId?: string;
 };
 
 export function executionFromApiToDomain(
@@ -94,6 +115,9 @@ export function executionFromApiToDomain(
 		sourceSnapshot: run.resources?.source_snapshot
 			? {
 					id: run.resources.source_snapshot.id,
+					version:
+						parseVersionFromSnapshotName(run.resources.source_snapshot.name) ??
+						LOCAL_VERSION_ID,
 				}
 			: undefined,
 		snapshot: run.resources?.snapshot
@@ -102,5 +126,10 @@ export function executionFromApiToDomain(
 					runnable: run.resources?.snapshot?.body?.runnable,
 				}
 			: undefined,
+		flowId: run.resources?.pipeline?.id,
+		flowName: run.resources?.pipeline?.name,
+		stackId: run.resources?.stack?.id,
+		stackName: run.resources?.stack?.name,
+		buildId: run.resources?.build?.id,
 	};
 }

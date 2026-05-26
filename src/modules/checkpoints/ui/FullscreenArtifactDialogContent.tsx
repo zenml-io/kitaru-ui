@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import {
 	DialogClose,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/shared/ui/dialog";
-import { Separator } from "@/shared/ui/separator";
+import { Separator } from "@zenml/hashi/primitives/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import { X } from "lucide-react";
 

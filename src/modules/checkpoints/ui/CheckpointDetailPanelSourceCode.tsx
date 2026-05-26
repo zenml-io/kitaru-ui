@@ -1,6 +1,6 @@
 import { Check, Copy, Expand, File, X } from "lucide-react";
 import { useCopy } from "@/shared/business-logic/use-copy";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { CodeBlock } from "@/shared/ui/CodeBlock";
 import {
 	Dialog,
@@ -10,8 +10,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/shared/ui/dialog";
-import { Separator } from "@/shared/ui/separator";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Separator } from "@zenml/hashi/primitives/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import type { CheckpointSource } from "../domain/checkpoint";
 import { filePathToFileName } from "../util/file-path";

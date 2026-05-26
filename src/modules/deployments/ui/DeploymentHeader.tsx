@@ -1,4 +1,4 @@
-import { Separator } from "@/shared/ui/separator";
+import { Separator } from "@zenml/hashi/primitives/separator";
 import { cn } from "@/shared/utils/styles";
 import { LOCAL_VERSION_ID, type Deployment } from "../domain/deployment";
 import type { StackComponent } from "@/modules/stacks/domain/stack";

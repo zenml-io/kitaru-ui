@@ -1,4 +1,4 @@
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@/shared/ui/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@zenml/hashi/primitives/empty";
 import { Archive } from "lucide-react";
 
 export function NoVisualizationFallback() {

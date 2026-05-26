@@ -1,6 +1,6 @@
-import { Input } from "@/shared/ui/input";
+import { Input } from "@zenml/hashi/primitives/input";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
-import { Separator } from "@/shared/ui/separator";
+import { Separator } from "@zenml/hashi/primitives/separator";
 import {
 	TableToolbarContent,
 	TableToolbarRoot,

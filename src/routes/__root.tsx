@@ -1,5 +1,5 @@
 import { serverInfoQueries } from "@/modules/root/business-logic/server-info-queries";
-import { Toaster } from "@/shared/ui/sonner";
+import { Toaster } from "@zenml/hashi/primitives/sonner";
 import { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,

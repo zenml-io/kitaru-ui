@@ -1,5 +1,5 @@
 import { Copy } from "lucide-react";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { cn } from "@/shared/utils/styles";
 import { formatTimestamp } from "@/shared/utils/time";
 import type { LogEntry, LogMessageRange } from "../domain/log-entry";

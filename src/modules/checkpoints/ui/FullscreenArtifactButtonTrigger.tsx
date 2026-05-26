@@ -1,5 +1,5 @@
-import { Button } from "@/shared/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { DialogTrigger } from "@/shared/ui/dialog";
 import { Expand } from "lucide-react";
 

@@ -1,6 +1,6 @@
 {
 	"$schema": "https://ui.shadcn.com/schema.json",
-	"style": "base-vega",
+	"style": "new-york",
 	"rsc": false,
 	"tsx": true,
 	"tailwind": {
@@ -13,11 +13,11 @@
 	"iconLibrary": "lucide",
 	"rtl": false,
 	"aliases": {
-		"components": "@/shared/ui",
-		"utils": "@/shared/utils",
-		"ui": "@/shared/ui",
-		"lib": "@/shared/utils",
-		"hooks": "@/shared/business-logic"
+		"components": "@zenml/hashi/components",
+		"utils": "@zenml/hashi/lib/utils",
+		"ui": "@zenml/hashi/primitives",
+		"lib": "@zenml/hashi/lib",
+		"hooks": "@zenml/hashi/hooks"
 	},
 	"menuColor": "default",
 	"menuAccent": "subtle",

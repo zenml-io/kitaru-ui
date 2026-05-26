@@ -4,7 +4,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@/shared/ui/empty";
+} from "@zenml/hashi/primitives/empty";
 import { AlertCircle } from "lucide-react";
 
 type Props = {

@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp, Copy, Download } from "lucide-react";
 import type { ReactNode } from "react";
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Input } from "@zenml/hashi/primitives/input";
 import {
 	Select,
 	SelectContent,

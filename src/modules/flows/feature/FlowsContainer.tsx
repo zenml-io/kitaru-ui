@@ -40,7 +40,7 @@ export function FlowsContainer() {
 		(nextSort) => {
 			router.navigate({
 				to: "/flows",
-				search: (prev) => ({ ...prev, sort: nextSort }),
+				search: { q, status, sort: nextSort },
 				replace: true,
 			});
 		}
@@ -92,22 +92,14 @@ export function FlowsContainer() {
 				onSearchValueChange={(value) => {
 					router.navigate({
 						to: "/flows",
-						search: (previousSearch) => ({
-							q: value,
-							status: previousSearch.status ?? "all",
-							sort: previousSearch.sort ?? DEFAULT_FLOWS_SORT,
-						}),
+						search: { q: value, status, sort },
 						replace: true,
 					});
 				}}
 				onStatusFilterChange={(value) => {
 					router.navigate({
 						to: "/flows",
-						search: (previousSearch) => ({
-							q: previousSearch.q ?? "",
-							status: value,
-							sort: previousSearch.sort ?? DEFAULT_FLOWS_SORT,
-						}),
+						search: { q, status: value, sort },
 						replace: true,
 					});
 				}}

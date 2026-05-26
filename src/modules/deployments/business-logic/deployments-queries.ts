@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import { fetchAllDeployments } from "../domain/fetch-all-deployments";
 import { fetchDeployment } from "../domain/fetch-deployment";
 import { fetchDeploymentByVersion } from "../domain/fetch-deployment-by-version";
 import { fetchDeployments } from "../domain/fetch-deployments";
@@ -17,6 +18,7 @@ export const deploymentsQueryKeys = {
 			flowName,
 			version,
 		] as const,
+	allFlows: () => [...deploymentsQueryKeys.base, "list", "all-flows"] as const,
 };
 
 export const deploymentsQueries = {
@@ -34,5 +36,10 @@ export const deploymentsQueries = {
 		queryOptions({
 			queryKey: deploymentsQueryKeys.byVersion(flowId, flowName, version),
 			queryFn: () => fetchDeploymentByVersion(flowId, flowName, version),
+		}),
+	allFlows: () =>
+		queryOptions({
+			queryKey: deploymentsQueryKeys.allFlows(),
+			queryFn: () => fetchAllDeployments(),
 		}),
 };

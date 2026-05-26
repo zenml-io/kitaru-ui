@@ -7,7 +7,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@/shared/ui/empty";
+} from "@zenml/hashi/primitives/empty";
 import type { LogEntry, LogMessageRange } from "../domain/log-entry";
 import { LogRow } from "./LogRow";
 

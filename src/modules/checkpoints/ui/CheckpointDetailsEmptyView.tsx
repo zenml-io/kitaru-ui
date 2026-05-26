@@ -3,7 +3,7 @@ import {
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
-} from "@/shared/ui/empty";
+} from "@zenml/hashi/primitives/empty";
 import { Info } from "lucide-react";
 
 export function CheckpointDetailsEmptyView() {

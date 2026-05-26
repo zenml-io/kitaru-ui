@@ -1,0 +1,48 @@
+/*
+ * ZenML reference palettes — raw color stops, namespaced.
+ *
+ * Two parallel ZenML palette families ship side-by-side:
+ *   - --zen-brown-*  warm earth tones (porcelain → carbon)
+ *   - --zen-green-*  sage / olive tones (porcelain → carbon)
+ *
+ * Each family has 10 stops named after the source SCSS variables. Family
+ * prefixes resolve the name collisions in the source (`porcelain` and
+ * `carbon-black` appear in both palettes); within a family, names are kept
+ * as-given (tan, camel, palm-leaf, ...) minus redundant `-brown`/`-black`
+ * suffixes that the namespace already implies.
+ *
+ * These are RAW palette tokens — they do not map to semantic roles like
+ * --primary, --ring, --sidebar-* on their own. A theme class (e.g.
+ * .theme-zenml-brown) is responsible for that mapping. See
+ * docs/zenml-palettes.md for the naming convention and intended use.
+ *
+ * Source values are sRGB hex; oklch() is the canonical form per project
+ * convention (see CLAUDE.md → Colors). Hex is preserved in comments for
+ * cross-reference with the design source.
+ */
+
+:root {
+	/* Brown — warm earth (light → dark) */
+	--zen-brown-porcelain: oklch(0.9738 0.0045 134.85); /* #F5F7F4 */
+	--zen-brown-soft-linen: oklch(0.9324 0.0173 84.59); /* #EEE8DC */
+	--zen-brown-pale-oak: oklch(0.8621 0.0375 76.58); /* #E0CFB7 */
+	--zen-brown-tan: oklch(0.7929 0.057 66.85); /* #D5B595 */
+	--zen-brown-camel: oklch(0.7345 0.065 72.06); /* #C3A37C */
+	--zen-brown-dusty-taupe: oklch(0.6824 0.0415 63.24); /* #AC947F */
+	--zen-brown-taupe: oklch(0.5996 0.0267 63.22); /* #8C7D70 */
+	--zen-brown-stone: oklch(0.4821 0.0167 74.26); /* #645D54 */
+	--zen-brown-charcoal: oklch(0.362 0.0115 78.17); /* #413D37 */
+	--zen-brown-carbon: oklch(0.2314 0.0081 128.86); /* #1C1E1A */
+
+	/* Green — sage & olive (light → dark) */
+	--zen-green-porcelain: oklch(0.9776 0.011 123.45); /* #F6F9F1 */
+	--zen-green-beige: oklch(0.945 0.0321 116.58); /* #EBF0D8 */
+	--zen-green-beige-2: oklch(0.92 0.0362 115.63); /* #E3E8CD */
+	--zen-green-beige-3: oklch(0.8949 0.0403 114.9); /* #DBE0C2 */
+	--zen-green-dry-sage: oklch(0.8202 0.0506 122.5); /* #BECAA6 */
+	--zen-green-muted-olive: oklch(0.7215 0.0637 127.3); /* #9AAD82 */
+	--zen-green-palm-leaf: oklch(0.6299 0.0666 132.25); /* #7A9268 */
+	--zen-green-dusty-olive: oklch(0.5457 0.0448 139.43); /* #63775E */
+	--zen-green-granite: oklch(0.3964 0.0387 139.44); /* #3C4C38 */
+	--zen-green-carbon: oklch(0.2243 0.0163 160.42); /* #151E19 */
+}

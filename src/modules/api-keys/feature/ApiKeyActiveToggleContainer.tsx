@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Switch } from "@/shared/ui/switch";
+import { Switch } from "@zenml/hashi/primitives/switch";
 
 import { apiKeyQueryKeys } from "../business-logic/api-key-queries";
 import { getErrorMessage } from "../business-logic/get-error-message";

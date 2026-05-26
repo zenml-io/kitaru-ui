@@ -2,7 +2,7 @@ import * as React from "react";
 
 import type { Column, RowData } from "@tanstack/react-table";
 import { cn } from "@/shared/utils/styles";
-import { Button } from "../button";
+import { Button } from "@zenml/hashi/primitives/button";
 
 declare module "@tanstack/react-table" {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

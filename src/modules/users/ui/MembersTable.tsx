@@ -8,7 +8,7 @@ import {
 	TableRow,
 } from "@/shared/ui/Table";
 import { TextRenderer, UserRenderer } from "@/shared/ui/Table/CellRenderer";
-import { Badge } from "@/shared/ui/badge";
+import { Badge } from "@zenml/hashi/primitives/badge";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
 	flexRender,

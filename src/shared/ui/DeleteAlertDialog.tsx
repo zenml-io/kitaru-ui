@@ -10,7 +10,7 @@ import {
 	AlertDialogTitle,
 } from "@/shared/ui/alert-dialog";
 import { Field, FieldLabel } from "@/shared/ui/field";
-import { Input } from "@/shared/ui/input";
+import { Input } from "@zenml/hashi/primitives/input";
 
 type DeleteAlertDialogProps = {
 	title: string;

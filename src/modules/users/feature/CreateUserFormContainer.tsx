@@ -1,7 +1,7 @@
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
-import { Input } from "@/shared/ui/input";
-import { Switch } from "@/shared/ui/switch";
+import { Input } from "@zenml/hashi/primitives/input";
+import { Switch } from "@zenml/hashi/primitives/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";

@@ -1,6 +1,6 @@
 import { Download } from "lucide-react";
-import { Button } from "@/shared/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { useArtifactStoreState } from "@/modules/artifacts/business-logic/use-artifact-store-state";
 import { getDownloadUnavailableReason } from "@/modules/artifacts/business-logic/download-availability";
 import { useDownloadArtifact } from "../business-logic/use-download-artifact";

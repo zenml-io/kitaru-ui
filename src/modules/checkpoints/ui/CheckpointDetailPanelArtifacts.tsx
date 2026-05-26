@@ -1,7 +1,7 @@
 import { ArtifactChip } from "@/modules/executions/ui/traces/ArtifactChip";
 import { ViewerFrameFullHeight } from "@/modules/executions/ui/traces/ViewerFrame";
 import { ChipBar } from "@/shared/ui/ChipBar";
-import { Separator } from "@/shared/ui/separator";
+import { Separator } from "@zenml/hashi/primitives/separator";
 import { TruncatedText } from "@/shared/ui/truncated-text";
 import type { ArtifactEntry } from "../domain/checkpoint";
 import { FullscreenArtifactButtonContainer } from "../feature/FullscreenArtifactButtonContainer";

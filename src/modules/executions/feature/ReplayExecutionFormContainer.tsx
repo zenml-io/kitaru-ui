@@ -1,5 +1,5 @@
 import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
-import { Switch } from "@/shared/ui/switch";
+import { Switch } from "@zenml/hashi/primitives/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import {

@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import {
 	CardAction,
 	CardDescription,

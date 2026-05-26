@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { cn } from "@/shared/utils/styles";
 
 function isOverflowing(el: HTMLElement): boolean {

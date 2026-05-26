@@ -1,6 +1,6 @@
 import type { ExecutionStatus } from "@/modules/executions/domain/execution";
-import { Button } from "@/shared/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { Play } from "lucide-react";
 import { ReplayExecutionSheetContainer } from "./ReplayExecutionSheetContainer";
 

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import type { Column } from "@tanstack/react-table";
 
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { cn } from "@/shared/utils/styles";
 
 function TableContainer({ className, ...props }: React.ComponentProps<"div">) {

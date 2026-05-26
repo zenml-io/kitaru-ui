@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zenml/hashi/primitives/tooltip";
 import { ColorDot } from "@/shared/ui/ColorDot";
 import { getCheckpointFillClass } from "./checkpoint-styles";
 import { formatDurationShort } from "@/shared/utils/time";

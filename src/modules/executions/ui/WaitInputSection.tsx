@@ -3,7 +3,7 @@ import { withTheme } from "@rjsf/core";
 import type RjsfForm from "@rjsf/core";
 import { Theme as shadcnTheme } from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { ColorDot } from "@/shared/ui/ColorDot";
 import { ChevronDown, ChevronUp, Send } from "lucide-react";
 import type { WaitCondition } from "../domain/wait-condition";

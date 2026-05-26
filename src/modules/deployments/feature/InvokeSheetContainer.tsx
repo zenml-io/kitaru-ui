@@ -1,6 +1,6 @@
 import { MonacoJsonSchemaEditor } from "@/modules/executions/ui/MonacoJsonSchemaEditor";
 import type { JsonSchema } from "@/shared/api/domain/json-schema";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import {
 	Sheet,

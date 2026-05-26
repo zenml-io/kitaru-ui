@@ -1,3 +1,2 @@
-onlyBuiltDependencies:
-  - esbuild
-  - lefthook
+packages:
+  - "shared/hashi"

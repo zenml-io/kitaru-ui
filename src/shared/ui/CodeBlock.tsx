@@ -25,6 +25,7 @@ const SUPPORTED_LANGS = [
 	"yaml",
 	"csv",
 	"javascript",
+	"dockerfile",
 ] as const;
 
 type SupportedLang = (typeof SUPPORTED_LANGS)[number];
@@ -48,6 +49,7 @@ function getHighlighter() {
 				import("shiki/langs/yaml.mjs"),
 				import("shiki/langs/csv.mjs"),
 				import("shiki/langs/javascript.mjs"),
+				import("shiki/langs/dockerfile.mjs"),
 			],
 			engine: createJavaScriptRegexEngine(),
 		});

@@ -1,4 +1,4 @@
-import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@zenml/hashi/primitives/tabs";
 
 export type ExecutionTab = "execution" | "logs";
 

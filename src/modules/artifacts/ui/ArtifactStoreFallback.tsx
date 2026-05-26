@@ -5,7 +5,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@/shared/ui/empty";
+} from "@zenml/hashi/primitives/empty";
 import { ExternalLink, HardDrive, KeyRound, PackageX } from "lucide-react";
 import type { ReactNode } from "react";
 

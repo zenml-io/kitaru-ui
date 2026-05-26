@@ -1,5 +1,5 @@
 import { useCopy } from "@/shared/business-logic/use-copy";
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import { cn } from "@/shared/utils/styles";
 import { Check, ChevronDown, Copy } from "lucide-react";
 import { useState } from "react";

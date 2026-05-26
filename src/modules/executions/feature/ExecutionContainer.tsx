@@ -7,7 +7,7 @@ import type { PanelTab } from "@/modules/checkpoints/ui/CheckpointDetailPanelTab
 import type { DeploymentVersion } from "@/modules/deployments/domain/deployment";
 import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
-import { Skeleton } from "@/shared/ui/skeleton";
+import { Skeleton } from "@zenml/hashi/primitives/skeleton";
 import { ThreePanelLayout } from "@/shared/ui/ThreePanelLayout";
 import { ThreePanelLayoutProvider } from "@/shared/ui/ThreePanelLayoutContext";
 import { useNavigate, useParams, useSearch } from "@tanstack/react-router";
@@ -185,6 +185,7 @@ export function ExecutionContainer({
 								flowId={flowId}
 								execution={executionData}
 								checkpoints={checkpointsData.checkpoints}
+								selectedCheckpointId={selectedCheckpointId}
 								onSelectCheckpoint={setSelectedCheckpointId}
 							/>
 						)
@@ -194,6 +195,7 @@ export function ExecutionContainer({
 							<CheckpointDetailPanelContainer
 								key={selectedCheckpointId}
 								checkpointId={selectedCheckpointId}
+								executionId={executionId}
 								activeTab={activeCheckpointTab}
 								onTabChange={setActiveCheckpointTab}
 								headerTrailing={

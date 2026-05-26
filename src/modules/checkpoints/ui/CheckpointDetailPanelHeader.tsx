@@ -1,6 +1,6 @@
 import { CheckpointTypeBadge } from "@/modules/executions/ui/traces/CheckpointTypeBadge";
 import type { Checkpoint } from "../domain/checkpoint";
-import { Badge } from "@/shared/ui/badge";
+import { Badge } from "@zenml/hashi/primitives/badge";
 import { formatCost } from "@/shared/utils/currency";
 import { LiveDurationMs } from "@/shared/ui/LiveDurationMs";
 import { TruncatedText } from "@/shared/ui/truncated-text";

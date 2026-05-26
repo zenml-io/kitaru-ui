@@ -1,4 +1,4 @@
-import { Input } from "@/shared/ui/input";
+import { Input } from "@zenml/hashi/primitives/input";
 import { RefreshButton } from "@/shared/ui/RefreshButton";
 import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
 

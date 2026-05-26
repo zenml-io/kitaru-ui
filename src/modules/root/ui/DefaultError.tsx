@@ -1,4 +1,4 @@
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import {
 	Empty,
 	EmptyContent,
@@ -6,7 +6,7 @@ import {
 	EmptyHeader,
 	EmptyMedia,
 	EmptyTitle,
-} from "@/shared/ui/empty";
+} from "@zenml/hashi/primitives/empty";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { AlertCircle, RefreshCcw } from "lucide-react";
 

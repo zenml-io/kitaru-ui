@@ -1,5 +1,6 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"ignoreCommand": "npx turbo-ignore kitaru-ui --fallback=HEAD^1",
 	"rewrites": [
 		{
 			"source": "/(.*)",

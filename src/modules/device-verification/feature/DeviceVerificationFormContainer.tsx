@@ -4,8 +4,8 @@ import {
 	type VerificationForm,
 } from "@/modules/device-verification/domain/device-verification-form-schema";
 import type { VerifyDeviceVariables } from "@/modules/device-verification/domain/verify-device";
-import { Button } from "@/shared/ui/button";
-import { Checkbox } from "@/shared/ui/checkbox";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Checkbox } from "@zenml/hashi/primitives/checkbox";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";

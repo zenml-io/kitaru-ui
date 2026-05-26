@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Button } from "@/shared/ui/button";
+import { Button } from "@zenml/hashi/primitives/button";
 import {
 	Dialog,
 	DialogContent,
@@ -13,7 +13,7 @@ import {
 	DialogTitle,
 } from "@/shared/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
-import { Input } from "@/shared/ui/input";
+import { Input } from "@zenml/hashi/primitives/input";
 
 import { getErrorMessage } from "../business-logic/get-error-message";
 import {

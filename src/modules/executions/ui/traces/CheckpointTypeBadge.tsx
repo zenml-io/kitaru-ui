@@ -1,4 +1,4 @@
-import { Badge } from "@/shared/ui/badge";
+import { Badge } from "@zenml/hashi/primitives/badge";
 import {
 	getCheckpointSurfaceClass,
 	getCheckpointTextClass,

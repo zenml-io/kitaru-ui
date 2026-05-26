@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { Card, CardContent } from "@/shared/ui/card";
 import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
-import { Input } from "@/shared/ui/input";
+import { Input } from "@zenml/hashi/primitives/input";
 
 import { secretQueries } from "../business-logic/secret-queries";
 import { useRemoveSecretKey } from "../business-logic/use-remove-secret-key";
