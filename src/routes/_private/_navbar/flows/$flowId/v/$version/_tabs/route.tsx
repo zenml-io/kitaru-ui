@@ -5,11 +5,16 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 export const Route = createFileRoute(
 	"/_private/_navbar/flows/$flowId/v/$version/_tabs"
 )({
-	component: () => (
+	component: RouteComponent,
+});
+
+function RouteComponent() {
+	const { flowId, version } = Route.useParams();
+	return (
 		<>
 			<DeploymentHeaderContainer />
-			<FlowContextBarContainer />
+			<FlowContextBarContainer flowId={flowId} version={version} />
 			<Outlet />
 		</>
-	),
-});
+	);
+}

@@ -31,11 +31,10 @@ export function LocalInvocationCard({
 							variant="outline"
 							render={
 								<Link
-									to="/flows/$flowId/v/$version/$tab"
+									to="/flows/$flowId/v/$version/executions"
 									params={{
 										flowId,
 										version: LOCAL_VERSION_ID,
-										tab: "executions",
 									}}
 								/>
 							}
