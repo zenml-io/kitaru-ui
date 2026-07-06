@@ -1,6 +1,7 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
 
 import {
 	deleteApiKeyRequest,
@@ -13,9 +14,10 @@ export function useDeleteApiKey(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: deleteApiKeyRequest,
+		mutationFn: (payload) => deleteApiKeyRequest(payload, { kitaruApiClient }),
 	});
 	return {
 		...mutation,

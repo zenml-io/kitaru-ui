@@ -1,6 +1,10 @@
 import { useLogoutUser } from "@/modules/session/business-logic/use-logout-user";
-import { userQueries } from "@/modules/users/business-logic/user-queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@zenml/hashi/primitives/avatar";
+import { useCurrentUser } from "@/modules/users/business-logic/use-current-user";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@zenml/hashi/primitives/avatar";
 import { Button } from "@zenml/hashi/primitives/button";
 import {
 	DropdownMenu,
@@ -9,13 +13,12 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@zenml/hashi/primitives/dropdown-menu";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { LoginCommandContainer } from "./LoginCommandContainer";
 import { ThemeSwitcherContainer } from "./ThemeSwitcherContainer";
 
 export function UserDropdownContainer() {
-	const { data } = useSuspenseQuery(userQueries.currentUser());
+	const { currentUserData: data } = useCurrentUser();
 	const router = useRouter();
 
 	const resolvedName = data.resolvedName;

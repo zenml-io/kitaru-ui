@@ -3,7 +3,8 @@ import {
 	type VerifyDeviceVariables,
 	verifyDevice as verifyDeviceRequest,
 } from "@/modules/device-verification/domain/verify-device";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
 
 export function useVerifyDevice(
@@ -12,9 +13,11 @@ export function useVerifyDevice(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: verifyDeviceRequest,
+		mutationFn: (variables) =>
+			verifyDeviceRequest(variables, { kitaruApiClient }),
 	});
 
 	return {

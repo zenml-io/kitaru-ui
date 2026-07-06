@@ -1,15 +1,20 @@
-import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
-import { Card, CardContent, CardHeader, CardTitle } from "@zenml/hashi/primitives/card";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useManualRefresh } from "@zenml/shared-kitaru/business-logic/use-manual-refresh";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@zenml/hashi/primitives/card";
 import { useState } from "react";
-import { userQueries } from "../business-logic/user-queries";
+import { useCurrentUser } from "../business-logic/use-current-user";
+import { useUserList } from "../business-logic/use-user-list";
 import { MembersTable } from "../ui/MembersTable";
 import { MembersListToolbarContainer } from "./MembersListToolbarContainer";
 
 export function MembersListPageContainer() {
 	const [searchValue, setSearchValue] = useState("");
-	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
-	const { data, refetch } = useSuspenseQuery(userQueries.list());
+	const { currentUserData: currentUser } = useCurrentUser();
+	const { userListData: data, refetch } = useUserList();
 	const { refresh: refreshMembers, isPending: isManualRefreshPending } =
 		useManualRefresh(refetch);
 

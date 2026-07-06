@@ -4,18 +4,24 @@ import {
 	expectLoginTokenResponse,
 	type LoginTokenResponse,
 } from "@/modules/session/domain/types";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import type { ServerActivationRequest } from "../domain/server-activation-types";
 
 export async function activateServerAndLogin(
-	payload: ServerActivationRequest
+	payload: ServerActivationRequest,
+	{ kitaruApiClient }: KitaruApiClientContext
 ): Promise<LoginTokenResponse> {
-	await activateServer(payload);
-	const response = await loginUser({
-		username: payload.admin_username,
-		password: payload.admin_password,
-	});
+	await activateServer(payload, { kitaruApiClient });
+	const response = await loginUser(
+		{
+			username: payload.admin_username,
+			password: payload.admin_password,
+		},
+		{ kitaruApiClient }
+	);
 	return expectLoginTokenResponse(response);
 }
 
@@ -30,9 +36,11 @@ export function useActivateServerAndLogin(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: activateServerAndLogin,
+		mutationFn: (payload) =>
+			activateServerAndLogin(payload, { kitaruApiClient }),
 	});
 
 	return {

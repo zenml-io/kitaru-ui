@@ -1,0 +1,53 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Welcome" />
+
+# Hashi
+
+Hashi is the ZenML shared UI design system: one set of tokens, primitives, and
+components serving two brands. ZenML is the default cascade at `:root`, and
+Kitaru is a deviation applied via `[data-app="kitaru"]`. Geometry, spacing, and
+behavior stay shared; only color and shadow language diverge.
+
+Use the **Brand** and **Mode** toolbar controls above to preview any story in
+all four combinations: ZenML or Kitaru, light or dark. Every component in this
+Storybook is expected to hold up in all four.
+
+## Consuming hashi
+
+Hashi is a source-only workspace package. Apps import styles once and pull
+components by path:
+
+```ts
+// styles, once per app entry
+import "@zenml/hashi/globals.css";
+
+// components, by export path
+import { Button } from "@zenml/hashi/primitives/button";
+import { StatusDot } from "@zenml/hashi/components/StatusDot";
+```
+
+Brand selection happens in the host app by setting `data-app="kitaru"` on
+`<html>` (or any ancestor). No attribute means ZenML. Dark mode is the standard
+`.dark` class.
+
+## Package layout
+
+| Path              | Contents                                                        |
+| ----------------- | --------------------------------------------------------------- |
+| `src/primitives/` | shadcn-style primitives (Button, Input, Dialog, Select, ...)    |
+| `src/components/` | Composed, brand-aware components (AppNavbar, SwitcherPill, ...) |
+| `src/hooks/`      | Shared hooks                                                    |
+| `src/lib/`        | Utilities (`cn`, state styles)                                  |
+| `src/styles/`     | `globals.css` (tokens + cascade) and `zenml-palettes.css`       |
+
+## Rules of the package
+
+- **Pure UI.** Components never import a router, a store, a data client, or
+  app code. Portability is the contract that lets three apps share this layer.
+- **Tokens first.** All color values are `oklch()` and flow through the
+  semantic tokens in `globals.css`. No hex, no raw Tailwind palette colors.
+- **Base UI for behavior.** Keyboard and focus behavior comes from
+  `@base-ui/react`. Never hand-rolled.
+- **Both brands, both modes.** A change is not done until it is verified in
+  all four combinations. The toolbar above makes that a two-click check.

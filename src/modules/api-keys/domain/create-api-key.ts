@@ -1,5 +1,5 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 
 import { apiKeyFromApiToDomain } from "./api-key";
 
@@ -9,8 +9,11 @@ export type CreateApiKeyPayload = {
 	description?: string;
 };
 
-export async function createApiKeyRequest(payload: CreateApiKeyPayload) {
-	const response = await apiClient.POST(
+export async function createApiKeyRequest(
+	payload: CreateApiKeyPayload,
+	{ kitaruApiClient }: KitaruApiClientContext
+) {
+	const response = await kitaruApiClient.POST(
 		"/api/v1/service_accounts/{service_account_id}/api_keys",
 		{
 			params: {

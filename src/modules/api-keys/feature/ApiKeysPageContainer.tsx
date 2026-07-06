@@ -1,11 +1,8 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
-
-import { userQueries } from "@/modules/users/business-logic/user-queries";
+import { useCurrentUser } from "@/modules/users/business-logic/use-current-user";
 import { Card, CardContent } from "@zenml/hashi/primitives/card";
-
-import { apiKeyQueries } from "../business-logic/api-key-queries";
-import { personalServiceAccountQueries } from "../business-logic/personal-service-account-queries";
+import { useState } from "react";
+import { useApiKeys } from "../business-logic/use-api-keys";
+import { usePersonalServiceAccount } from "../business-logic/use-personal-service-account";
 import { ApiKeysTable } from "../ui/ApiKeysTable";
 import { EmptyApiKeys } from "../ui/EmptyApiKeys";
 import { ApiKeyActiveToggleContainer } from "./ApiKeyActiveToggleContainer";
@@ -14,19 +11,18 @@ import { ApiKeysListHeaderContainer } from "./ApiKeysListHeaderContainer";
 import { CreateApiKeyDialogContainer } from "./CreateApiKeyDialogContainer";
 
 export function ApiKeysPageContainer() {
-	const { data: currentUser } = useSuspenseQuery(userQueries.currentUser());
-	const { data: personalSa } = useSuspenseQuery(
-		personalServiceAccountQueries.resolve(currentUser.id)
+	const { currentUserData: currentUser } = useCurrentUser();
+	const { personalServiceAccountData: personalSa } = usePersonalServiceAccount(
+		currentUser.id
 	);
 	const [createOpen, setCreateOpen] = useState(false);
 
 	const hasServiceAccount = personalSa !== null;
-	const { data, refetch } = useQuery({
-		...apiKeyQueries.list(personalSa?.id ?? ""),
+	const { apiKeysData, refetch } = useApiKeys(personalSa?.id ?? "", {
 		enabled: hasServiceAccount,
 	});
 
-	const items = data?.items ?? [];
+	const items = apiKeysData?.items ?? [];
 
 	return (
 		<Card>

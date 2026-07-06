@@ -1,7 +1,8 @@
 import type { LoginPayload } from "@/modules/session/domain/login-schema";
 import { loginUser as loginUserRequest } from "@/modules/session/domain/login-user";
 import { type LoginSuccessResponse } from "@/modules/session/domain/types";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 
 export function useLoginUser(
@@ -10,9 +11,10 @@ export function useLoginUser(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: loginUserRequest,
+		mutationFn: (payload) => loginUserRequest(payload, { kitaruApiClient }),
 	});
 
 	return {

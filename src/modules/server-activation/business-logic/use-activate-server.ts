@@ -2,7 +2,8 @@ import {
 	type ActivateServerResponse,
 	activateServer as activateServerRequest,
 } from "@/modules/server-activation/domain/activate-server";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
 import type { ServerActivationRequest } from "../domain/server-activation-types";
 
@@ -17,9 +18,11 @@ export function useActivateServer(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: activateServerRequest,
+		mutationFn: (payload) =>
+			activateServerRequest(payload, { kitaruApiClient }),
 	});
 
 	return {

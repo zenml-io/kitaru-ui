@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { toast } from "sonner";
 
-import { DeleteAlertDialog } from "@/shared/ui/DeleteAlertDialog";
+import { DeleteAlertDialog } from "@zenml/shared-kitaru/ui/DeleteAlertDialog";
 
 import { apiKeyQueryKeys } from "../business-logic/api-key-queries";
 import { getErrorMessage } from "../business-logic/get-error-message";
@@ -22,10 +23,11 @@ export function DeleteApiKeyAlertDialogContainer({
 	onOpenChange,
 }: DeleteApiKeyAlertDialogContainerProps) {
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const { deleteApiKey, isPending } = useDeleteApiKey({
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: apiKeyQueryKeys.list(serviceAccountId),
+				queryKey: apiKeyQueryKeys.list(scopeKey, serviceAccountId),
 			});
 			toast.success("API key deleted");
 			onOpenChange(false);

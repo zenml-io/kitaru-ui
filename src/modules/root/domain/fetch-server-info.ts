@@ -1,10 +1,14 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import type { components } from "@/shared/api/openapi";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
+import type { components } from "@zenml/shared-kitaru/api/openapi";
 
 export type ServerInfo = components["schemas"]["ServerModel"];
 
-export async function fetchServerInfo(): Promise<ServerInfo> {
-	const response = await apiClient.GET("/api/v1/info");
+export type FetchServerInfoArgs = object;
+
+export async function fetchServerInfo({
+	kitaruApiClient,
+}: KitaruApiClientContext): Promise<ServerInfo> {
+	const response = await kitaruApiClient.GET("/api/v1/info");
 	return expectData(response);
 }

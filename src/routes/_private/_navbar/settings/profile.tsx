@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_private/_navbar/settings/profile")({
 	component: UpdateCurrentUserPageContainer,
 	loader: async ({ context }) => {
 		await Promise.all([
-			context.queryClient.ensureQueryData(userQueries.currentUser()),
+			context.queryClient.ensureQueryData(userQueries.currentUser(context)),
 		]);
 
 		return {

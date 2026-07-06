@@ -1,6 +1,7 @@
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
 import type { UserUpdate } from "../domain/users";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { updateCurrentUserRequest } from "../domain/update-current-user";
 
 export function useUpdateCurrentUser(
@@ -9,9 +10,11 @@ export function useUpdateCurrentUser(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: updateCurrentUserRequest,
+		mutationFn: (payload: UserUpdate) =>
+			updateCurrentUserRequest({ payload }, { kitaruApiClient }),
 	});
 
 	return {

@@ -1,5 +1,6 @@
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { deleteUserRequest } from "../domain/delete-user";
 
 export function useDeleteUser(
@@ -8,9 +9,11 @@ export function useDeleteUser(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: deleteUserRequest,
+		mutationFn: (userNameOrId: string) =>
+			deleteUserRequest({ userNameOrId }, { kitaruApiClient }),
 	});
 
 	return {

@@ -1,5 +1,5 @@
-import { isFetchError } from "@/shared/api/domain/fetch-error";
-import { isRecord } from "@/shared/utils/is-record";
+import { isFetchError } from "@zenml/shared-kitaru/api/domain";
+import { isRecord } from "@zenml/shared-kitaru/utils/is-record";
 
 export function getErrorMessage(error: unknown, fallback: string): string {
 	if (isFetchError(error)) {

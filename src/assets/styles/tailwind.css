@@ -1,2 +1,2 @@
-@import "@zenml/hashi/globals.css";
-@import "./shadcn.css";
+@import "@zenml/shared-kitaru/kitaru-tailwind.css";
+@import "@zenml/shared-kitaru/shadcn.css";

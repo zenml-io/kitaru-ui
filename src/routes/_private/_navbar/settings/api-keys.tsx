@@ -10,13 +10,15 @@ export const Route = createFileRoute("/_private/_navbar/settings/api-keys")({
 	component: ApiKeysPageContainer,
 	loader: async ({ context }) => {
 		const user = await context.queryClient.ensureQueryData(
-			userQueries.currentUser()
+			userQueries.currentUser(context)
 		);
 		const sa = await context.queryClient.ensureQueryData(
-			personalServiceAccountQueries.resolve(user.id)
+			personalServiceAccountQueries.resolve({ userId: user.id }, context)
 		);
 		if (sa) {
-			await context.queryClient.ensureQueryData(apiKeyQueries.list(sa.id));
+			await context.queryClient.ensureQueryData(
+				apiKeyQueries.list({ serviceAccountId: sa.id }, context)
+			);
 		}
 		return {
 			crumb: { label: "API keys", disabled: false },

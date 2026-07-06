@@ -1,5 +1,5 @@
-import type { components } from "@/shared/api/openapi";
-import { parseBackendTimestamp } from "@/shared/utils/time";
+import type { components } from "@zenml/shared-kitaru/api/openapi";
+import { parseBackendTimestamp } from "@zenml/shared-kitaru/utils/time";
 
 export type ApiKey = {
 	id: string;

@@ -8,6 +8,7 @@ import {
 	redirect,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import type { KitaruApiClient } from "@zenml/shared-kitaru/api";
 
 function RootLayout() {
 	return (
@@ -20,20 +21,24 @@ function RootLayout() {
 	);
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-	{
-		beforeLoad: async ({ context, location, buildLocation }) => {
-			const serverInfo = await context.queryClient.ensureQueryData(
-				serverInfoQueries.detail()
-			);
+type RouterContext = {
+	queryClient: QueryClient;
+	kitaruApiClient: KitaruApiClient;
+	scopeKey: string;
+};
 
-			if (
-				serverInfo.active === false &&
-				location.pathname !== buildLocation({ to: "/activate-server" }).pathname
-			) {
-				throw redirect({ to: "/activate-server" });
-			}
-		},
-		component: RootLayout,
-	}
-);
+export const Route = createRootRouteWithContext<RouterContext>()({
+	beforeLoad: async ({ context, location, buildLocation }) => {
+		const serverInfo = await context.queryClient.ensureQueryData(
+			serverInfoQueries.detail(context)
+		);
+
+		if (
+			serverInfo.active === false &&
+			location.pathname !== buildLocation({ to: "/activate-server" }).pathname
+		) {
+			throw redirect({ to: "/activate-server" });
+		}
+	},
+	component: RootLayout,
+});

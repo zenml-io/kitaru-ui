@@ -1,10 +1,6 @@
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { parseVersionPathParam } from "@/modules/deployments/business-logic/parse-version-path-param";
-import {
-	buildLocalDeployment,
-	LOCAL_VERSION_ID,
-} from "@/modules/deployments/domain/deployment";
-import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
+import { deploymentsQueries } from "@zenml/shared-kitaru/modules/deployments";
+import { parseVersionPathParam } from "@zenml/shared-kitaru/modules/deployments";
+import { flowsQueries } from "@zenml/shared-kitaru/modules/flows";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
 
@@ -24,18 +20,25 @@ export const Route = createFileRoute(
 	},
 	loader: async ({ context, params }) => {
 		const flow = await ensureQueryDataOr404(
-			context.queryClient.ensureQueryData(flowsQueries.detail(params.flowId))
+			context.queryClient.ensureQueryData(
+				flowsQueries.detail(
+					{
+						flowId: params.flowId,
+					},
+					context
+				)
+			)
 		);
-		const deployment =
-			params.version === LOCAL_VERSION_ID
-				? buildLocalDeployment(params.flowId, flow.name)
-				: await context.queryClient.ensureQueryData(
-						deploymentsQueries.byVersion(
-							params.flowId,
-							flow.name,
-							params.version
-						)
-					);
+		const deployment = await context.queryClient.ensureQueryData(
+			deploymentsQueries.currentDeployment(
+				{
+					flowId: params.flowId,
+					flowName: flow.name,
+					version: params.version,
+				},
+				context
+			)
+		);
 		if (!deployment) throw notFound();
 		return { deployment };
 	},

@@ -1,9 +1,11 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 import { userFromApiToDomain } from "./users";
 
-export async function fetchUserList() {
-	const response = await apiClient.GET("/api/v1/users", {
+export async function fetchUserList({
+	kitaruApiClient,
+}: KitaruApiClientContext) {
+	const response = await kitaruApiClient.GET("/api/v1/users", {
 		params: {
 			query: {
 				sort_by: "desc:created",

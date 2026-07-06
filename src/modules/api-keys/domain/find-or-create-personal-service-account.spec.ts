@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { apiClient } from "@/shared/api/domain/api-client";
-import { FetchError } from "@/shared/api/domain/fetch-error";
+import { createMockKitaruApiClient } from "@zenml/shared-kitaru/api/fixtures/create-mock-kitaru-api-client";
+import { FetchError } from "@zenml/shared-kitaru/api/domain";
 
 import {
 	buildPersonalServiceAccountName,
@@ -20,16 +20,9 @@ describe("findOrCreatePersonalServiceAccount", () => {
 	const userId = "aaaa-bbbb";
 	const expectedName = `pat-${userId}`;
 
-	beforeEach(() => {
-		vi.restoreAllMocks();
-	});
-
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-
 	it("returns the existing SA id when the list has exactly one match", async () => {
-		const get = vi.spyOn(apiClient, "GET").mockResolvedValue({
+		const kitaruApiClient = createMockKitaruApiClient();
+		const get = kitaruApiClient.GET.mockResolvedValue({
 			data: {
 				index: 1,
 				max_size: 1,
@@ -39,9 +32,14 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			},
 			response: new Response(null, { status: 200 }),
 		} as never);
-		const post = vi.spyOn(apiClient, "POST");
+		const post = kitaruApiClient.POST;
 
-		const result = await findOrCreatePersonalServiceAccount(userId);
+		const result = await findOrCreatePersonalServiceAccount(
+			{
+				userId,
+			},
+			{ kitaruApiClient }
+		);
 
 		expect(result).toEqual({ id: "sa-existing" });
 		expect(get).toHaveBeenCalledWith("/api/v1/service_accounts", {
@@ -58,7 +56,8 @@ describe("findOrCreatePersonalServiceAccount", () => {
 	});
 
 	it("creates the SA when the list is empty", async () => {
-		vi.spyOn(apiClient, "GET").mockResolvedValue({
+		const kitaruApiClient = createMockKitaruApiClient();
+		kitaruApiClient.GET.mockResolvedValue({
 			data: {
 				index: 1,
 				max_size: 1,
@@ -68,12 +67,17 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			},
 			response: new Response(null, { status: 200 }),
 		} as never);
-		const post = vi.spyOn(apiClient, "POST").mockResolvedValue({
+		const post = kitaruApiClient.POST.mockResolvedValue({
 			data: { id: "sa-new", name: expectedName },
 			response: new Response(null, { status: 200 }),
 		} as never);
 
-		const result = await findOrCreatePersonalServiceAccount(userId);
+		const result = await findOrCreatePersonalServiceAccount(
+			{
+				userId,
+			},
+			{ kitaruApiClient }
+		);
 
 		expect(result).toEqual({ id: "sa-new" });
 		expect(post).toHaveBeenCalledWith("/api/v1/service_accounts", {
@@ -86,7 +90,8 @@ describe("findOrCreatePersonalServiceAccount", () => {
 	});
 
 	it("recovers from a 409 conflict by re-fetching the SA", async () => {
-		const get = vi.spyOn(apiClient, "GET");
+		const kitaruApiClient = createMockKitaruApiClient();
+		const get = kitaruApiClient.GET;
 		get.mockResolvedValueOnce({
 			data: {
 				index: 1,
@@ -97,7 +102,7 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			},
 			response: new Response(null, { status: 200 }),
 		} as never);
-		const post = vi.spyOn(apiClient, "POST").mockRejectedValue(
+		const post = kitaruApiClient.POST.mockRejectedValue(
 			new FetchError({
 				status: 409,
 				statusText: "Conflict",
@@ -117,7 +122,12 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			response: new Response(null, { status: 200 }),
 		} as never);
 
-		const result = await findOrCreatePersonalServiceAccount(userId);
+		const result = await findOrCreatePersonalServiceAccount(
+			{
+				userId,
+			},
+			{ kitaruApiClient }
+		);
 
 		expect(result).toEqual({ id: "sa-raced" });
 		expect(get).toHaveBeenCalledTimes(2);
@@ -127,7 +137,8 @@ describe("findOrCreatePersonalServiceAccount", () => {
 	});
 
 	it("throws a clear error when a 409 has no raced SA to recover", async () => {
-		const get = vi.spyOn(apiClient, "GET");
+		const kitaruApiClient = createMockKitaruApiClient();
+		const get = kitaruApiClient.GET;
 		const emptyPage = {
 			data: {
 				index: 1,
@@ -139,7 +150,7 @@ describe("findOrCreatePersonalServiceAccount", () => {
 			response: new Response(null, { status: 200 }),
 		} as never;
 		get.mockResolvedValueOnce(emptyPage);
-		vi.spyOn(apiClient, "POST").mockRejectedValue(
+		kitaruApiClient.POST.mockRejectedValue(
 			new FetchError({
 				status: 409,
 				statusText: "Conflict",
@@ -150,8 +161,8 @@ describe("findOrCreatePersonalServiceAccount", () => {
 		);
 		get.mockResolvedValueOnce(emptyPage);
 
-		await expect(findOrCreatePersonalServiceAccount(userId)).rejects.toThrow(
-			/personal service account/i
-		);
+		await expect(
+			findOrCreatePersonalServiceAccount({ userId }, { kitaruApiClient })
+		).rejects.toThrow(/personal service account/i);
 	});
 });

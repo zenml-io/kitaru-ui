@@ -5,11 +5,12 @@ import {
 } from "@/modules/server-activation/domain/server-activation-schema";
 import { useActivateServerAndLogin } from "@/modules/server-activation/business-logic/use-activate-server-and-login";
 import { Button } from "@zenml/hashi/primitives/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { ServerActivationRequest } from "../domain/server-activation-types";
@@ -24,6 +25,7 @@ function getErrorMessage(error: unknown): string {
 export function ServerActivationFormContainer() {
 	const router = useRouter();
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const form = useForm<ServerActivationPayload>({
 		resolver: zodResolver(serverActivationSchema),
 		defaultValues: {
@@ -38,7 +40,7 @@ export function ServerActivationFormContainer() {
 		useActivateServerAndLogin({
 			onSuccess: async () => {
 				await queryClient.invalidateQueries({
-					queryKey: serverInfoQueryKeys.all,
+					queryKey: serverInfoQueryKeys.all(scopeKey),
 					refetchType: "all",
 				});
 

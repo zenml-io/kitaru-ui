@@ -1,5 +1,5 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 
 import { apiKeyFromApiToDomain } from "./api-key";
 
@@ -9,8 +9,11 @@ export type RotateApiKeyPayload = {
 	retainPeriodMinutes?: number;
 };
 
-export async function rotateApiKeyRequest(payload: RotateApiKeyPayload) {
-	const response = await apiClient.PUT(
+export async function rotateApiKeyRequest(
+	payload: RotateApiKeyPayload,
+	{ kitaruApiClient }: KitaruApiClientContext
+) {
+	const response = await kitaruApiClient.PUT(
 		"/api/v1/service_accounts/{service_account_id}/api_keys/{api_key_name_or_id}/rotate",
 		{
 			params: {

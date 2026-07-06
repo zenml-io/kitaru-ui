@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import {
 	AlertDialog,
 	AlertDialogCancel,
@@ -8,14 +9,14 @@ import {
 	AlertDialogTitle,
 } from "@zenml/hashi/primitives/alert-dialog";
 import { Button } from "@zenml/hashi/primitives/button";
-import { useQueryClient } from "@tanstack/react-query";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { toast } from "sonner";
 import { useDeleteUser } from "../business-logic/use-delete-user";
 import { userQueryKeys } from "../business-logic/user-queries";
-import type { User } from "../domain/users";
+import type { KitaruUser } from "../domain/users";
 
 type RemoveMemberAlertDialogProps = {
-	toDeleteMember: User;
+	toDeleteMember: KitaruUser;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 };
@@ -26,13 +27,18 @@ export function RemoveMemberAlertDialog({
 	onOpenChange,
 }: RemoveMemberAlertDialogProps) {
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const memberName = toDeleteMember?.name ?? "this member";
 
 	const { deleteUser, isPending: isDeletePending } = useDeleteUser({
 		onSuccess: () => {
 			onOpenChange(false);
-			queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
-			queryClient.invalidateQueries({ queryKey: userQueryKeys.current });
+			queryClient.invalidateQueries({
+				queryKey: userQueryKeys.all(scopeKey),
+			});
+			queryClient.invalidateQueries({
+				queryKey: userQueryKeys.current(scopeKey),
+			});
 		},
 		onError: (error) => {
 			toast.error(error.message);

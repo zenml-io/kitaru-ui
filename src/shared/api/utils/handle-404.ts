@@ -1,5 +1,5 @@
 import { notFound } from "@tanstack/react-router";
-import { isFetchError } from "../domain/fetch-error";
+import { isFetchError } from "@zenml/shared-kitaru/api/domain";
 
 /**
  * Wraps a query promise and throws TanStack Router's notFound()

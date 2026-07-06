@@ -1,3 +1,6 @@
+import { Field, FieldError, FieldGroup, FieldLabel } from "@zenml/shared-kitaru/ui/field";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@zenml/hashi/primitives/button";
 import {
 	Dialog,
@@ -9,10 +12,8 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@zenml/hashi/primitives/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { useId, useState, type PropsWithChildren } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -20,13 +21,14 @@ import {
 	updateAvatarFormSchema,
 	type UpdateAvatarFormType,
 } from "../business-logic/update-user-avatar-schema";
+import { useCurrentUser } from "../business-logic/use-current-user";
 import { useUpdateCurrentUser } from "../business-logic/use-update-current-user";
-import { userQueries, userQueryKeys } from "../business-logic/user-queries";
+import { userQueryKeys } from "../business-logic/user-queries";
 
 export function UpdateAvatarDialogContainer({ children }: PropsWithChildren) {
 	const formId = useId();
 	const [open, setOpen] = useState(false);
-	const { data } = useSuspenseQuery(userQueries.currentUser());
+	const { currentUserData: data } = useCurrentUser();
 
 	const avatarUrl = data.avatarUrl ?? undefined;
 
@@ -75,11 +77,13 @@ function UpdateAvatarForm({
 	formId,
 }: UpdateAvatarFormProps) {
 	const queryClient = useQueryClient();
-	const { current } = userQueryKeys;
+	const { scopeKey } = useKitaruContext();
 
 	const { updateCurrentUser } = useUpdateCurrentUser({
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: current });
+			queryClient.invalidateQueries({
+				queryKey: userQueryKeys.current(scopeKey),
+			});
 			handleSuccess();
 		},
 		onError: (error) => {

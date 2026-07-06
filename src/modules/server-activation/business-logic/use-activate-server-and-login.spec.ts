@@ -1,5 +1,6 @@
 import { activateServer } from "@/modules/server-activation/domain/activate-server";
 import { loginUser } from "@/modules/session/domain/login-user";
+import { createMockKitaruApiClient } from "@zenml/shared-kitaru/api/fixtures/create-mock-kitaru-api-client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { activateServerAndLogin } from "./use-activate-server-and-login";
 
@@ -13,6 +14,7 @@ vi.mock("@/modules/session/domain/login-user", () => ({
 
 const mockedActivateServer = vi.mocked(activateServer);
 const mockedLoginUser = vi.mocked(loginUser);
+const kitaruApiClient = createMockKitaruApiClient();
 
 const payload = {
 	server_name: "My Kitaru Server",
@@ -46,22 +48,32 @@ describe("activateServerAndLogin", () => {
 			return loginResponse;
 		});
 
-		const result = await activateServerAndLogin(payload);
+		const result = await activateServerAndLogin(
+			{ ...payload },
+			{ kitaruApiClient }
+		);
 
 		expect(result).toBe(loginResponse);
 		expect(callOrder).toEqual(["activate", "login"]);
-		expect(mockedActivateServer).toHaveBeenCalledWith(payload);
-		expect(mockedLoginUser).toHaveBeenCalledWith({
-			username: payload.admin_username,
-			password: payload.admin_password,
+		expect(mockedActivateServer).toHaveBeenCalledWith(payload, {
+			kitaruApiClient,
 		});
+		expect(mockedLoginUser).toHaveBeenCalledWith(
+			{
+				username: payload.admin_username,
+				password: payload.admin_password,
+			},
+			{ kitaruApiClient }
+		);
 	});
 
 	it("propagates activation errors and does not attempt login", async () => {
 		const error = new Error("Activation failed");
 		mockedActivateServer.mockRejectedValue(error);
 
-		await expect(activateServerAndLogin(payload)).rejects.toBe(error);
+		await expect(
+			activateServerAndLogin({ ...payload }, { kitaruApiClient })
+		).rejects.toBe(error);
 		expect(mockedLoginUser).not.toHaveBeenCalled();
 	});
 
@@ -70,12 +82,19 @@ describe("activateServerAndLogin", () => {
 		mockedActivateServer.mockResolvedValue(null);
 		mockedLoginUser.mockRejectedValue(error);
 
-		await expect(activateServerAndLogin(payload)).rejects.toBe(error);
-		expect(mockedActivateServer).toHaveBeenCalledWith(payload);
-		expect(mockedLoginUser).toHaveBeenCalledWith({
-			username: payload.admin_username,
-			password: payload.admin_password,
+		await expect(
+			activateServerAndLogin({ ...payload }, { kitaruApiClient })
+		).rejects.toBe(error);
+		expect(mockedActivateServer).toHaveBeenCalledWith(payload, {
+			kitaruApiClient,
 		});
+		expect(mockedLoginUser).toHaveBeenCalledWith(
+			{
+				username: payload.admin_username,
+				password: payload.admin_password,
+			},
+			{ kitaruApiClient }
+		);
 	});
 
 	it("throws when login returns redirect response", async () => {
@@ -84,8 +103,8 @@ describe("activateServerAndLogin", () => {
 			authorization_url: "https://example.com/oauth/authorize",
 		});
 
-		await expect(activateServerAndLogin(payload)).rejects.toThrow(
-			"redirect response"
-		);
+		await expect(
+			activateServerAndLogin({ ...payload }, { kitaruApiClient })
+		).rejects.toThrow("redirect response");
 	});
 });

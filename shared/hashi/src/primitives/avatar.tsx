@@ -30,12 +30,20 @@ function Avatar({
 }) {
 	const [status, setStatus] = React.useState<ImageLoadingStatus>("loading");
 
+	// Only expose an `img` role when the avatar carries its own text
+	// alternative; a bare/decorative avatar (labeled by adjacent text) stays
+	// role-less so it isn't announced as an unnamed image. A caller-supplied
+	// `role` in props still wins via spread order below.
+	const hasLabel =
+		props["aria-label"] != null || props["aria-labelledby"] != null;
+
 	return (
 		<AvatarContext.Provider value={{ status, setStatus }}>
 			<span
 				data-slot="avatar"
 				data-size={size}
 				data-shape={shape}
+				role={hasLabel ? "img" : undefined}
 				className={cn(
 					"group/avatar relative flex size-8 shrink-0 overflow-hidden select-none data-[shape=circle]:rounded-full data-[size=2xl]:size-20 data-[size=lg]:size-10 data-[size=sm]:size-6 data-[size=xl]:size-12",
 					AVATAR_SQUARE_RADII,

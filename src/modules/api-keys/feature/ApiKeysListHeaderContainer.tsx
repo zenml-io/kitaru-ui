@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 
-import { useManualRefresh } from "@/shared/business-logic/use-manual-refresh";
+import { useManualRefresh } from "@zenml/shared-kitaru/business-logic/use-manual-refresh";
 import { Button } from "@zenml/hashi/primitives/button";
 import {
 	CardAction,
@@ -8,7 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@zenml/hashi/primitives/card";
-import { RefreshButton } from "@/shared/ui/RefreshButton";
+import { RefreshButton } from "@zenml/shared-kitaru/ui/RefreshButton";
 
 type ApiKeysListHeaderContainerProps = {
 	refetch: () => Promise<unknown>;

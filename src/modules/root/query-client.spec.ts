@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { FetchError } from "@zenml/shared-kitaru/api/domain";
+import { queryClient } from "./query-client";
 
 type MockWindow = Window & typeof globalThis;
 
@@ -25,10 +27,7 @@ function mockWindowLocation({
 	return assign;
 }
 
-type FetchErrorClass =
-	typeof import("@/shared/api/domain/fetch-error").FetchError;
-
-function unauthorizedError(FetchError: FetchErrorClass) {
+function unauthorizedError() {
 	return new FetchError({
 		message: "Unauthorized",
 		status: 401,
@@ -38,7 +37,7 @@ function unauthorizedError(FetchError: FetchErrorClass) {
 	});
 }
 
-function serverError(FetchError: FetchErrorClass) {
+function serverError() {
 	return new FetchError({
 		message: "Internal error",
 		status: 500,
@@ -48,15 +47,12 @@ function serverError(FetchError: FetchErrorClass) {
 	});
 }
 
-async function getFreshQueryClient() {
-	vi.resetModules();
-	const { queryClient } = await import("./query-client");
-	const { FetchError } = await import("@/shared/api/domain/fetch-error");
-	return { queryClient, FetchError };
-}
-
+// `queryClient` is a module singleton; its 401 handler reads `window.location`
+// at error time, so a single import works — each test just restubs `window`.
+// Clear the cache between tests so query state never leaks.
 describe("queryClient global 401 handling", () => {
 	afterEach(() => {
+		queryClient.clear();
 		vi.restoreAllMocks();
 		vi.unstubAllGlobals();
 	});
@@ -67,13 +63,12 @@ describe("queryClient global 401 handling", () => {
 			search: "?x=1&y=2",
 			hash: "#frag",
 		});
-		const { queryClient, FetchError } = await getFreshQueryClient();
 
 		await expect(
 			queryClient.fetchQuery({
 				queryKey: ["unauthorized-test"],
 				queryFn: async () => {
-					throw unauthorizedError(FetchError);
+					throw unauthorizedError();
 				},
 			})
 		).rejects.toBeInstanceOf(FetchError);
@@ -88,13 +83,12 @@ describe("queryClient global 401 handling", () => {
 			pathname: "/login",
 			search: "?next=%2F",
 		});
-		const { queryClient, FetchError } = await getFreshQueryClient();
 
 		await expect(
 			queryClient.fetchQuery({
 				queryKey: ["login-page-unauthorized-test"],
 				queryFn: async () => {
-					throw unauthorizedError(FetchError);
+					throw unauthorizedError();
 				},
 			})
 		).rejects.toBeInstanceOf(FetchError);
@@ -106,13 +100,12 @@ describe("queryClient global 401 handling", () => {
 		const assign = mockWindowLocation({
 			pathname: "/runs",
 		});
-		const { queryClient, FetchError } = await getFreshQueryClient();
 
 		await expect(
 			queryClient.fetchQuery({
 				queryKey: ["non-401-test"],
 				queryFn: async () => {
-					throw serverError(FetchError);
+					throw serverError();
 				},
 			})
 		).rejects.toBeInstanceOf(FetchError);

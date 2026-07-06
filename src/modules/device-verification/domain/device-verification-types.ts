@@ -1,4 +1,4 @@
-import type { components, operations } from "@/shared/api/openapi";
+import type { components, operations } from "@zenml/shared-kitaru/api/openapi";
 
 export type Device = components["schemas"]["OAuthDeviceResponse"];
 export type DeviceQueryParams = NonNullable<

@@ -33,9 +33,11 @@ import { Route as PrivateNavbarSettingsSecretsSecretIdRouteImport } from './rout
 import { Route as PrivateNavbarFlowsFlowIdVVersionRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/route'
 import { Route as PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/executions/$executionId/route'
 import { Route as PrivateNavbarFlowsFlowIdVVersionIndexRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/index'
+import { Route as PrivateNavbarFlowsFlowIdVVersionCompareRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/compare'
 import { Route as PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/route'
 import { Route as PrivateNavbarFlowsFlowIdVVersionTabsTabRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab'
 import { Route as PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/executions/$executionId/route'
+import { Route as PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRouteImport } from './routes/_private/_navbar/flows/$flowId/v/$version/executions/$executionId_/replay/route'
 
 const PrivateRouteRoute = PrivateRouteRouteImport.update({
   id: '/_private',
@@ -169,6 +171,12 @@ const PrivateNavbarFlowsFlowIdVVersionIndexRoute =
     path: '/',
     getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionRouteRoute,
   } as any)
+const PrivateNavbarFlowsFlowIdVVersionCompareRoute =
+  PrivateNavbarFlowsFlowIdVVersionCompareRouteImport.update({
+    id: '/compare',
+    path: '/compare',
+    getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionRouteRoute,
+  } as any)
 const PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute =
   PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteImport.update({
     id: '/_tabs',
@@ -186,6 +194,14 @@ const PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute =
     path: '/executions/$executionId',
     getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionRouteRoute,
   } as any)
+const PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute =
+  PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRouteImport.update(
+    {
+      id: '/executions/$executionId_/replay',
+      path: '/executions/$executionId/replay',
+      getParentRoute: () => PrivateNavbarFlowsFlowIdVVersionRouteRoute,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof PrivateIndexRoute
@@ -208,9 +224,11 @@ export interface FileRoutesByFullPath {
   '/settings/secrets/': typeof PrivateNavbarSettingsSecretsIndexRoute
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/flows/$flowId/v/$version': typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren
+  '/flows/$flowId/v/$version/compare': typeof PrivateNavbarFlowsFlowIdVVersionCompareRoute
   '/flows/$flowId/v/$version/': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   '/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
   '/flows/$flowId/v/$version/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/flows/$flowId/v/$version/executions/$executionId/replay': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PrivateIndexRoute
@@ -229,8 +247,10 @@ export interface FileRoutesByTo {
   '/settings/secrets': typeof PrivateNavbarSettingsSecretsIndexRoute
   '/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/flows/$flowId/v/$version': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
+  '/flows/$flowId/v/$version/compare': typeof PrivateNavbarFlowsFlowIdVVersionCompareRoute
   '/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
   '/flows/$flowId/v/$version/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/flows/$flowId/v/$version/executions/$executionId/replay': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -258,9 +278,11 @@ export interface FileRoutesById {
   '/_private/_navbar/flows/$flowId/executions/$executionId': typeof PrivateNavbarFlowsFlowIdExecutionsExecutionIdRouteRoute
   '/_private/_navbar/flows/$flowId/v/$version': typeof PrivateNavbarFlowsFlowIdVVersionRouteRouteWithChildren
   '/_private/_navbar/flows/$flowId/v/$version/_tabs': typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren
+  '/_private/_navbar/flows/$flowId/v/$version/compare': typeof PrivateNavbarFlowsFlowIdVVersionCompareRoute
   '/_private/_navbar/flows/$flowId/v/$version/': typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
   '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab': typeof PrivateNavbarFlowsFlowIdVVersionTabsTabRoute
+  '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId_/replay': typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -285,9 +307,11 @@ export interface FileRouteTypes {
     | '/settings/secrets/'
     | '/flows/$flowId/executions/$executionId'
     | '/flows/$flowId/v/$version'
+    | '/flows/$flowId/v/$version/compare'
     | '/flows/$flowId/v/$version/'
     | '/flows/$flowId/v/$version/executions/$executionId'
     | '/flows/$flowId/v/$version/$tab'
+    | '/flows/$flowId/v/$version/executions/$executionId/replay'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -306,8 +330,10 @@ export interface FileRouteTypes {
     | '/settings/secrets'
     | '/flows/$flowId/executions/$executionId'
     | '/flows/$flowId/v/$version'
+    | '/flows/$flowId/v/$version/compare'
     | '/flows/$flowId/v/$version/executions/$executionId'
     | '/flows/$flowId/v/$version/$tab'
+    | '/flows/$flowId/v/$version/executions/$executionId/replay'
   id:
     | '__root__'
     | '/_private'
@@ -334,9 +360,11 @@ export interface FileRouteTypes {
     | '/_private/_navbar/flows/$flowId/executions/$executionId'
     | '/_private/_navbar/flows/$flowId/v/$version'
     | '/_private/_navbar/flows/$flowId/v/$version/_tabs'
+    | '/_private/_navbar/flows/$flowId/v/$version/compare'
     | '/_private/_navbar/flows/$flowId/v/$version/'
     | '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId'
     | '/_private/_navbar/flows/$flowId/v/$version/_tabs/$tab'
+    | '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId_/replay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -514,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionIndexRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionRouteRoute
     }
+    '/_private/_navbar/flows/$flowId/v/$version/compare': {
+      id: '/_private/_navbar/flows/$flowId/v/$version/compare'
+      path: '/compare'
+      fullPath: '/flows/$flowId/v/$version/compare'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionCompareRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionRouteRoute
+    }
     '/_private/_navbar/flows/$flowId/v/$version/_tabs': {
       id: '/_private/_navbar/flows/$flowId/v/$version/_tabs'
       path: ''
@@ -533,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/executions/$executionId'
       fullPath: '/flows/$flowId/v/$version/executions/$executionId'
       preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRouteImport
+      parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionRouteRoute
+    }
+    '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId_/replay': {
+      id: '/_private/_navbar/flows/$flowId/v/$version/executions/$executionId_/replay'
+      path: '/executions/$executionId/replay'
+      fullPath: '/flows/$flowId/v/$version/executions/$executionId/replay'
+      preLoaderRoute: typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRouteImport
       parentRoute: typeof PrivateNavbarFlowsFlowIdVVersionRouteRoute
     }
   }
@@ -555,18 +597,24 @@ const PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren =
 
 interface PrivateNavbarFlowsFlowIdVVersionRouteRouteChildren {
   PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute: typeof PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren
+  PrivateNavbarFlowsFlowIdVVersionCompareRoute: typeof PrivateNavbarFlowsFlowIdVVersionCompareRoute
   PrivateNavbarFlowsFlowIdVVersionIndexRoute: typeof PrivateNavbarFlowsFlowIdVVersionIndexRoute
   PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute: typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute
+  PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute: typeof PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute
 }
 
 const PrivateNavbarFlowsFlowIdVVersionRouteRouteChildren: PrivateNavbarFlowsFlowIdVVersionRouteRouteChildren =
   {
     PrivateNavbarFlowsFlowIdVVersionTabsRouteRoute:
       PrivateNavbarFlowsFlowIdVVersionTabsRouteRouteWithChildren,
+    PrivateNavbarFlowsFlowIdVVersionCompareRoute:
+      PrivateNavbarFlowsFlowIdVVersionCompareRoute,
     PrivateNavbarFlowsFlowIdVVersionIndexRoute:
       PrivateNavbarFlowsFlowIdVVersionIndexRoute,
     PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute:
       PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdRouteRoute,
+    PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute:
+      PrivateNavbarFlowsFlowIdVVersionExecutionsExecutionIdReplayRouteRoute,
   }
 
 const PrivateNavbarFlowsFlowIdVVersionRouteRouteWithChildren =

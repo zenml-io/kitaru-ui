@@ -1,8 +1,10 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
-import { userFromApiToDomain, type User } from "./users";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
+import { userFromApiToDomain, type KitaruUser } from "./users";
 
-export async function fetchCurrentUser(): Promise<User> {
-	const response = await apiClient.GET("/api/v1/current-user");
+export async function fetchCurrentUser({
+	kitaruApiClient,
+}: KitaruApiClientContext): Promise<KitaruUser> {
+	const response = await kitaruApiClient.GET("/api/v1/current-user");
 	return userFromApiToDomain(expectData(response));
 }

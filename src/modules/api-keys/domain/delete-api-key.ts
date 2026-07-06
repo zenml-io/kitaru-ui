@@ -1,5 +1,5 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectOptionalData } from "@/shared/api/utils/unwrap-api-result";
+import { expectOptionalData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 
 export type DeleteApiKeyPayload = {
 	serviceAccountId: string;
@@ -7,9 +7,10 @@ export type DeleteApiKeyPayload = {
 };
 
 export async function deleteApiKeyRequest(
-	payload: DeleteApiKeyPayload
+	payload: DeleteApiKeyPayload,
+	{ kitaruApiClient }: KitaruApiClientContext
 ): Promise<void> {
-	const response = await apiClient.DELETE(
+	const response = await kitaruApiClient.DELETE(
 		"/api/v1/service_accounts/{service_account_id}/api_keys/{api_key_name_or_id}",
 		{
 			params: {

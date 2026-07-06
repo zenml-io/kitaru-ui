@@ -1,4 +1,4 @@
-import type { components } from "@/shared/api/openapi";
+import type { components } from "@zenml/shared-kitaru/api/openapi";
 
 export type ServerActivationRequest =
 	components["schemas"]["ServerActivationRequest"] & {

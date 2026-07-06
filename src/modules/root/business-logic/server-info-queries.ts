@@ -1,15 +1,18 @@
 import { fetchServerInfo } from "@/modules/root/domain/fetch-server-info";
 import { queryOptions } from "@tanstack/react-query";
+import type { KitaruApiRuntime } from "@zenml/shared-kitaru/api";
+
+export type ServerInfoQueryArgs = object;
 
 export const serverInfoQueryKeys = {
-	all: ["server-info"] as const,
-	detail: () => [...serverInfoQueryKeys.all] as const,
+	all: (scopeKey: string) => [scopeKey, "server-info"] as const,
+	detail: (scopeKey: string) => [...serverInfoQueryKeys.all(scopeKey)] as const,
 };
 
 export const serverInfoQueries = {
-	detail: () =>
+	detail: ({ kitaruApiClient, scopeKey }: KitaruApiRuntime) =>
 		queryOptions({
-			queryKey: serverInfoQueryKeys.detail(),
-			queryFn: fetchServerInfo,
+			queryKey: serverInfoQueryKeys.detail(scopeKey),
+			queryFn: () => fetchServerInfo({ kitaruApiClient }),
 		}),
 };

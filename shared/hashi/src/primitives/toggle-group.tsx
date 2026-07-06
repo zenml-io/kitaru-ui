@@ -40,6 +40,7 @@ function ToggleGroup({
 			data-variant={variant}
 			data-size={size}
 			data-spacing={spacing}
+			role="toolbar"
 			style={{ "--gap": spacing } as React.CSSProperties}
 			className={cn(
 				"group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-md",

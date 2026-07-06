@@ -1,25 +1,29 @@
-import { Button } from "@zenml/hashi/primitives/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
-import { Input } from "@zenml/hashi/primitives/input";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Input } from "@zenml/hashi/primitives/input";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
 	UpdateProfileFormSchema,
 	type UpdateProfileForm,
 } from "../business-logic/update-user-form-schema";
+import { useCurrentUser } from "../business-logic/use-current-user";
 import { useUpdateCurrentUser } from "../business-logic/use-update-current-user";
-import { userQueries, userQueryKeys } from "../business-logic/user-queries";
-import { toast } from "sonner";
+import { userQueryKeys } from "../business-logic/user-queries";
 
 export function UpdateCurrentUserFormContainer() {
-	const { data } = useSuspenseQuery(userQueries.currentUser());
+	const { scopeKey } = useKitaruContext();
+	const { currentUserData: data } = useCurrentUser();
 	const queryClient = useQueryClient();
-	const { current } = userQueryKeys;
 	const { updateCurrentUser, isPending: isMutationPending } =
 		useUpdateCurrentUser({
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: current });
+				queryClient.invalidateQueries({
+					queryKey: userQueryKeys.current(scopeKey),
+				});
 				toast.success("Profile updated successfully");
 			},
 			onError: (error) => {

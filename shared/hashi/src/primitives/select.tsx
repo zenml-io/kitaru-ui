@@ -76,7 +76,7 @@ function SelectContent({
 
 	return (
 		<SelectPrimitive.Portal>
-			<SelectPrimitive.Positioner {...positionerProps}>
+			<SelectPrimitive.Positioner className="z-50" {...positionerProps}>
 				<SelectPrimitive.Popup
 					data-slot="select-content"
 					className={cn(

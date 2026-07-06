@@ -1,5 +1,6 @@
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import {
 	createUserRequest,
 	type CreateUserParams,
@@ -17,9 +18,11 @@ export function useCreateUser(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: createUserRequest,
+		mutationFn: (params: CreateUserParams) =>
+			createUserRequest(params, { kitaruApiClient }),
 	});
 
 	return {

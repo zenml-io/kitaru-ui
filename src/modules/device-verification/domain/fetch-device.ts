@@ -1,15 +1,20 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 import type {
 	Device,
 	DeviceQueryParams,
 } from "@/modules/device-verification/domain/device-verification-types";
 
+export type FetchDeviceArgs = {
+	deviceId: string;
+	queryParams: DeviceQueryParams;
+};
+
 export async function fetchDevice(
-	deviceId: string,
-	queryParams: DeviceQueryParams
+	{ deviceId, queryParams }: FetchDeviceArgs,
+	{ kitaruApiClient }: KitaruApiClientContext
 ): Promise<Device> {
-	const response = await apiClient.GET("/api/v1/devices/{device_id}", {
+	const response = await kitaruApiClient.GET("/api/v1/devices/{device_id}", {
 		params: {
 			path: {
 				device_id: deviceId,

@@ -17,8 +17,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/shared/ui/Table";
-import { TextRenderer } from "@/shared/ui/Table/CellRenderer";
+} from "@zenml/shared-kitaru/ui/Table";
+import { TextRenderer } from "@zenml/shared-kitaru/ui/Table/CellRenderer";
 
 import type { ApiKey } from "../domain/api-key";
 

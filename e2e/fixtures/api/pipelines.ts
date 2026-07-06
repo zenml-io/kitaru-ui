@@ -1,4 +1,4 @@
-import type { components } from "@/shared/api/openapi";
+import type { components } from "@zenml/shared-kitaru/api/openapi";
 
 type PipelineResponse = components["schemas"]["PipelineResponse"];
 type PipelinePage = components["schemas"]["Page_PipelineResponse_"];

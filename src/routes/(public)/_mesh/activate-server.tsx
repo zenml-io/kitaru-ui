@@ -6,7 +6,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/(public)/_mesh/activate-server")({
 	beforeLoad: async ({ context }) => {
 		const serverInfo = await context.queryClient.ensureQueryData(
-			serverInfoQueries.detail()
+			serverInfoQueries.detail(context)
 		);
 
 		if (serverInfo.active === true) {

@@ -1,14 +1,13 @@
-import { serverInfoQueries } from "@/modules/root/business-logic/server-info-queries";
-import { userQueries } from "@/modules/users/business-logic/user-queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useServerInfo } from "@/modules/root/business-logic/use-server-info";
+import { useCurrentUser } from "@/modules/users/business-logic/use-current-user";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { buildPageEvent } from "../business-logic/build-page-event";
 import { sendAnalyticsEvents } from "../domain/send-analytics-event";
 
 export function PageAnalyticsContainer() {
-	const { data: serverInfo } = useSuspenseQuery(serverInfoQueries.detail());
-	const { data: user } = useSuspenseQuery(userQueries.currentUser());
+	const { serverInfoData: serverInfo } = useServerInfo();
+	const { currentUserData: user } = useCurrentUser();
 	const { subscribe } = useRouter();
 
 	useEffect(() => {

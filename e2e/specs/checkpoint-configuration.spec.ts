@@ -136,7 +136,7 @@ test("renders the configuration tab with stack and docker image sections", async
 		.getByRole("button", { name: /load_data/ })
 		.first()
 		.click();
-	await page.getByRole("button", { name: "Configuration" }).click();
+	await page.getByRole("tab", { name: "Configuration" }).click();
 
 	await expect(page.getByRole("button", { name: "Stack" })).toBeVisible();
 	await expect(page.getByText("production-stack")).toBeVisible();
@@ -168,7 +168,7 @@ test("renders the empty state when execution has no stack or build", async ({
 		.getByRole("button", { name: /load_data/ })
 		.first()
 		.click();
-	await page.getByRole("button", { name: "Configuration" }).click();
+	await page.getByRole("tab", { name: "Configuration" }).click();
 
 	await expect(page.getByText(/no configuration/i)).toBeVisible();
 });
@@ -179,7 +179,7 @@ async function openConfigurationTab(page: import("@playwright/test").Page) {
 		.getByRole("button", { name: /load_data/ })
 		.first()
 		.click();
-	await page.getByRole("button", { name: "Configuration" }).click();
+	await page.getByRole("tab", { name: "Configuration" }).click();
 	await expect(page.getByRole("button", { name: "Stack" })).toBeVisible();
 }
 

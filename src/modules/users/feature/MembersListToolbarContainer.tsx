@@ -1,5 +1,5 @@
 import { Input } from "@zenml/hashi/primitives/input";
-import { RefreshButton } from "@/shared/ui/RefreshButton";
+import { RefreshButton } from "@zenml/shared-kitaru/ui/RefreshButton";
 import { CreateUserDialogContainer } from "./CreateUserDialogContainer";
 
 type Props = {

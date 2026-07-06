@@ -1,10 +1,13 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { userQueries } from "../business-logic/user-queries";
-import { Avatar, AvatarFallback, AvatarImage } from "@zenml/hashi/primitives/avatar";
+import { useCurrentUser } from "../business-logic/use-current-user";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@zenml/hashi/primitives/avatar";
 import { UpdateAvatarDialogContainer } from "./UpdateAvatarDialogContainer";
 
 export function UpdateAvatarContainer() {
-	const { data } = useSuspenseQuery(userQueries.currentUser());
+	const { currentUserData: data } = useCurrentUser();
 
 	const avatarUrl = data.avatarUrl ?? undefined;
 	const resolvedName = data.resolvedName;

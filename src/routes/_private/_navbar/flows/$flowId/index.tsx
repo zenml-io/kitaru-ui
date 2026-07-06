@@ -1,15 +1,20 @@
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { resolveDefaultDeployment } from "@/modules/deployments/business-logic/resolve-deployment";
+import { deploymentsQueries } from "@zenml/shared-kitaru/modules/deployments";
+import { resolveDefaultDeployment } from "@zenml/shared-kitaru/modules/deployments";
 import {
 	LOCAL_VERSION_ID,
 	type Deployment,
-} from "@/modules/deployments/domain/deployment";
+} from "@zenml/shared-kitaru/modules/deployments";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/_navbar/flows/$flowId/")({
 	beforeLoad: async ({ context, params }) => {
 		const realDeployments = await context.queryClient.ensureQueryData(
-			deploymentsQueries.list(params.flowId)
+			deploymentsQueries.list(
+				{
+					flowId: params.flowId,
+				},
+				context
+			)
 		);
 		const target =
 			resolveDefaultDeployment(realDeployments) ??

@@ -26,10 +26,7 @@ export function DefaultPageNotFound() {
 				</EmptyDescription>
 			</EmptyHeader>
 			<EmptyContent>
-				<Button
-					className="min-w-44"
-					render={<Link to="/flows" />}
-				>
+				<Button className="min-w-44" render={<Link to="/flows" />}>
 					<ChevronLeft />
 					Go to Flows
 				</Button>

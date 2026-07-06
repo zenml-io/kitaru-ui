@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,7 +13,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@zenml/hashi/primitives/dialog";
-import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 
 import { getErrorMessage } from "../business-logic/get-error-message";
@@ -22,7 +23,7 @@ import {
 } from "../business-logic/api-key-form-schema";
 import { apiKeyQueryKeys } from "../business-logic/api-key-queries";
 import { useCreateApiKey } from "../business-logic/use-create-api-key";
-import { findOrCreatePersonalServiceAccount } from "../domain/find-or-create-personal-service-account";
+import { useFindOrCreatePersonalServiceAccount } from "../business-logic/use-find-or-create-personal-service-account";
 import { personalServiceAccountQueryKeys } from "../business-logic/personal-service-account-queries";
 import { ApiKeyRevealPanel } from "../ui/ApiKeyRevealPanel";
 
@@ -40,6 +41,8 @@ export function CreateApiKeyDialogContainer({
 	serviceAccountId,
 }: CreateApiKeyDialogContainerProps) {
 	const queryClient = useQueryClient();
+	const kitaruApiRuntime = useKitaruApiRuntime();
+	const { scopeKey } = kitaruApiRuntime;
 	const [revealKey, setRevealKey] = useState<string | null>(null);
 	const [isResolvingSa, setIsResolvingSa] = useState(false);
 	const [resolvedServiceAccountId, setResolvedServiceAccountId] = useState<
@@ -55,12 +58,16 @@ export function CreateApiKeyDialogContainer({
 		onError: (error) =>
 			toast.error(getErrorMessage(error, "Could not create API key.")),
 	});
+	const {
+		findOrCreatePersonalServiceAccountAsync,
+		isPending: isResolvingServiceAccount,
+	} = useFindOrCreatePersonalServiceAccount();
 
 	function handleClose(nextOpen: boolean) {
 		if (!nextOpen) {
 			if (revealKey && resolvedServiceAccountId) {
 				void queryClient.invalidateQueries({
-					queryKey: apiKeyQueryKeys.list(resolvedServiceAccountId),
+					queryKey: apiKeyQueryKeys.list(scopeKey, resolvedServiceAccountId),
 				});
 			}
 			form.reset({ name: "", description: "" });
@@ -75,10 +82,10 @@ export function CreateApiKeyDialogContainer({
 			let saId = serviceAccountId;
 			if (!saId) {
 				setIsResolvingSa(true);
-				const resolved = await findOrCreatePersonalServiceAccount(userId);
+				const resolved = await findOrCreatePersonalServiceAccountAsync(userId);
 				saId = resolved.id;
 				await queryClient.invalidateQueries({
-					queryKey: personalServiceAccountQueryKeys.resolve(userId),
+					queryKey: personalServiceAccountQueryKeys.resolve(scopeKey, userId),
 				});
 			}
 			const created = await createApiKeyAsync({
@@ -102,7 +109,7 @@ export function CreateApiKeyDialogContainer({
 		}
 	}
 
-	const isSubmitting = isCreating || isResolvingSa;
+	const isSubmitting = isCreating || isResolvingSa || isResolvingServiceAccount;
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>

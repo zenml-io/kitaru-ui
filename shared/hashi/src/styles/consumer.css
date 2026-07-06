@@ -1,0 +1,9 @@
+/*
+ * Consumer entry for hashi's stylesheet. The package.json exports map points
+ * "@zenml/hashi/globals.css" here so apps get globals.css minus the colocated
+ * *.stories.tsx files — story-only layout utilities must not ship in
+ * production CSS. Hashi's own Storybook imports ./globals.css directly
+ * (bypassing this exclusion) so stories keep their utilities there.
+ */
+@import "./globals.css";
+@source not "../**/*.stories.tsx";

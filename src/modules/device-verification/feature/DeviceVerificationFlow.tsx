@@ -7,10 +7,9 @@ import {
 	startDeviceVerificationSuccessCountdown,
 	type CountdownTimer,
 } from "@/modules/device-verification/util/login-countdown";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { deviceQueries } from "../business-logic/device-queries";
+import { useDevice } from "../business-logic/use-device";
 
 type DeviceVerificationFlowProps = {
 	deviceId: string;
@@ -30,9 +29,7 @@ export function DeviceVerificationFlow({
 	const [countdown, setCountdown] = useState(SUCCESS_REDIRECT_SECONDS);
 	const timerRef = useRef<CountdownTimer | null>(null);
 
-	const { data: device } = useSuspenseQuery({
-		...deviceQueries.detail(deviceId, { user_code: userCode }),
-	});
+	const { deviceData: device } = useDevice(deviceId, { user_code: userCode });
 
 	const location =
 		device.metadata?.city && device.metadata?.region

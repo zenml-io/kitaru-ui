@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -20,12 +21,13 @@ export function ApiKeyActiveToggleContainer({
 	apiKey,
 }: ApiKeyActiveToggleContainerProps) {
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const [showDeactivate, setShowDeactivate] = useState(false);
 
 	const { updateApiKey, isPending } = useUpdateApiKey({
 		onSuccess: () =>
 			queryClient.invalidateQueries({
-				queryKey: apiKeyQueryKeys.list(serviceAccountId),
+				queryKey: apiKeyQueryKeys.list(scopeKey, serviceAccountId),
 			}),
 		onError: (error) =>
 			toast.error(getErrorMessage(error, "Could not update API key.")),

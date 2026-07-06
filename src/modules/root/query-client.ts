@@ -1,4 +1,4 @@
-import { isFetchError } from "@/shared/api/domain/fetch-error";
+import { isFetchError } from "@zenml/shared-kitaru/api/domain";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 
 function getNextPath() {

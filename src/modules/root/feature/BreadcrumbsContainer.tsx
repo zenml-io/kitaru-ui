@@ -1,14 +1,9 @@
-import { DeploymentVersionSwitcherContainer } from "@/modules/deployments/feature/DeploymentVersionSwitcherContainer";
+import { DeploymentVersionSwitcherContainer } from "@zenml/shared-kitaru/modules/deployments";
 import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@zenml/hashi/primitives/breadcrumb";
+	Breadcrumbs,
+	type BreadcrumbItemData,
+} from "@zenml/hashi/components/Breadcrumbs";
 import { isMatch, Link, useMatches } from "@tanstack/react-router";
-import { Fragment } from "react";
 
 const FLOW_DETAIL_ROUTE_ID = "/_private/_navbar/flows/$flowId";
 
@@ -23,35 +18,17 @@ export function BreadcrumbsContainer() {
 
 	if (matchesWithCrumbs.length <= 1) return null;
 
-	return (
-		<Breadcrumb>
-			<BreadcrumbList>
-				{matchesWithCrumbs.map((match, index) => (
-					<Fragment key={match.id}>
-						<BreadcrumbItem>
-							{index === matchesWithCrumbs.length - 1 ? (
-								<BreadcrumbPage className="font-semibold">
-									{match.loaderData?.crumb.label}
-								</BreadcrumbPage>
-							) : match.loaderData?.crumb.disabled ? (
-								<BreadcrumbPage>{match.loaderData?.crumb.label}</BreadcrumbPage>
-							) : (
-								<BreadcrumbLink
-									render={<Link to={match.fullPath} search={(prev) => prev} />}
-								>
-									{match.loaderData?.crumb.label}
-								</BreadcrumbLink>
-							)}
-							{match.routeId === FLOW_DETAIL_ROUTE_ID && (
-								<DeploymentVersionSwitcherContainer />
-							)}
-						</BreadcrumbItem>
-						{index < matchesWithCrumbs.length - 1 ? (
-							<BreadcrumbSeparator />
-						) : null}
-					</Fragment>
-				))}
-			</BreadcrumbList>
-		</Breadcrumb>
-	);
+	const items: BreadcrumbItemData[] = matchesWithCrumbs.map((match, index) => ({
+		key: match.id,
+		label: match.loaderData?.crumb.label,
+		isCurrent: index === matchesWithCrumbs.length - 1,
+		isDisabled: match.loaderData?.crumb.disabled,
+		labelRender: <Link to={match.fullPath} search={(prev) => prev} />,
+		trailing:
+			match.routeId === FLOW_DETAIL_ROUTE_ID ? (
+				<DeploymentVersionSwitcherContainer />
+			) : undefined,
+	}));
+
+	return <Breadcrumbs items={items} />;
 }

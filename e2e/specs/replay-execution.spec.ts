@@ -96,6 +96,17 @@ test("replay from execution details redirects to the new execution", async ({
 		},
 		"/api/v1/artifact_versions": { get: emptyPage },
 		"/api/v1/pipeline_snapshots": { get: emptyPage },
+		"/api/v1/pipeline_snapshots/{snapshot_id}": {
+			get: {
+				status: 200,
+				body: {
+					...runnableDeployment,
+					resources: {
+						pipeline: makePipeline({ id: FLOW_ID, name: "demo-flow" }),
+					},
+				},
+			},
+		},
 	});
 
 	await page.goto(`/flows/${FLOW_ID}/v/local/executions/${OLD_EXECUTION_ID}`);
@@ -104,11 +115,19 @@ test("replay from execution details redirects to the new execution", async ({
 		`/flows/${FLOW_ID}/v/local/executions/${OLD_EXECUTION_ID}`
 	);
 
+	// Replay now navigates to a full-page edit view instead of opening a dialog.
 	await page.getByRole("button", { name: "Replay" }).first().click();
-	await expect(page.getByText("Replay Execution #7")).toBeVisible();
+	await expect(page).toHaveURL(
+		`/flows/${FLOW_ID}/v/local/executions/${OLD_EXECUTION_ID}/replay`
+	);
+	await expect(page.getByText("Replay defaults")).toBeVisible();
 
-	const replayDialog = page.getByRole("dialog");
-	await replayDialog.getByRole("button", { name: "Replay" }).click();
+	// Launch replay opens the confirm modal; submitting it redirects.
+	await page.getByRole("button", { name: "Launch replay" }).click();
+	await page
+		.getByRole("dialog")
+		.getByRole("button", { name: "Launch replay" })
+		.click();
 
 	await expect(page).toHaveURL(
 		`/flows/${FLOW_ID}/v/local/executions/${NEW_EXECUTION_ID}`

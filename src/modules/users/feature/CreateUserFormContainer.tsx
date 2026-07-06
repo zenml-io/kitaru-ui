@@ -1,9 +1,10 @@
-import { Button } from "@zenml/hashi/primitives/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
-import { Input } from "@zenml/hashi/primitives/input";
-import { Switch } from "@zenml/hashi/primitives/switch";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@zenml/hashi/primitives/button";
+import { Input } from "@zenml/hashi/primitives/input";
+import { Switch } from "@zenml/hashi/primitives/switch";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -20,6 +21,7 @@ type CreateUserFormProps = {
 
 export function CreateUserFormContainer({ onSuccess }: CreateUserFormProps) {
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const form = useForm<CreateUserFormType>({
 		resolver: zodResolver(createUserSchema),
 		defaultValues: {
@@ -30,7 +32,9 @@ export function CreateUserFormContainer({ onSuccess }: CreateUserFormProps) {
 
 	const { createUser, isPending } = useCreateUser({
 		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: userQueryKeys.all });
+			queryClient.invalidateQueries({
+				queryKey: userQueryKeys.all(scopeKey),
+			});
 			onSuccess(data);
 		},
 		onError: (error) => {

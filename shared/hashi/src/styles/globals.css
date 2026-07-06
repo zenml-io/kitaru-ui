@@ -8,13 +8,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Make Tailwind scan hashi's own primitives/components/hooks when consumed
-   from an app. Without this, classes that appear only inside hashi sources
-   (e.g. data-[orientation=vertical]:w-px on Separator) are never emitted by
-   the consumer's Tailwind build. Paths are relative to this CSS file. */
+/* Make Tailwind scan hashi's own sources when consumed from an app. Without
+   this, classes that appear only inside hashi sources (e.g.
+   data-[orientation=vertical]:w-px on Separator, or the tint classes lib
+   helpers like state-styles.ts return) are never emitted by the consumer's
+   Tailwind build. Paths are relative to this CSS file. */
 @source "../primitives";
 @source "../components";
 @source "../hooks";
+@source "../lib";
 
 /* ZenML reference palettes (raw tokens, no semantic mapping here) */
 @import "./zenml-palettes.css";
@@ -67,7 +69,7 @@
 	--muted-foreground: oklch(0.5 0.025 63);
 	--accent: oklch(0.9324 0.0173 84.59);
 	--accent-foreground: oklch(0.4821 0.0167 74.26);
-	--destructive: oklch(0.5796 0.1405 19.7837);
+	--destructive: oklch(0.55 0.1405 19.7837);
 	--destructive-foreground: oklch(0.992 0.0034 67.7841);
 	--border: oklch(0.92 0.012 78.17);
 	--input: oklch(0.92 0.012 78.17);
@@ -94,7 +96,7 @@
 	--success: oklch(0.55 0.14 145);
 	--success-foreground: oklch(1 0 0);
 	--warning: oklch(0.68 0.15 70);
-	--warning-foreground: oklch(1 0 0);
+	--warning-foreground: oklch(0.28 0.06 70);
 	--info: oklch(0.55 0.15 260);
 	--info-foreground: oklch(1 0 0);
 
@@ -106,6 +108,20 @@
 	   safe to use elsewhere when an extra accent is needed. */
 	--accent-teal: oklch(0.704 0.123 182.5);
 	--accent-teal-foreground: oklch(0.18 0.02 182.5);
+
+	/* Text-on-light companions — the base tokens above stay vivid for dots and
+	   solid fills, but fail 4.5:1 as TEXT on their /15 tints, the beige neutral
+	   badge fill, and white cards. Each -text value keeps the base hue at the
+	   lightest in-gamut L that clears 4.6:1 on all three surfaces. Used by the
+	   Badge light/neutral/ghost emphases; reuse for any colored text on light
+	   surfaces. */
+	--primary-text: oklch(0.48 0.075 130);
+	--destructive-text: oklch(0.51 0.141 19.7837);
+	--success-text: oklch(0.48 0.14 145);
+	--warning-text: oklch(0.5 0.108 70);
+	--info-text: oklch(0.5 0.15 260);
+	--accent-teal-text: oklch(0.49 0.087 182.5);
+	--status-archived-text: oklch(0.49 0.015 240);
 
 	/* Heat map scale */
 	--heat-low: 0.94 0.03 60;
@@ -135,6 +151,14 @@
 		0 8px 10px -1px hsl(var(--shadow-color) / 0.1);
 	--shadow-2xl: 0 1px 3px 0px hsl(var(--shadow-color) / 0.25);
 	--shadow-accent: 0 4px 16px oklch(0.53 0.075 130 / 0.2);
+
+	/* Brand-mark identity tile (compact mark used in the leftmost navbar slot).
+	   ZenML: lightest green surface with a deep green icon. Kitaru overrides
+	   below. Light/dark inversion happens in the .dark variants. */
+	--brand-mark-bg: var(--zen-green-porcelain); /* #F6F9F1 */
+	--brand-mark-fg: var(
+		--zen-green-granite
+	); /* #3C4C38 — near user-provided #25392F */
 }
 
 /* Dark = ZenML dark (was previously [data-app="zenml"].dark). */
@@ -179,6 +203,9 @@
 	   clear 4.5:1+ with white foreground on filled badges/buttons. */
 	--success: oklch(0.55 0.14 145);
 	--warning: oklch(0.55 0.14 70);
+	/* Deeper dark warning bg keeps white foreground (≈4.98); the light :root
+	   warning-foreground is a dark brown that would fail here, so override back. */
+	--warning-foreground: oklch(1 0 0);
 	--info: oklch(0.55 0.15 260);
 	--destructive: oklch(0.55 0.18 25);
 	--destructive-foreground: oklch(1 0 0);
@@ -195,9 +222,25 @@
 	/* Shared dark variants */
 	--status-archived: oklch(0.56 0.02 240);
 	--accent-teal-foreground: oklch(0.16 0.02 182.5);
+
+	/* Text-on-dark companions — dark tints and the dark neutral badge fill need
+	   BRIGHTER text than the base tokens; each -text value keeps the hue at the
+	   darkest L clearing 4.6:1 on the ZenML and Kitaru dark badge surfaces. */
+	--primary-text: oklch(0.75 0.075 130);
+	--destructive-text: oklch(0.77 0.138 25);
+	--success-text: oklch(0.75 0.14 145);
+	--warning-text: oklch(0.76 0.14 70);
+	--info-text: oklch(0.76 0.124 260);
+	--accent-teal-text: oklch(0.81 0.123 182.5);
+	--status-archived-text: oklch(0.76 0.02 240);
 	--heat-low: 0.32 0.03 60;
 	--heat-med: 0.4 0.05 50;
 	--heat-high: 0.48 0.08 45;
+
+	/* Brand-mark identity tile — ZenML dark: invert the light scheme so the
+	   tile sits as a darker green surface with a light green icon. */
+	--brand-mark-bg: var(--zen-green-granite); /* #3C4C38 */
+	--brand-mark-fg: var(--zen-green-porcelain); /* #F6F9F1 */
 }
 
 /*
@@ -213,6 +256,8 @@
 	--popover-foreground: oklch(0.2576 0.0281 56.6469);
 	--primary: oklch(0.7171 0.1347 57.2915);
 	--primary-foreground: oklch(1 0 0);
+	/* Kitaru's orange primary needs its own text-on-light companion (hue 57). */
+	--primary-text: oklch(0.51 0.123 57.2915);
 	--secondary: oklch(0.9629 0.0079 73.7438);
 	--secondary-foreground: oklch(0.4903 0.035 58.6942);
 	--muted: oklch(0.9392 0.0136 60.5651);
@@ -239,6 +284,13 @@
 	/* Kitaru shadow — warm brown undertone */
 	--shadow-color: 30 40% 8%;
 	--shadow-accent: 0 4px 16px oklch(0.7171 0.1347 57.2915 / 0.2);
+
+	/* Brand-mark identity tile — Kitaru light: lightest warm cream surface
+	   with the brand orange icon. */
+	--brand-mark-bg: oklch(0.9784 0.0056 64); /* #FCF7F3 — Kitaru light surface */
+	--brand-mark-fg: oklch(
+		0.6886 0.1839 46.97
+	); /* #EB711A — Kitaru brand orange */
 }
 
 [data-app="kitaru"].dark {
@@ -253,6 +305,8 @@
 	--popover-foreground: oklch(0.9211 0.004 106.4781);
 	--primary: oklch(0.6724 0.1308 38.7559);
 	--primary-foreground: oklch(1 0 0);
+	/* Kitaru dark primary text companion (hue 38.76). */
+	--primary-text: oklch(0.81 0.109 38.7559);
 	--secondary: oklch(0.3085 0.0035 106.6039);
 	--secondary-foreground: oklch(0.9211 0.004 106.4781);
 	--muted: oklch(0.2213 0.0038 106.707);
@@ -286,6 +340,14 @@
 	--success: oklch(0.72 0.16 145);
 	--warning: oklch(0.78 0.15 70);
 	--info: oklch(0.72 0.15 260);
+
+	/* Brand-mark identity tile — Kitaru dark: deeper warm surface with the
+	   brand orange icon. Avoids the very low-chroma --accent so the orange
+	   identity stays visible against the dark canvas. */
+	--brand-mark-bg: oklch(0.32 0.05 55);
+	--brand-mark-fg: oklch(
+		0.6886 0.1839 46.97
+	); /* #EB711A — Kitaru brand orange */
 }
 
 /*
@@ -296,29 +358,29 @@
  * its own token-driven fill.
  */
 html:not(.dark) [data-slot="button"][data-variant="secondary"],
-html:not(.dark) [data-slot="badge"][data-variant="secondary"] {
+html:not(.dark) [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
 	background-color: oklch(0.945 0.014 84.59);
 }
 html:not(.dark) [data-slot="button"][data-variant="secondary"]:hover,
-html:not(.dark) [data-slot="badge"][data-variant="secondary"]:hover {
+html:not(.dark) [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
 	background-color: oklch(0.91 0.016 84.59);
 }
 .dark [data-slot="button"][data-variant="secondary"],
-.dark [data-slot="badge"][data-variant="secondary"] {
+.dark [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
 	background-color: oklch(0.32 0.022 153);
 }
 .dark [data-slot="button"][data-variant="secondary"]:hover,
-.dark [data-slot="badge"][data-variant="secondary"]:hover {
+.dark [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
 	background-color: oklch(0.38 0.024 153);
 }
 
 /* Kitaru mirror — restore --secondary-driven fill (specificity beats baseline). */
 [data-app="kitaru"] [data-slot="button"][data-variant="secondary"],
-[data-app="kitaru"] [data-slot="badge"][data-variant="secondary"] {
+[data-app="kitaru"] [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
 	background-color: var(--secondary);
 }
 [data-app="kitaru"] [data-slot="button"][data-variant="secondary"]:hover,
-[data-app="kitaru"] [data-slot="badge"][data-variant="secondary"]:hover {
+[data-app="kitaru"] [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
 	background-color: color-mix(in oklch, var(--secondary) 80%, transparent);
 }
 
@@ -375,6 +437,15 @@ html:not(.dark) [data-slot="badge"][data-variant="secondary"]:hover {
 	/* Reusable teal accent (used by init/provision/resume statuses + ad hoc) */
 	--color-accent-teal: var(--accent-teal);
 	--color-accent-teal-foreground: var(--accent-teal-foreground);
+
+	/* AA text-on-surface companions (see :root/.dark definitions) */
+	--color-primary-text: var(--primary-text);
+	--color-destructive-text: var(--destructive-text);
+	--color-success-text: var(--success-text);
+	--color-warning-text: var(--warning-text);
+	--color-info-text: var(--info-text);
+	--color-accent-teal-text: var(--accent-teal-text);
+	--color-status-archived-text: var(--status-archived-text);
 
 	/* Fonts */
 	--font-sans: var(--font-sans);
@@ -576,9 +647,9 @@ html:not(.dark) [data-slot="badge"][data-variant="secondary"]:hover {
 		border-radius: 9999px;
 	}
 	.text-section-label {
-		@apply text-muted-foreground text-xs font-semibold uppercase tracking-wider;
+		@apply text-muted-foreground text-xs font-semibold tracking-wider uppercase;
 	}
 	.link-cell {
-		@apply hover:text-primary focus-visible:ring-ring/50 focus-visible:ring-3 rounded-sm underline-offset-4 transition-colors hover:underline focus-visible:outline-none;
+		@apply hover:text-primary focus-visible:ring-ring/50 rounded-sm underline-offset-4 transition-colors hover:underline focus-visible:ring-3 focus-visible:outline-none;
 	}
 }

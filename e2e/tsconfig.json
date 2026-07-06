@@ -17,5 +17,5 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"include": ["./**/*.ts", "../src/shared/api/openapi.d.ts"]
+	"include": ["./**/*.ts", "../../../shared/kitaru/src/api/openapi.d.ts"]
 }

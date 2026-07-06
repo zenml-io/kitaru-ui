@@ -1,4 +1,4 @@
-import { CopyCommand } from "@/shared/ui/CopyCommand";
+import { CopyCommand } from "@zenml/shared-kitaru/ui/CopyCommand";
 
 export function LoginCommand({ url }: { url: string }) {
 	const command = `kitaru login ${url}`;

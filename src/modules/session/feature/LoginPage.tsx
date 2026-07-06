@@ -1,4 +1,4 @@
-import { MeshFormCard } from "@/shared/ui/MeshFormCard";
+import { MeshFormCard } from "@zenml/shared-kitaru/ui/MeshFormCard";
 import { LoginFormContainer } from "./LoginFormContainer";
 
 export function LoginPage() {

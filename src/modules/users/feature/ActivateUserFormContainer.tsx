@@ -1,5 +1,5 @@
 import { Button } from "@zenml/hashi/primitives/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";

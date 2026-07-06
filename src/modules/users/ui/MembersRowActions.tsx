@@ -6,12 +6,12 @@ import {
 	DropdownMenuTrigger,
 } from "@zenml/hashi/primitives/dropdown-menu";
 import { MoreHorizontal, Trash2 } from "lucide-react";
-import type { User } from "../domain/users";
+import type { KitaruUser } from "../domain/users";
 import { useState } from "react";
 import { RemoveMemberAlertDialog } from "../feature/RemoveMemberAlertDialog";
 
 type MembersRowActionsProps = {
-	member: User;
+	member: KitaruUser;
 	isCurrentUser: boolean;
 };
 

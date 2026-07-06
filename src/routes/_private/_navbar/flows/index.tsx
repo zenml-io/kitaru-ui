@@ -1,23 +1,27 @@
-import { FlowsContainer } from "@/modules/flows/feature/FlowsContainer";
-import {
-	flowStatusFilterValues,
-	type FlowStatusFilter,
-} from "@/modules/flows/domain/flow";
-import {
-	ALLOWED_FLOWS_SORT_FIELDS,
-	DEFAULT_FLOWS_SORT,
-} from "@/modules/flows/business-logic/flows-queries";
+import { FlowsContainer } from "@zenml/shared-kitaru/modules/flows";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
-import { sortBySchema } from "@/shared/utils/sorting";
+import { compactPartial } from "@/shared/utils/compact-partial";
+import { sortBySchema } from "@zenml/shared-kitaru/utils/sorting";
 import {
+	Link,
 	type SearchSchemaInput,
 	createFileRoute,
 	stripSearchParams,
+	useNavigate,
 } from "@tanstack/react-router";
 import { z } from "zod";
 
-import { flowsQueries } from "@/modules/flows/business-logic/flows-queries";
-import { PageSpinner } from "@/shared/ui/spinner";
+import { PageSpinner } from "@zenml/shared-kitaru/ui/spinner";
+import {
+	ALLOWED_FLOWS_SORT_FIELDS,
+	DEFAULT_FLOWS_SORT,
+	FlowsRouteProvider,
+	flowStatusFilterValues,
+	flowsQueries,
+	type FlowLinkProps,
+	type FlowStatusFilter,
+	type FlowsRouteState,
+} from "@zenml/shared-kitaru/modules/flows";
 
 const flowsSearchSchema = z.object({
 	q: z.string().catch(""),
@@ -39,13 +43,20 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 			stripSearchParams({ q: "", status: "all", sort: DEFAULT_FLOWS_SORT }),
 		],
 	},
-	component: FlowsContainer,
+	component: FlowsRouteAdapter,
 	head: () => ({
 		meta: [{ title: buildPageTitles("Flows") }],
 	}),
 	pendingComponent: PageSpinner,
 	loader: async ({ context, deps }) => {
-		await context.queryClient.ensureQueryData(flowsQueries.list(deps));
+		await context.queryClient.ensureQueryData(
+			flowsQueries.list(
+				{
+					params: deps,
+				},
+				context
+			)
+		);
 	},
 	loaderDeps: ({ search }) => ({
 		name: search.q,
@@ -53,3 +64,33 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 		sort: search.sort,
 	}),
 });
+
+function LinkToFlow({ flowId, children, className }: FlowLinkProps) {
+	return (
+		<Link to="/flows/$flowId" params={{ flowId }} className={className}>
+			{children}
+		</Link>
+	);
+}
+
+function FlowsRouteAdapter() {
+	const { q, status, sort } = Route.useSearch();
+	const navigate = useNavigate();
+
+	function updateSearch(next: Partial<FlowsRouteState>) {
+		navigate({
+			to: "/flows",
+			search: { q, status, sort, ...compactPartial(next) },
+			replace: true,
+		});
+	}
+
+	return (
+		<FlowsRouteProvider
+			state={{ q, status, sort }}
+			navigation={{ updateSearch, LinkToFlow }}
+		>
+			<FlowsContainer />
+		</FlowsRouteProvider>
+	);
+}

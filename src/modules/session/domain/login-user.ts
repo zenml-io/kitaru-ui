@@ -3,17 +3,20 @@ import {
 	isLoginTokenResponse,
 	type LoginSuccessResponse,
 } from "@/modules/session/domain/types";
-import { apiClient } from "@/shared/api/domain/api-client";
 import {
 	clearCsrfToken,
 	setCsrfToken,
 } from "@/shared/api/utils/csrf-token-cookie";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
+
+export type LoginUserArgs = LoginPayload;
 
 export async function loginUser(
-	payload: LoginPayload
+	payload: LoginUserArgs,
+	{ kitaruApiClient }: KitaruApiClientContext
 ): Promise<LoginSuccessResponse> {
-	const response = await apiClient.POST("/api/v1/login", {
+	const response = await kitaruApiClient.POST("/api/v1/login", {
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded",
 		},

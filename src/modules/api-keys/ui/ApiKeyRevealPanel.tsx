@@ -1,5 +1,5 @@
-import { CopyCommand } from "@/shared/ui/CopyCommand";
-import { WarningBanner } from "@/shared/ui/WarningBanner";
+import { CopyCommand } from "@zenml/shared-kitaru/ui/CopyCommand";
+import { WarningBanner } from "@zenml/shared-kitaru/ui/WarningBanner";
 
 type ApiKeyRevealPanelProps = {
 	mode: "create" | "rotate";

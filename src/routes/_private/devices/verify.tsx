@@ -18,7 +18,13 @@ export const Route = createFileRoute("/_private/devices/verify")({
 	loader: async ({ context, deps }) => {
 		return Promise.all([
 			context.queryClient.ensureQueryData(
-				deviceQueries.detail(deps.device_id, { user_code: deps.user_code })
+				deviceQueries.detail(
+					{
+						deviceId: deps.device_id,
+						queryParams: { user_code: deps.user_code },
+					},
+					context
+				)
 			),
 		]);
 	},

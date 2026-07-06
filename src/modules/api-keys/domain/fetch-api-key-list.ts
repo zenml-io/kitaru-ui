@@ -1,10 +1,17 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 
 import { apiKeyFromApiToDomain } from "./api-key";
 
-export async function fetchApiKeyList(serviceAccountId: string) {
-	const response = await apiClient.GET(
+export type FetchApiKeyListParams = {
+	serviceAccountId: string;
+};
+
+export async function fetchApiKeyList(
+	{ serviceAccountId }: FetchApiKeyListParams,
+	{ kitaruApiClient }: KitaruApiClientContext
+) {
+	const response = await kitaruApiClient.GET(
 		"/api/v1/service_accounts/{service_account_id}/api_keys",
 		{
 			params: {

@@ -5,7 +5,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 export const Route = createFileRoute("/_private")({
 	component: PrivateLayout,
 	beforeLoad: async ({ context }) => {
-		await context.queryClient.ensureQueryData(userQueries.currentUser());
+		await context.queryClient.ensureQueryData(userQueries.currentUser(context));
 	},
 });
 

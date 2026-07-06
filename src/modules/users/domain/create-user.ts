@@ -1,5 +1,5 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 import type { CreateUserDialogSuccess } from "./users";
 
 export type CreateUserParams = {
@@ -7,10 +7,13 @@ export type CreateUserParams = {
 	is_admin: boolean;
 };
 
+type CreateUserRequestArgs = CreateUserParams;
+
 export async function createUserRequest(
-	params: CreateUserParams
+	params: CreateUserRequestArgs,
+	{ kitaruApiClient }: KitaruApiClientContext
 ): Promise<CreateUserDialogSuccess> {
-	const response = await apiClient.POST("/api/v1/users", {
+	const response = await kitaruApiClient.POST("/api/v1/users", {
 		body: {
 			name: params.name,
 			is_admin: params.is_admin,

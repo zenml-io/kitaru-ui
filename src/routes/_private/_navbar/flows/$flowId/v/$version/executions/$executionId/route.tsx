@@ -1,21 +1,21 @@
-import { checkpointsQueries } from "@/modules/checkpoints/business-logic/checkpoints-queries";
-import { DeploymentExecutionContainer } from "@/modules/deployments/feature/DeploymentExecutionContainer";
-import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
-import { formatExecutionIndex } from "@/modules/executions/util/execution";
+import { checkpointsQueries } from "@zenml/shared-kitaru/modules/checkpoints";
+import { DeploymentExecutionContainer } from "@zenml/shared-kitaru/modules/deployments";
+import { executionsQueries } from "@zenml/shared-kitaru/modules/executions";
+import { formatExecutionIndex } from "@zenml/shared-kitaru/modules/executions";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
-import { PageSpinner } from "@/shared/ui/spinner";
+import { PageSpinner } from "@zenml/shared-kitaru/ui/spinner";
 import { buildPageTitles } from "@/shared/utils/build-page-titles";
-import { createFileRoute } from "@tanstack/react-router";
-
-type ExecutionSearch = {
-	tab?: "logs";
-	scope?: string;
-};
+import {
+	ExecutionDetailRouteProvider,
+	type ExecutionDetailSearch,
+	type ExecutionLinkProps,
+} from "@zenml/shared-kitaru/modules/executions";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 function validateExecutionSearch(
 	search: Record<string, unknown>
-): ExecutionSearch {
-	const out: ExecutionSearch = {};
+): ExecutionDetailSearch {
+	const out: ExecutionDetailSearch = {};
 	if (search.tab === "logs") out.tab = "logs";
 	if (typeof search.scope === "string" && search.scope.length > 0) {
 		out.scope = search.scope;
@@ -26,20 +26,37 @@ function validateExecutionSearch(
 export const Route = createFileRoute(
 	"/_private/_navbar/flows/$flowId/v/$version/executions/$executionId"
 )({
-	component: DeploymentExecutionContainer,
+	component: ExecutionDetailRouteAdapter,
 	pendingComponent: PageSpinner,
 	validateSearch: validateExecutionSearch,
 
 	loader: async ({ context, params }) => {
 		const [, execution] = await Promise.all([
-			context.queryClient.ensureQueryData(executionsQueries.all(params.flowId)),
+			context.queryClient.ensureQueryData(
+				executionsQueries.list(
+					{
+						flowId: params.flowId,
+					},
+					context
+				)
+			),
 			ensureQueryDataOr404(
 				context.queryClient.ensureQueryData(
-					executionsQueries.detail(params.executionId)
+					executionsQueries.detail(
+						{
+							executionId: params.executionId,
+						},
+						context
+					)
 				)
 			),
 			context.queryClient.ensureQueryData(
-				checkpointsQueries.all(params.executionId)
+				checkpointsQueries.list(
+					{
+						executionId: params.executionId,
+					},
+					context
+				)
 			),
 		]);
 
@@ -57,3 +74,79 @@ export const Route = createFileRoute(
 		],
 	}),
 });
+
+const ROUTE_PATH =
+	"/flows/$flowId/v/$version/executions/$executionId" as const;
+
+function LinkToExecution({
+	flowId,
+	version,
+	executionId,
+	keepLogsTab,
+	ariaCurrent,
+	className,
+	children,
+}: ExecutionLinkProps) {
+	return (
+		<Link
+			to={ROUTE_PATH}
+			params={{ flowId, version, executionId }}
+			search={keepLogsTab ? { tab: "logs" } : {}}
+			aria-current={ariaCurrent}
+			className={className}
+		>
+			{children}
+		</Link>
+	);
+}
+
+function ExecutionDetailRouteAdapter() {
+	const { flowId, version, executionId } = Route.useParams();
+	const { tab, scope } = Route.useSearch();
+	const navigate = useNavigate();
+
+	function updateSearch(next: ExecutionDetailSearch) {
+		void navigate({
+			to: ROUTE_PATH,
+			params: { flowId, version, executionId },
+			search: next,
+			replace: true,
+		});
+	}
+
+	function goToExecution(target: {
+		flowId: string;
+		version: "local" | number;
+		executionId: string;
+	}) {
+		void navigate({
+			to: ROUTE_PATH,
+			params: {
+				flowId: target.flowId,
+				version: target.version,
+				executionId: target.executionId,
+			},
+			search: {},
+		});
+	}
+
+	function goToReplay(targetExecutionId: string) {
+		void navigate({
+			to: "/flows/$flowId/v/$version/executions/$executionId/replay",
+			params: { flowId, version, executionId: targetExecutionId },
+		});
+	}
+
+	function redirectToFlow(targetFlowId: string) {
+		void navigate({ to: "/flows/$flowId", params: { flowId: targetFlowId } });
+	}
+
+	return (
+		<ExecutionDetailRouteProvider
+			state={{ flowId, version, executionId, tab, scope }}
+			navigation={{ updateSearch, goToExecution, goToReplay, redirectToFlow, LinkToExecution }}
+		>
+			<DeploymentExecutionContainer />
+		</ExecutionDetailRouteProvider>
+	);
+}

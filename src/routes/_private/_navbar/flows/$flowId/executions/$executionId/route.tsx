@@ -1,6 +1,6 @@
-import { deploymentsQueries } from "@/modules/deployments/business-logic/deployments-queries";
-import { LOCAL_VERSION_ID } from "@/modules/deployments/domain/deployment";
-import { executionsQueries } from "@/modules/executions/business-logic/executions-queries";
+import { deploymentsQueries } from "@zenml/shared-kitaru/modules/deployments";
+import { LOCAL_VERSION_ID } from "@zenml/shared-kitaru/modules/deployments";
+import { executionsQueries } from "@zenml/shared-kitaru/modules/executions";
 import { ensureQueryDataOr404 } from "@/shared/api/utils/handle-404";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
@@ -25,11 +25,21 @@ export const Route = createFileRoute(
 		const [execution, deployments] = await Promise.all([
 			ensureQueryDataOr404(
 				context.queryClient.ensureQueryData(
-					executionsQueries.detail(params.executionId)
+					executionsQueries.detail(
+						{
+							executionId: params.executionId,
+						},
+						context
+					)
 				)
 			),
 			context.queryClient.ensureQueryData(
-				deploymentsQueries.list(params.flowId)
+				deploymentsQueries.list(
+					{
+						flowId: params.flowId,
+					},
+					context
+				)
 			),
 		]);
 		const sourceSnapshotId = execution.sourceSnapshot?.id;

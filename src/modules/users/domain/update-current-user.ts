@@ -1,9 +1,16 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 import type { UserUpdate } from "./users";
 
-export async function updateCurrentUserRequest(payload: UserUpdate) {
-	const response = await apiClient.PUT("/api/v1/current-user", {
+type UpdateCurrentUserRequestArgs = {
+	payload: UserUpdate;
+};
+
+export async function updateCurrentUserRequest(
+	{ payload }: UpdateCurrentUserRequestArgs,
+	{ kitaruApiClient }: KitaruApiClientContext
+) {
+	const response = await kitaruApiClient.PUT("/api/v1/current-user", {
 		body: payload,
 	});
 	return expectData(response);

@@ -1,5 +1,6 @@
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { logoutUser as logoutUserRequest } from "../domain/logout-user";
 
 export function useLogoutUser(
@@ -8,9 +9,10 @@ export function useLogoutUser(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: logoutUserRequest,
+		mutationFn: () => logoutUserRequest({ kitaruApiClient }),
 	});
 
 	return {

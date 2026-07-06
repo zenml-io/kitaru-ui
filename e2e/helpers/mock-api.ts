@@ -1,6 +1,6 @@
 // e2e/helpers/mock-api.ts
 import type { Page, Request as PWRequest, Route } from "@playwright/test";
-import type { paths } from "@/shared/api/openapi";
+import type { paths } from "@zenml/shared-kitaru/api/openapi";
 
 export type Method = "get" | "post" | "put" | "delete" | "patch";
 

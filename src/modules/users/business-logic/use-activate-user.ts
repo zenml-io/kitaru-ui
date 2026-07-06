@@ -1,7 +1,9 @@
 import { loginUser } from "@/modules/session/domain/login-user";
 import type { LoginSuccessResponse } from "@/modules/session/domain/types";
-import type { FetchError } from "@/shared/api/domain/fetch-error";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
+import type { FetchError } from "@zenml/shared-kitaru/api/domain";
 import { useMutation, type UseMutationOptions } from "@tanstack/react-query";
+import { useKitaruApiRuntime } from "@zenml/shared-kitaru/contexts";
 import { activateUser, type ActivateUserParams } from "../domain/activate-user";
 
 export function useActivateUserAndLogin(
@@ -15,9 +17,11 @@ export function useActivateUserAndLogin(
 		"mutationFn"
 	>
 ) {
+	const { kitaruApiClient } = useKitaruApiRuntime();
 	const mutation = useMutation({
 		...options,
-		mutationFn: activateUserAndLogin,
+		mutationFn: (params: ActivateUserParams) =>
+			activateUserAndLogin(params, { kitaruApiClient }),
 	});
 
 	return {
@@ -27,11 +31,17 @@ export function useActivateUserAndLogin(
 	};
 }
 
-async function activateUserAndLogin(params: ActivateUserParams) {
-	const user = await activateUser(params);
-	const loginResponse = await loginUser({
-		username: user.name,
-		password: params.payload.password,
-	});
+async function activateUserAndLogin(
+	params: ActivateUserParams,
+	{ kitaruApiClient }: KitaruApiClientContext
+) {
+	const user = await activateUser(params, { kitaruApiClient });
+	const loginResponse = await loginUser(
+		{
+			username: user.name,
+			password: params.payload.password,
+		},
+		{ kitaruApiClient }
+	);
 	return loginResponse;
 }

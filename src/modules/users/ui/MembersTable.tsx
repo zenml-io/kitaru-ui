@@ -6,8 +6,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/shared/ui/Table";
-import { TextRenderer, UserRenderer } from "@/shared/ui/Table/CellRenderer";
+} from "@zenml/shared-kitaru/ui/Table";
+import { TextRenderer, UserRenderer } from "@zenml/shared-kitaru/ui/Table/CellRenderer";
 import { Badge } from "@zenml/hashi/primitives/badge";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import {
@@ -17,11 +17,11 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { User } from "../domain/users";
+import type { KitaruUser } from "../domain/users";
 import { MembersRowActions } from "./MembersRowActions";
 
 type MembersTableContainerProps = {
-	users: User[];
+	users: KitaruUser[];
 	currentUserId: string;
 };
 
@@ -93,7 +93,7 @@ export function MembersTable({
 	);
 }
 
-function createColumns(currentUserId: string): ColumnDef<User>[] {
+function createColumns(currentUserId: string): ColumnDef<KitaruUser>[] {
 	return [
 		{
 			accessorKey: "name",

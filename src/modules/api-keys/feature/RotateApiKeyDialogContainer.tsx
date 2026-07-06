@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useKitaruContext } from "@zenml/shared-kitaru/contexts";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,10 +13,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@zenml/hashi/primitives/dialog";
-import { Field, FieldError, FieldLabel } from "@/shared/ui/field";
+import { Field, FieldError, FieldLabel } from "@zenml/shared-kitaru/ui/field";
 import { Input } from "@zenml/hashi/primitives/input";
 import { Switch } from "@zenml/hashi/primitives/switch";
-import { WarningBanner } from "@/shared/ui/WarningBanner";
+import { WarningBanner } from "@zenml/shared-kitaru/ui/WarningBanner";
 
 import { getErrorMessage } from "../business-logic/get-error-message";
 import {
@@ -41,6 +42,7 @@ export function RotateApiKeyDialogContainer({
 	apiKey,
 }: RotateApiKeyDialogContainerProps) {
 	const queryClient = useQueryClient();
+	const { scopeKey } = useKitaruContext();
 	const [revealKey, setRevealKey] = useState<string | null>(null);
 
 	const form = useForm<RotateApiKeyFormValues>({
@@ -58,7 +60,7 @@ export function RotateApiKeyDialogContainer({
 		if (!nextOpen) {
 			if (revealKey) {
 				void queryClient.invalidateQueries({
-					queryKey: apiKeyQueryKeys.list(serviceAccountId),
+					queryKey: apiKeyQueryKeys.list(scopeKey, serviceAccountId),
 				});
 			}
 			form.reset({ enableRetention: false, retainPeriodMinutes: "" });

@@ -1,5 +1,5 @@
-import { apiClient } from "@/shared/api/domain/api-client";
-import { expectData } from "@/shared/api/utils/unwrap-api-result";
+import { expectData } from "@zenml/shared-kitaru/api/utils/unwrap-api-result";
+import type { KitaruApiClientContext } from "@zenml/shared-kitaru/api";
 import type {
 	Device,
 	DeviceVerifyPayload,
@@ -10,18 +10,23 @@ export type VerifyDeviceVariables = {
 	payload: DeviceVerifyPayload;
 };
 
-export async function verifyDevice({
-	deviceId,
-	payload,
-}: VerifyDeviceVariables): Promise<Device> {
-	const response = await apiClient.PUT("/api/v1/devices/{device_id}/verify", {
-		params: {
-			path: {
-				device_id: deviceId,
+export type VerifyDeviceArgs = VerifyDeviceVariables;
+
+export async function verifyDevice(
+	{ deviceId, payload }: VerifyDeviceArgs,
+	{ kitaruApiClient }: KitaruApiClientContext
+): Promise<Device> {
+	const response = await kitaruApiClient.PUT(
+		"/api/v1/devices/{device_id}/verify",
+		{
+			params: {
+				path: {
+					device_id: deviceId,
+				},
 			},
-		},
-		body: payload,
-	});
+			body: payload,
+		}
+	);
 
 	return expectData(response);
 }
