@@ -16,19 +16,37 @@ Currently exposes:
 
 ## Conventions
 
-### File naming
+### File layout
 
-| Directory                | Case           | Example                         |
-| ------------------------ | -------------- | ------------------------------- |
-| `src/components/`        | **PascalCase** | `WorkspaceIdentityBand.tsx`     |
-| `src/primitives/`        | kebab-case     | `dropdown-menu.tsx`             |
-| `src/lib/`, `src/hooks/` | kebab-case     | `state-styles.ts`, `use-foo.ts` |
+Every component lives in its own folder, named after the component, with its
+source, stories, and Figma Code Connect file colocated inside:
 
-- Files in `src/components/` use **PascalCase**, matching the exported component name (`WorkspaceIdentityBand.tsx` exports `WorkspaceIdentityBand`).
-- Files in `src/primitives/` keep **kebab-case** to stay compatible with the `shadcn` CLI generator (`npx shadcn add dropdown-menu` writes `dropdown-menu.tsx`).
-- Non-component TypeScript files (`lib/`, `hooks/`) stay kebab-case as usual.
+```
+src/primitives/dropdown-menu/
+├── dropdown-menu.tsx
+├── dropdown-menu.stories.tsx
+└── dropdown-menu.figma.tsx
 
-Import paths mirror the file name verbatim — wildcard exports in `package.json` resolve `@zenml/hashi/components/<File>` → `./src/components/<File>.tsx`. PascalCase paths therefore reach PascalCase files; primitives stay lower-case on both sides.
+src/components/WorkspaceIdentityBand/
+├── WorkspaceIdentityBand.tsx
+├── WorkspaceIdentityBand.stories.tsx
+└── WorkspaceIdentityBand.figma.tsx
+
+```
+
+| Directory                | Case           | Example                                           |
+| ------------------------ | -------------- | ------------------------------------------------- |
+| `src/components/`        | **PascalCase** | `WorkspaceIdentityBand/WorkspaceIdentityBand.tsx` |
+| `src/primitives/`        | kebab-case     | `dropdown-menu/dropdown-menu.tsx`                 |
+| `src/lib/`, `src/hooks/` | kebab-case     | `state-styles.ts`, `use-foo.ts`                   |
+
+- Files in `src/components/` use **PascalCase**, matching the exported component name (folder and file name both = `WorkspaceIdentityBand`).
+- Files in `src/primitives/` keep **kebab-case** to stay compatible with the `shadcn` CLI generator (`npx shadcn add dropdown-menu` writes a flat `dropdown-menu.tsx` — move it into `dropdown-menu/dropdown-menu.tsx` after).
+- Non-component TypeScript files (`lib/`, `hooks/`) stay flat and kebab-case as usual — no per-file folder.
+
+Import specifiers are unchanged by the folder move and still mirror the component name — `package.json` `exports` use repeated-`*` targets to reach into the per-component folder: `"./components/*": "./src/components/*/*.tsx"` resolves `@zenml/hashi/components/<Name>` → `./src/components/<Name>/<Name>.tsx`. Nested family directories are not supported — the wildcard reaches exactly one folder level (a deeper path would double-substitute into a broken target). Group related components in Storybook titles (`Components/Timeline/...`) instead. PascalCase paths therefore reach PascalCase files; primitives stay lower-case on both sides.
+
+One DX cost: TypeScript's reverse export-map lookup only follows the first `*`, so editors no longer suggest hashi subpath imports for new code — existing imports keep resolving fine, but new ones need the specifier typed out by hand.
 
 ## Storybook & tests
 

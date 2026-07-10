@@ -1,17 +1,11 @@
 {
 	"codeConnect": {
 		"parser": "react",
-		"include": [
-			"src/**/*.figma.tsx",
-			"src/**/*.tsx"
-		],
+		"include": ["src/**/*.figma.tsx", "src/**/*.tsx"],
 		"importPaths": {
 			"src/primitives/*": "@zenml/hashi/primitives/*",
 			"src/components/*": "@zenml/hashi/components/*"
 		},
-		"exclude": [
-			"src/**/*.stories.tsx",
-			"src/storybook/**"
-		]
+		"exclude": ["src/**/*.stories.tsx", "src/storybook/**"]
 	}
 }

@@ -7,8 +7,7 @@ import { describe, expect, it } from "vitest";
 // Every component and primitive ships with colocated stories — the Storybook
 // IS the design-system reference, and the stories double as browser render +
 // axe tests. This gate fails CI the moment a source file lands without them.
-// The scan is recursive so subdirectories (e.g. components/timeline/) are
-// held to the same rule. Recipe: shared/hashi/CONTRIBUTING.md.
+// The scan is recursive so any nested folder is held to the same rule. Recipe: shared/hashi/CONTRIBUTING.md.
 
 const src = join(dirname(fileURLToPath(import.meta.url)), "..");
 

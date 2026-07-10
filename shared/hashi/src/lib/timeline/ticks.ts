@@ -27,31 +27,43 @@ const NICE_STEPS_MS = [
 // breathing room that adjacent labels never touch even at small viewports.
 const MIN_TICK_GAP_PX = 72;
 
-// Step floor at each label range. Two purposes:
-//   1) Prevent label-text collisions caused by `formatDurationShort` flooring
-//      precision (e.g. four ticks at `3h 3m 0s/10s/20s/30s` all render as
-//      "3h 3m"). The step has to be >= the smallest displayed unit so adjacent
-//      ticks always have distinct strings.
-//   2) Bias the picker toward "round" timestamps (e.g. `4h`, `4h 30m`, `5h`
-//      instead of `4h 33m`, `4h 34m`). In the hours range we floor at 30
-//      minutes; multi-day, at 1 hour.
-function getLabelPrecisionMs(ms: number): number {
-	if (ms < 60_000) return 1_000; // seconds
-	if (ms < 3_600_000) return 60_000; // minutes
-	if (ms < 24 * 3_600_000) return 30 * 60_000; // 30 minutes
-	return 60 * 60_000; // 1 hour
-}
-
-// Pick the smallest "nice" step that:
-//   - is at least `targetMs` (so we get roughly the desired tick count)
-//   - is at least the label precision at `referenceMs` (so adjacent labels
-//     don't collapse into the same string)
-function pickNiceStep(targetMs: number, referenceMs: number): number {
-	const required = Math.max(1, targetMs, getLabelPrecisionMs(referenceMs));
+// Pick the smallest "nice" step at least `targetMs`, so tick density follows
+// how much horizontal room a segment actually has — not the absolute time. A
+// short active span keeps a fine step even at hour scale (e.g. the 5s of work
+// after a one-hour wait still gets second-level ticks).
+function pickNiceStep(targetMs: number): number {
+	const required = Math.max(1, targetMs);
 	return (
 		NICE_STEPS_MS.find((s) => s >= required) ??
 		NICE_STEPS_MS[NICE_STEPS_MS.length - 1]!
 	);
+}
+
+// Axis labels reuse formatDurationShort, except a fine-grained tick at hour
+// scale: formatDurationShort drops seconds past 1h, which would make adjacent
+// second-apart ticks render identically. There, show h/m/s and trim only the
+// leading/trailing zero units so an exact hour stays "1h", not "1h 0m 0s".
+function formatAxisTick(ms: number, stepMs: number): string {
+	if (ms < 3_600_000 || stepMs >= 60_000) return formatDurationShort(ms);
+	const totalSec = Math.round(ms / 1000);
+	const units: Array<[number, string]> = [
+		[Math.floor(totalSec / 3600), "h"],
+		[Math.floor((totalSec % 3600) / 60), "m"],
+		[totalSec % 60, "s"],
+	];
+	let first = -1;
+	let last = -1;
+	units.forEach(([value], i) => {
+		if (value > 0) {
+			if (first < 0) first = i;
+			last = i;
+		}
+	});
+	if (first < 0) return "0s";
+	return units
+		.slice(first, last + 1)
+		.map(([value, unit]) => `${value}${unit}`)
+		.join(" ");
 }
 
 interface ActiveSegment {
@@ -60,10 +72,6 @@ interface ActiveSegment {
 }
 
 function buildActiveSegments(timeMap: TimeMap): ActiveSegment[] {
-	if (timeMap.scaleMode === "linear") {
-		return [{ startMs: 0, endMs: timeMap.totalMs }];
-	}
-
 	const segments: ActiveSegment[] = [];
 	let cursor = 0;
 	for (const gap of timeMap.gaps) {
@@ -134,12 +142,12 @@ export function buildTicks(
 			ticks.push({
 				ms: midMs,
 				pct: timeMap.msToPct(midMs),
-				label: formatDurationShort(midMs),
+				label: formatAxisTick(midMs, segDur),
 			});
 			ticks.push({
 				ms: segEnd,
 				pct: segEndPct,
-				label: formatDurationShort(segEnd),
+				label: formatAxisTick(segEnd, segDur),
 			});
 			continue;
 		}
@@ -147,7 +155,7 @@ export function buildTicks(
 		// Target ~1 tick per MIN_TICK_GAP_PX of segment width.
 		const maxTicks = Math.max(1, Math.floor(segPxWidth / MIN_TICK_GAP_PX));
 		const targetStep = segDur / Math.max(1, maxTicks);
-		const step = pickNiceStep(targetStep, segEnd);
+		const step = pickNiceStep(targetStep);
 
 		// Lay ticks on a step grid anchored at 0 so `0s` always lands at the
 		// origin.
@@ -156,7 +164,19 @@ export function buildTicks(
 			ticks.push({
 				ms,
 				pct: timeMap.msToPct(ms),
-				label: formatDurationShort(ms),
+				label: formatAxisTick(ms, step),
+			});
+		}
+
+		// Always label the segment's end. It's a wait's start time (or the axis
+		// end), so labelling it keeps the compressed axis covered edge to edge and
+		// makes the time "jump" across the next fixed-width wait stripe legible —
+		// the round-number grid above usually stops short of it.
+		if (ticks[ticks.length - 1]?.ms !== segEnd) {
+			ticks.push({
+				ms: segEnd,
+				pct: Math.min(100, segEndPct),
+				label: formatAxisTick(segEnd, step),
 			});
 		}
 	}
@@ -168,18 +188,17 @@ export function buildTicks(
 		ticks.unshift({
 			ms: 0,
 			pct: timeMap.msToPct(0),
-			label: "0s",
+			label: formatAxisTick(0, 1000),
 		});
 	}
 
-	if (
-		timeMap.scaleMode === "linear" &&
-		ticks[ticks.length - 1]?.ms !== timeMap.totalMs
-	) {
+	// Always anchor the axis end so the right edge carries the total duration,
+	// in both linear and compressed modes.
+	if (ticks[ticks.length - 1]?.ms !== timeMap.totalMs) {
 		ticks.push({
 			ms: timeMap.totalMs,
-			pct: timeMap.msToPct(timeMap.totalMs),
-			label: formatDurationShort(timeMap.totalMs),
+			pct: Math.min(100, timeMap.msToPct(timeMap.totalMs)),
+			label: formatAxisTick(timeMap.totalMs, 1000),
 		});
 	}
 

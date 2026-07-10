@@ -3,7 +3,7 @@
 // hashi has no `./types/*` subpath dependency. The unions are kept structurally
 // identical to the prototype's `@/types/dashboard` and `@/types/org` exports.
 
-import type { BadgeVariant } from "../primitives/badge";
+import type { BadgeVariant } from "../primitives/badge/badge";
 
 export type FlowStatus = "active" | "paused" | "error";
 

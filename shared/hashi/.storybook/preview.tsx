@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import type { Decorator, Preview } from "@storybook/react-vite";
 
-import { TooltipProvider } from "../src/primitives/tooltip";
+import { TooltipProvider } from "../src/primitives/tooltip/tooltip";
 
 // The raw stylesheet, not the "@zenml/hashi/globals.css" consumer entry:
 // the consumer entry excludes *.stories.tsx from the Tailwind scan, while

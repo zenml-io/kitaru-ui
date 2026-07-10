@@ -115,7 +115,9 @@
 	   lightest in-gamut L that clears 4.6:1 on all three surfaces. Used by the
 	   Badge light/neutral/ghost emphases; reuse for any colored text on light
 	   surfaces. */
-	--primary-text: oklch(0.48 0.075 130);
+	/* primary-text sits below the lightest-AA rule on purpose: at 0.48 the olive
+	   green read too faint on tinted surfaces (~5:1); 0.43 clears ~6.3:1. */
+	--primary-text: oklch(0.43 0.075 130);
 	--destructive-text: oklch(0.51 0.141 19.7837);
 	--success-text: oklch(0.48 0.14 145);
 	--warning-text: oklch(0.5 0.108 70);
