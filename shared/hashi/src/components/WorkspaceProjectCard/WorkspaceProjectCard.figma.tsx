@@ -19,13 +19,21 @@ figma.connect(
 			statisticsSlot: figma.enum("statistics", {
 				with: <ProjectStatistics flows={12} executions={847} />,
 			}),
+			footerSlot: figma.enum("footer", {
+				with: (
+					<div className="bg-secondary flex items-center justify-between gap-2 rounded-md px-3 py-2 font-mono text-xs">
+						<code>kitaru project use model-training</code>
+					</div>
+				),
+			}),
 		},
-		example: ({ gradient, statisticsSlot }) => (
+		example: ({ gradient, statisticsSlot, footerSlot }) => (
 			<WorkspaceProjectCard
 				name="production-traces"
 				path="/zenml/production-traces"
 				gradient={gradient}
 				statisticsSlot={statisticsSlot}
+				footerSlot={footerSlot}
 			/>
 		),
 	}

@@ -1,8 +1,10 @@
 import figma from "@figma/code-connect";
 
 import {
+	ArrowDown,
 	ArrowLeft,
 	ArrowLeftRight,
+	ArrowUp,
 	Bell,
 	Bot,
 	Box,
@@ -14,6 +16,7 @@ import {
 	ChevronUp,
 	ChevronsUpDown,
 	Circle,
+	CircleAlert,
 	CircleCheck,
 	Clock,
 	Copy,
@@ -25,16 +28,19 @@ import {
 	FolderTree,
 	GitBranch,
 	House,
+	Info,
 	KeyRound,
 	Layers,
 	LayoutGrid,
 	List,
 	Mail,
+	Network,
 	Package,
 	Play,
 	Plus,
 	RectangleEllipsis,
 	RefreshCcw,
+	RotateCcw,
 	Search,
 	Server,
 	Settings,
@@ -48,10 +54,11 @@ import {
 	Zap,
 } from "lucide-react";
 
-// Generated from the Icons page of the Hashi Design System Figma file —
-// the 45 lucide icons hashi imports (lucide-react@1.16.0). Each Figma
-// Icon/<slug> component maps to its lucide-react export so INSTANCE_SWAP
-// slots resolve to real icon imports in snippets.
+// One entry per icon published on the Icons page of the Hashi Design
+// System Figma file (51 icons, lucide-react@1.16.0) — including icons
+// not yet imported by hashi source. Each Figma Icon/<slug> component
+// maps to its lucide-react export so INSTANCE_SWAP slots resolve to
+// real icon imports in snippets.
 
 figma.connect(Check, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=41-5", {
 	example: () => <Check />,
@@ -187,4 +194,22 @@ figma.connect(Workflow, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Has
 });
 figma.connect(Zap, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=56-75", {
 	example: () => <Zap />,
+});
+figma.connect(ArrowUp, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=145-2", {
+	example: () => <ArrowUp />,
+});
+figma.connect(ArrowDown, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=145-5", {
+	example: () => <ArrowDown />,
+});
+figma.connect(Info, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=378-6", {
+	example: () => <Info />,
+});
+figma.connect(CircleAlert, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=378-14", {
+	example: () => <CircleAlert />,
+});
+figma.connect(RotateCcw, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=416-5", {
+	example: () => <RotateCcw />,
+});
+figma.connect(Network, "https://www.figma.com/design/IZhfgAOIPjDObsCtpFKhRY/Hashi-Design-System?node-id=416-14", {
+	example: () => <Network />,
 });

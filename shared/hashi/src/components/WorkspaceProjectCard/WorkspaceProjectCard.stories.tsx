@@ -153,6 +153,22 @@ export const NoStatistics: Story = {
 	),
 };
 
+export const WithCommandFooter: Story = {
+	render: () => (
+		<WorkspaceProjectCard
+			name="model-training"
+			path="/kitaru/model-training"
+			statisticsSlot={<ProjectStatistics flows={9} executions={1204} />}
+			footerSlot={
+				<div className="bg-secondary flex items-center justify-between gap-2 rounded-md px-3 py-2 font-mono text-xs">
+					<code>kitaru project use model-training</code>
+				</div>
+			}
+			gradient="kitaru-amber"
+		/>
+	),
+};
+
 // Large counts confirm tabular-num alignment doesn't break layout.
 export const LargeCounts: Story = {
 	render: () => (

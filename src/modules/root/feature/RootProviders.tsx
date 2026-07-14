@@ -8,6 +8,7 @@ import {
 	KitaruApiClientProvider,
 	KitaruProvider,
 } from "@zenml/shared-kitaru/contexts";
+import { LATEST_KITARU_VERSION_TARGET } from "@zenml/shared-kitaru/modules/versions";
 import { ThemeProvider } from "next-themes";
 import type { ReactNode } from "react";
 
@@ -22,7 +23,11 @@ export function RootProviders({ children }: RootProvidersProps) {
 		<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
 			<QueryClientProvider client={queryClient}>
 				<KitaruApiClientProvider kitaruApiClient={apiClient}>
-					<KitaruProvider scopeKey={KITARU_SCOPE_KEY} apiBaseUrl={apiBaseUrl}>
+					<KitaruProvider
+						scopeKey={KITARU_SCOPE_KEY}
+						apiBaseUrl={apiBaseUrl}
+						kitaruVersionTarget={LATEST_KITARU_VERSION_TARGET}
+					>
 						<TooltipProvider>{children}</TooltipProvider>
 					</KitaruProvider>
 				</KitaruApiClientProvider>

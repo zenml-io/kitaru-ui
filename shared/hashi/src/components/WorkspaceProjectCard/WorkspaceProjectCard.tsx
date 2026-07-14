@@ -18,6 +18,7 @@ interface WorkspaceProjectCardProps {
 	path: string;
 	gradient: ProjectGradient;
 	statisticsSlot?: ReactNode;
+	footerSlot?: ReactNode;
 	className?: string;
 }
 
@@ -26,6 +27,7 @@ export function WorkspaceProjectCard({
 	path,
 	gradient,
 	statisticsSlot,
+	footerSlot,
 	className,
 }: WorkspaceProjectCardProps) {
 	return (
@@ -48,6 +50,7 @@ export function WorkspaceProjectCard({
 				</div>
 				{statisticsSlot}
 			</div>
+			{footerSlot && <div className="border-t p-3">{footerSlot}</div>}
 		</Card>
 	);
 }

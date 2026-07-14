@@ -166,4 +166,5 @@ it applies). Both still get a tracker row.
 
 When a component's props change, update its `.figma.tsx` and Figma variants
 in the same PR — CI republishes automatically. Icon mappings live in
-`src/icons.figma.tsx` (generated from the lucide set hashi imports).
+`src/icons.figma.tsx` (one entry per icon published on the Icons page
+of the Hashi Design System Figma file).
