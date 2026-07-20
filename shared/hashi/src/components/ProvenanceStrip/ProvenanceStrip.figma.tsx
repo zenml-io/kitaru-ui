@@ -16,6 +16,8 @@ figma.connect(
 			<ProvenanceStrip
 				role={role}
 				source="#151"
+				// comparison is a runtime-supplied link rendered by the consuming app
+				comparison={<a href="#compare-151-152">Compare</a>}
 				stats={[{ label: "Reused", value: "6 of 8" }]}
 			/>
 		),

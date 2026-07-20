@@ -9,6 +9,7 @@ import {
 	ExecutionDetailRouteProvider,
 	type ExecutionDetailSearch,
 	type ExecutionLinkProps,
+	type ComparisonLinkProps,
 } from "@zenml/shared-kitaru/modules/executions";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
@@ -100,6 +101,26 @@ function LinkToExecution({
 	);
 }
 
+function LinkToComparison({
+	flowId,
+	version,
+	executionId,
+	originalExecutionId,
+	className,
+	children,
+}: ComparisonLinkProps) {
+	return (
+		<Link
+			to="/flows/$flowId/v/$version/compare"
+			params={{ flowId, version }}
+			search={{ executions: `${originalExecutionId},${executionId}` }}
+			className={className}
+		>
+			{children}
+		</Link>
+	);
+}
+
 function ExecutionDetailRouteAdapter() {
 	const { flowId, version, executionId } = Route.useParams();
 	const { tab, scope } = Route.useSearch();
@@ -144,7 +165,7 @@ function ExecutionDetailRouteAdapter() {
 	return (
 		<ExecutionDetailRouteProvider
 			state={{ flowId, version, executionId, tab, scope }}
-			navigation={{ updateSearch, goToExecution, goToReplay, redirectToFlow, LinkToExecution }}
+			navigation={{ updateSearch, goToExecution, goToReplay, redirectToFlow, LinkToExecution, LinkToComparison }}
 		>
 			<DeploymentExecutionContainer />
 		</ExecutionDetailRouteProvider>

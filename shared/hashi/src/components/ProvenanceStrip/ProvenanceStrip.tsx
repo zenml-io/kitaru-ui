@@ -1,4 +1,4 @@
-import { Network, RotateCcw } from "lucide-react";
+import { ArrowLeftRight, Network, RotateCcw } from "lucide-react";
 
 import { cn } from "@zenml/hashi/lib/utils";
 import { Separator } from "@zenml/hashi/primitives/separator";
@@ -20,6 +20,12 @@ export interface ProvenanceStripProps {
 	 * is "original".
 	 */
 	source?: React.ReactNode;
+	/**
+	 * Optional trailing "Compare" link, already rendered by the consuming
+	 * app (router `Link`, anchor, or string) — same router-agnostic pattern as
+	 * `source`. Only rendered for replays; ignored when `role` is "original".
+	 */
+	comparison?: React.ReactNode;
 	stats?: ProvenanceStat[];
 	className?: string;
 }
@@ -45,6 +51,7 @@ const DELTA_TONE_CLASS: Record<ProvenanceStatTone, string> = {
 export function ProvenanceStrip({
 	role,
 	source,
+	comparison,
 	stats = [],
 	className,
 }: ProvenanceStripProps) {
@@ -122,6 +129,21 @@ export function ProvenanceStrip({
 				<>
 					<Separator orientation="vertical" className="h-5" />
 					<div className="flex items-center gap-3">{statNodes}</div>
+				</>
+			) : null}
+
+			{role === "replay" && comparison ? (
+				<>
+					<Separator orientation="vertical" className="h-5" />
+					<div className="flex items-center gap-1.5">
+						<ArrowLeftRight
+							className="text-primary-text size-3.5 shrink-0"
+							aria-hidden
+						/>
+						<span className="text-primary-text text-xs font-medium underline decoration-1 underline-offset-4">
+							{comparison}
+						</span>
+					</div>
 				</>
 			) : null}
 		</div>

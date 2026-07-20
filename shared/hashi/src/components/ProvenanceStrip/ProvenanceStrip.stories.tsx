@@ -63,6 +63,17 @@ export const WithSourceLink: Story = {
 };
 
 /**
+ * `comparison` renders a trailing "Compare" link (already-rendered by the
+ * consuming app) that opens the execution comparison view. Replay role only.
+ */
+export const WithComparisonLink: Story = {
+	args: {
+		source: <a href="#execution-151">#151</a>,
+		comparison: <a href="#compare-151-152">Compare</a>,
+	},
+};
+
+/**
  * Realistic composed header row: mono execution id, a warning status badge,
  * a vertical separator, then the provenance strip — mirrors how the
  * execution detail header assembles its left cluster, hashi primitives only.
@@ -70,9 +81,7 @@ export const WithSourceLink: Story = {
 export const ComposedHeader: Story = {
 	render: () => (
 		<div className="flex items-center gap-3">
-			<h1 className="text-foreground font-mono text-lg font-semibold">
-				#152
-			</h1>
+			<h1 className="text-foreground font-mono text-lg font-semibold">#152</h1>
 			<Badge variant="warning" emphasis="light" radius="full">
 				<Loader2 className="animate-spin" aria-hidden />
 				Running
