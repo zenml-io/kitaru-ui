@@ -44,7 +44,7 @@ Audit finding 2026-07-06: the library contains exactly the 25 already-connected 
 | primitives/tabs | existing | 81-22 | merged | |
 | primitives/toggle | existing | 71-20 | merged | |
 | primitives/tooltip | existing | 79-5 | merged | |
-| components/MemberAvatarStack | existing | 91-5 | merged | |
+| components/MemberAvatarStack | existing | 91-5 | merged | RESYNCED 2026-07-24: member tints went from solid dark fills to light surfaces with same-hue dark text. The 4 avatar fills + initials were RAW unbound paints; all 8 now bind to variables. New `component/member-tint-{1..5}-{bg,fg}` (VariableID:764:2..11) in the Color collection, values set for all 4 modes; tints 1-5 are brand-neutral so ZenML and Kitaru share a value, light/dark differ. Slot 0 is NOT a new variable, it binds to existing `surface/muted` + `text/secondary-foreground` because that is what the code does (`var(--muted)` / `var(--secondary-foreground)`), which also makes it track brand automatically. PageIdentityHeader 288-1091 and the other consumers inherit via instances, verified. Figma resolves Kitaru modes to #f2e9e2 / #705c4d / #1b1b19 / #e5e5e2, matching the browser exactly. |
 | components/StatusDot | existing | 87-23 | merged | |
 | components/WorkspaceAvatar | existing | 89-13 | merged | |
 | components/WorkspaceStatusDot | existing | 88-8 | merged | |

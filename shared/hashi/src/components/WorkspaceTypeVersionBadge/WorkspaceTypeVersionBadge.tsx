@@ -17,8 +17,10 @@ interface WorkspaceTypeVersionBadgeProps {
 // Left half = type-tinted (sage for ZenML, peach for Kitaru). Right half = a
 // softer hue from the same scene with the same text + border. Colors come
 // straight from the Paper artboards converted to oklch; they're type-anchored
-// (a ZenML pill stays green even on a Kitaru-themed page), same pattern as
-// WorkspaceAvatar — that's why they live inline rather than as theme tokens.
+// (a ZenML pill keeps its own colour even on a Kitaru-themed page), same
+// pattern as WorkspaceAvatar — that's why Kitaru lives inline rather than as
+// theme tokens. The ZenML half reads from tokens because the ZenML brand
+// colour itself changes per brand (purple under the legacy zenml-pro theme).
 type TagPalette = {
 	bgStrong: string;
 	bgSoft: string;
@@ -27,12 +29,14 @@ type TagPalette = {
 };
 
 const PALETTES: Record<WorkspaceType, TagPalette> = {
-	// Paper: #E1E7DE / #F5F7F4 / #D4DED0 / #7A9268 (= --zen-green-palm-leaf)
+	// Paper: #E1E7DE / #F5F7F4 / #D4DED0 / #7A9268 (= --zen-green-palm-leaf).
+	// Tokenized because the ZenML brand colour is itself brand-dependent: the
+	// legacy Pro theme restates these in purple. Kitaru below stays literal.
 	zenml: {
-		bgStrong: "oklch(0.9099 0.0202 122.5)",
-		bgSoft: "oklch(0.9738 0.0045 134.85)",
-		border: "oklch(0.8721 0.0235 122.5)",
-		text: "oklch(0.5 0.0666 132.25)",
+		bgStrong: "var(--ws-tag-zenml-bg-strong)",
+		bgSoft: "var(--ws-tag-zenml-bg-soft)",
+		border: "var(--ws-tag-zenml-border)",
+		text: "var(--ws-tag-zenml-text)",
 	},
 	// Paper: #F3E3D4 / #F5ECE3 / #FAD3B3 / #E28C46
 	kitaru: {

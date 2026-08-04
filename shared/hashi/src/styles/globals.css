@@ -8,6 +8,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ZenML reference palettes (raw tokens, no semantic mapping here) */
+@import "./zenml-palettes.css";
+
+/* The temporary ZenML Pro legacy brand is NOT imported here. It ships as its
+   own entry, "@zenml/hashi/zenml-pro-legacy.css", imported after this file by
+   the Pro app only. Keeping it out of the shared stylesheet stops it reaching
+   consumers that will never use it (kitaru-ui pulls this file in), and letting
+   source order do the work means its blocks need no specificity qualifier. */
+
 /* Make Tailwind scan hashi's own sources when consumed from an app. Without
    this, classes that appear only inside hashi sources (e.g.
    data-[orientation=vertical]:w-px on Separator, or the tint classes lib
@@ -17,9 +26,6 @@
 @source "../components";
 @source "../hooks";
 @source "../lib";
-
-/* ZenML reference palettes (raw tokens, no semantic mapping here) */
-@import "./zenml-palettes.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -161,6 +167,51 @@
 	--brand-mark-fg: var(
 		--zen-green-granite
 	); /* #3C4C38 — near user-provided #25392F */
+
+	/* Workspace-type marks (WorkspaceAvatar gradient, WorkspaceTypeVersionBadge
+	   pill). These are type-anchored, not theme-anchored: a workspace shows its
+	   own type wherever it is rendered. Only the zenml set is tokenized, because
+	   "the ZenML brand colour" is the one value that legitimately differs per
+	   brand — the legacy Pro theme restates it in purple. The kitaru palette
+	   stays inline in the components on purpose: Kitaru marks are never
+	   theme-bound. Values below are the current greens, unchanged. */
+	--ws-mark-zenml-from: oklch(0.78 0.11 145);
+	--ws-mark-zenml-mid: oklch(0.62 0.1 145);
+	--ws-mark-zenml-to: oklch(0.5 0.09 140);
+	--ws-tag-zenml-bg-strong: oklch(0.9099 0.0202 122.5);
+	--ws-tag-zenml-bg-soft: oklch(0.9738 0.0045 134.85);
+	--ws-tag-zenml-border: oklch(0.8721 0.0235 122.5);
+	--ws-tag-zenml-text: oklch(0.5 0.0666 132.25);
+
+	/* Member-avatar tints. A categorical palette for telling PEOPLE apart, so it
+	   spans the hue circle and carries no brand meaning. lib/state-styles.ts
+	   reads these positionally and holds no colour of its own.
+
+	   Literal oklch rather than Tailwind's --color-<hue>-<step> vars on purpose:
+	   consuming apps redefine names in that namespace (zenml-pro-ui declares
+	   --color-blue-* as bare HSL triplets in @layer base, which outranks
+	   Tailwind's @layer theme), so a var reference there resolves to a non-colour
+	   and the declaration is dropped. Values below are Tailwind's, frozen.
+
+	   Slot 0 is the plain avatar-fallback surface and rides --muted, so it
+	   follows light and dark with no restatement. Its text is
+	   --secondary-foreground, not the --muted-foreground an untinted fallback
+	   uses: that pairing sinks to 2.95:1 under Kitaru and 4.39:1 under the
+	   legacy brand, both short of AA for 10px bold. Slots 0 and 5 swap under
+	   zenml-pro-legacy.css, which leads with purple and closes with the
+	   fallback. Every pair clears 4.5:1 in every brand and mode. */
+	--member-tint-0-bg: var(--muted);
+	--member-tint-0-fg: var(--secondary-foreground);
+	--member-tint-1-bg: oklch(93.2% 0.032 255.585);
+	--member-tint-1-fg: oklch(42.4% 0.199 265.638);
+	--member-tint-2-bg: oklch(96.2% 0.059 95.617);
+	--member-tint-2-fg: oklch(47.3% 0.137 46.201);
+	--member-tint-3-bg: oklch(92.5% 0.084 155.995);
+	--member-tint-3-fg: oklch(39.3% 0.095 152.535);
+	--member-tint-4-bg: oklch(95.4% 0.038 75.164);
+	--member-tint-4-fg: oklch(47% 0.157 37.304);
+	--member-tint-5-bg: oklch(94.6% 0.033 307.174);
+	--member-tint-5-fg: oklch(43.8% 0.218 303.724);
 }
 
 /* Dark = ZenML dark (was previously [data-app="zenml"].dark). */
@@ -172,6 +223,19 @@
 	--sidebar-primary-foreground: oklch(0.9738 0.0045 134.85);
 	--sidebar-ring: oklch(0.53 0.075 130);
 	--shadow-accent: 0 4px 16px oklch(0.53 0.075 130 / 0.25);
+
+	/* Member tints invert for dark, a light fill would glare on a dark surface.
+	   Slot 0 rides --muted / --secondary-foreground and needs no restatement. */
+	--member-tint-1-bg: oklch(37.9% 0.146 265.522);
+	--member-tint-1-fg: oklch(93.2% 0.032 255.585);
+	--member-tint-2-bg: oklch(41.4% 0.112 45.904);
+	--member-tint-2-fg: oklch(96.2% 0.059 95.617);
+	--member-tint-3-bg: oklch(39.3% 0.095 152.535);
+	--member-tint-3-fg: oklch(96.2% 0.044 156.743);
+	--member-tint-4-bg: oklch(40.8% 0.123 38.172);
+	--member-tint-4-fg: oklch(95.4% 0.038 75.164);
+	--member-tint-5-bg: oklch(38.1% 0.176 304.987);
+	--member-tint-5-fg: oklch(94.6% 0.033 307.174);
 
 	/* Accent / Secondary — brown charcoal warmth for de-emphasized/accent surfaces
 	   (banners, chips, hovers). Matches the Paper reference banner fill. */
@@ -360,29 +424,53 @@
  * its own token-driven fill.
  */
 html:not(.dark) [data-slot="button"][data-variant="secondary"],
-html:not(.dark) [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
+html:not(.dark)
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	) {
 	background-color: oklch(0.945 0.014 84.59);
 }
 html:not(.dark) [data-slot="button"][data-variant="secondary"]:hover,
-html:not(.dark) [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
+html:not(.dark)
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	):hover {
 	background-color: oklch(0.91 0.016 84.59);
 }
 .dark [data-slot="button"][data-variant="secondary"],
-.dark [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
+.dark
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	) {
 	background-color: oklch(0.32 0.022 153);
 }
 .dark [data-slot="button"][data-variant="secondary"]:hover,
-.dark [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
+.dark
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	):hover {
 	background-color: oklch(0.38 0.024 153);
 }
 
 /* Kitaru mirror — restore --secondary-driven fill (specificity beats baseline). */
 [data-app="kitaru"] [data-slot="button"][data-variant="secondary"],
-[data-app="kitaru"] [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]) {
+[data-app="kitaru"]
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	) {
 	background-color: var(--secondary);
 }
 [data-app="kitaru"] [data-slot="button"][data-variant="secondary"]:hover,
-[data-app="kitaru"] [data-slot="badge"]:is([data-variant="secondary"], [data-emphasis="neutral"]):hover {
+[data-app="kitaru"]
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	):hover {
 	background-color: color-mix(in oklch, var(--secondary) 80%, transparent);
 }
 

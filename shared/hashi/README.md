@@ -4,7 +4,8 @@ Hashi — the shared design system for ZenML frontend apps.
 
 Currently exposes:
 
-- `@zenml/hashi/globals.css` — the canonical dual-theme stylesheet (generic ZenML at `:root`/`.dark`, Kitaru deviation under `[data-app="kitaru"]`).
+- `@zenml/hashi/globals.css`, the canonical stylesheet with generic ZenML at `:root`/`.dark` and Kitaru under `[data-app="kitaru"]`.
+- `@zenml/hashi/zenml-pro-legacy.css`, the opt-in legacy ZenML Pro brand under `[data-app="zenml-pro"]`. Import it after `globals.css`; only the Pro app needs it.
 - `@zenml/hashi/primitives/*` — shadcn-style primitives (Button, Input, DropdownMenu, …).
 - `@zenml/hashi/components/*` — higher-level composed components (identity bands, switcher pills, brand marks, …).
 - `@zenml/hashi/lib/*` — pure helpers (`cn`, `state-styles`).
@@ -13,6 +14,29 @@ Currently exposes:
 
 - `apps/kitaru-ui` (OSS) — consumes `@zenml/hashi/globals.css` (Kitaru theme via `<html data-app="kitaru">`).
 - Other internal ZenML apps — consume primitives, components, and lib helpers.
+
+## Brand themes
+
+ZenML is the default brand at `:root`, with light and dark modes. Kitaru
+overrides the shared semantic tokens under `[data-app="kitaru"]`.
+
+The temporary third brand, `[data-app="zenml-pro"]`, reproduces the legacy
+ZenML Pro purple shell and supports light mode only. It ships as its own entry
+rather than inside `globals.css`, so it never reaches consumers that will not
+use it. Import it after `globals.css`, since its blocks rely on source order to
+outrank the `:root` ZenML tokens:
+
+```css
+@import "@zenml/hashi/globals.css";
+@import "@zenml/hashi/zenml-pro-legacy.css";
+```
+
+Its tokens alias the live variables from
+`apps/zenml-pro-ui/src/styles/globals.css`, with frozen fallback values so
+standalone Hashi surfaces render without the app stylesheet. At rebrand, delete
+`src/styles/zenml-pro-legacy.css`, its export entry, the imports, and every
+`data-app="zenml-pro"` attribute. Those surfaces then fall through to the
+default `:root` ZenML brand.
 
 ## Conventions
 

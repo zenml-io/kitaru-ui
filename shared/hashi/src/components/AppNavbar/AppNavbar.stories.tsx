@@ -187,7 +187,7 @@ export const Composed: Story = {
 						variant="ghost"
 						size="icon-sm"
 					/>
-					<Avatar size="sm" aria-label="User avatar">
+					<Avatar size="sm">
 						<AvatarFallback>AK</AvatarFallback>
 					</Avatar>
 				</>

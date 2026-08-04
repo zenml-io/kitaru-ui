@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Bot, Check, ShieldCheck } from "lucide-react";
+import { expect } from "storybook/test";
 
 import { getMemberTintClass } from "../../lib/state-styles";
 
@@ -126,9 +127,9 @@ export const FallbackOnly: Story = {
 };
 
 // ─── Tint rotation (member colors) ───────────────────────────────────────────
-// Uses getMemberTintClass directly — solid earthy tints (emerald/stone/amber/
-// green/orange family) defined in state-styles.ts. Index wraps via modulo so
-// any non-negative integer is safe.
+// Uses getMemberTintClass directly — earthy tints (emerald/stone/amber/green/
+// orange family) defined in state-styles.ts, each a light surface with dark
+// same-hue text. Index wraps via modulo so any non-negative integer is safe.
 
 const TINT_INITIALS = ["AL", "BM", "CN", "DO", "EP", "FQ"];
 
@@ -156,7 +157,7 @@ export const TintRotation: Story = {
 export const WithBadge: Story = {
 	render: () => (
 		<div className="flex flex-wrap items-end gap-6">
-			{(["sm", "default", "lg", "xl"] as const).map((size) => (
+			{(["sm", "default", "lg", "xl", "2xl"] as const).map((size) => (
 				<div key={size} className="flex flex-col items-center gap-2">
 					<Avatar size={size}>
 						<AvatarFallback>ZA</AvatarFallback>
@@ -168,6 +169,25 @@ export const WithBadge: Story = {
 				</div>
 			))}
 		</div>
+	),
+	play: async ({ canvasElement }) => {
+		const avatar = canvasElement.querySelector("[data-slot=avatar]");
+		await expect(avatar).toHaveStyle({ overflow: "visible" });
+	},
+};
+
+export const ImageWithBadge: Story = {
+	render: () => (
+		<Avatar size="2xl">
+			<AvatarImage
+				src="https://i.pravatar.cc/150?u=storybook-image-badge"
+				alt="Zuri Achermann"
+			/>
+			<AvatarFallback>ZA</AvatarFallback>
+			<AvatarBadge>
+				<Check />
+			</AvatarBadge>
+		</Avatar>
 	),
 };
 
@@ -195,13 +215,15 @@ export const BadgeWithIcon: Story = {
 				</span>
 			</div>
 			<div className="flex flex-col items-center gap-2">
-				<Avatar size="xl">
+				<Avatar size="2xl">
 					<AvatarFallback>ZA</AvatarFallback>
 					<AvatarBadge>
 						<Bot />
 					</AvatarBadge>
 				</Avatar>
-				<span className="text-muted-foreground font-mono text-xs">Bot</span>
+				<span className="text-muted-foreground font-mono text-xs">
+					Bot — 2xl
+				</span>
 			</div>
 		</div>
 	),
@@ -313,8 +335,62 @@ export const Group: Story = {
 					<AvatarGroupCount>+3</AvatarGroupCount>
 				</AvatarGroup>
 			</div>
+
+			<div className="flex flex-col gap-2">
+				<span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+					2xl size
+				</span>
+				<AvatarGroup>
+					<Avatar size="2xl">
+						<AvatarFallback className={getMemberTintClass(0)}>
+							AL
+						</AvatarFallback>
+					</Avatar>
+					<Avatar size="2xl">
+						<AvatarFallback className={getMemberTintClass(1)}>
+							BM
+						</AvatarFallback>
+					</Avatar>
+					<AvatarGroupCount>+24</AvatarGroupCount>
+				</AvatarGroup>
+			</div>
+
+			<div className="flex flex-col gap-2">
+				<span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+					Mixed sizes — count follows 2xl
+				</span>
+				<AvatarGroup>
+					<Avatar size="sm">
+						<AvatarFallback className={getMemberTintClass(2)}>
+							CN
+						</AvatarFallback>
+					</Avatar>
+					<Avatar size="xl" shape="square">
+						<AvatarFallback className={getMemberTintClass(3)}>
+							DO
+						</AvatarFallback>
+					</Avatar>
+					<Avatar size="2xl" shape="square">
+						<AvatarFallback className={getMemberTintClass(4)}>
+							EP
+						</AvatarFallback>
+					</Avatar>
+					<AvatarGroupCount shape="square">+9</AvatarGroupCount>
+				</AvatarGroup>
+			</div>
 		</div>
 	),
+	play: async ({ canvasElement }) => {
+		const counts = canvasElement.querySelectorAll(
+			"[data-slot=avatar-group-count]"
+		);
+		const mixedGroupCount = counts.item(counts.length - 1);
+		await expect(mixedGroupCount).toHaveStyle({
+			width: "80px",
+			height: "80px",
+			borderRadius: "8px",
+		});
+	},
 };
 
 // ─── Composed: user table row ─────────────────────────────────────────────────

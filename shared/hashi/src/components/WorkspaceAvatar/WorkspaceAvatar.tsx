@@ -26,9 +26,13 @@ interface WorkspaceAvatarProps {
 // regardless of which theme the surrounding page is in — a Kitaru workspace
 // stays orange when viewed from a ZenML-themed org page. Values are tuned to
 // the warm/cool palette from Paper artboards 7E1-0 / 743-0.
+//
+// The zenml stops read from tokens because "the ZenML brand colour" is itself
+// brand-dependent: the legacy Pro theme restates them in purple. Kitaru stays
+// literal, since Kitaru marks are never theme-bound.
 const GRADIENT_BY_TYPE: Record<WorkspaceType, string> = {
 	zenml:
-		"linear-gradient(135deg, oklch(0.78 0.11 145) 0%, oklch(0.62 0.1 145) 50%, oklch(0.5 0.09 140) 100%)",
+		"linear-gradient(135deg, var(--ws-mark-zenml-from) 0%, var(--ws-mark-zenml-mid) 50%, var(--ws-mark-zenml-to) 100%)",
 	kitaru:
 		"linear-gradient(135deg, oklch(0.82 0.1 70) 0%, oklch(0.74 0.13 55) 50%, oklch(0.7 0.15 35) 100%)",
 };
@@ -61,12 +65,7 @@ export function WorkspaceAvatar({
 		filter: hue !== 0 ? `hue-rotate(${hue}deg)` : undefined,
 	};
 	return (
-		<Avatar
-			shape="square"
-			size={size}
-			className={className}
-			aria-label={workspace.name}
-		>
+		<Avatar shape="square" size={size} className={className}>
 			{imageUrl ? <AvatarImage src={imageUrl} alt={workspace.name} /> : null}
 			<AvatarFallback style={style} />
 		</Avatar>

@@ -39,7 +39,7 @@ type Story = StoryObj<typeof PageIdentityHeader>;
 /** A squared placeholder avatar reused across the simpler stories. */
 function PlaceholderAvatar() {
 	return (
-		<Avatar shape="square" size="xl" aria-label="production-traces">
+		<Avatar shape="square" size="xl">
 			<AvatarFallback className="bg-muted text-muted-foreground">
 				<Package className="size-5" aria-hidden />
 			</AvatarFallback>
@@ -138,7 +138,7 @@ export const Composed: Story = {
 		pretitle: "Organization",
 		title: "ZenML",
 		avatar: (
-			<Avatar shape="square" size="xl" aria-label="ZenML organization">
+			<Avatar shape="square" size="xl">
 				<AvatarFallback className="bg-primary text-primary-foreground" />
 			</Avatar>
 		),

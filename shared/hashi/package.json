@@ -6,6 +6,7 @@
 	"description": "Hashi — ZenML shared UI design system (tokens + primitives).",
 	"exports": {
 		"./globals.css": "./src/styles/consumer.css",
+		"./zenml-pro-legacy.css": "./src/styles/zenml-pro-legacy.css",
 		"./primitives/*.stories": null,
 		"./primitives/*": "./src/primitives/*/*.tsx",
 		"./components/*.stories": null,

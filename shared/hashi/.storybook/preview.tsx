@@ -7,11 +7,18 @@ import { TooltipProvider } from "../src/primitives/tooltip/tooltip";
 // the consumer entry excludes *.stories.tsx from the Tailwind scan, while
 // stories here need their layout utilities compiled.
 import "../src/styles/globals.css";
+// The legacy Pro brand is a separate entry so it does not ship to consumers
+// that never use it. It MUST be imported after globals.css: its blocks rely on
+// source order to outrank the :root ZenML tokens.
+import "../src/styles/zenml-pro-legacy.css";
 
 /**
- * Hashi ships two brands in one CSS cascade: ZenML at `:root` and Kitaru as
- * the `[data-app="kitaru"]` deviation. Dark mode is the `.dark` class. Both
- * are applied to <html> so every token (and the `body` base styles) respond.
+ * Hashi ships three brands: ZenML at `:root` and Kitaru at
+ * `[data-app="kitaru"]` in globals.css, plus ZenML Pro (legacy) at
+ * `[data-app="zenml-pro"]` in the stylesheet imported above. Dark mode uses the
+ * `.dark` class for ZenML and Kitaru. ZenML Pro (legacy) is light-only, so the
+ * decorator removes `.dark` whenever it is selected. All three are applied to
+ * <html> so every token and the `body` base styles respond.
  */
 const withBrandAndMode: Decorator = (Story, context) => {
 	const brand = context.globals.brand as string;
@@ -19,12 +26,12 @@ const withBrandAndMode: Decorator = (Story, context) => {
 
 	useEffect(() => {
 		const root = document.documentElement;
-		if (brand === "kitaru") {
-			root.setAttribute("data-app", "kitaru");
-		} else {
+		if (brand === "zenml") {
 			root.removeAttribute("data-app");
+		} else {
+			root.setAttribute("data-app", brand);
 		}
-		root.classList.toggle("dark", mode === "dark");
+		root.classList.toggle("dark", brand !== "zenml-pro" && mode === "dark");
 	}, [brand, mode]);
 
 	return <Story />;
@@ -41,13 +48,15 @@ const withTooltipProvider: Decorator = (Story) => (
 const preview: Preview = {
 	globalTypes: {
 		brand: {
-			description: "Brand cascade (ZenML at :root, Kitaru via [data-app])",
+			description:
+				"Brand cascade (ZenML at :root, Kitaru and light-only ZenML Pro via [data-app])",
 			toolbar: {
 				title: "Brand",
 				icon: "paintbrush",
 				items: [
 					{ value: "zenml", title: "ZenML" },
 					{ value: "kitaru", title: "Kitaru" },
+					{ value: "zenml-pro", title: "ZenML Pro (legacy)" },
 				],
 				dynamicTitle: true,
 			},

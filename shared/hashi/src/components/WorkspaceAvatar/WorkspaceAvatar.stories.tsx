@@ -64,15 +64,18 @@ type Story = StoryObj<typeof WorkspaceAvatar>;
 export const Default: Story = {};
 
 // ─── Type variants ────────────────────────────────────────────────────────────
-// ZenML workspaces use a green gradient; Kitaru workspaces use an orange/terracotta
-// gradient. The color is type-anchored — it never follows the page's brand theme.
+// ZenML workspaces use the ZenML brand gradient; Kitaru workspaces use an
+// orange/terracotta gradient. The color is type-anchored, it tracks the
+// workspace's own type rather than the page's brand theme. The one exception is
+// the ZenML gradient itself, which restates in purple under the legacy
+// zenml-pro brand because that is what the ZenML brand color was there.
 
 export const TypeVariants: Story = {
 	render: () => (
 		<div className="flex flex-col gap-6">
 			<div>
 				<p className="text-muted-foreground mb-3 text-xs font-medium tracking-wider uppercase">
-					ZenML type — green gradient
+					ZenML type — brand gradient
 				</p>
 				<div className="flex flex-wrap items-center gap-4">
 					<WorkspaceAvatar workspace={SAMPLE_ZENML} size="2xl" />

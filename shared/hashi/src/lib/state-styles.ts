@@ -271,16 +271,24 @@ export function getWorkspaceTypeLabel(type: WorkspaceType) {
 	return workspaceTypeStyles[type].label;
 }
 
-// Solid tints for member-avatar fallbacks. Green/brown/orange family only —
-// matches the earthy palette in Paper artboards 7E1-0 / 743-0. No gradients
-// on text avatars (CLAUDE.md).
+// Positions in the member-avatar palette. This list holds no colours: the
+// values, the light/dark inversion, and the per-brand swap of slots 0 and 5 all
+// live in the token block in styles/globals.css, which documents the reasoning.
+//
+// Two constraints that are easy to break here:
+//   - Never substitute a Tailwind palette utility (bg-blue-100 and friends).
+//     Consuming apps redefine names in the --color-<hue>-<step> namespace, so
+//     those can resolve to a non-colour and drop out entirely.
+//   - Keep the slots spelled out. Tailwind extracts class names by scanning
+//     source text, so an interpolated `bg-[var(--member-tint-${i}-bg)]` emits
+//     no CSS at all.
 const MEMBER_TINTS: string[] = [
-	"bg-emerald-700 text-emerald-50 dark:bg-emerald-600 dark:text-emerald-50",
-	"bg-stone-700 text-stone-50 dark:bg-stone-600 dark:text-stone-50",
-	"bg-amber-700 text-amber-50 dark:bg-amber-600 dark:text-amber-50",
-	"bg-green-800 text-green-50 dark:bg-green-700 dark:text-green-50",
-	"bg-orange-700 text-orange-50 dark:bg-orange-600 dark:text-orange-50",
-	"bg-stone-800 text-stone-50 dark:bg-stone-700 dark:text-stone-50",
+	"bg-[var(--member-tint-0-bg)] text-[var(--member-tint-0-fg)]",
+	"bg-[var(--member-tint-1-bg)] text-[var(--member-tint-1-fg)]",
+	"bg-[var(--member-tint-2-bg)] text-[var(--member-tint-2-fg)]",
+	"bg-[var(--member-tint-3-bg)] text-[var(--member-tint-3-fg)]",
+	"bg-[var(--member-tint-4-bg)] text-[var(--member-tint-4-fg)]",
+	"bg-[var(--member-tint-5-bg)] text-[var(--member-tint-5-fg)]",
 ];
 
 export function getMemberTintClass(index: number): string {

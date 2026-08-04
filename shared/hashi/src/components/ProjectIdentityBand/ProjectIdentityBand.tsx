@@ -29,7 +29,7 @@ export function ProjectIdentityBandView({
 	return (
 		<PageIdentityHeader
 			avatar={
-				<Avatar shape="square" size="xl" aria-label={name}>
+				<Avatar shape="square" size="xl">
 					<AvatarFallback className="bg-muted text-muted-foreground">
 						<Package className="size-5" aria-hidden />
 					</AvatarFallback>

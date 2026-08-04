@@ -29,9 +29,10 @@ type Story = StoryObj<typeof WorkspaceTypeVersionBadge>;
 
 export const Default: Story = {};
 
-// Both workspace type flavors side-by-side. Colors are type-anchored — the
-// ZenML pill stays sage-green and the Kitaru pill stays peach regardless of
-// the active app theme.
+// Both workspace type flavors side-by-side. Colors are type-anchored, so the
+// Kitaru pill stays peach regardless of the active app theme. The ZenML pill
+// carries the ZenML brand color: sage-green under the ZenML and Kitaru brands,
+// purple under the legacy zenml-pro brand.
 export const Types: Story = {
 	render: () => (
 		<div className="flex flex-col gap-4">

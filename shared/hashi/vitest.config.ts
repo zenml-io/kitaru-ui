@@ -20,6 +20,7 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		include: [
+			"@base-ui/react/avatar",
 			"@base-ui/react/collapsible",
 			"@base-ui/react/merge-props",
 			"@base-ui/react/progress",

@@ -1,0 +1,153 @@
+/*
+ * ZenML Pro legacy theme.
+ *
+ * This is a snapshot-alias of apps/zenml-pro-ui/src/styles/globals.css, taken
+ * 2026-07-24. Tokens alias the live app variables and fall back to frozen
+ * values when rendered standalone.
+ *
+ * Brand purple is allowed only in this file. This is the carve-out from the
+ * repo-wide no-purple rule. The one purple outside it is member-avatar tint 5
+ * in globals.css, which is a categorical colour for telling people apart and
+ * carries no brand meaning.
+ *
+ * Exit plan: at rebrand, delete this file, its import, and every
+ * data-app="zenml-pro" attribute. Surfaces then fall through to the :root
+ * ZenML brand.
+ *
+ * The legacy ZenML Pro product has no dark mode. Dark mode is unsupported
+ * under this brand, so no .dark combination is defined.
+ *
+ * Aliasing constraint: Tailwind v4 ships its own default palette under the
+ * same --color-<hue>-<step> namespace, and its values are oklch. A name that
+ * overlaps it is therefore always defined, so the fallback never applies and
+ * hsl(oklch(...)) computes to an invalid value. The legacy neutral and blue
+ * scales collide this way, so tokens sourced from them carry frozen literals
+ * instead of aliases. Every other prefix used here (primary, surface, text,
+ * border, error, success, warning) is outside Tailwind's namespace and aliases
+ * safely. Check any new alias against Tailwind's palette before adding it.
+ *
+ * Scope: this remaps the semantic palette only. Hashi-only utility scales that
+ * the legacy product has no counterpart for (the JSON viewer --code-* set and
+ * the --heat-* ramp) keep their :root values by design, rather than inventing
+ * legacy values that never existed.
+ *
+ * Load order: this is a separate entry, "@zenml/hashi/zenml-pro-legacy.css",
+ * imported AFTER globals.css by the Pro app (and by hashi's own Storybook).
+ * That ordering is what lets the plain [data-app="zenml-pro"] (0,1,0) beat the
+ * :root ZenML block (0,1,0) on source order, exactly as the Kitaru block does.
+ * Import it before globals.css and the tokens below silently stop applying.
+ */
+[data-app="zenml-pro"] {
+	--primary: hsl(var(--color-primary-400, 260 89% 60%));
+	--primary-foreground: hsl(var(--color-text-negative, 0 0% 100%));
+	--primary-text: hsl(var(--color-text-brand, 259 67% 35%));
+
+	--background: hsl(var(--color-surface-secondary, 210 20% 98%));
+	--foreground: hsl(var(--color-text-primary, 258 66% 7%));
+	--card: hsl(var(--color-surface-primary, 0 0% 100%));
+	--card-foreground: var(--foreground);
+	--popover: hsl(var(--color-surface-primary, 0 0% 100%));
+	--popover-foreground: var(--foreground);
+	--secondary: hsl(var(--color-surface-tertiary, 220 14% 96%));
+	/* neutral-700, frozen: collides with Tailwind's palette (see header). */
+	--secondary-foreground: hsl(217 19% 27%);
+	--muted: hsl(var(--color-surface-tertiary, 220 14% 96%));
+	--muted-foreground: hsl(var(--color-text-secondary, 220 9% 46%));
+	/* surface-tertiary is the legacy semantic alias of neutral-100. */
+	--accent: hsl(var(--color-surface-tertiary, 220 14% 96%));
+	--accent-foreground: hsl(217 19% 27%);
+	--border: hsl(var(--color-border-moderate, 220 13% 91%));
+	--input: hsl(var(--color-border-moderate, 220 13% 91%));
+	--ring: var(--primary);
+
+	--destructive: hsl(var(--color-error-500, 4 81% 58%));
+	--destructive-foreground: hsl(var(--color-text-negative, 0 0% 100%));
+	--success: hsl(var(--color-success-500, 137 74% 43%));
+	--success-foreground: hsl(var(--color-text-negative, 0 0% 100%));
+	--warning: hsl(var(--color-warning-500, 32 95% 51%));
+	/* blue-500, frozen: collides with Tailwind's palette (see header). */
+	--info: hsl(209 89% 42%);
+	--info-foreground: hsl(var(--color-text-negative, 0 0% 100%));
+
+	/* The legacy palette has no AA-safe warning foreground or text variables.
+	   These literals retain its warning hue and satisfy their light-mode roles. */
+	--warning-foreground: hsl(32 95% 18%);
+	--warning-text: hsl(32 95% 30%);
+
+	--destructive-text: hsl(var(--color-error-700, 4 59% 39%));
+	--success-text: hsl(var(--color-success-700, 137 74% 29%));
+	/* blue-600, frozen: collides with Tailwind's palette (see header). */
+	--info-text: hsl(208 89% 33%);
+
+	/* The legacy palette has no chart semantic variables, so these are frozen
+	   literals derived directly from its purple, blue, green, orange, and
+	   neutral scales. */
+	--chart-1: hsl(260 89% 60%);
+	--chart-2: hsl(209 89% 42%);
+	--chart-3: hsl(137 74% 43%);
+	--chart-4: hsl(32 95% 51%);
+	--chart-5: hsl(220 9% 46%);
+
+	--sidebar: hsl(var(--color-surface-secondary, 210 20% 98%));
+	--sidebar-foreground: var(--foreground);
+	--sidebar-primary: var(--primary);
+	--sidebar-primary-foreground: hsl(var(--color-text-negative, 0 0% 100%));
+	--sidebar-accent: hsl(var(--color-surface-tertiary, 220 14% 96%));
+	--sidebar-accent-foreground: hsl(217 19% 27%);
+	--sidebar-border: hsl(var(--color-border-moderate, 220 13% 91%));
+	--sidebar-ring: var(--primary);
+
+	/* The legacy app has no shadow semantic token. This frozen triplet mirrors
+	   its cool neutral-900 hue, while the accent remains a live primary alias. */
+	--shadow-color: 221 39% 11%;
+	--shadow-accent: 0 4px 16px hsl(var(--color-primary-400, 260 89% 60%) / 0.2);
+
+	--brand-mark-bg: hsl(var(--color-primary-025, 259 90% 96%));
+	--brand-mark-fg: hsl(var(--color-primary-500, 259 67% 35%));
+
+	/* Workspace-type marks. A zenml-type workspace shows the ZenML brand colour,
+	   which in the legacy product is purple, so the green :root stops would read
+	   as the new brand leaking onto a legacy surface. Restated from the legacy
+	   primary scale: 300/400/500 for the avatar gradient, 025/050/100/500 for
+	   the tag. The kitaru palette is deliberately untouched, it stays orange
+	   under every brand. */
+	--ws-mark-zenml-from: hsl(var(--color-primary-300, 260 89% 68%));
+	--ws-mark-zenml-mid: hsl(var(--color-primary-400, 260 89% 60%));
+	--ws-mark-zenml-to: hsl(var(--color-primary-500, 259 67% 35%));
+	--ws-tag-zenml-bg-strong: hsl(var(--color-primary-050, 259 90% 92%));
+	--ws-tag-zenml-bg-soft: hsl(var(--color-primary-025, 259 90% 96%));
+	--ws-tag-zenml-border: hsl(var(--color-primary-100, 260 90% 84%));
+	--ws-tag-zenml-text: hsl(var(--color-primary-500, 259 67% 35%));
+
+	/* Member-avatar tints 0 and 5, inverted from :root. This brand leads with
+	   its own purple and closes with the plain avatar-fallback surface, where
+	   ZenML does the reverse. Slots 1 to 4 are shared utility pairs. */
+	--member-tint-0-bg: hsl(var(--color-primary-025, 259 90% 96%));
+	--member-tint-0-fg: hsl(var(--color-primary-500, 259 67% 35%));
+	--member-tint-5-bg: var(--muted);
+	--member-tint-5-fg: var(--secondary-foreground);
+}
+
+/* ZenML Pro legacy mirror, restore --secondary-driven fill. The doubled
+   attribute selector lifts specificity to (0,4,0) so this beats the
+   html:not(.dark) baseline at (0,3,1), whose extra type selector would
+   otherwise break the tie against a bare (0,3,0) attribute selector. The
+   doubling is required by that baseline, not by load order, so it stays even
+   though the token block above no longer needs a qualifier. */
+[data-app="zenml-pro"][data-app] [data-slot="button"][data-variant="secondary"],
+[data-app="zenml-pro"][data-app]
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	) {
+	background-color: var(--secondary);
+}
+[data-app="zenml-pro"][data-app]
+	[data-slot="button"][data-variant="secondary"]:hover,
+[data-app="zenml-pro"][data-app]
+	[data-slot="badge"]:is(
+		[data-variant="secondary"],
+		[data-emphasis="neutral"]
+	):hover {
+	background-color: color-mix(in oklch, var(--secondary) 80%, transparent);
+}

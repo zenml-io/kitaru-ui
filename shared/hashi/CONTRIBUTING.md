@@ -5,6 +5,33 @@ The Storybook is the canonical reference for hashi; a component without
 stories does not exist as far as consumers are concerned, and CI enforces
 that (see Enforcement below).
 
+## Brand theming
+
+### ZenML Pro legacy
+
+The `[data-app="zenml-pro"]` brand exists so new ZenML Pro features can use
+Hashi components while embedded in the legacy purple product shell. It is
+light-only because the legacy product has no dark mode.
+
+Tokens in `src/styles/zenml-pro-legacy.css` alias the live variables from
+`apps/zenml-pro-ui/src/styles/globals.css` and include frozen fallback values
+for standalone rendering. Brand purple and the required legacy `hsl()` values
+are allowed only in this file, nowhere else in Hashi. The single exception is
+member-avatar tint 5 in `globals.css`, a categorical colour for telling people
+apart that carries no brand meaning.
+
+It ships as its own entry, `@zenml/hashi/zenml-pro-legacy.css`, and must be
+imported after `globals.css`: its blocks outrank the `:root` ZenML tokens on
+source order, not specificity. At rebrand, delete the file, its export entry,
+the imports, and every `data-app="zenml-pro"` attribute so those surfaces fall
+through to the default `:root` ZenML brand.
+
+Never style a component with a Tailwind palette utility such as `bg-blue-100`.
+Consuming apps redefine names in the `--color-<hue>-<step>` namespace, and
+`zenml-pro-ui` declares several of them as bare HSL triplets, so the utility
+resolves to a non-colour and the declaration is dropped inside that app. Use a
+theme token.
+
 ## Adding a component
 
 1. **Place the source.** Every component lives in its own folder, named after
@@ -76,7 +103,7 @@ that (see Enforcement below).
 - [ ] `pnpm test` green — render + axe checks pass for every story
 - [ ] `pnpm typecheck` green
 - [ ] No `react-router`, store, data-client, or app-code imports (pure UI)
-- [ ] All colors `oklch()` through theme tokens — no hex/rgb/hsl
+- [ ] Component colors use `oklch()` theme tokens with no hex/rgb/hsl. The documented legacy ZenML Pro theme file is the only exception.
 - [ ] Text contrast ≥ 4.5:1 (3:1 for large text) on the surfaces it renders on
 - [ ] Icon-only buttons have `aria-label`; images/labeled spans have a role
 - [ ] Figma component built (or `skip`/`map-to-existing` verdict recorded),
