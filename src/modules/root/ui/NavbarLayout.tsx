@@ -9,7 +9,7 @@ import { UserDropdownContainer } from "../feature/UserDropdownContainer";
 import { NavbarTabs, type NavbarTab } from "./NavbarTabs";
 
 const NAVBAR_TABS: NavbarTab[] = [
-	{ to: "/flows", label: "Flows" },
+	{ to: "/flows", label: "Agents" },
 	{ to: "/executions", label: "Executions" },
 ];
 

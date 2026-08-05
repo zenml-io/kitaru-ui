@@ -45,7 +45,7 @@ export const Route = createFileRoute("/_private/_navbar/flows/")({
 	},
 	component: FlowsRouteAdapter,
 	head: () => ({
-		meta: [{ title: buildPageTitles("Flows") }],
+		meta: [{ title: buildPageTitles("Agents") }],
 	}),
 	pendingComponent: PageSpinner,
 	loader: async ({ context, deps }) => {

@@ -22,13 +22,13 @@ export function DefaultPageNotFound() {
 				<EmptyTitle>Page not found</EmptyTitle>
 				<EmptyDescription>
 					The page you're looking for doesn't exist or the URL may have changed.
-					Check the address or head back to your flows.
+					Check the address or head back to your agents.
 				</EmptyDescription>
 			</EmptyHeader>
 			<EmptyContent>
 				<Button className="min-w-44" render={<Link to="/flows" />}>
 					<ChevronLeft />
-					Go to Flows
+					Go to Agents
 				</Button>
 
 				<code className="text-muted-foreground/60 bg-muted/50 rounded-md px-3 py-1.5 font-mono text-xs">

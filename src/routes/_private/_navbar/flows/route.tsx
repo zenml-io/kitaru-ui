@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_private/_navbar/flows")({
 	loader: () => {
 		return {
 			crumb: {
-				label: "Flows",
+				label: "Agents",
 				disabled: false,
 			},
 		};

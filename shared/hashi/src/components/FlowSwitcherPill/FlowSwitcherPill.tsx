@@ -44,21 +44,21 @@ export function FlowSwitcherPillView({
 		<SwitcherPill
 			className={className}
 			labelRender={labelRender}
-			labelAriaLabel={`Go to flow ${selected.name}`}
-			triggerAriaLabel={`Switch flow. Current: ${selected.name}`}
+			labelAriaLabel={`Go to agent ${selected.name}`}
+			triggerAriaLabel={`Switch agent. Current: ${selected.name}`}
 			label={
 				<span className="max-w-30 truncate md:max-w-50">{selected.name}</span>
 			}
 		>
 			<SwitcherDropdownMenu
-				contextLabel="Flows"
+				contextLabel="Agents"
 				footer={
 					<DropdownMenuItem
 						onClick={onCreateFlow}
 						className="text-muted-foreground m-1 flex items-center gap-2.5 py-1.5"
 					>
 						<Plus className="size-3.5" aria-hidden />
-						<span className="text-sm">New flow</span>
+						<span className="text-sm">New agent</span>
 					</DropdownMenuItem>
 				}
 			>
@@ -70,7 +70,7 @@ export function FlowSwitcherPillView({
 							)
 						: items;
 					if (filtered.length === 0) {
-						return <SwitcherEmpty noun="flows" query={query} />;
+						return <SwitcherEmpty noun="agents" query={query} />;
 					}
 					return filtered.map((item) => {
 						const isActive = item.id === selected.id;

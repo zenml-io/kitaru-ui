@@ -66,7 +66,7 @@ export function ProjectStatistics({
 		<div className="flex items-center gap-4 text-xs">
 			<span className="text-muted-foreground inline-flex items-center gap-1 tabular-nums">
 				<span className="text-foreground font-semibold">{flows}</span>
-				{flows === 1 ? "flow" : "flows"}
+				{flows === 1 ? "agent" : "agents"}
 			</span>
 			<span className="text-muted-foreground inline-flex items-center gap-1 tabular-nums">
 				<span className="text-foreground font-semibold">{executions}</span>
